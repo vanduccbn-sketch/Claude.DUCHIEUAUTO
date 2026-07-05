@@ -1,0 +1,24 @@
+#top-bar { background-color: var(--dark); color: var(--gray); font-size: 13px; padding: 8px 0; border-bottom: 2px solid transparent; border-image: var(--gradient-m-stripe) 1; }
+.top-bar-inner { display: flex; justify-content: space-between; align-items: center; }
+.top-bar-left, .top-bar-right { display: flex; align-items: center; gap: 20px; }
+.top-bar-left i, .top-bar-right i { color: var(--primary); margin-right: 5px; }
+.hotline strong { color: var(--white); }
+.social-links a { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; background-color: rgba(255, 255, 255, 0.06); color: var(--gray); transition: var(--transition); }
+.social-links a:hover { background-color: var(--primary); color: var(--white); }
+#header { background: var(--glass-bg); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid rgba(255, 255, 255, 0.06); transition: var(--transition); }
+.header-inner { display: flex; justify-content: space-between; align-items: center; height: 80px; }
+.logo { font-family: var(--font-title); font-size: 32px; color: var(--white); letter-spacing: 2px; }
+.logo span { color: var(--primary); text-shadow: 0 0 20px rgba(228, 0, 43, 0.4); }
+.main-nav ul { display: flex; gap: 35px; }
+.main-nav a { color: var(--white); font-size: 15px; font-weight: 500; text-transform: uppercase; letter-spacing: 1px; position: relative; padding: 5px 0; }
+.main-nav a::after { content: ''; position: absolute; bottom: 0; left: 0; width: 0; height: 3px; background: var(--gradient-m-stripe); transition: var(--transition); }
+.main-nav a:hover::after, .main-nav a.active::after { width: 100%; }
+.main-nav a:hover, .main-nav a.active { color: var(--primary); }
+.header-actions { display: flex; align-items: center; gap: 15px; }
+.menu-toggle { display: none; background: none; border: none; color: var(--white); font-size: 24px; cursor: pointer; }
+@media (max-width: 991px) {
+    .main-nav { position: absolute; top: 100%; left: 0; width: 100%; background: var(--dark); display: none; flex-direction: column; padding: 20px; box-shadow: var(--shadow-md); }
+    .main-nav.active { display: flex; }
+    .main-nav ul { flex-direction: column; gap: 18px; }
+    .menu-toggle { display: block !important; }
+}

@@ -1,0 +1,21 @@
+@font-face {
+    font-family: 'UTM Bebas';
+    src: url('../fonts/UTM-Bebas.woff2') format('woff2'),
+         url('../fonts/UTM-Bebas.woff') format('woff'),
+         url('../fonts/UTM-Bebas.ttf') format('truetype');
+    font-weight: normal; font-style: normal; font-display: swap;
+}
+@font-face {
+    font-family: 'UTM Avo';
+    src: url('../fonts/UTM-Avo.woff2') format('woff2'),
+         url('../fonts/UTM-Avo.woff') format('woff'),
+         url('../fonts/UTM-Avo.ttf') format('truetype');
+    font-weight: 400; font-style: normal; font-display: swap;
+}
+@font-face {
+    font-family: 'UTM Avo';
+    src: url('../fonts/UTM-AvoBold.woff2') format('woff2'),
+         url('../fonts/UTM-AvoBold.woff') format('woff'),
+         url('../fonts/UTM-AvoBold.ttf') format('truetype');
+    font-weight: 700; font-style: normal; font-display: swap;
+}

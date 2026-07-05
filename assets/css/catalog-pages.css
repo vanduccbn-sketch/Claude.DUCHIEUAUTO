@@ -1,0 +1,223 @@
+/* =========================================================
+   CATALOG PAGES - category-chi-tiet / brand-san-pham / san-pham-chi-tiet / san-pham
+   ========================================================= */
+
+#product-catalog-page {
+    padding: 20px 0 100px;
+}
+
+.breadcrumb {
+    padding: 20px 0;
+    font-size: 14px;
+    color: var(--text-muted);
+}
+
+.breadcrumb a {
+    color: var(--m-blue);
+}
+
+.breadcrumb a:hover {
+    color: var(--primary);
+}
+
+.breadcrumb .sep {
+    margin: 0 8px;
+    color: var(--gray);
+}
+
+/* ---------- Poster đầu trang danh mục ---------- */
+.category-poster {
+    width: 100%;
+    height: 360px;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 30px;
+    box-shadow: var(--shadow-md);
+    background-color: #e9eaed;
+}
+
+.category-poster img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.category-title {
+    font-family: var(--font-title);
+    font-size: 2.2rem;
+    margin-bottom: 30px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* ---------- Danh sách thương hiệu ---------- */
+.brand-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-bottom: 60px;
+}
+
+.brand-card {
+    display: block;
+    background-color: var(--bg-alt);
+    border: 1px solid var(--border-color-light);
+    border-radius: 8px;
+    padding: 28px 24px;
+    transition: var(--transition);
+}
+
+.brand-card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--primary);
+}
+
+.brand-card h3 {
+    font-family: var(--font-title);
+    font-size: 20px;
+    margin-bottom: 10px;
+    color: var(--text-color);
+}
+
+.brand-card span {
+    font-size: 13px;
+    color: var(--m-blue);
+    font-weight: 600;
+}
+
+/* ---------- Grid sản phẩm theo thương hiệu ---------- */
+.brand-title {
+    font-family: var(--font-title);
+    font-size: 2rem;
+    margin-bottom: 30px;
+    text-transform: uppercase;
+}
+
+.product-grid-catalog {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+    margin-bottom: 60px;
+}
+
+.product-card-catalog {
+    display: block;
+    background-color: var(--bg-alt);
+    border: 1px solid var(--border-color-light);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: var(--transition);
+}
+
+.product-card-catalog:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--primary);
+}
+
+.product-img-catalog {
+    height: 180px;
+    background-color: #e9eaed;
+    overflow: hidden;
+}
+
+.product-img-catalog img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.product-info-catalog {
+    padding: 18px;
+}
+
+.product-brand-catalog {
+    display: block;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--m-blue);
+    margin-bottom: 6px;
+}
+
+.product-info-catalog h3 {
+    font-size: 16px;
+    color: var(--text-color);
+    margin-bottom: 8px;
+}
+
+.product-price-catalog {
+    font-size: 14px;
+    color: var(--primary);
+    font-weight: 700;
+}
+
+/* ---------- Trang chi tiết sản phẩm ---------- */
+.product-detail-wrap {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 50px;
+    padding: 40px 0 80px;
+    align-items: start;
+}
+
+.product-detail-img {
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+    background-color: #e9eaed;
+    height: 420px;
+}
+
+.product-detail-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.product-detail-brand {
+    display: inline-block;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--m-blue);
+    margin-bottom: 12px;
+    font-weight: 700;
+}
+
+.product-detail-name {
+    font-family: var(--font-title);
+    font-size: 2.2rem;
+    margin-bottom: 18px;
+    color: var(--text-color);
+}
+
+.product-detail-price {
+    display: block;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 24px;
+}
+
+.product-detail-desc {
+    color: var(--text-muted);
+    line-height: 1.8;
+    margin-bottom: 30px;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 991px) {
+    .brand-grid { grid-template-columns: repeat(2, 1fr); }
+    .product-grid-catalog { grid-template-columns: repeat(2, 1fr); }
+    .product-detail-wrap { grid-template-columns: 1fr; }
+    .category-poster { height: 260px; }
+}
+
+@media (max-width: 576px) {
+    .brand-grid { grid-template-columns: 1fr; }
+    .product-grid-catalog { grid-template-columns: 1fr; }
+    .category-title { font-size: 1.6rem; }
+    .product-detail-img { height: 300px; }
+}

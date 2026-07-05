@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Danh Mục Sản Phẩm | Đức Hiếu Auto</title>
+    <link rel="icon" type="image/png" href="assets/images/favicon.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link rel="stylesheet" href="assets/css/fonts.css">
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/header.css">
+    <link rel="stylesheet" href="assets/css/services.css">
+    <link rel="stylesheet" href="assets/css/footer.css">
+    <link rel="stylesheet" href="assets/css/catalog-pages.css">
+</head>
+<body>
+
+    <div id="top-bar">
+        <div class="container top-bar-inner">
+            <div class="top-bar-left">
+                <span><i class="fa-solid fa-location-dot"></i> 123 Lý Thái Tổ, Phường Buôn Ma Thuật, Đăk Lăk</span>
+                <span><i class="fa-solid fa-envelope"></i> contact.duchieuauto47@gmail.com</span>
+            </div>
+            <div class="top-bar-right">
+                <span class="hotline"><i class="fa-solid fa-phone-volume"></i> Hotline: <strong>0869 100 237</strong></span>
+            </div>
+        </div>
+    </div>
+
+    <header id="header">
+        <div class="container header-inner">
+            <a href="index.html" class="logo">ĐỨC HIẾU <span>AUTO</span></a>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="index.html">Trang Chủ</a></li>
+                    <li><a href="index.html#about">Giới Thiệu</a></li>
+                    <li><a href="index.html#service">Dịch Vụ</a></li>
+                    <li><a href="san-pham.html" class="active">Sản Phẩm</a></li>
+                    <li><a href="index.html#project">Công Trình</a></li>
+                    <li><a href="index.html#contact">Liên Hệ</a></li>
+                </ul>
+            </nav>
+            <div class="header-actions">
+                <a href="index.html#contact" class="btn btn-primary">Nhận Báo Giá</a>
+                <button class="menu-toggle" aria-label="Mở menu"><i class="fa-solid fa-bars"></i></button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section id="product-catalog-page">
+            <div class="container">
+                <div class="breadcrumb">
+                    <a href="index.html">Trang Chủ</a>
+                    <span class="sep">/</span>
+                    <span class="breadcrumb-current">Sản Phẩm</span>
+                </div>
+                <h1 class="section-title">DANH MỤC SẢN PHẨM</h1>
+                <div class="services-grid product-category-grid"></div>
+            </div>
+        </section>
+    </main>
+
+    <footer id="footer">
+        <div class="container footer-inner">
+            <div class="footer-col brand-col">
+                <h3>ĐỨC HIẾU AUTO</h3>
+                <p class="footer-desc">Trung tâm nâng cấp và chăm sóc ô tô chuyên nghiệp.</p>
+                <div class="social-links">
+                    <a href="#" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="#" aria-label="Zalo"><i class="fa-solid fa-comment-dots"></i></a>
+                    <a href="#" aria-label="Youtube"><i class="fa-brands fa-youtube"></i></a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h3>Liên Kết</h3>
+                <ul>
+                    <li><a href="index.html">Trang Chủ</a></li>
+                    <li><a href="index.html#about">Giới Thiệu</a></li>
+                    <li><a href="san-pham.html">Sản Phẩm</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>Liên Hệ</h3>
+                <ul class="contact-info">
+                    <li><i class="fa-solid fa-location-dot"></i> 123 Lý Thái Tổ, Buôn Ma Thuật, Đăk Lăk</li>
+                    <li><i class="fa-solid fa-phone"></i> 0869 100 237</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom"><p>© 2026 Đức Hiếu Auto. All rights reserved.</p></div>
+    </footer>
+
+    <script src="assets/js/catalog-data.js"></script>
+    <script src="assets/js/catalog-render.js"></script>
+    <script>
+        renderCategoryGrid(".product-category-grid", "product");
+
+        const menuToggle = document.querySelector('.menu-toggle');
+        const nav = document.querySelector('.main-nav');
+        menuToggle.addEventListener('click', () => nav.classList.toggle('active'));
+    </script>
+</body>
+</html>

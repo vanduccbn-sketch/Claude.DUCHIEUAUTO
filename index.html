@@ -266,6 +266,27 @@
         </div>
     </footer>
 
+    <!-- Widget liên hệ nhanh: Zalo / Messenger / Điện thoại -->
+    <div class="quick-contact" id="quickContact">
+        <div class="quick-contact-items">
+            <a class="qc-item qc-zalo" href="https://zalo.me/0869110237" target="_blank" rel="noopener" aria-label="Chat Zalo">
+                <i class="fa-solid fa-comment-dots"></i>
+                <span>Chat Zalo</span>
+            </a>
+            <a class="qc-item qc-messenger" href="https://www.facebook.com/thanhphatautocar" target="_blank" rel="noopener" aria-label="Nhắn tin Messenger">
+                <i class="fa-brands fa-facebook-messenger"></i>
+                <span>Messenger</span>
+            </a>
+            <a class="qc-item qc-phone" href="tel:0869110237" aria-label="Gọi điện thoại">
+                <i class="fa-solid fa-phone"></i>
+                <span>0869 110 237</span>
+            </a>
+        </div>
+        <button type="button" class="quick-contact-toggle" id="quickContactToggle" aria-label="Mở/đóng liên hệ nhanh">
+            <i class="fa-solid fa-plus"></i>
+        </button>
+    </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
@@ -317,6 +338,18 @@
 
         backToTop.addEventListener('click', () => {
             window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // Toggle widget liên hệ nhanh (Zalo / Messenger / Điện thoại)
+        const quickContact = document.getElementById('quickContact');
+        const quickContactToggle = document.getElementById('quickContactToggle');
+        quickContactToggle.addEventListener('click', () => {
+            quickContact.classList.toggle('active');
+        });
+        document.addEventListener('click', (e) => {
+            if (!quickContact.contains(e.target)) {
+                quickContact.classList.remove('active');
+            }
         });
     </script>
 </body>

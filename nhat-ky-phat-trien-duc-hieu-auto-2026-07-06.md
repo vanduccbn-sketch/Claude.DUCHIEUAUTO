@@ -38,6 +38,9 @@ Cấu trúc trang hiện có:
 - [x] Bổ sung gallery 3 ảnh cho mục "Giới Thiệu" (#about) — `assets/images/about/`
 - [x] Bổ sung ảnh poster cho 9 dịch vụ (Ceramic, Phim cách nhiệt, Độ đèn, Decal, PPF, Cách âm, Phủ gầm, Mâm xe, Bodykit) — `assets/images/service/<id>/poster.jpg`
 - [x] Bổ sung logo chính hãng cho 6 brand đã có sản phẩm thật (JBL, Infinity, Harman/Kardon, Pioneer, Zestech, VIETMAP) — `assets/images/brands/<id>/logo.*`, hiển thị ở brand-card và brand-title
+- [x] Thêm widget "Liên hệ nhanh" nổi góc phải (Zalo, Messenger, Điện thoại) trên cả 5 trang, có nút thu/mở, không đè lên nút back-to-top
+- [x] Sửa lỗi thiếu file `assets/css/project.css` (mục "Công Trình Tiêu Biểu" trước đó không có style)
+- [x] Ẩn top-bar (địa chỉ/email/hotline) trên mobile (≤768px) để tránh tràn ngang
 
 ## Việc cần làm tiếp theo (TODO)
 

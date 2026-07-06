@@ -22,3 +22,8 @@
     .main-nav ul { flex-direction: column; gap: 18px; }
     .menu-toggle { display: block !important; }
 }
+
+@media (max-width: 768px) {
+    /* Ẩn địa chỉ, email, hotline trên di động để tránh tràn ngang - vẫn còn nút "Nhận Báo Giá" và widget liên hệ nhanh */
+    #top-bar { display: none; }
+}

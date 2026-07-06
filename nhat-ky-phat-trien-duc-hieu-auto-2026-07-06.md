@@ -41,10 +41,25 @@ Cấu trúc trang hiện có:
 - [x] Thêm widget "Liên hệ nhanh" nổi góc phải (Zalo, Messenger, Điện thoại) trên cả 5 trang, có nút thu/mở, không đè lên nút back-to-top
 - [x] Sửa lỗi thiếu file `assets/css/project.css` (mục "Công Trình Tiêu Biểu" trước đó không có style)
 - [x] Ẩn top-bar (địa chỉ/email/hotline) trên mobile (≤768px) để tránh tràn ngang
+- [x] **Tái cấu trúc lớn**: gộp `services` + `productCategories` thành 1 danh sách `categories` duy nhất, đúng 8 mục theo yêu cầu (tham khảo IA của 2tautocar.com.vn):
+  1. Màn Hình Ô Tô (Gotech, Zestech*, Kovar, Teyes, Safeview)
+  2. Âm Thanh - Cách Âm Ô Tô (JBL*, Infinity*, Harman/Kardon*, Pioneer*, German-Maestro, Audiotec Fischer, DrArtex, Vibrofiltr) — gộp "Loa & Âm Thanh" + "Cách Âm Ô Tô" cũ
+  3. Android Box Ô Tô (mới, placeholder "Đang cập nhật")
+  4. Film Cách Nhiệt (3M, Titan, Global)
+  5. Camera Hành Trình - 360 Độ (UTOUR, VIETMAP*, 70mai, FINEVU, BlackVue)
+  6. PPF - Wrap Đổi Màu (XPEL, AX Film, 3M, Oracal, Avery Dennison) — gộp "PPF" + "Decal Đổi Màu" cũ
+  7. Nâng Cấp Ánh Sáng (Fogway, GTR, X-Light, NAOEVO) — đổi tên từ "Độ Đèn Tăng Sáng"
+  8. Đồ Bán Tải (mới, placeholder "Đang cập nhật")
+  (*: hãng có sản phẩm thật)
+  - **Đã loại bỏ** hoàn toàn: Phủ Ceramic, Phủ Gầm Ô Tô, Độ Mâm Xe Thể Thao, Độ Bodykit, Phuộc Hiệu Năng Cao, Mâm Độ (không nằm trong 8 mục yêu cầu) — xóa luôn sản phẩm placeholder mồ côi liên quan
+  - Dùng chung 1 danh sách cho cả mục "Dịch Vụ" (trang chủ) và trang "Sản Phẩm"
+  - Đơn giản hóa `catalog-render.js`: bỏ tham số `type=service/product` trên URL (giờ chỉ còn `?id=`, `?id=&brand=`, `?id=&brand=&loai=`)
+  - Tải mới 4 ảnh poster còn thiếu: Màn Hình Ô Tô, Camera Hành Trình - 360 Độ, Android Box Ô Tô, Đồ Bán Tải
+  - Sửa 3 link sản phẩm nổi bật ở trang chủ (Infinity/JBL/Pioneer) đang trỏ tới id sản phẩm cũ không còn tồn tại
 
 ## Việc cần làm tiếp theo (TODO)
 
+- [ ] Lấy dữ liệu sản phẩm thật cho 2 mục mới: Android Box Ô Tô, Đồ Bán Tải
 - [ ] Triển khai tương tự cho các brand còn lại trong Màn hình (Gotech, Kovar, Teyes, Safeview) và Camera hành trình (UTOUR, 70mai, FINEVU, BlackVue)
-- [ ] Triển khai danh mục Phuộc, Mâm độ (còn placeholder)
 - [ ] Bổ sung Kenwood (màn hình/đầu CD) nếu cần mở rộng danh mục Âm thanh ô tô
 - [ ] Rà lại giá/thông số các sản phẩm có ghi chú "trang nguồn chưa cập nhật đầy đủ" khi có dữ liệu mới

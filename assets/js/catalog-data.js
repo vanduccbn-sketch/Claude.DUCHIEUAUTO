@@ -2,11 +2,12 @@
    CATALOG DATA - NGUỒN DỮ LIỆU DUY NHẤT
    =========================================================
    Cấu trúc:
-   - services: các dịch vụ (poster + danh sách thương hiệu + sản phẩm)
-   - productCategories: các danh mục sản phẩm (poster + danh sách thương hiệu + sản phẩm)
+   - categories: danh sách DUY NHẤT gồm 8 nhóm dịch vụ/danh mục sản phẩm
+     (poster + danh sách thương hiệu, thương hiệu có thể chia thêm "types").
+     Dùng chung cho cả mục "Dịch Vụ" (trang chủ) và trang "Sản Phẩm".
    - products: TỪ ĐIỂN DUY NHẤT chứa mọi sản phẩm theo "id".
-     -> Cả services và productCategories chỉ THAM CHIẾU tới id này,
-        không copy dữ liệu ra 2 nơi => không bao giờ trùng folder ảnh.
+     -> categories chỉ THAM CHIẾU tới id này, không copy dữ liệu ra 2 nơi
+        => không bao giờ trùng folder ảnh.
      -> Folder ảnh tương ứng: assets/images/products/<id>/
 
    Tên danh mục/thương hiệu/model bên dưới lấy từ thông tin công bố
@@ -18,97 +19,7 @@
 
 const CATALOG = {
 
-  services: [
-    {
-      id: "phu-ceramic",
-      name: "Phủ Ceramic",
-      poster: "assets/images/service/phu-ceramic/poster.jpg",
-      brands: [
-        { id: "ceramic-pro", name: "Ceramic Pro", products: ["ceramic-pro-9h"] },
-        { id: "gtechniq", name: "Gtechniq", products: ["gtechniq-crystal-serum"] },
-        { id: "carpro", name: "CarPro", products: ["carpro-cquartz"] }
-      ]
-    },
-    {
-      id: "dan-phim-cach-nhiet",
-      name: "Dán Phim Cách Nhiệt",
-      poster: "assets/images/service/dan-phim-cach-nhiet/poster.jpg",
-      brands: [
-        { id: "3m-film", name: "3M", products: ["3m-crystalline"] },
-        { id: "titan-film", name: "Titan", products: ["titan-premium"] },
-        { id: "global-film", name: "Global", products: ["global-ceramic-film"] }
-      ]
-    },
-    {
-      id: "do-den",
-      name: "Độ Đèn Tăng Sáng",
-      poster: "assets/images/service/do-den/poster.jpg",
-      brands: [
-        { id: "fogway", name: "Fogway", products: ["fogway-led-x1"] },
-        { id: "gtr-light", name: "GTR", products: ["gtr-laser-v2"] },
-        { id: "x-light", name: "X-Light", products: ["x-light-v20"] },
-        { id: "naoevo", name: "NAOEVO", products: ["naoevo-p60"] }
-      ]
-    },
-    {
-      id: "decal-doi-mau-xe",
-      name: "Decal Đổi Màu / Tem Xe",
-      poster: "assets/images/service/decal-doi-mau-xe/poster.jpg",
-      brands: [
-        { id: "3m-wrap", name: "3M", products: ["3m-2080-series"] },
-        { id: "oracal", name: "Oracal", products: ["oracal-970ra"] },
-        { id: "avery", name: "Avery Dennison", products: ["avery-scs"] }
-      ]
-    },
-    {
-      id: "ppf-bao-ve-son-xe",
-      name: "PPF - Phim Bảo Vệ Sơn Xe",
-      poster: "assets/images/service/ppf-bao-ve-son-xe/poster.jpg",
-      brands: [
-        { id: "xpel", name: "XPEL", products: ["xpel-ultimate-plus"] },
-        { id: "ax-film", name: "AX Film", products: ["ax-film-tpu"] }
-      ]
-    },
-    {
-      id: "cach-am-oto",
-      name: "Cách Âm Ô Tô",
-      poster: "assets/images/service/cach-am-oto/poster.jpg",
-      brands: [
-        { id: "drartex", name: "DrArtex", products: ["drartex-standard"] },
-        { id: "vibrofiltr", name: "Vibrofiltr", products: ["vibrofiltr-premium"] }
-      ]
-    },
-    {
-      id: "phu-gam-oto",
-      name: "Phủ Gầm Ô Tô",
-      poster: "assets/images/service/phu-gam-oto/poster.jpg",
-      brands: [
-        { id: "dinitrol", name: "Dinitrol", products: ["dinitrol-4941"] },
-        { id: "noxudol", name: "Noxudol", products: ["noxudol-750"] }
-      ]
-    },
-    {
-      id: "do-mam-xe",
-      name: "Độ Mâm Xe Thể Thao",
-      poster: "assets/images/service/do-mam-xe/poster.jpg",
-      brands: [
-        { id: "enkei", name: "Enkei", products: ["enkei-rpf1"] },
-        { id: "rays", name: "Rays", products: ["rays-gram-lights"] },
-        { id: "bbs", name: "BBS", products: ["bbs-ch-r"] }
-      ]
-    },
-    {
-      id: "do-bodykit",
-      name: "Độ Bodykit",
-      poster: "assets/images/service/do-bodykit/poster.jpg",
-      brands: [
-        { id: "bodykit-nhap-khau", name: "Bodykit Nhập Khẩu", products: ["bodykit-nk-sport"] },
-        { id: "bodykit-fiber", name: "Bodykit Fiber Glass Thủ Công", products: ["bodykit-fiber-custom"] }
-      ]
-    }
-  ],
-
-  productCategories: [
+  categories: [
     {
       id: "man-hinh-o-to",
       name: "Màn Hình Ô Tô",
@@ -128,21 +39,9 @@ const CATALOG = {
       ]
     },
     {
-      id: "camera-hanh-trinh",
-      name: "Camera Hành Trình",
-      poster: "assets/images/products-category/camera-hanh-trinh/poster.jpg",
-      brands: [
-        { id: "utour", name: "UTOUR", products: ["utour-x5"] },
-        { id: "vietmap-cam", name: "VIETMAP", logo: "assets/images/brands/vietmap-cam/logo.png", products: ["vietmap-sc620","vietmap-v740","vietmap-l110","vietmap-s720","vietmap-r440","vietmap-s860","vietmap-speedmap-m2","vietmap-ts-c1l","vietmap-ts-5k","vietmap-ts-3k","vietmap-ts-2k-lite","vietmap-ts-c1"] },
-        { id: "70mai", name: "70mai", products: ["70mai-a810"] },
-        { id: "finevu", name: "FINEVU", products: ["finevu-gx4"] },
-        { id: "blackvue", name: "BlackVue", products: ["blackvue-dr770x"] }
-      ]
-    },
-    {
-      id: "loa-am-thanh",
-      name: "Loa & Âm Thanh",
-      poster: "assets/images/products-category/loa-am-thanh/poster.jpg",
+      id: "am-thanh-cach-am-oto",
+      name: "Âm Thanh - Cách Âm Ô Tô",
+      poster: "assets/images/service/cach-am-oto/poster.jpg",
       brands: [
         {
           id: "jbl", name: "JBL", logo: "assets/images/brands/jbl/logo.png",
@@ -177,27 +76,70 @@ const CATALOG = {
           ]
         },
         { id: "german-maestro", name: "German-Maestro", products: ["german-maestro-m-line"] },
-        { id: "audiotec-fischer", name: "Audiotec Fischer (BRAX / HELIX / MATCH)", products: ["helix-dsp-pro"] }
+        { id: "audiotec-fischer", name: "Audiotec Fischer (BRAX / HELIX / MATCH)", products: ["helix-dsp-pro"] },
+        { id: "drartex", name: "DrArtex (Cách âm)", products: ["drartex-standard"] },
+        { id: "vibrofiltr", name: "Vibrofiltr (Cách âm)", products: ["vibrofiltr-premium"] }
       ]
     },
     {
-      id: "phuoc-hieu-nang-cao",
-      name: "Phuộc Hiệu Năng Cao",
-      poster: "assets/images/products-category/phuoc-hieu-nang-cao/poster.jpg",
+      id: "android-box-o-to",
+      name: "Android Box Ô Tô",
+      poster: "assets/images/products-category/android-box-o-to/poster.jpg",
       brands: [
-        { id: "kyb", name: "KYB", products: ["kyb-excel-g"] },
-        { id: "tein", name: "Tein", products: ["tein-flex-z"] },
-        { id: "gforce", name: "G-Force", products: ["gforce-sport"] }
+        { id: "dang-cap-nhat-box", name: "Đang cập nhật", products: ["android-box-placeholder"] }
       ]
     },
     {
-      id: "mam-do",
-      name: "Mâm Độ",
-      poster: "assets/images/products-category/mam-do/poster.jpg",
+      id: "dan-phim-cach-nhiet",
+      name: "Film Cách Nhiệt",
+      poster: "assets/images/service/dan-phim-cach-nhiet/poster.jpg",
       brands: [
-        { id: "enkei-p", name: "Enkei", products: ["enkei-rpf1"] },
-        { id: "rays-p", name: "Rays", products: ["rays-gram-lights"] },
-        { id: "bbs-p", name: "BBS", products: ["bbs-ch-r"] }
+        { id: "3m-film", name: "3M", products: ["3m-crystalline"] },
+        { id: "titan-film", name: "Titan", products: ["titan-premium"] },
+        { id: "global-film", name: "Global", products: ["global-ceramic-film"] }
+      ]
+    },
+    {
+      id: "camera-hanh-trinh",
+      name: "Camera Hành Trình - 360 Độ",
+      poster: "assets/images/products-category/camera-hanh-trinh/poster.jpg",
+      brands: [
+        { id: "utour", name: "UTOUR", products: ["utour-x5"] },
+        { id: "vietmap-cam", name: "VIETMAP", logo: "assets/images/brands/vietmap-cam/logo.png", products: ["vietmap-sc620","vietmap-v740","vietmap-l110","vietmap-s720","vietmap-r440","vietmap-s860","vietmap-speedmap-m2","vietmap-ts-c1l","vietmap-ts-5k","vietmap-ts-3k","vietmap-ts-2k-lite","vietmap-ts-c1"] },
+        { id: "70mai", name: "70mai", products: ["70mai-a810"] },
+        { id: "finevu", name: "FINEVU", products: ["finevu-gx4"] },
+        { id: "blackvue", name: "BlackVue", products: ["blackvue-dr770x"] }
+      ]
+    },
+    {
+      id: "ppf-wrap-doi-mau",
+      name: "PPF - Wrap Đổi Màu",
+      poster: "assets/images/service/ppf-bao-ve-son-xe/poster.jpg",
+      brands: [
+        { id: "xpel", name: "XPEL", products: ["xpel-ultimate-plus"] },
+        { id: "ax-film", name: "AX Film", products: ["ax-film-tpu"] },
+        { id: "3m-wrap", name: "3M", products: ["3m-2080-series"] },
+        { id: "oracal", name: "Oracal", products: ["oracal-970ra"] },
+        { id: "avery", name: "Avery Dennison", products: ["avery-scs"] }
+      ]
+    },
+    {
+      id: "do-den",
+      name: "Nâng Cấp Ánh Sáng",
+      poster: "assets/images/service/do-den/poster.jpg",
+      brands: [
+        { id: "fogway", name: "Fogway", products: ["fogway-led-x1"] },
+        { id: "gtr-light", name: "GTR", products: ["gtr-laser-v2"] },
+        { id: "x-light", name: "X-Light", products: ["x-light-v20"] },
+        { id: "naoevo", name: "NAOEVO", products: ["naoevo-p60"] }
+      ]
+    },
+    {
+      id: "do-ban-tai",
+      name: "Đồ Bán Tải",
+      poster: "assets/images/products-category/do-ban-tai/poster.jpg",
+      brands: [
+        { id: "dang-cap-nhat-bantai", name: "Đang cập nhật", products: ["ban-tai-placeholder"] }
       ]
     }
   ],
@@ -208,9 +150,8 @@ const CATALOG = {
      Điền "image", "desc", "price" sau khi có thông tin thật.
      ========================================================= */
   products: {
-    "ceramic-pro-9h":        { name: "Ceramic Pro 9H",              brand: "Ceramic Pro",      image: "", price: "", desc: "" },
-    "gtechniq-crystal-serum":{ name: "Gtechniq Crystal Serum",       brand: "Gtechniq",         image: "", price: "", desc: "" },
-    "carpro-cquartz":        { name: "CarPro CQuartz",              brand: "CarPro",           image: "", price: "", desc: "" },
+    "android-box-placeholder": { name: "Sản phẩm đang cập nhật", brand: "Đang cập nhật", image: "", price: "", desc: "" },
+    "ban-tai-placeholder":     { name: "Sản phẩm đang cập nhật", brand: "Đang cập nhật", image: "", price: "", desc: "" },
 
     "3m-crystalline":        { name: "3M Crystalline",              brand: "3M",               image: "", price: "", desc: "" },
     "titan-premium":         { name: "Titan Premium",               brand: "Titan",            image: "", price: "", desc: "" },
@@ -230,16 +171,6 @@ const CATALOG = {
 
     "drartex-standard":      { name: "DrArtex Standard",            brand: "DrArtex",          image: "", price: "", desc: "" },
     "vibrofiltr-premium":    { name: "Vibrofiltr Premium",          brand: "Vibrofiltr",       image: "", price: "", desc: "" },
-
-    "dinitrol-4941":         { name: "Dinitrol 4941",               brand: "Dinitrol",         image: "", price: "", desc: "" },
-    "noxudol-750":           { name: "Noxudol 750",                 brand: "Noxudol",          image: "", price: "", desc: "" },
-
-    "enkei-rpf1":            { name: "Enkei RPF1",                  brand: "Enkei",            image: "", price: "", desc: "" },
-    "rays-gram-lights":      { name: "Rays Gram Lights 57DR",       brand: "Rays",             image: "", price: "", desc: "" },
-    "bbs-ch-r":              { name: "BBS CH-R",                    brand: "BBS",              image: "", price: "", desc: "" },
-
-    "bodykit-nk-sport":      { name: "Bodykit Nhập Khẩu - Sport",   brand: "Nhập Khẩu",        image: "", price: "", desc: "" },
-    "bodykit-fiber-custom":  { name: "Bodykit Fiber Glass Custom",  brand: "Thủ Công",         image: "", price: "", desc: "" },
 
     "gotech-gt2k":           { name: "Gotech GT2K",                 brand: "Gotech",           image: "https://cdn.chungauto.vn/uploads/man-hinh-gotech/gotech-gt-2k.jpg", price: "8.900.000₫", desc: "Màn hình Android ô tô Gotech GT2K, tấm nền QLED 2K (2000x1200), RAM 4GB/ROM 32GB, chip 7862 Octa Core, hệ điều hành Android 12. Hỗ trợ Wifi, 4G, Bluetooth, điều khiển giọng nói qua trợ lý Gotech Assistant & Kiki, tích hợp 3 phần mềm bản đồ Carmap/Google Maps/Navitel. Có bản GT2K 360 kèm camera 360 độ (giá 14.900.000₫). Bảo hành 2 năm 1 đổi 1." },
     "gotech-gts4":           { name: "Gotech GT2K Pro",             brand: "Gotech",           image: "", price: "11.900.000₫", desc: "Màn hình Android ô tô Gotech GT2K Pro, màn hình 10 inch tấm nền 2K, tích hợp DSP chỉnh âm thanh chuyên sâu, hỗ trợ CarPlay/Android Auto không dây. Cấu hình mạnh, đa nhiệm mượt, kho ứng dụng CH Play, trợ lý ảo GotechGPT. Phù hợp nâng cấp cho các dòng xe phổ thông." },
@@ -381,11 +312,7 @@ const CATALOG = {
 
     /* ---------- Pioneer - Âm Ly ---------- */
     "pioneer-gm-a6704": { name: "Pioneer GM-A6704", brand: "Pioneer", price: "5.490.000₫", desc: "Ampli Class-AB 4 kênh công suất tối đa 1000W, thiết kế nhỏ gọn với núm chỉnh Bass Boost từ xa. Bộ lọc HPF/LPF linh hoạt mang lại âm thanh mạnh mẽ, chân thực cho mọi hành trình.", specs: [["Số kênh","4/3/2 kênh"],["Class ampli","AB"],["Công suất tối đa","170W x4 (4Ω) / 250W x4 (2Ω) / 500W x2 (cầu 4Ω)"],["Công suất RMS","60W x4 (4Ω) / 95W x4 (2Ω) / 190W x2 (cầu 4Ω)"],["Dải tần số","10Hz – 70kHz"],["Bass Boost","0/6/12dB @ 50Hz"]] },
-    "pioneer-gm-d8704": { name: "Pioneer GM-D8704", brand: "Pioneer", price: "10.160.000₫", desc: "Ampli Class-D 4 kênh công suất tối đa 200W, thiết kế nhỏ gọn linh hoạt lắp đặt với mạch Class-D tinh gọn cho hiệu suất cao và chất lượng âm thanh vượt trội.", specs: [["Loại ampli","Class-D, 4 kênh"],["Công suất tối đa","200W"],["Bộ lọc LPF","Điều chỉnh 40-500Hz"],["Bộ lọc HPF","Điều chỉnh 40-500Hz"],["Trở kháng hỗ trợ","Ổn định ở 1Ω"],["SKU","GM-D8704"],["Xuất xứ","Nhật Bản"]] },
-
-    "kyb-excel-g":           { name: "KYB Excel-G",                 brand: "KYB",              image: "", price: "", desc: "" },
-    "tein-flex-z":           { name: "Tein Flex Z",                 brand: "Tein",             image: "", price: "", desc: "" },
-    "gforce-sport":          { name: "G-Force Sport",               brand: "G-Force",          image: "", price: "", desc: "" }
+    "pioneer-gm-d8704": { name: "Pioneer GM-D8704", brand: "Pioneer", price: "10.160.000₫", desc: "Ampli Class-D 4 kênh công suất tối đa 200W, thiết kế nhỏ gọn linh hoạt lắp đặt với mạch Class-D tinh gọn cho hiệu suất cao và chất lượng âm thanh vượt trội.", specs: [["Loại ampli","Class-D, 4 kênh"],["Công suất tối đa","200W"],["Bộ lọc LPF","Điều chỉnh 40-500Hz"],["Bộ lọc HPF","Điều chỉnh 40-500Hz"],["Trở kháng hỗ trợ","Ổn định ở 1Ω"],["SKU","GM-D8704"],["Xuất xứ","Nhật Bản"]] }
   }
 };
 

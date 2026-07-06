@@ -7,12 +7,8 @@ function getParam(name) {
     return new URLSearchParams(window.location.search).get(name);
 }
 
-function getCategoryList(type) {
-    return type === "product" ? CATALOG.productCategories : CATALOG.services;
-}
-
-function findCategory(type, id) {
-    return getCategoryList(type).find(c => c.id === id);
+function findCategory(id) {
+    return CATALOG.categories.find(c => c.id === id);
 }
 
 function findProduct(id) {
@@ -20,18 +16,17 @@ function findProduct(id) {
 }
 
 function productImgFallback(id) {
-    // Ảnh sản phẩm dùng chung 1 folder duy nhất theo id, không phân biệt vào từ dịch vụ hay sản phẩm
+    // Ảnh sản phẩm dùng chung 1 folder duy nhất theo id
     return `assets/images/products/${id}/anh-1.jpg`;
 }
 
-/* ---------- Trang danh mục dịch vụ / sản phẩm (index.html) ---------- */
-function renderCategoryGrid(containerSelector, type) {
-    const list = getCategoryList(type);
+/* ---------- Danh mục Dịch Vụ / Sản Phẩm (index.html, san-pham.html) ---------- */
+function renderCategoryGrid(containerSelector) {
     const container = document.querySelector(containerSelector);
     if (!container) return;
 
-    container.innerHTML = list.map(cat => `
-        <a class="service-card" href="category-chi-tiet.html?type=${type}&id=${cat.id}">
+    container.innerHTML = CATALOG.categories.map(cat => `
+        <a class="service-card" href="category-chi-tiet.html?id=${cat.id}">
             <div class="service-img">
                 <img src="${cat.poster}" alt="${cat.name}" loading="lazy" onerror="this.src='assets/images/placeholder.svg'">
                 <div class="service-overlay"><i class="fa-solid fa-magnifying-glass-plus"></i></div>
@@ -46,9 +41,8 @@ function renderCategoryGrid(containerSelector, type) {
 
 /* ---------- Trang chi tiết danh mục (poster + danh sách thương hiệu) ---------- */
 function renderCategoryDetail() {
-    const type = getParam("type") || "service";
     const id = getParam("id");
-    const cat = findCategory(type, id);
+    const cat = findCategory(id);
 
     if (!cat) {
         document.querySelector(".category-detail-wrap").innerHTML = "<p>Không tìm thấy danh mục.</p>";
@@ -62,10 +56,8 @@ function renderCategoryDetail() {
     posterImg.onerror = () => { posterImg.onerror = null; posterImg.src = "assets/images/placeholder.svg"; };
     document.querySelector(".category-title").textContent = cat.name;
 
-    const breadcrumbLabel = type === "product" ? "Sản Phẩm" : "Dịch Vụ";
-    const breadcrumbLink = type === "product" ? "san-pham.html" : "index.html#service";
-    document.querySelector(".breadcrumb-parent").textContent = breadcrumbLabel;
-    document.querySelector(".breadcrumb-parent").href = breadcrumbLink;
+    document.querySelector(".breadcrumb-parent").textContent = "Sản Phẩm";
+    document.querySelector(".breadcrumb-parent").href = "san-pham.html";
     document.querySelector(".breadcrumb-current").textContent = cat.name;
 
     const brandGrid = document.querySelector(".brand-grid");
@@ -75,7 +67,7 @@ function renderCategoryDetail() {
             : brand.products.length;
         const logoHtml = brand.logo ? `<div class="brand-logo"><img src="${brand.logo}" alt="${brand.name}" loading="lazy"></div>` : "";
         return `
-        <a class="brand-card" href="brand-san-pham.html?type=${type}&id=${cat.id}&brand=${brand.id}">
+        <a class="brand-card" href="brand-san-pham.html?id=${cat.id}&brand=${brand.id}">
             ${logoHtml}
             <h3>${brand.name}</h3>
             <span>${count} sản phẩm <i class="fa-solid fa-arrow-right"></i></span>
@@ -85,11 +77,10 @@ function renderCategoryDetail() {
 
 /* ---------- Trang sản phẩm theo thương hiệu (hỗ trợ thêm cấp "loại": hãng -> loại -> sản phẩm) ---------- */
 function renderBrandProducts() {
-    const type = getParam("type") || "service";
     const id = getParam("id");
     const brandId = getParam("brand");
     const typeId = getParam("loai");
-    const cat = findCategory(type, id);
+    const cat = findCategory(id);
     const brand = cat ? cat.brands.find(b => b.id === brandId) : null;
 
     if (!cat || !brand) {
@@ -99,7 +90,7 @@ function renderBrandProducts() {
 
     const breadcrumbCat = document.querySelector(".breadcrumb-cat");
     breadcrumbCat.textContent = cat.name;
-    breadcrumbCat.href = `category-chi-tiet.html?type=${type}&id=${cat.id}`;
+    breadcrumbCat.href = `category-chi-tiet.html?id=${cat.id}`;
 
     const breadcrumbBrandSep = document.querySelector(".breadcrumb-brand-sep");
     const breadcrumbBrand = document.querySelector(".breadcrumb-brand");
@@ -120,7 +111,7 @@ function renderBrandProducts() {
 
         grid.classList.add("type-grid");
         grid.innerHTML = brand.types.map(t => `
-            <a class="brand-card" href="brand-san-pham.html?type=${type}&id=${cat.id}&brand=${brand.id}&loai=${t.id}">
+            <a class="brand-card" href="brand-san-pham.html?id=${cat.id}&brand=${brand.id}&loai=${t.id}">
                 <h3>${t.name}</h3>
                 <span>${t.products.length} sản phẩm <i class="fa-solid fa-arrow-right"></i></span>
             </a>
@@ -140,7 +131,7 @@ function renderBrandProducts() {
         breadcrumbBrandSep.hidden = false;
         breadcrumbBrand.hidden = false;
         breadcrumbBrand.textContent = brand.name;
-        breadcrumbBrand.href = `brand-san-pham.html?type=${type}&id=${cat.id}&brand=${brand.id}`;
+        breadcrumbBrand.href = `brand-san-pham.html?id=${cat.id}&brand=${brand.id}`;
         document.querySelector(".breadcrumb-current").textContent = t.name;
         document.title = brand.name + " - " + t.name + " | Đức Hiếu Auto";
         setBrandTitle(brand.name + " - " + t.name, false);

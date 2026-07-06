@@ -30,8 +30,18 @@ Cấu trúc trang hiện có:
   - Thêm bảng "Thông số kỹ thuật" (specs) vào trang chi tiết sản phẩm (`san-pham-chi-tiet.html` + CSS)
   - Dữ liệu thu thập song song qua 5 agent nền theo hãng để rút ngắn thời gian xử lý
 
+- [x] Bổ sung danh mục "Màn Hình Ô Tô" — brand Zestech: 12 sản phẩm thật (dữ liệu từ zestech.com.vn), chia loại Có/Không Camera 360
+- [x] Bổ sung danh mục "Camera Hành Trình" — brand VIETMAP: 12 sản phẩm thật (dữ liệu từ vietmap.vn)
+- [x] Cấp quyền tự động (allow rules) cho project trong `.claude/settings.local.json`, thêm `.gitignore`
+- [x] Push lên GitHub (`origin/master`) — GitHub Pages đã deploy bản mới
+- [x] Thêm video nền cho Hero section (`assets/videos/hero-bg.mp4`, nguồn Pexels miễn phí bản quyền, thay Ferrari)
+- [x] Bổ sung gallery 3 ảnh cho mục "Giới Thiệu" (#about) — `assets/images/about/`
+- [x] Bổ sung ảnh poster cho 9 dịch vụ (Ceramic, Phim cách nhiệt, Độ đèn, Decal, PPF, Cách âm, Phủ gầm, Mâm xe, Bodykit) — `assets/images/service/<id>/poster.jpg`
+- [x] Bổ sung logo chính hãng cho 6 brand đã có sản phẩm thật (JBL, Infinity, Harman/Kardon, Pioneer, Zestech, VIETMAP) — `assets/images/brands/<id>/logo.*`, hiển thị ở brand-card và brand-title
+
 ## Việc cần làm tiếp theo (TODO)
 
-- [ ] Triển khai tương tự cho các danh mục sản phẩm còn lại (Màn hình, Camera hành trình, Phuộc, Mâm độ...)
+- [ ] Triển khai tương tự cho các brand còn lại trong Màn hình (Gotech, Kovar, Teyes, Safeview) và Camera hành trình (UTOUR, 70mai, FINEVU, BlackVue)
+- [ ] Triển khai danh mục Phuộc, Mâm độ (còn placeholder)
 - [ ] Bổ sung Kenwood (màn hình/đầu CD) nếu cần mở rộng danh mục Âm thanh ô tô
 - [ ] Rà lại giá/thông số các sản phẩm có ghi chú "trang nguồn chưa cập nhật đầy đủ" khi có dữ liệu mới

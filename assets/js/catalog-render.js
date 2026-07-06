@@ -73,8 +73,10 @@ function renderCategoryDetail() {
         const count = brand.types
             ? brand.types.reduce((sum, t) => sum + t.products.length, 0)
             : brand.products.length;
+        const logoHtml = brand.logo ? `<div class="brand-logo"><img src="${brand.logo}" alt="${brand.name}" loading="lazy"></div>` : "";
         return `
         <a class="brand-card" href="brand-san-pham.html?type=${type}&id=${cat.id}&brand=${brand.id}">
+            ${logoHtml}
             <h3>${brand.name}</h3>
             <span>${count} sản phẩm <i class="fa-solid fa-arrow-right"></i></span>
         </a>`;
@@ -103,10 +105,15 @@ function renderBrandProducts() {
     const breadcrumbBrand = document.querySelector(".breadcrumb-brand");
     const grid = document.querySelector(".product-grid-catalog");
 
+    const brandTitleEl = document.querySelector(".brand-title");
+    const setBrandTitle = (text, showLogo) => {
+        brandTitleEl.innerHTML = (showLogo && brand.logo ? `<img class="brand-title-logo" src="${brand.logo}" alt="${brand.name}">` : "") + `<span>${text}</span>`;
+    };
+
     // Hãng có phân loại (VD: Loa Ô Tô / Loa Sub / Âm Ly) và chưa chọn loại cụ thể -> hiển thị danh sách loại
     if (brand.types && !typeId) {
         document.title = brand.name + " | Đức Hiếu Auto";
-        document.querySelector(".brand-title").textContent = brand.name;
+        setBrandTitle(brand.name, true);
         breadcrumbBrandSep.hidden = true;
         breadcrumbBrand.hidden = true;
         document.querySelector(".breadcrumb-current").textContent = brand.name;
@@ -136,14 +143,14 @@ function renderBrandProducts() {
         breadcrumbBrand.href = `brand-san-pham.html?type=${type}&id=${cat.id}&brand=${brand.id}`;
         document.querySelector(".breadcrumb-current").textContent = t.name;
         document.title = brand.name + " - " + t.name + " | Đức Hiếu Auto";
-        document.querySelector(".brand-title").textContent = brand.name + " - " + t.name;
+        setBrandTitle(brand.name + " - " + t.name, false);
     } else {
         productIds = brand.products;
         breadcrumbBrandSep.hidden = true;
         breadcrumbBrand.hidden = true;
         document.querySelector(".breadcrumb-current").textContent = brand.name;
         document.title = brand.name + " | Đức Hiếu Auto";
-        document.querySelector(".brand-title").textContent = brand.name;
+        setBrandTitle(brand.name, true);
     }
 
     grid.classList.remove("type-grid");

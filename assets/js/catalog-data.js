@@ -116,7 +116,7 @@ const CATALOG = {
       brands: [
         { id: "gotech", name: "Gotech", products: ["gotech-gt2k", "gotech-gts4"] },
         {
-          id: "zestech", name: "Zestech",
+          id: "zestech", name: "Zestech", logo: "assets/images/brands/zestech/logo.svg",
           types: [
             { id: "co-camera-360", name: "Có Camera 360", products: ["zestech-zt360-base","zestech-zt360g","zestech-z18-360","zestech-zt3-360-vf3","zestech-zx-adas-cc-360","zestech-zx-adas-tc-360"] },
             { id: "khong-camera-360", name: "Không Camera 360", products: ["zestech-z18","zestech-zx10-gioi-han","zestech-zx10-cao-cap","zestech-zx-adas-tc","zestech-zx-adas-gioi-han","zestech-zt5-vf5"] }
@@ -133,7 +133,7 @@ const CATALOG = {
       poster: "assets/images/products-category/camera-hanh-trinh/poster.jpg",
       brands: [
         { id: "utour", name: "UTOUR", products: ["utour-x5"] },
-        { id: "vietmap-cam", name: "VIETMAP", products: ["vietmap-sc620","vietmap-v740","vietmap-l110","vietmap-s720","vietmap-r440","vietmap-s860","vietmap-speedmap-m2","vietmap-ts-c1l","vietmap-ts-5k","vietmap-ts-3k","vietmap-ts-2k-lite","vietmap-ts-c1"] },
+        { id: "vietmap-cam", name: "VIETMAP", logo: "assets/images/brands/vietmap-cam/logo.png", products: ["vietmap-sc620","vietmap-v740","vietmap-l110","vietmap-s720","vietmap-r440","vietmap-s860","vietmap-speedmap-m2","vietmap-ts-c1l","vietmap-ts-5k","vietmap-ts-3k","vietmap-ts-2k-lite","vietmap-ts-c1"] },
         { id: "70mai", name: "70mai", products: ["70mai-a810"] },
         { id: "finevu", name: "FINEVU", products: ["finevu-gx4"] },
         { id: "blackvue", name: "BlackVue", products: ["blackvue-dr770x"] }
@@ -145,7 +145,7 @@ const CATALOG = {
       poster: "assets/images/products-category/loa-am-thanh/poster.jpg",
       brands: [
         {
-          id: "jbl", name: "JBL",
+          id: "jbl", name: "JBL", logo: "assets/images/brands/jbl/logo.png",
           types: [
             { id: "loa-o-to", name: "Loa Ô Tô", products: ["jbl-club-64","jbl-club-64c","jbl-club-64csq","jbl-club-605csq","jbl-club-64sq","jbl-stage1-62cf","jbl-stadium-62cf","jbl-basspro-hub","jbl-basspro-sl2","jbl-stage3-x637f","jbl-stage2-634","jbl-stage3-607cf"] },
             { id: "loa-sub", name: "Loa Sub", products: ["jbl-club-marine-10-sub","jbl-stage-1200d","jbl-club-1000ssl","jbl-club-122sl","jbl-club-102sl","jbl-basspro-lite","jbl-sub-st82","jbl-basspro-go","jbl-basspro-nano"] },
@@ -153,7 +153,7 @@ const CATALOG = {
           ]
         },
         {
-          id: "infinity", name: "Infinity",
+          id: "infinity", name: "Infinity", logo: "assets/images/brands/infinity/logo.png",
           types: [
             { id: "loa-o-to", name: "Loa Ô Tô", products: ["infinity-spkka203s","infinity-kap-60-11cs","infinity-ref-1070","infinity-primus-603cf","infinity-infspkka603cf","infinity-spkka63xf","infinity-primus-693c","infinity-beta-be621","infinity-ref-375tx","infinity-perfect-300m","infinity-kappa-20mx"] },
             { id: "loa-sub", name: "Loa Sub", products: ["infinity-ref-1220de","infinity-primus-1270b","infinity-kappa-1000w","infinity-kappa-800w","infinity-ref1000s","infinity-subrf123w","infinity-reference-1000ssl","infinity-basslink-dc-blk","infinity-basslink-sm2","infinity-basslink-mini"] },
@@ -161,7 +161,7 @@ const CATALOG = {
           ]
         },
         {
-          id: "harman-kardon", name: "Harman/Kardon",
+          id: "harman-kardon", name: "Harman/Kardon", logo: "assets/images/brands/harman-kardon/logo.png",
           types: [
             { id: "loa-o-to", name: "Loa Ô Tô", products: ["hk-f6cf","hk-f6f","hk-flow75t","hk-flow-300s","hk-flow-600cf"] },
             { id: "loa-sub", name: "Loa Sub", products: ["hk-feel-700","hk-flow-80"] },
@@ -169,7 +169,7 @@ const CATALOG = {
           ]
         },
         {
-          id: "pioneer", name: "Pioneer",
+          id: "pioneer", name: "Pioneer", logo: "assets/images/brands/pioneer/logo.png",
           types: [
             { id: "loa-o-to", name: "Loa Ô Tô", products: ["pioneer-ts-z65ch","pioneer-ts-a1608c","pioneer-ts-g1620f-2"] },
             { id: "loa-sub", name: "Loa Sub", products: ["pioneer-ts-a30s4","pioneer-ts-wx140da"] },

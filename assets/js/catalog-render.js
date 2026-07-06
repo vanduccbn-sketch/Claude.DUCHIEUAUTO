@@ -69,19 +69,24 @@ function renderCategoryDetail() {
     document.querySelector(".breadcrumb-current").textContent = cat.name;
 
     const brandGrid = document.querySelector(".brand-grid");
-    brandGrid.innerHTML = cat.brands.map(brand => `
+    brandGrid.innerHTML = cat.brands.map(brand => {
+        const count = brand.types
+            ? brand.types.reduce((sum, t) => sum + t.products.length, 0)
+            : brand.products.length;
+        return `
         <a class="brand-card" href="brand-san-pham.html?type=${type}&id=${cat.id}&brand=${brand.id}">
             <h3>${brand.name}</h3>
-            <span>${brand.products.length} sản phẩm <i class="fa-solid fa-arrow-right"></i></span>
-        </a>
-    `).join("");
+            <span>${count} sản phẩm <i class="fa-solid fa-arrow-right"></i></span>
+        </a>`;
+    }).join("");
 }
 
-/* ---------- Trang sản phẩm theo thương hiệu ---------- */
+/* ---------- Trang sản phẩm theo thương hiệu (hỗ trợ thêm cấp "loại": hãng -> loại -> sản phẩm) ---------- */
 function renderBrandProducts() {
     const type = getParam("type") || "service";
     const id = getParam("id");
     const brandId = getParam("brand");
+    const typeId = getParam("loai");
     const cat = findCategory(type, id);
     const brand = cat ? cat.brands.find(b => b.id === brandId) : null;
 
@@ -90,16 +95,59 @@ function renderBrandProducts() {
         return;
     }
 
-    document.title = brand.name + " | Đức Hiếu Auto";
-    document.querySelector(".brand-title").textContent = brand.name;
-
     const breadcrumbCat = document.querySelector(".breadcrumb-cat");
     breadcrumbCat.textContent = cat.name;
     breadcrumbCat.href = `category-chi-tiet.html?type=${type}&id=${cat.id}`;
-    document.querySelector(".breadcrumb-current").textContent = brand.name;
 
+    const breadcrumbBrandSep = document.querySelector(".breadcrumb-brand-sep");
+    const breadcrumbBrand = document.querySelector(".breadcrumb-brand");
     const grid = document.querySelector(".product-grid-catalog");
-    grid.innerHTML = brand.products.map(pid => {
+
+    // Hãng có phân loại (VD: Loa Ô Tô / Loa Sub / Âm Ly) và chưa chọn loại cụ thể -> hiển thị danh sách loại
+    if (brand.types && !typeId) {
+        document.title = brand.name + " | Đức Hiếu Auto";
+        document.querySelector(".brand-title").textContent = brand.name;
+        breadcrumbBrandSep.hidden = true;
+        breadcrumbBrand.hidden = true;
+        document.querySelector(".breadcrumb-current").textContent = brand.name;
+
+        grid.classList.add("type-grid");
+        grid.innerHTML = brand.types.map(t => `
+            <a class="brand-card" href="brand-san-pham.html?type=${type}&id=${cat.id}&brand=${brand.id}&loai=${t.id}">
+                <h3>${t.name}</h3>
+                <span>${t.products.length} sản phẩm <i class="fa-solid fa-arrow-right"></i></span>
+            </a>
+        `).join("");
+        return;
+    }
+
+    let productIds;
+    if (brand.types) {
+        const t = brand.types.find(x => x.id === typeId);
+        if (!t) {
+            document.querySelector(".brand-products-wrap").innerHTML = "<p>Không tìm thấy loại sản phẩm.</p>";
+            return;
+        }
+        productIds = t.products;
+
+        breadcrumbBrandSep.hidden = false;
+        breadcrumbBrand.hidden = false;
+        breadcrumbBrand.textContent = brand.name;
+        breadcrumbBrand.href = `brand-san-pham.html?type=${type}&id=${cat.id}&brand=${brand.id}`;
+        document.querySelector(".breadcrumb-current").textContent = t.name;
+        document.title = brand.name + " - " + t.name + " | Đức Hiếu Auto";
+        document.querySelector(".brand-title").textContent = brand.name + " - " + t.name;
+    } else {
+        productIds = brand.products;
+        breadcrumbBrandSep.hidden = true;
+        breadcrumbBrand.hidden = true;
+        document.querySelector(".breadcrumb-current").textContent = brand.name;
+        document.title = brand.name + " | Đức Hiếu Auto";
+        document.querySelector(".brand-title").textContent = brand.name;
+    }
+
+    grid.classList.remove("type-grid");
+    grid.innerHTML = productIds.map(pid => {
         const p = findProduct(pid);
         if (!p) return "";
         const img = p.image || productImgFallback(pid);
@@ -137,4 +185,12 @@ function renderProductDetail() {
     document.querySelector(".product-detail-name").textContent = p.name;
     document.querySelector(".product-detail-price").textContent = p.price || "Liên hệ để biết giá";
     document.querySelector(".product-detail-desc").textContent = p.desc || "Thông tin chi tiết đang được cập nhật. Vui lòng liên hệ hotline để được tư vấn.";
+
+    const specsSection = document.querySelector(".product-detail-specs");
+    if (p.specs && p.specs.length) {
+        specsSection.querySelector(".specs-table").innerHTML = p.specs.map(([k, v]) => `<tr><th>${k}</th><td>${v}</td></tr>`).join("");
+        specsSection.hidden = false;
+    } else {
+        specsSection.hidden = true;
+    }
 }

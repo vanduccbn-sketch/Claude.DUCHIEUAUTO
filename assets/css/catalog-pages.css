@@ -207,17 +207,66 @@
     margin-bottom: 30px;
 }
 
+/* ---------- Trang sản phẩm theo loại (Loa Ô Tô / Loa Sub / Âm Ly) ---------- */
+.product-grid-catalog.type-grid {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+/* ---------- Bảng thông số kỹ thuật (trang chi tiết sản phẩm) ---------- */
+.product-detail-specs {
+    padding-bottom: 80px;
+}
+
+.product-detail-specs h2 {
+    font-family: var(--font-title);
+    font-size: 1.6rem;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.specs-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.specs-table tr:nth-child(odd) {
+    background-color: var(--bg-alt);
+}
+
+.specs-table th,
+.specs-table td {
+    text-align: left;
+    padding: 12px 20px;
+    font-size: 14px;
+    border-bottom: 1px solid var(--border-color-light);
+}
+
+.specs-table th {
+    width: 260px;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+.specs-table td {
+    color: var(--text-color);
+}
+
 /* ---------- Responsive ---------- */
 @media (max-width: 991px) {
     .brand-grid { grid-template-columns: repeat(2, 1fr); }
     .product-grid-catalog { grid-template-columns: repeat(2, 1fr); }
+    .product-grid-catalog.type-grid { grid-template-columns: repeat(2, 1fr); }
     .product-detail-wrap { grid-template-columns: 1fr; }
     .category-poster { height: 260px; }
+    .specs-table th { width: 180px; }
 }
 
 @media (max-width: 576px) {
     .brand-grid { grid-template-columns: 1fr; }
     .product-grid-catalog { grid-template-columns: 1fr; }
+    .product-grid-catalog.type-grid { grid-template-columns: 1fr; }
     .category-title { font-size: 1.6rem; }
     .product-detail-img { height: 300px; }
+    .specs-table th, .specs-table td { padding: 10px 12px; font-size: 13px; }
 }

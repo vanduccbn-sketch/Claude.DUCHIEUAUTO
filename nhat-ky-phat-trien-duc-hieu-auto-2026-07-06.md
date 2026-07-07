@@ -80,10 +80,17 @@ Cấu trúc trang hiện có:
   - Logo chính hãng đủ cả 4 thương hiệu (VIETMAP/Zestech tái dùng logo có sẵn từ danh mục khác; Elliview lấy từ icar.vn; Carlinkit — logo trên CDN chính (carlinkit.com) bị chặn hotlink (403), người dùng gửi trực tiếp logo lấy từ carlinkit.com.au để tải về)
   - Xóa placeholder "Đang cập nhật" của mục này, đã push lên GitHub Pages và xác nhận deploy
 
+- [x] Bổ sung dữ liệu thật cho danh mục **"Camera Hành Trình - 360 Độ"** (VIETMAP giữ nguyên, ẩn FINEVU theo yêu cầu):
+  - UTOUR: C2L, C2 Max, C3L (combo trước-sau), C3 và C3M (gương điện tử AI ADAS) — 5 sản phẩm, đây là toàn bộ sản phẩm thật đang bán (dữ liệu từ utourvietnam.vn, akauto.com.vn)
+  - 70mai: 4K T800, Omni X800 4K (360 độ), A810, 4K A800SE, A510, A500S, M310, T400 — 8 sản phẩm (dữ liệu từ shop70mai.vn)
+  - BlackVue: ELITE 10, ELITE 9, ELITE 8, DR770X-2CH II — 4 sản phẩm (dữ liệu từ msport.vn, nhà phân phối chính hãng). Lưu ý: các model DR970X/DR750X từng thấy trong bài viết cũ trên msport.vn đã bị gỡ khỏi catalog hiện tại (URL redirect về trang chủ) nên không đưa vào để tránh dữ liệu sai/lỗi thời
+  - Ẩn brand FINEVU (`hidden: true`, giữ nguyên dữ liệu cũ)
+  - Logo chính hãng: UTOUR và BlackVue tải thành công từ trang phân phối VN; 70mai chưa tìm được logo đáng tin cậy (trang phân phối chỉ có logo shop riêng, không phải logo hãng)
+  - 1 trong 3 agent nền (BlackVue) bị dừng giữa chừng do hết session limit — đã tự hoàn thành nốt phần còn lại thủ công (fetch trực tiếp + verify HTTP status các URL sản phẩm cũ để loại bỏ model không còn bán)
+
 ## Việc cần làm tiếp theo (TODO)
 
 - [ ] Lấy dữ liệu sản phẩm thật cho mục "Đồ Bán Tải"
-- [ ] Tìm logo chính hãng Titan (Film Cách Nhiệt) khi có nguồn đáng tin cậy
-- [ ] Triển khai tương tự cho các brand còn lại trong Camera hành trình (UTOUR, 70mai, FINEVU, BlackVue)
+- [ ] Tìm logo chính hãng Titan (Film Cách Nhiệt) và 70mai khi có nguồn đáng tin cậy
 - [ ] Bổ sung Kenwood (màn hình/đầu CD) nếu cần mở rộng danh mục Âm thanh ô tô
 - [ ] Rà lại giá/thông số các sản phẩm có ghi chú "trang nguồn chưa cập nhật đầy đủ" khi có dữ liệu mới

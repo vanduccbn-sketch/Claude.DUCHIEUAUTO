@@ -66,6 +66,11 @@ Cấu trúc trang hiện có:
 - [x] Bổ sung logo chính hãng 3M, Global vào "Film Cách Nhiệt" (Titan: không tìm được logo chính hãng đáng tin cậy - trang titanwindowfilm.vn đã ngừng hoạt động, chưa thêm)
 - [x] Bổ sung brand **Gotech** (12 sản phẩm, dữ liệu từ gotech.vn) và **Teyes** (8 sản phẩm, dữ liệu + giá thật từ teyes.vn) trong danh mục "Màn Hình Ô Tô" — cả 2 chia loại Có/Không Camera 360, kèm logo chính hãng
 - [x] **Ẩn** brand Kovar và Safeview khỏi danh mục "Màn Hình Ô Tô" (cờ `hidden: true`, giữ nguyên dữ liệu, lọc ở `catalog-render.js` — có thể bật lại dễ dàng sau này)
+- [x] **Thiết kế lại trang chi tiết danh mục** (`category-chi-tiet.html`) — áp dụng chung cho mọi danh mục:
+  - Poster về chiều cao chuẩn (300/200/170px desktop/tablet/mobile), tiêu đề overlay trực tiếp lên poster + gợi ý cuộn xuống ("Xem thương hiệu" nhấp nháy) để khách biết bên dưới còn danh sách thương hiệu
+  - Lưới thương hiệu chuyển sang flexbox: chuẩn 4 ô/hàng, hàng cuối thiếu ô (VD chỉ 3 hãng) tự canh giữa thay vì lệch trái, các ô luôn đồng đều kích thước
+  - Logo thương hiệu to hơn (56px → 72px)
+  - Giảm 50% khoảng cách breadcrumb/poster/tiêu đề
 
 ## Việc cần làm tiếp theo (TODO)
 

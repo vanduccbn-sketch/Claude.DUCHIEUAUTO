@@ -58,10 +58,14 @@ Cấu trúc trang hiện có:
   - Sửa 3 link sản phẩm nổi bật ở trang chủ (Infinity/JBL/Pioneer) đang trỏ tới id sản phẩm cũ không còn tồn tại
 - [x] Bổ sung brand **3M** trong danh mục "Film Cách Nhiệt" — 3 sản phẩm thật (dữ liệu từ muoihungauto.net/collections/phim-cach-nhiet-3m), phân loại theo dòng xe 4/5/7 chỗ, mỗi loại là 1 sản phẩm riêng (giá, ảnh, thông số UV/hồng ngoại/bảo hành)
 - [x] Bổ sung `PowerShell`, `Artifact`, `SendMessage`, `ScheduleWakeup` vào allow-list `.claude/settings.local.json` (thiếu `PowerShell` khiến vẫn bị hỏi quyền)
+- [x] **Chuyển toàn bộ project** từ `d:\OneDrive - Cong Ty TNHH Phuc Giang\Desktop\VANDUC\Claude-DUCHIEUAUTO` sang **`D:\Claude-DUCHIEUAUTO`** (ngoài vùng đồng bộ OneDrive) — do phát hiện OneDrive tự đồng bộ hoàn nguyên file về bản cũ sau mỗi lần commit, làm mất code vừa sửa. Đã xác minh git log/remote/working tree nguyên vẹn ở vị trí mới.
+- [x] Bổ sung brand **Titan** và **Global** trong danh mục "Film Cách Nhiệt" — dữ liệu từ akauto.com.vn:
+  - Titan: chia loại Sedan 4-5 chỗ / SUV 7 chỗ, mỗi loại 3 dòng phim (Black, Titanium, Titanium Plus) — 6 sản phẩm
+  - Global: chia loại Xe 4-5 chỗ / Xe 7 chỗ, mỗi loại 2 dòng phim (Supreme Series, QDP Ceramic Series) — 4 sản phẩm
+  - Danh mục "Film Cách Nhiệt" giờ đã đủ cả 3 brand thật (3M, Titan, Global)
 
 ## Việc cần làm tiếp theo (TODO)
 
-- [ ] Bổ sung brand Titan, Global trong "Film Cách Nhiệt" (còn placeholder)
 - [ ] Lấy dữ liệu sản phẩm thật cho 2 mục mới: Android Box Ô Tô, Đồ Bán Tải
 - [ ] Triển khai tương tự cho các brand còn lại trong Màn hình (Gotech, Kovar, Teyes, Safeview) và Camera hành trình (UTOUR, 70mai, FINEVU, BlackVue)
 - [ ] Bổ sung Kenwood (màn hình/đầu CD) nếu cần mở rộng danh mục Âm thanh ô tô

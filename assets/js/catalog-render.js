@@ -68,9 +68,11 @@ function renderCategoryDetail() {
         const logoHtml = brand.logo ? `<div class="brand-logo"><img src="${brand.logo}" alt="${brand.name}" loading="lazy"></div>` : "";
         return `
         <a class="brand-card" href="brand-san-pham.html?id=${cat.id}&brand=${brand.id}">
+            <div class="brand-card-info">
+                <h3>${brand.name}</h3>
+                <span>${count} sản phẩm <i class="fa-solid fa-arrow-right"></i></span>
+            </div>
             ${logoHtml}
-            <h3>${brand.name}</h3>
-            <span>${count} sản phẩm <i class="fa-solid fa-arrow-right"></i></span>
         </a>`;
     }).join("");
 }

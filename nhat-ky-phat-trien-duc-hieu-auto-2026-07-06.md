@@ -88,9 +88,16 @@ Cấu trúc trang hiện có:
   - Logo chính hãng: UTOUR và BlackVue tải thành công từ trang phân phối VN; 70mai chưa tìm được logo đáng tin cậy (trang phân phối chỉ có logo shop riêng, không phải logo hãng)
   - 1 trong 3 agent nền (BlackVue) bị dừng giữa chừng do hết session limit — đã tự hoàn thành nốt phần còn lại thủ công (fetch trực tiếp + verify HTTP status các URL sản phẩm cũ để loại bỏ model không còn bán)
 
+- [x] Danh mục **"Nâng Cấp Ánh Sáng"**: thay thương hiệu NAOEVO bằng **Aozoom** (dữ liệu từ aozoom.com.vn), chia 2 loại:
+  - Bi LED (5sp): Double Laser Phoenix Light, Laser Thor Light 1.8", Bi Laser Jaguar Pro, Lion King Pro, LED Captain 1.8"
+  - Bi Gầm (5sp): LED Wasp Fog Light 3.0", LED G9 All New, Ant 3in1 Fog Light 2.0", Special Fog Light Ford/Toyota, LED Stone Fog Light
+  - Logo Aozoom trích xuất trực tiếp từ SVG gốc trên site (không phải ảnh raster)
+  - Fogway, GTR, X-Light trong danh mục này vẫn là placeholder, chưa làm
+
 ## Việc cần làm tiếp theo (TODO)
 
 - [ ] Lấy dữ liệu sản phẩm thật cho mục "Đồ Bán Tải"
+- [ ] Lấy dữ liệu sản phẩm thật cho Fogway, GTR, X-Light (Nâng Cấp Ánh Sáng)
 - [ ] Tìm logo chính hãng Titan (Film Cách Nhiệt) và 70mai khi có nguồn đáng tin cậy
 - [ ] Bổ sung Kenwood (màn hình/đầu CD) nếu cần mở rộng danh mục Âm thanh ô tô
 - [ ] Rà lại giá/thông số các sản phẩm có ghi chú "trang nguồn chưa cập nhật đầy đủ" khi có dữ liệu mới

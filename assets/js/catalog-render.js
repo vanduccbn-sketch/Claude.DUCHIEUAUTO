@@ -61,7 +61,7 @@ function renderCategoryDetail() {
     document.querySelector(".breadcrumb-current").textContent = cat.name;
 
     const brandGrid = document.querySelector(".brand-grid");
-    brandGrid.innerHTML = cat.brands.map(brand => {
+    brandGrid.innerHTML = cat.brands.filter(brand => !brand.hidden).map(brand => {
         const count = brand.types
             ? brand.types.reduce((sum, t) => sum + t.products.length, 0)
             : brand.products.length;

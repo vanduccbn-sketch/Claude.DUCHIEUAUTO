@@ -94,7 +94,7 @@ const CATALOG = {
       name: "Film Cách Nhiệt",
       poster: "assets/images/service/dan-phim-cach-nhiet/poster.jpg",
       brands: [
-        { id: "3m-film", name: "3M", products: ["3m-film-4-cho", "3m-film-5-cho", "3m-film-7-cho"] },
+        { id: "3m-film", name: "3M", logo: "assets/images/brands/3m-film/logo.png", products: ["3m-film-4-cho", "3m-film-5-cho", "3m-film-7-cho"] },
         {
           id: "titan-film", name: "Titan",
           types: [
@@ -103,7 +103,7 @@ const CATALOG = {
           ]
         },
         {
-          id: "global-film", name: "Global",
+          id: "global-film", name: "Global", logo: "assets/images/brands/global-film/logo.png",
           types: [
             { id: "xe-4-5-cho", name: "Xe 4-5 Chỗ", products: ["global-supreme-4-5-cho","global-qdp-ceramic-4-5-cho"] },
             { id: "xe-7-cho", name: "Xe 7 Chỗ", products: ["global-supreme-7-cho","global-qdp-ceramic-7-cho"] }

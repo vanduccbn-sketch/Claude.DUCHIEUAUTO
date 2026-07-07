@@ -94,7 +94,7 @@ const CATALOG = {
       name: "Film Cách Nhiệt",
       poster: "assets/images/service/dan-phim-cach-nhiet/poster.jpg",
       brands: [
-        { id: "3m-film", name: "3M", products: ["3m-crystalline"] },
+        { id: "3m-film", name: "3M", products: ["3m-film-4-cho", "3m-film-5-cho", "3m-film-7-cho"] },
         { id: "titan-film", name: "Titan", products: ["titan-premium"] },
         { id: "global-film", name: "Global", products: ["global-ceramic-film"] }
       ]
@@ -153,7 +153,10 @@ const CATALOG = {
     "android-box-placeholder": { name: "Sản phẩm đang cập nhật", brand: "Đang cập nhật", image: "", price: "", desc: "" },
     "ban-tai-placeholder":     { name: "Sản phẩm đang cập nhật", brand: "Đang cập nhật", image: "", price: "", desc: "" },
 
-    "3m-crystalline":        { name: "3M Crystalline",              brand: "3M",               image: "", price: "", desc: "" },
+    /* ---------- 3M - Phim Cách Nhiệt (phân loại theo dòng xe) ---------- */
+    "3m-film-4-cho": { name: "Phim Cách Nhiệt 3M Xe 4 Chỗ", brand: "3M", price: "14.800.000₫", desc: "Trọn gói dán phim cách nhiệt 3M chính hãng cho xe 4 chỗ, chống nóng hiệu quả, cản tia UV lên đến 99.9% và tia hồng ngoại lên đến 97%, giảm chói cả ngày lẫn đêm. Đa dạng dòng phim High Performance, Ceramic hồng ngoại, Crystalline 200 lớp tùy nhu cầu. Hàng chính hãng 3M - phân phối bởi Mười Hùng Auto.", specs: [["Chống tia UV","Lên đến 99.9%"],["Cản tia hồng ngoại","Lên đến 97%"],["Giảm chói","Ban ngày & ban đêm"],["Dòng phim","3M High Performance (HP50/HP20) / 3M Ceramic IR (IR50/IR25/IR15) / 3M Crystalline 200 lớp (CR60/70, CR40/20)"],["Bảo hành","Điện tử 10 năm (3M EWS 2.0)"],["Dòng xe áp dụng","Xe 4 chỗ (sedan)"],["Xuất xứ","Chính hãng 3M - phân phối bởi Mười Hùng Auto"]] },
+    "3m-film-5-cho": { name: "Phim Cách Nhiệt 3M Xe 5 Chỗ", brand: "3M", price: "16.300.000₫", desc: "Trọn gói dán phim cách nhiệt 3M chính hãng cho xe 5 chỗ, ngăn cản tác động nhiệt độ, cản tia hồng ngoại lên đến 97% và tia UV lên đến 99.9%, giảm hấp thụ năng lượng mặt trời lên đến 60%. Đa dạng dòng phim Crystalline, High Performance, Ceramic. Hàng chính hãng 3M - phân phối bởi Mười Hùng Auto.", specs: [["Chống tia UV","Lên đến 99.9%"],["Cản tia hồng ngoại","Lên đến 97%"],["Giảm năng lượng mặt trời","Lên đến 60%"],["Dòng phim","3M Crystalline / 3M High Performance / 3M Ceramic"],["Bảo hành","Điện tử 10 năm (3M EWS 2.0)"],["Dòng xe áp dụng","Xe 5 chỗ (sedan/hatchback/CUV)"],["Xuất xứ","Chính hãng 3M - phân phối bởi Mười Hùng Auto"]] },
+    "3m-film-7-cho": { name: "Phim Cách Nhiệt 3M Xe 7 Chỗ", brand: "3M", price: "17.600.000₫", desc: "Trọn gói dán phim cách nhiệt 3M chính hãng cho xe 7 chỗ, cản tia UV lên đến 99.9% và tia hồng ngoại lên đến 97%, giảm chói lên đến 55% cả ngày lẫn đêm, bảo vệ nội thất và sức khỏe hành khách. Đa dạng dòng phim High Performance, Ceramic, Crystalline. Hàng chính hãng 3M - phân phối bởi Mười Hùng Auto.", specs: [["Chống tia UV","Lên đến 99.9%"],["Cản tia hồng ngoại","Lên đến 97%"],["Giảm chói","Lên đến 55% (ngày & đêm)"],["Dòng phim","3M High Performance (99% UV, giảm chói 94%) / 3M Ceramic (cản hồng ngoại 95%) / 3M Crystalline (97% hồng ngoại, 99% UV, chống SPF)"],["Bảo hành","Điện tử 10 năm (3M EWS 2.0)"],["Dòng xe áp dụng","Xe 7 chỗ (SUV/MPV)"],["Xuất xứ","Chính hãng 3M - phân phối bởi Mười Hùng Auto"]] },
     "titan-premium":         { name: "Titan Premium",               brand: "Titan",            image: "", price: "", desc: "" },
     "global-ceramic-film":   { name: "Global Ceramic Film",         brand: "Global",           image: "", price: "", desc: "" },
 

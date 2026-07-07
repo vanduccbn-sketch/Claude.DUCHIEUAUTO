@@ -45,7 +45,7 @@ Cấu trúc trang hiện có:
   1. Màn Hình Ô Tô (Gotech, Zestech*, Kovar, Teyes, Safeview)
   2. Âm Thanh - Cách Âm Ô Tô (JBL*, Infinity*, Harman/Kardon*, Pioneer*, German-Maestro, Audiotec Fischer, DrArtex, Vibrofiltr) — gộp "Loa & Âm Thanh" + "Cách Âm Ô Tô" cũ
   3. Android Box Ô Tô (mới, placeholder "Đang cập nhật")
-  4. Film Cách Nhiệt (3M, Titan, Global)
+  4. Film Cách Nhiệt (3M*, Titan, Global)
   5. Camera Hành Trình - 360 Độ (UTOUR, VIETMAP*, 70mai, FINEVU, BlackVue)
   6. PPF - Wrap Đổi Màu (XPEL, AX Film, 3M, Oracal, Avery Dennison) — gộp "PPF" + "Decal Đổi Màu" cũ
   7. Nâng Cấp Ánh Sáng (Fogway, GTR, X-Light, NAOEVO) — đổi tên từ "Độ Đèn Tăng Sáng"
@@ -56,9 +56,12 @@ Cấu trúc trang hiện có:
   - Đơn giản hóa `catalog-render.js`: bỏ tham số `type=service/product` trên URL (giờ chỉ còn `?id=`, `?id=&brand=`, `?id=&brand=&loai=`)
   - Tải mới 4 ảnh poster còn thiếu: Màn Hình Ô Tô, Camera Hành Trình - 360 Độ, Android Box Ô Tô, Đồ Bán Tải
   - Sửa 3 link sản phẩm nổi bật ở trang chủ (Infinity/JBL/Pioneer) đang trỏ tới id sản phẩm cũ không còn tồn tại
+- [x] Bổ sung brand **3M** trong danh mục "Film Cách Nhiệt" — 3 sản phẩm thật (dữ liệu từ muoihungauto.net/collections/phim-cach-nhiet-3m), phân loại theo dòng xe 4/5/7 chỗ, mỗi loại là 1 sản phẩm riêng (giá, ảnh, thông số UV/hồng ngoại/bảo hành)
+- [x] Bổ sung `PowerShell`, `Artifact`, `SendMessage`, `ScheduleWakeup` vào allow-list `.claude/settings.local.json` (thiếu `PowerShell` khiến vẫn bị hỏi quyền)
 
 ## Việc cần làm tiếp theo (TODO)
 
+- [ ] Bổ sung brand Titan, Global trong "Film Cách Nhiệt" (còn placeholder)
 - [ ] Lấy dữ liệu sản phẩm thật cho 2 mục mới: Android Box Ô Tô, Đồ Bán Tải
 - [ ] Triển khai tương tự cho các brand còn lại trong Màn hình (Gotech, Kovar, Teyes, Safeview) và Camera hành trình (UTOUR, 70mai, FINEVU, BlackVue)
 - [ ] Bổ sung Kenwood (màn hình/đầu CD) nếu cần mở rộng danh mục Âm thanh ô tô

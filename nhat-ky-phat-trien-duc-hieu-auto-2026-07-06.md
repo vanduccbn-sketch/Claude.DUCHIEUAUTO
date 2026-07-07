@@ -63,10 +63,14 @@ Cấu trúc trang hiện có:
   - Titan: chia loại Sedan 4-5 chỗ / SUV 7 chỗ, mỗi loại 3 dòng phim (Black, Titanium, Titanium Plus) — 6 sản phẩm
   - Global: chia loại Xe 4-5 chỗ / Xe 7 chỗ, mỗi loại 2 dòng phim (Supreme Series, QDP Ceramic Series) — 4 sản phẩm
   - Danh mục "Film Cách Nhiệt" giờ đã đủ cả 3 brand thật (3M, Titan, Global)
+- [x] Bổ sung logo chính hãng 3M, Global vào "Film Cách Nhiệt" (Titan: không tìm được logo chính hãng đáng tin cậy - trang titanwindowfilm.vn đã ngừng hoạt động, chưa thêm)
+- [x] Bổ sung brand **Gotech** (12 sản phẩm, dữ liệu từ gotech.vn) và **Teyes** (8 sản phẩm, dữ liệu + giá thật từ teyes.vn) trong danh mục "Màn Hình Ô Tô" — cả 2 chia loại Có/Không Camera 360, kèm logo chính hãng
+- [x] **Ẩn** brand Kovar và Safeview khỏi danh mục "Màn Hình Ô Tô" (cờ `hidden: true`, giữ nguyên dữ liệu, lọc ở `catalog-render.js` — có thể bật lại dễ dàng sau này)
 
 ## Việc cần làm tiếp theo (TODO)
 
 - [ ] Lấy dữ liệu sản phẩm thật cho 2 mục mới: Android Box Ô Tô, Đồ Bán Tải
-- [ ] Triển khai tương tự cho các brand còn lại trong Màn hình (Gotech, Kovar, Teyes, Safeview) và Camera hành trình (UTOUR, 70mai, FINEVU, BlackVue)
+- [ ] Tìm logo chính hãng Titan (Film Cách Nhiệt) khi có nguồn đáng tin cậy
+- [ ] Triển khai tương tự cho các brand còn lại trong Camera hành trình (UTOUR, 70mai, FINEVU, BlackVue)
 - [ ] Bổ sung Kenwood (màn hình/đầu CD) nếu cần mở rộng danh mục Âm thanh ô tô
 - [ ] Rà lại giá/thông số các sản phẩm có ghi chú "trang nguồn chưa cập nhật đầy đủ" khi có dữ liệu mới

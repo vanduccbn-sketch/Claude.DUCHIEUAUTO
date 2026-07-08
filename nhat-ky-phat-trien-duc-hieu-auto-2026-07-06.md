@@ -98,9 +98,17 @@ Cấu trúc trang hiện có:
   - **Danh mục "Nâng Cấp Ánh Sáng" nay đã đủ dữ liệu thật cho cả 4 thương hiệu** (Fogway, GTR, X-Light, Aozoom)
   - Phát hiện: quyền tự động (`bypassPermissions`) trước đó chỉ set ở `.claude/settings.local.json` (project) nhưng file thực sự kiểm soát quyền là `C:\Users\ECOM-PGI\.claude\settings.json` (global) — agent nền chạy ngoài thư mục project (VD thư mục Temp) không được hưởng quyền này nên vẫn bị hỏi. Đã bổ sung `defaultMode: bypassPermissions` + danh sách tool cơ bản vào đúng file global để áp dụng nhất quán mọi nơi
 
+- [x] Bổ sung dữ liệu thật cho danh mục **"PPF - Wrap Đổi Màu"** (20 sản phẩm, 5 thương hiệu):
+  - XPEL (4sp): Ultimate Plus, Stealth, Tracwrap, Armor — 4 dòng PPF chính hãng từ xpelvietnam.vn (nhà phân phối duy nhất tại VN), kèm logo
+  - AX Film (6sp): PPF G/K/X/M/S Series + Color PPF SP999 Super Black — từ axfilmvn.com, kèm logo (logo gốc chỉ có bản nhỏ 80x24px, không có bản độ phân giải cao hơn công khai)
+  - 3M (1sp): 2080-S120 Satin White Aluminum — đây là trang sản phẩm chính thức DUY NHẤT còn sống trên 3m.com.vn tại thời điểm cào; đã kiểm tra thêm 1080-G12 và các mã khác nhưng đều trả về 404 nên không đưa vào để tránh dữ liệu lỗi thời
+  - Oracal (6sp): 970 Lightning Strike Gloss, Black Matt, Silver Grey Matt, Metallic Black Gloss, Sunset Shift Gloss, Dove Blue Metallic Gloss — dữ liệu + giá thật (theo mét) từ decalppf.com (đại lý Orafol tại VN)
+  - Avery Dennison (3sp): Supreme Xtreme, Ultima Plus, Ultima — từ averydennisonvn.com, kèm logo. Trang "Supreme Wrap Film" (màu đổi màu) hiện không có sản phẩm nào công khai nên chỉ lấy 3 dòng PPF
+  - Toàn bộ giá dạng "Liên hệ" đều do trang nguồn không công khai giá bán lẻ (mô hình báo giá theo tư vấn), không phải do thiếu sót thu thập
+
 ## Việc cần làm tiếp theo (TODO)
 
 - [ ] Lấy dữ liệu sản phẩm thật cho mục "Đồ Bán Tải"
-- [ ] Tìm logo chính hãng Titan (Film Cách Nhiệt) và 70mai khi có nguồn đáng tin cậy
+- [ ] Tìm logo chính hãng Titan (Film Cách Nhiệt), 70mai và 3M (Wrap) khi có nguồn đáng tin cậy
 - [ ] Bổ sung Kenwood (màn hình/đầu CD) nếu cần mở rộng danh mục Âm thanh ô tô
 - [ ] Rà lại giá/thông số các sản phẩm có ghi chú "trang nguồn chưa cập nhật đầy đủ" khi có dữ liệu mới

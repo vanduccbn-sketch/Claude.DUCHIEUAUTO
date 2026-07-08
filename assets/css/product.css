@@ -33,9 +33,15 @@
 @media (max-width: 576px) {
     .view-all-cta { flex-direction: column; text-align: center; padding: 24px 22px; }
 }
-.swiper-button-next, .swiper-button-prev { color: var(--white); background-color: var(--dark); width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: var(--shadow-sm); transition: var(--transition); }
-.swiper-button-next:after, .swiper-button-prev:after { font-size: 16px; font-weight: bold; }
+/* Mũi tên căn theo vùng ảnh (không đè lên tên/mô tả sản phẩm bên dưới), làm mờ bớt cho nhẹ mắt */
+.swiper-button-next, .swiper-button-prev { top: 87px; color: var(--white); background-color: rgba(21, 23, 28, 0.5); width: 36px; height: 36px; border-radius: 50%; border: 1px solid rgba(255, 255, 255, 0.15); box-shadow: var(--shadow-sm); transition: var(--transition); }
+.swiper-button-next:after, .swiper-button-prev:after { font-size: 14px; font-weight: bold; }
 .swiper-button-next:hover, .swiper-button-prev:hover { background-color: var(--primary); border-color: var(--primary); }
 .swiper-pagination-bullet { background-color: var(--m-blue); opacity: 0.4; width: 8px; height: 8px; transition: var(--transition); }
 .swiper-pagination-bullet-active { background-color: var(--primary); opacity: 1; width: 22px; border-radius: 5px; }
-@media (max-width: 768px) { #product { padding: 50px 0; } .product-img { height: 190px; } }
+@media (max-width: 768px) {
+    #product { padding: 50px 0; }
+    .product-img { height: 190px; }
+    .swiper-button-next, .swiper-button-prev { top: 95px; width: 32px; height: 32px; background-color: rgba(21, 23, 28, 0.4); }
+    .swiper-button-next:after, .swiper-button-prev:after { font-size: 12px; }
+}

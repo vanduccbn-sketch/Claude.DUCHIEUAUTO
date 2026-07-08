@@ -132,10 +132,7 @@
 
         const quickContact = document.getElementById('quickContact');
         const quickContactToggle = document.getElementById('quickContactToggle');
-        quickContactToggle.addEventListener('click', () => quickContact.classList.toggle('active'));
-        document.addEventListener('click', (e) => {
-            if (!quickContact.contains(e.target)) quickContact.classList.remove('active');
-        });
+        quickContactToggle.addEventListener('click', () => quickContact.classList.toggle('collapsed'));
     </script>
 </body>
 </html>

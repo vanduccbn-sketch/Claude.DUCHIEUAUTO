@@ -134,57 +134,7 @@
                 <div class="brand-marquee" data-aos="fade-up">
                     <span class="brand-marquee-label">Thương Hiệu Chính Hãng Chúng Tôi Phân Phối</span>
                     <div class="brand-marquee-viewport">
-                        <div class="brand-marquee-track">
-                            <img src="assets/images/brands/xpel/logo.png" alt="XPEL" loading="lazy">
-                            <img src="assets/images/brands/3m-film/logo.png" alt="3M" loading="lazy">
-                            <img src="assets/images/brands/jbl/logo.png" alt="JBL" loading="lazy">
-                            <img src="assets/images/brands/infinity/logo.png" alt="Infinity" loading="lazy">
-                            <img src="assets/images/brands/harman-kardon/logo.png" alt="Harman/Kardon" loading="lazy">
-                            <img src="assets/images/brands/pioneer/logo.png" alt="Pioneer" loading="lazy">
-                            <img src="assets/images/brands/warn/logo.svg" alt="WARN" loading="lazy">
-                            <img src="assets/images/brands/tjm/logo.svg" alt="TJM" loading="lazy">
-                            <img src="assets/images/brands/king-springs/logo.svg" alt="King Springs" loading="lazy">
-                            <img src="assets/images/brands/aeroklas/logo.png" alt="Aeroklas" loading="lazy">
-                            <img src="assets/images/brands/fogway/logo.png" alt="Fogway" loading="lazy">
-                            <img src="assets/images/brands/aozoom/logo.svg" alt="Aozoom" loading="lazy">
-                            <img src="assets/images/brands/zestech/logo.svg" alt="Zestech" loading="lazy">
-                            <img src="assets/images/brands/teyes/logo.png" alt="Teyes" loading="lazy">
-                            <img src="assets/images/brands/gotech/logo.png" alt="Gotech" loading="lazy">
-                            <img src="assets/images/brands/vietmap-cam/logo.png" alt="VIETMAP" loading="lazy">
-                            <img src="assets/images/brands/utour/logo.png" alt="UTOUR" loading="lazy">
-                            <img src="assets/images/brands/blackvue/logo.png" alt="BlackVue" loading="lazy">
-                            <img src="assets/images/brands/carlinkit/logo.png" alt="Carlinkit" loading="lazy">
-                            <img src="assets/images/brands/elliview/logo.png" alt="Elliview" loading="lazy">
-                            <img src="assets/images/brands/ax-film/logo.png" alt="AX Film" loading="lazy">
-                            <img src="assets/images/brands/avery-dennison/logo.png" alt="Avery Dennison" loading="lazy">
-                            <img src="assets/images/brands/global-film/logo.png" alt="Global" loading="lazy">
-                            <img src="assets/images/brands/70mai/logo.svg" alt="70mai" loading="lazy">
-                            <!-- lặp lại để cuộn liền mạch -->
-                            <img src="assets/images/brands/xpel/logo.png" alt="XPEL" loading="lazy">
-                            <img src="assets/images/brands/3m-film/logo.png" alt="3M" loading="lazy">
-                            <img src="assets/images/brands/jbl/logo.png" alt="JBL" loading="lazy">
-                            <img src="assets/images/brands/infinity/logo.png" alt="Infinity" loading="lazy">
-                            <img src="assets/images/brands/harman-kardon/logo.png" alt="Harman/Kardon" loading="lazy">
-                            <img src="assets/images/brands/pioneer/logo.png" alt="Pioneer" loading="lazy">
-                            <img src="assets/images/brands/warn/logo.svg" alt="WARN" loading="lazy">
-                            <img src="assets/images/brands/tjm/logo.svg" alt="TJM" loading="lazy">
-                            <img src="assets/images/brands/king-springs/logo.svg" alt="King Springs" loading="lazy">
-                            <img src="assets/images/brands/aeroklas/logo.png" alt="Aeroklas" loading="lazy">
-                            <img src="assets/images/brands/fogway/logo.png" alt="Fogway" loading="lazy">
-                            <img src="assets/images/brands/aozoom/logo.svg" alt="Aozoom" loading="lazy">
-                            <img src="assets/images/brands/zestech/logo.svg" alt="Zestech" loading="lazy">
-                            <img src="assets/images/brands/teyes/logo.png" alt="Teyes" loading="lazy">
-                            <img src="assets/images/brands/gotech/logo.png" alt="Gotech" loading="lazy">
-                            <img src="assets/images/brands/vietmap-cam/logo.png" alt="VIETMAP" loading="lazy">
-                            <img src="assets/images/brands/utour/logo.png" alt="UTOUR" loading="lazy">
-                            <img src="assets/images/brands/blackvue/logo.png" alt="BlackVue" loading="lazy">
-                            <img src="assets/images/brands/carlinkit/logo.png" alt="Carlinkit" loading="lazy">
-                            <img src="assets/images/brands/elliview/logo.png" alt="Elliview" loading="lazy">
-                            <img src="assets/images/brands/ax-film/logo.png" alt="AX Film" loading="lazy">
-                            <img src="assets/images/brands/avery-dennison/logo.png" alt="Avery Dennison" loading="lazy">
-                            <img src="assets/images/brands/global-film/logo.png" alt="Global" loading="lazy">
-                            <img src="assets/images/brands/70mai/logo.svg" alt="70mai" loading="lazy">
-                        </div>
+                        <div class="brand-marquee-track"></div>
                     </div>
                 </div>
 
@@ -393,6 +343,9 @@
         // Render danh sách dịch vụ theo nhóm: Nội Thất / Ngoại Thất / Đồ Bán Tải (link ra trang riêng, không còn popup)
         renderServiceGrid(".service-catalog-grid");
 
+        // Render dải logo thương hiệu chạy - mỗi logo liên kết tới trang thương hiệu tương ứng
+        renderBrandMarquee(".brand-marquee-track");
+
         // Khởi tạo hiệu ứng cuộn AOS
         AOS.init({ duration: 800, once: true });
 
@@ -458,16 +411,11 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         });
 
-        // Toggle widget liên hệ nhanh (Zalo / Messenger / Điện thoại)
+        // Toggle widget liên hệ nhanh (Zalo / Messenger / Điện thoại) - mặc định mở sẵn
         const quickContact = document.getElementById('quickContact');
         const quickContactToggle = document.getElementById('quickContactToggle');
         quickContactToggle.addEventListener('click', () => {
-            quickContact.classList.toggle('active');
-        });
-        document.addEventListener('click', (e) => {
-            if (!quickContact.contains(e.target)) {
-                quickContact.classList.remove('active');
-            }
+            quickContact.classList.toggle('collapsed');
         });
     </script>
 </body>

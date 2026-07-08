@@ -11,6 +11,10 @@ function findCategory(id) {
     return CATALOG.categories.find(c => c.id === id);
 }
 
+function findServiceGroup(id) {
+    return CATALOG.serviceGroups.find(g => g.id === id);
+}
+
 function findProduct(id) {
     return CATALOG.products[id] || null;
 }
@@ -20,27 +24,52 @@ function productImgFallback(id) {
     return `assets/images/products/${id}/anh-1.jpg`;
 }
 
-/* ---------- Danh mục Dịch Vụ / Sản Phẩm (index.html, san-pham.html) ---------- */
+function serviceCardHtml(item) {
+    return `
+        <a class="service-card" href="${item.href}">
+            <div class="service-img">
+                <img src="${item.poster}" alt="${item.name}" loading="lazy" onerror="this.src='assets/images/placeholder.svg'">
+                <div class="service-overlay"><i class="fa-solid fa-magnifying-glass-plus"></i></div>
+            </div>
+            <div class="service-content">
+                <h3>${item.name}</h3>
+                <span class="service-more">Xem chi tiết <i class="fa-solid fa-arrow-right"></i></span>
+            </div>
+        </a>`;
+}
+
+/* ---------- Danh mục Sản Phẩm (san-pham.html) - giữ nguyên phẳng, đủ 8 danh mục ---------- */
 function renderCategoryGrid(containerSelector) {
     const container = document.querySelector(containerSelector);
     if (!container) return;
 
-    container.innerHTML = CATALOG.categories.map(cat => `
-        <a class="service-card" href="category-chi-tiet.html?id=${cat.id}">
-            <div class="service-img">
-                <img src="${cat.poster}" alt="${cat.name}" loading="lazy" onerror="this.src='assets/images/placeholder.svg'">
-                <div class="service-overlay"><i class="fa-solid fa-magnifying-glass-plus"></i></div>
-            </div>
-            <div class="service-content">
-                <h3>${cat.name}</h3>
-                <span class="service-more">Xem chi tiết <i class="fa-solid fa-arrow-right"></i></span>
-            </div>
-        </a>
-    `).join("");
+    container.innerHTML = CATALOG.categories
+        .map(cat => serviceCardHtml({ ...cat, href: `category-chi-tiet.html?id=${cat.id}` }))
+        .join("");
+}
+
+/* ---------- Dịch Vụ (index.html) - gộp nhóm: Nội Thất Ô Tô / Ngoại Thất Ô Tô / Đồ Bán Tải ---------- */
+function renderServiceGrid(containerSelector) {
+    const container = document.querySelector(containerSelector);
+    if (!container) return;
+
+    const doBanTai = findCategory("do-ban-tai");
+    const items = [
+        ...CATALOG.serviceGroups.map(g => ({ ...g, href: `category-chi-tiet.html?group=${g.id}` })),
+        ...(doBanTai ? [{ ...doBanTai, href: `category-chi-tiet.html?id=${doBanTai.id}` }] : [])
+    ];
+
+    container.innerHTML = items.map(serviceCardHtml).join("");
 }
 
 /* ---------- Trang chi tiết danh mục (poster + danh sách thương hiệu) ---------- */
 function renderCategoryDetail() {
+    const groupId = getParam("group");
+    if (groupId) {
+        renderServiceGroupDetail(groupId);
+        return;
+    }
+
     const id = getParam("id");
     const cat = findCategory(id);
 
@@ -77,6 +106,39 @@ function renderCategoryDetail() {
     }).join("");
 }
 
+/* ---------- Trang chi tiết 1 nhóm dịch vụ (poster + danh sách danh mục con) ---------- */
+function renderServiceGroupDetail(groupId) {
+    const group = findServiceGroup(groupId);
+
+    if (!group) {
+        document.querySelector(".category-detail-wrap").innerHTML = "<p>Không tìm thấy danh mục.</p>";
+        return;
+    }
+
+    document.title = group.name + " | Đức Hiếu Auto";
+    const posterImg = document.querySelector(".category-poster img");
+    posterImg.src = group.poster;
+    posterImg.alt = group.name;
+    posterImg.onerror = () => { posterImg.onerror = null; posterImg.src = "assets/images/placeholder.svg"; };
+    document.querySelector(".category-title").textContent = group.name;
+
+    document.querySelector(".breadcrumb-parent").textContent = "Dịch Vụ";
+    document.querySelector(".breadcrumb-parent").href = "index.html#service";
+    document.querySelector(".breadcrumb-current").textContent = group.name;
+
+    const scrollCueText = document.querySelector(".scroll-cue span");
+    if (scrollCueText) scrollCueText.textContent = "Xem danh mục";
+
+    const grid = document.querySelector(".brand-grid");
+    grid.classList.remove("brand-grid");
+    grid.classList.add("services-grid");
+    grid.innerHTML = group.categories
+        .map(catId => findCategory(catId))
+        .filter(Boolean)
+        .map(cat => serviceCardHtml({ ...cat, href: `category-chi-tiet.html?id=${cat.id}` }))
+        .join("");
+}
+
 /* ---------- Trang sản phẩm theo thương hiệu (hỗ trợ thêm cấp "loại": hãng -> loại -> sản phẩm) ---------- */
 function renderBrandProducts() {
     const id = getParam("id");
@@ -99,25 +161,30 @@ function renderBrandProducts() {
     const grid = document.querySelector(".product-grid-catalog");
 
     const brandTitleEl = document.querySelector(".brand-title");
-    const setBrandTitle = (text, showLogo) => {
-        brandTitleEl.innerHTML = (showLogo && brand.logo ? `<img class="brand-title-logo" src="${brand.logo}" alt="${brand.name}">` : "") + `<span>${text}</span>`;
+    const setBrandTitle = (text, logoSrc) => {
+        brandTitleEl.innerHTML = (logoSrc ? `<img class="brand-title-logo" src="${logoSrc}" alt="${text}">` : "") + `<span>${text}</span>`;
     };
 
     // Hãng có phân loại (VD: Loa Ô Tô / Loa Sub / Âm Ly) và chưa chọn loại cụ thể -> hiển thị danh sách loại
     if (brand.types && !typeId) {
         document.title = brand.name + " | Đức Hiếu Auto";
-        setBrandTitle(brand.name, true);
+        setBrandTitle(brand.name, brand.logo);
         breadcrumbBrandSep.hidden = true;
         breadcrumbBrand.hidden = true;
         document.querySelector(".breadcrumb-current").textContent = brand.name;
 
         grid.classList.add("type-grid");
-        grid.innerHTML = brand.types.map(t => `
+        grid.innerHTML = brand.types.map(t => {
+            const typeLogoHtml = t.logo ? `<div class="brand-logo"><img src="${t.logo}" alt="${t.name}" loading="lazy"></div>` : "";
+            return `
             <a class="brand-card" href="brand-san-pham.html?id=${cat.id}&brand=${brand.id}&loai=${t.id}">
-                <h3>${t.name}</h3>
-                <span>${t.products.length} sản phẩm <i class="fa-solid fa-arrow-right"></i></span>
-            </a>
-        `).join("");
+                <div class="brand-card-info">
+                    <h3>${t.name}</h3>
+                    <span>${t.products.length} sản phẩm <i class="fa-solid fa-arrow-right"></i></span>
+                </div>
+                ${typeLogoHtml}
+            </a>`;
+        }).join("");
         return;
     }
 
@@ -136,14 +203,14 @@ function renderBrandProducts() {
         breadcrumbBrand.href = `brand-san-pham.html?id=${cat.id}&brand=${brand.id}`;
         document.querySelector(".breadcrumb-current").textContent = t.name;
         document.title = brand.name + " - " + t.name + " | Đức Hiếu Auto";
-        setBrandTitle(brand.name + " - " + t.name, false);
+        setBrandTitle(brand.name + " - " + t.name, t.logo || brand.logo);
     } else {
         productIds = brand.products;
         breadcrumbBrandSep.hidden = true;
         breadcrumbBrand.hidden = true;
         document.querySelector(".breadcrumb-current").textContent = brand.name;
         document.title = brand.name + " | Đức Hiếu Auto";
-        setBrandTitle(brand.name, true);
+        setBrandTitle(brand.name, brand.logo);
     }
 
     grid.classList.remove("type-grid");

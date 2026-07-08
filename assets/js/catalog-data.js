@@ -133,7 +133,7 @@ const CATALOG = {
       brands: [
         { id: "utour", name: "UTOUR", logo: "assets/images/brands/utour/logo.png", products: ["utour-c2l","utour-c2-max","utour-c3l","utour-c3","utour-c3m"] },
         { id: "vietmap-cam", name: "VIETMAP", logo: "assets/images/brands/vietmap-cam/logo.png", products: ["vietmap-sc620","vietmap-v740","vietmap-l110","vietmap-s720","vietmap-r440","vietmap-s860","vietmap-speedmap-m2","vietmap-ts-c1l","vietmap-ts-5k","vietmap-ts-3k","vietmap-ts-2k-lite","vietmap-ts-c1"] },
-        { id: "70mai", name: "70mai", products: ["70mai-t800","70mai-omni-x800","70mai-a810","70mai-a800se","70mai-a510","70mai-a500s","70mai-m310","70mai-t400"] },
+        { id: "70mai", name: "70mai", logo: "assets/images/brands/70mai/logo.svg", products: ["70mai-t800","70mai-omni-x800","70mai-a810","70mai-a800se","70mai-a510","70mai-a500s","70mai-m310","70mai-t400"] },
         { id: "finevu", name: "FINEVU", hidden: true, products: ["finevu-gx4"] },
         { id: "blackvue", name: "BlackVue", logo: "assets/images/brands/blackvue/logo.png", products: ["blackvue-elite10","blackvue-elite9","blackvue-elite8","blackvue-dr770x-2ch-ii"] }
       ]
@@ -145,7 +145,7 @@ const CATALOG = {
       brands: [
         { id: "xpel", name: "XPEL", logo: "assets/images/brands/xpel/logo.png", products: ["xpel-ultimate-plus","xpel-stealth","xpel-tracwrap","xpel-armor"] },
         { id: "ax-film", name: "AX Film", logo: "assets/images/brands/ax-film/logo.png", products: ["ax-ppf-g-series","ax-ppf-k-series-v2","ax-ppf-x-series-v2","ax-ppf-m-series","ax-ppf-s-series","ax-tpu-super-black"] },
-        { id: "3m-wrap", name: "3M", products: ["3m-2080-s120"] },
+        { id: "3m-wrap", name: "3M", logo: "assets/images/brands/3m-film/logo.png", products: ["3m-2080-s120"] },
         { id: "oracal", name: "Oracal", products: ["oracal-970-123-lightning-strike","oracal-970-070-black-matt","oracal-970-090-silver-grey-matt","oracal-970-704-metallic-black-gloss","oracal-970-100-sunset-shift-gloss","oracal-970-195-dove-blue-metallic-gloss"] },
         { id: "avery", name: "Avery Dennison", logo: "assets/images/brands/avery-dennison/logo.png", products: ["avery-supreme-xtreme","avery-ultima-plus","avery-ultima"] }
       ]
@@ -155,9 +155,27 @@ const CATALOG = {
       name: "Nâng Cấp Ánh Sáng",
       poster: "assets/images/service/do-den/poster.jpg",
       brands: [
-        { id: "fogway", name: "Fogway", logo: "assets/images/brands/fogway/logo.png", products: ["fogway-gen-1","fogway-gen-3","fogway-gen-5","fogway-gen-9"] },
-        { id: "gtr-light", name: "GTR", products: ["gtr-limited-3-0","gtr-limited-3-0-2024","gtr-premium-2-0","gtr-premium-ultra-2022","gtr-g1-turbo","gtr-g1-turbo-v2","gtr-g1-pro","gtr-g1-ultra"] },
-        { id: "x-light", name: "X-Light", products: ["xlight-v20l-quantum","xlight-quantum-x-v2","xlight-quantum-x","xlight-v20-new-2025","xlight-f-pro-v2","xlight-x5-ultra","xlight-f10-new-2025","xlight-x3-ultra"] },
+        {
+          id: "fogway", name: "Fogway", logo: "assets/images/brands/fogway/logo.png",
+          types: [
+            { id: "bi-led", name: "Bi LED", products: ["fogway-gen-3","fogway-gen-5","fogway-gen-9"] },
+            { id: "bi-gam", name: "Bi Gầm", products: ["fogway-gen-1"] }
+          ]
+        },
+        {
+          id: "gtr-light", name: "GTR",
+          types: [
+            { id: "bi-led", name: "Bi LED", products: ["gtr-limited-3-0","gtr-limited-3-0-2024","gtr-premium-2-0","gtr-premium-ultra-2022"] },
+            { id: "bi-gam", name: "Bi Gầm", products: ["gtr-g1-turbo","gtr-g1-turbo-v2","gtr-g1-pro","gtr-g1-ultra"] }
+          ]
+        },
+        {
+          id: "x-light", name: "X-Light",
+          types: [
+            { id: "bi-led", name: "Bi LED", products: ["xlight-v20l-quantum","xlight-quantum-x-v2","xlight-quantum-x","xlight-v20-new-2025","xlight-f-pro-v2","xlight-x5-ultra"] },
+            { id: "bi-gam", name: "Bi Gầm", products: ["xlight-f10-new-2025","xlight-x3-ultra"] }
+          ]
+        },
         {
           id: "aozoom", name: "Aozoom", logo: "assets/images/brands/aozoom/logo.svg",
           types: [
@@ -168,12 +186,59 @@ const CATALOG = {
       ]
     },
     {
+      /* Riêng danh mục này phân cấp Nhóm Sản Phẩm -> Thương Hiệu -> Sản Phẩm:
+         mỗi phần tử "brands" bên dưới là 1 NHÓM SẢN PHẨM, "types" bên trong mới là các THƯƠNG HIỆU thật. */
       id: "do-ban-tai",
       name: "Đồ Bán Tải",
       poster: "assets/images/products-category/do-ban-tai/poster.jpg",
       brands: [
-        { id: "dang-cap-nhat-bantai", name: "Đang cập nhật", products: ["ban-tai-placeholder"] }
+        {
+          id: "nap-thung", name: "Nắp Thùng Bán Tải",
+          types: [
+            { id: "aeroklas", name: "Aeroklas", logo: "assets/images/brands/aeroklas/logo.png", products: ["aeroklas-e-roller-wildtrak","aeroklas-e-roller-raptor"] }
+          ]
+        },
+        {
+          id: "lo-xo-giam-xoc", name: "Lò Xo - Giảm Xóc",
+          types: [
+            { id: "king-springs", name: "King Springs", logo: "assets/images/brands/king-springs/logo.svg", products: ["kingsprings-coils-raptor-2018","kingsprings-raptor-nextgen-2023","kingsprings-kfrr-121","kingsprings-kfrr-121hd","kingsprings-kfrr-121ehd","kingsprings-kfrr-124","kingsprings-kfrs-121"] },
+            { id: "tjm", name: "TJM", logo: "assets/images/brands/tjm/logo.svg", products: ["tjm-giamxoc-colorado","tjm-loxo-ranger-raptor"] }
+          ]
+        },
+        {
+          id: "nhip", name: "Nhíp",
+          types: [
+            { id: "tjm", name: "TJM", logo: "assets/images/brands/tjm/logo.svg", products: ["tjm-nhip-hilux","tjm-nhip-navara","tjm-nhip-xgs-ranger"] }
+          ]
+        },
+        {
+          id: "toi-dien", name: "Tời Điện - Móc Tời",
+          types: [
+            { id: "tjm", name: "TJM", logo: "assets/images/brands/tjm/logo.svg", products: ["tjm-toi-prime-12000","tjm-toi-torq-12000","tjm-toi-torq-9500"] },
+            { id: "warn", name: "WARN", logo: "assets/images/brands/warn/logo.svg", products: ["warn-vr-evo-10s","warn-vr-evo-12s","warn-moc-toi-epic-sidewinder"] }
+          ]
+        }
       ]
+    }
+  ],
+
+  /* =========================================================
+     NHÓM DỊCH VỤ (chỉ dùng cho trang chủ index.html, mục "Dịch Vụ")
+     Trang "Sản Phẩm" (san-pham.html) vẫn dùng "categories" ở trên, giữ nguyên phẳng 8 danh mục.
+     Riêng "Đồ Bán Tải" không nằm trong nhóm nào - link thẳng vào category-chi-tiet.html?id=do-ban-tai.
+     ========================================================= */
+  serviceGroups: [
+    {
+      id: "noi-that-o-to",
+      name: "Nội Thất Ô Tô",
+      poster: "assets/images/products-category/man-hinh-o-to/poster.jpg",
+      categories: ["man-hinh-o-to", "am-thanh-cach-am-oto", "android-box-o-to", "camera-hanh-trinh"]
+    },
+    {
+      id: "ngoai-that-o-to",
+      name: "Ngoại Thất Ô Tô",
+      poster: "assets/images/service/ppf-bao-ve-son-xe/poster.jpg",
+      categories: ["dan-phim-cach-nhiet", "ppf-wrap-doi-mau", "do-den"]
     }
   ],
 
@@ -183,7 +248,33 @@ const CATALOG = {
      Điền "image", "desc", "price" sau khi có thông tin thật.
      ========================================================= */
   products: {
-    "ban-tai-placeholder":     { name: "Sản phẩm đang cập nhật", brand: "Đang cập nhật", image: "", price: "", desc: "" },
+    /* ---------- Aeroklas - Đồ Bán Tải ---------- */
+    "aeroklas-e-roller-wildtrak": { name: "Aeroklas E Roller LID - Ford Ranger WildTrak 2023", brand: "Aeroklas", price: "34.000.000₫", desc: "Nắp thùng cuộn điện Aeroklas E Roller LID dành riêng cho Ford Ranger WildTrak 2023, được phát triển theo đúng yêu cầu FLA (Ford Licensed Accessories) và là phụ kiện chính hãng được Ford khuyến nghị lắp đặt. Nút đóng/mở tích hợp ngay trên thành thùng sau, thao tác nhanh gọn; vỏ nắp làm từ vật liệu cao cấp, bền bỉ theo thời gian.", specs: [["Loại nắp thùng","Nắp thùng cuộn điện (E Roller LID)"], ["Dòng xe áp dụng","Ford Ranger WildTrak 2023"], ["Vận hành","Đóng/mở điện, nút bấm trên thành thùng"], ["Chứng nhận","Phụ kiện FLA - được Ford khuyến nghị"], ["Bảo hành","24 tháng"], ["Mã sản phẩm","aeroklas-e-roller-lid-wildtrak"], ["Xuất xứ","Aeroklas - Thái Lan"]] },
+    "aeroklas-e-roller-raptor": { name: "Aeroklas E Roller LID - Ford Ranger & Raptor 2023", brand: "Aeroklas", price: "34.000.000₫", desc: "Nắp thùng cuộn điện Aeroklas E Roller LID dành cho Ford Ranger & Ranger Raptor 2023, được phát triển theo đúng yêu cầu FLA (Ford Licensed Accessories) và là phụ kiện chính hãng được Ford khuyến nghị lắp đặt. Nút đóng/mở tích hợp ngay trên thành thùng sau, sản xuất từ vật liệu cao cấp.", specs: [["Loại nắp thùng","Nắp thùng cuộn điện (E Roller LID)"], ["Dòng xe áp dụng","Ford Ranger & Ranger Raptor 2023"], ["Vận hành","Đóng/mở điện, nút bấm trên thành thùng"], ["Chứng nhận","Phụ kiện FLA - được Ford khuyến nghị"], ["Bảo hành","24 tháng"], ["Mã sản phẩm","aeroklas-e-roller-lid-ranger"], ["Xuất xứ","Aeroklas - Thái Lan"]] },
+
+    /* ---------- King Springs - Đồ Bán Tải (Lò xo Ranger Raptor) ---------- */
+    "kingsprings-coils-raptor-2018": { name: "King Springs Coils - Ford Ranger Raptor (07/2018+)", brand: "King Springs", price: "8.600.000₫", desc: "Cặp lò xo King Springs là sự bổ sung hoàn hảo cho siêu bán tải Ford Ranger Raptor (07/2018 trở về sau) khi nâng cấp thêm đồ chơi như cản, tời hay nắp thùng phía sau, giúp xe giữ được độ cân bằng và cảm giác lái đầm chắc.", specs: [["Dòng xe áp dụng","Ford Ranger Raptor 07/2018 - 2022"], ["Số lượng","Cặp (2 lò xo)"], ["Xuất xứ","King Springs - Australia"], ["Bảo hành","12 tháng"]] },
+    "kingsprings-raptor-nextgen-2023": { name: "King Springs Coils - Ranger Raptor NextGen 2023 ON", brand: "King Springs", price: "8.600.000₫", desc: "Cặp lò xo King Springs là sự bổ sung hoàn hảo cho siêu bán tải Ranger Raptor NextGen 2023 trở về sau khi nâng cấp thêm đồ chơi, mang lại cảm giác lái đầm chắc hơn.", specs: [["Dòng xe áp dụng","Ford Ranger Raptor NextGen 2023-ON"], ["Số lượng","Cặp (2 lò xo)"], ["Xuất xứ","King Springs - Australia"], ["Bảo hành","12 tháng"]] },
+    "kingsprings-kfrr-121": { name: "King Springs KFRR-121 - Tăng chiều cao 2-3cm", brand: "King Springs", price: "8.600.000₫", desc: "Cặp lò xo sau King Springs KFRR-121 dành cho Ford Ranger Raptor 2018-2022, tăng chiều cao 20-30mm, giảm bồng bềnh, tăng kiểm soát lái và êm ái. Phù hợp cho xe nguyên bản hoặc đã gắn thêm cản/tời.", specs: [["Mã lò xo","KFRR-121"], ["Dòng xe áp dụng","Ford Ranger Raptor 2018-2022"], ["Độ nâng","Tăng chiều cao 20-30mm"], ["Phù hợp","Xe nguyên bản hoặc gắn thêm cản/tời"], ["Xuất xứ","Australia"]] },
+    "kingsprings-kfrr-121hd": { name: "King Springs KFRR-121HD - Tăng chiều cao 5cm", brand: "King Springs", price: "8.600.000₫", desc: "Cặp lò xo sau King Springs KFRR-121HD tăng chiều cao 50mm, giảm bồng bềnh, tăng kiểm soát lái. Phù hợp cho xe gắn thêm cản, tời, lều và phụ kiện dã ngoại với tải trọng tới 300kg.", specs: [["Mã lò xo","KFRR-121HD"], ["Độ nâng","Tăng chiều cao 50mm"], ["Tải trọng hỗ trợ","Tới 300kg phụ kiện"], ["Dòng xe áp dụng","Ford Ranger Raptor 2018-2022"], ["Xuất xứ","Australia"]] },
+    "kingsprings-kfrr-121ehd": { name: "King Springs KFRR-121EHD - Tăng chiều cao 5cm (Tải nặng)", brand: "King Springs", price: "8.600.000₫", desc: "Cặp lò xo sau King Springs KFRR-121EHD tăng chiều cao 50mm, phù hợp cho xe gắn thêm cản, tời, lều, phụ kiện dã ngoại, thùng nước, tủ lạnh với tải trọng lên tới 500kg. Made in Australia.", specs: [["Mã lò xo","KFRR-121EHD"], ["Độ nâng","Tăng chiều cao 50mm"], ["Tải trọng hỗ trợ","Tới 500kg phụ kiện"], ["Dòng xe áp dụng","Ford Ranger Raptor 2018-2022"], ["Xuất xứ","Australia"]] },
+    "kingsprings-kfrr-124": { name: "King Springs KFRR-124 - Ranger Raptor NextGen 2023-ON", brand: "King Springs", price: "8.600.000₫", desc: "Cặp lò xo sau King Springs KFRR-124 dành riêng cho Ford Ranger Raptor NextGen 2023, tăng chiều cao 2-2,5cm so với nguyên bản, thiết kế Raised Comfort Coil, phù hợp lắp thêm nắp thùng, lều dã ngoại, cản sau.", specs: [["Mã lò xo","KFRR-124"], ["Độ nâng","Tăng chiều cao 20-25mm"], ["Thiết kế","Raised Comfort Coil"], ["Dòng xe áp dụng","Ford Ranger Raptor NextGen 2023-ON"], ["Xuất xứ","Australia"]] },
+    "kingsprings-kfrs-121": { name: "King Springs KFRS-121 - Giữ nguyên chiều cao", brand: "King Springs", price: "8.600.000₫", desc: "Cặp lò xo sau King Springs KFRS-121 giữ nguyên chiều cao nguyên bản, thiết kế dạng búp măng giúp giảm bồng bềnh, tăng kiểm soát lái. Phù hợp cho xe nguyên bản hoặc gắn thêm cản sau.", specs: [["Mã lò xo","KFRS-121"], ["Độ nâng","Giữ nguyên chiều cao"], ["Dòng xe áp dụng","Ford Ranger Raptor 2018-2022"], ["Xuất xứ","Australia"]] },
+
+    /* ---------- TJM - Đồ Bán Tải (Tời điện) ---------- */
+    "tjm-toi-prime-12000": { name: "TJM Prime 12000lb (Cáp mềm)", brand: "TJM", price: "21.800.000₫", desc: "Tời điện TJM Prime sức kéo 12.000 lbs (~5.445kg), trang bị motor 12V DC công suất 4.9HP, tỉ số truyền 210:1, đi kèm cáp mềm dài 28m.", specs: [["Sức kéo","12.000 lbs (~5.445 kg)"], ["Kích thước (D-R-C)","543 x 161 x 205 mm"], ["Trọng lượng","30 kg"], ["Dây cáp","Cáp mềm dài 28m, đường kính 9.5mm"], ["Motor","12V DC, công suất 4.9 HP (3.6 kW)"], ["Tỉ số truyền","210:1"], ["Bảo hành","12 tháng"]] },
+    "tjm-toi-torq-12000": { name: "TJM Torq 12000lb (Cáp mềm)", brand: "TJM", price: "Liên hệ", desc: "Tời điện TJM Torq sức kéo 5,4 tấn (12.000 lbs), đi kèm bộ cáp mềm tổng hợp Synthetic Rope và remote điều khiển - món đồ cứu hộ quan trọng khi đi offroad.", specs: [["Sức kéo","12.000 lbs (~5,4 tấn)"], ["Dây cáp","Cáp mềm Synthetic Rope"], ["Kèm theo","Remote điều khiển"], ["Bảo hành","24 tháng"], ["Mã sản phẩm","947TJMTQ12D"]] },
+    "tjm-toi-torq-9500": { name: "TJM Torq 9500lb (Cáp cứng)", brand: "TJM", price: "16.900.000₫", desc: "Tời điện TJM Torq sức kéo 4,3 tấn (9.500 lbs), trang bị cáp cứng, là trang bị cứu hộ quan trọng khi đi offroad, khám phá địa hình.", specs: [["Sức kéo","9.500 lbs (~4,3 tấn)"], ["Dây cáp","Cáp cứng (steel cable)"], ["Ứng dụng","Cứu hộ, offroad"]] },
+    "tjm-giamxoc-colorado": { name: "Full Set Giảm Xóc TJM4x4 - Chevrolet Colorado & Isuzu D-Max", brand: "TJM", price: "41.720.000₫", desc: "Full Set giảm xóc Chevrolet Colorado & Isuzu D-Max thương hiệu TJM4x4, bao gồm bộ phuộc TJM XGS Series 4000 và bộ nhíp TJM, mang lại cảm giác lái êm ái, vững vàng khi ôm cua tốc độ cao. Bảo hành chính hãng 3 năm.", specs: [["Bao gồm","Phuộc TJM XGS Series 4000 + Bộ nhíp TJM"], ["Dòng xe áp dụng","Chevrolet Colorado, Isuzu D-Max"], ["Bảo hành","36 tháng"], ["Mã sản phẩm","Full-Set-Colorado"]] },
+    "tjm-loxo-ranger-raptor": { name: "Full Set 4 Lò Xo TJM Coil Springs - Ranger Raptor", brand: "TJM", price: "15.000.000₫", desc: "Bộ 4 lò xo TJM Coil Springs là sự bổ sung hoàn hảo cho siêu bán tải Ford Ranger Raptor khi nâng cấp thêm đồ chơi như cản trước, tời phía trước, nắp thùng phía sau.", specs: [["Số lượng","4 lò xo (trước + sau)"], ["Dòng xe áp dụng","Ford Ranger Raptor"], ["Thương hiệu","TJM4x4"]] },
+    "tjm-nhip-hilux": { name: "Bộ Nhíp TJM & Phụ Kiện - Toyota Hilux (2015+)", brand: "TJM", price: "18.100.000₫", desc: "Bộ nhíp sau TJM và phụ kiện dành cho dòng xe bán tải Toyota Hilux (2015+), gồm cặp nhíp sau Leaf Spring LBA 150kg, vòng đệm nhíp, thanh U, cùm nhíp, greasable pins và pin protector cap XGS. Có thể mua trọn bộ hoặc từng phụ kiện lẻ.", specs: [["Cặp nhíp sau Leaf Spring LBA 150kg","SKU 653T287D (SL 2)"], ["Vòng đệm nhíp","SKU 779587K (SL 1)"], ["Thanh U 14x62x210mm","SKU 775SP1 (SL 4)"], ["Cùm nhíp","SKU 656T389G (SL 2)"], ["Greasable Pins","SKU 656T100GP (SL 2)"], ["Pin Protector Cap XGS","SKU 7794848 (SL 1)"], ["Giá phụ kiện lẻ","Từ 300.000₫"], ["Giá trọn bộ","18.100.000₫"]] },
+    "tjm-nhip-navara": { name: "Bộ Nhíp TJM & Phụ Kiện - Nissan Navara NP300 (2015+)", brand: "TJM", price: "18.300.000₫", desc: "Bộ nhíp và phụ kiện TJM dành cho xe bán tải Nissan Navara NP300 (2015+), gồm cặp nhíp sau Leaf Spring LBA 100kg, bộ vòng đệm nhíp Complete Leaf Spring & Shackle Poly Bush Kit, cùm nhíp Greasable Shackles, greasable pins và thanh U cố định. Có thể mua trọn bộ hoặc từng phụ kiện lẻ.", specs: [["Cặp nhíp sau Leaf Spring LBA 100kg","SKU 6532210R (SL 2)"], ["Complete Leaf Spring & Shackle Poly Bush Kit","SKU 779543K (SL 1)"], ["Cùm nhíp Greasable Shackles","SKU 656T312G (SL 2)"], ["Greasable Pins","SKU 656T100GP (SL 2)"], ["Thanh U 14x62x210mm Type B","SKU 775014 (SL 4)"], ["Giá phụ kiện lẻ","Từ 300.000₫"], ["Giá trọn bộ","18.300.000₫"]] },
+    "tjm-nhip-xgs-ranger": { name: "Bộ Nhíp TJM XGS & Phụ Kiện - Ford Ranger & Mazda BT-50", brand: "TJM", price: "18.950.000₫", desc: "Nhíp TJM XGS cho xe Ford Ranger và Mazda BT-50, vừa đáp ứng khả năng chở tải theo từng nhu cầu khác nhau, vừa đảm bảo độ êm ái cho người ngồi trên xe. Có thể mua trọn bộ hoặc từng phụ kiện lẻ.", specs: [["Dòng xe áp dụng","Ford Ranger, Mazda BT-50"], ["Dòng sản phẩm","TJM XGS Series"], ["Giá phụ kiện lẻ","Từ 300.000₫"], ["Giá trọn bộ","18.950.000₫"]] },
+
+    /* ---------- WARN - Đồ Bán Tải (Tời điện) ---------- */
+    "warn-vr-evo-10s": { name: "WARN VR EVO 10-S (Cáp mềm Synthetic)", brand: "WARN", price: "21.800.000₫", desc: "Tời điện WARN VR EVO 10-S thế hệ mới từ Hoa Kỳ, được đánh giá là dòng tời có hiệu năng tốt nhất mà WARN từng cung cấp, động cơ mạnh mẽ, tốc độ kéo nhanh và tiêu thụ điện năng thấp.", specs: [["Sức kéo","10.000 lbs (~4.536 kg)"], ["Nguồn điện","12V"], ["Tỉ số truyền","218:1"], ["Trọng lượng","32 kg"], ["Dây cáp","Cáp mềm Synthetic dài 27.5m, đường kính 9.5mm"], ["Xuất xứ","Hoa Kỳ"], ["Mã sản phẩm","103253"]] },
+    "warn-vr-evo-12s": { name: "WARN VR EVO 12-S (Cáp mềm Synthetic)", brand: "WARN", price: "26.500.000₫", desc: "Tời điện WARN VR EVO 12-S là giải pháp lý tưởng cho các dòng xe bán tải tầm trung và full-size (1 tấn), cáp mềm Synthetic dài 27.4m, đạt chuẩn chống nước IP68, mount màu đen, xuất xứ Hoa Kỳ.", specs: [["Dây cáp","Cáp mềm Synthetic 90ft (27.4m)"], ["Chống nước","Đạt chuẩn IP68"], ["Công tắc","Albright, phản hồi nhanh"], ["Thân vỏ","Nhôm nguyên khối (One Piece)"], ["Điều khiển","2 trong 1 (có dây + không dây)"], ["Bảo hành","Trọn đời thân vỏ, 12 tháng thiết bị điện"], ["Xuất xứ","Hoa Kỳ"], ["Mã sản phẩm","103255"]] },
+    "warn-moc-toi-epic-sidewinder": { name: "Móc Tời WARN Epic Sidewinder - Gunmetal", brand: "WARN", price: "1.600.000₫", desc: "Móc tời Epic Sidewinder của WARN hỗ trợ xử lý tình huống mắc lầy, thân làm từ nhôm rèn siêu bền, chốt bằng thép rèn, hệ thống móc kéo kết nối trực tiếp, dễ sử dụng, mang lại điểm cứu hộ an toàn tối ưu.", specs: [["Chất liệu thân","Nhôm rèn (Forged Aluminum)"], ["Chốt","Thép rèn (Forged Steel)"], ["Màu sắc","Gunmetal"], ["Mã sản phẩm","100635"]] },
 
     /* ---------- VIETMAP - Android Box ---------- */
     "vietmap-box-bs10": { name: "VIETMAP BS10", brand: "VIETMAP", price: "6.990.000₫", desc: "VIETMAP BS10 là Android Box cao cấp giúp biến màn hình DVD zin theo xe (có Apple CarPlay/Android Auto) thành màn hình Android thông minh mà không cần thay màn hình gốc. Trang bị chip Snapdragon 6125 8 nhân mạnh mẽ, hỗ trợ điều khiển giọng nói KIKI, dẫn đường VIETMAP Live và nhiều tiện ích giải trí thông minh khác.", specs: [["RAM/ROM","4GB/64GB (6.990.000₫) - 6GB/128GB (8.390.000₫) - 8GB/128GB (9.490.000₫)"], ["Chip xử lý","Qualcomm Snapdragon 6125, 8 nhân"], ["Hệ điều hành","Android"], ["Dẫn đường","VIETMAP Live (dẫn đường online)"], ["Điều khiển giọng nói","Có (trợ lý KIKI)"], ["Kết nối SIM/4G","Hỗ trợ"], ["Điều khiển vô lăng","Hỗ trợ (tùy dòng xe)"], ["Màn hình phụ","Hỗ trợ qua cổng Mini HDMI"], ["Nhiệt độ hoạt động","-20°C đến 80°C"], ["Nguồn điện","5V 1A"], ["Bảo hành","Theo chính sách hãng VIETMAP"]] },
@@ -248,7 +339,7 @@ const CATALOG = {
     "gtr-premium-2-0": { name: "GTR Premium 2.0", brand: "GTR", price: "7.500.000đ / Cặp", desc: "Dòng bi LED cao cấp ra mắt cuối 2021, được giới thiệu là sản phẩm đầu tiên trên thế giới dùng 14 nhân LED Osram, đạt chuẩn sản xuất Nhật Bản. Trang bị công nghệ tản nhiệt độc quyền GTR Cooling Ai và lớp phủ lens AR Pro chống chói, cho ánh sáng rõ nét và ổn định. Thiết kế phần drive tháo rời độc lập giúp bảo trì dễ dàng hơn.", specs: [["Công suất Cos","65W"], ["Công suất Pha","70W"], ["Nhiệt độ màu","5500K (chính), 3000K (tâm), 5000K (pha)"], ["Cấu hình chip LED","14 chip Osram (12 chính + 2 phụ)"], ["Chỉ số hoàn màu CRI","90"], ["Kích thước","150 x 104 x 82 mm"], ["Tản nhiệt","GTR Cooling Ai (độc quyền)"], ["Công nghệ lens","Phủ AR Pro"], ["Bảo hành","3 năm"]] },
     "gtr-premium-ultra-2022": { name: "GTR Premium Ultra 2022", brand: "GTR", price: "8.000.000đ / Cặp", desc: "Bản nâng cấp của GTR Premium 2.0, được GTR giới thiệu như một siêu phẩm hoàn toàn mới cả về thiết kế lẫn hiệu năng chiếu sáng. Sử dụng lens phủ AR màu xanh cùng màn chắn cơ khí chống chói, ánh sáng 4800K ấm phù hợp điều kiện mưa sương. Đạt chuẩn đánh giá X-Treme Vision 4.5/6 sao ở chế độ cos.", specs: [["Công suất Cos","~55W"], ["Công suất Pha","~105W"], ["Nhiệt độ màu","4800K"], ["Cấu hình chip LED","12 LED (chóa chính) + 2 LED (chóa phụ)"], ["Tản nhiệt","GTR Cooling AI (đế đồng DTP + lá tản nhiệt + quạt)"], ["Điện áp","12V - 24V"], ["Tầm chiếu (Pha)","~900m"], ["Bảo hành","3 năm"]] },
     "gtr-g1-turbo": { name: "GTR Bi Gầm G1 Turbo", brand: "GTR", price: "6.200.000đ / Cặp (đã VAT)", desc: "Đèn bi gầm đổi màu tích hợp mắt quỷ, điều khiển qua app LED LAMP trên điện thoại (Android/iOS). Trang bị công nghệ cảm biến nhiệt tự động, hai đèn phụ trợ và van thoát nhiệt phía sau giúp tản nhiệt thụ động hiệu quả. Đạt chuẩn chống nước IP68, phù hợp lắp gầm xe trong điều kiện khắc nghiệt.", specs: [["Cấu hình chip LED","6+1+1"], ["Công suất Cos","40W"], ["Công suất Pha","65W"], ["Nhiệt độ màu","3000K / 4300K / 5500K"], ["Kích thước lens","3 Inch"], ["Tản nhiệt","Hệ thống thụ động"], ["Chống nước","IP68"], ["Điện áp","12V - 16V"], ["Tuổi thọ","30.000 giờ"], ["Bảo hành","24 tháng"]] },
-    "gtr-g1-turbo-v2": { name: "GTR Bi Gầm G1 Turbo V2", brand: "GTR", price: "6.000.000đ", desc: "Phiên bản nâng cấp V2 của dòng bi gầm G1 Turbo trong hệ sinh thái GTR, thuộc phân khúc đèn tăng sáng gầm xe cao cấp. Trang website chính hãng hiện chưa công bố chi tiết bảng thông số kỹ thuật riêng cho phiên bản này, chỉ hiển thị tên sản phẩm, giá bán và hình ảnh.", specs: [["Loại đèn","Bi gầm LED"], ["Thương hiệu","GTR"], ["Ghi chú","Thông số kỹ thuật chi tiết chưa được công bố trên trang chính hãng tại thời điểm thu thập"]] },
+    "gtr-g1-turbo-v2": { name: "GTR Bi Gầm G1 Turbo V2", brand: "GTR", price: "6.000.000đ", desc: "Phiên bản nâng cấp V2 của dòng bi gầm G1 Turbo trong hệ sinh thái GTR, sở hữu diode laser Osram 1+1 kết hợp 6 nhân LED lớn, cho ánh sáng Cos 4800K độc bản kết hợp trợ pha 3000K. Đạt chuẩn chống nước IP68, thân đèn nhôm kích thước nhỏ gọn, phù hợp lắp gầm xe trong điều kiện khắc nghiệt.", specs: [["Công suất Cos","~45W"], ["Công suất Pha","~75W"], ["Diode Laser","1+1 Osram"], ["Nhân LED","6 (big)"], ["Nhiệt độ màu","Cos 4800K / Pha 4300K"], ["Chống nước","IP68"], ["Tuổi thọ","30.000 giờ (theo công bố NSX)"], ["Điện áp","12V - 16V"], ["Kích thước đèn","129 x 67 x 80 mm"], ["Lens","3.0 Inch"], ["Đặc điểm nổi bật","Cos độc bản 4800K + Trợ pha 3000K"], ["Bảo hành","Điện tử 24 tháng qua số Seri"]] },
     "gtr-g1-pro": { name: "GTR Bi Gầm LED G1 Pro", brand: "GTR", price: "Liên hệ", desc: "Sản phẩm bi gầm cao cấp đầu tiên của GTR, thiết kế nguyên khối liền mạch tích hợp chóa phản xạ ngay trên thân đèn, có đường rãnh tản nhiệt và khả năng chống nước tốt. Cho ánh sáng vàng 3000K bám đường và trắng 5500K hiện đại, công suất cao thuộc nhóm mạnh nhất phân khúc bi gầm hiện nay.", specs: [["Công suất Cos","35W"], ["Công suất Pha","45W"], ["Nhiệt độ màu","3000K / 5500K"], ["Điện áp","12V - 24V"], ["Cường độ sáng Cos","5.400 lx"], ["Cường độ sáng Pha","6.200 lx"], ["Thiết kế","Nguyên khối, chống nước, tích hợp chóa phản xạ"]] },
     "gtr-g1-ultra": { name: "GTR Bi Gầm LED G1 Ultra", brand: "GTR", price: "5.500.000đ / Cặp", desc: "Đèn bi gầm cho khả năng chiếu sáng mạnh vượt trội trong phân khúc, chế độ pha mô phỏng hiệu ứng đèn laser chiếu xa tới 500m. Lens AR chống chói giúp tăng an toàn khi tham gia giao thông, thân đèn nhôm nguyên khối sơn đen nhám bền bỉ. Có 3 tùy chọn nhiệt độ màu phù hợp nhiều điều kiện thời tiết.", specs: [["Công suất Cos","40W"], ["Công suất Pha","50W"], ["Nhiệt độ màu","3000K / 4300K / 5500K"], ["Kích thước lens","3.0 Inch"], ["Cấu hình chip LED","6 LED chính + 1 LED phụ"], ["Đặc điểm lens","AR chống chói"], ["Tầm chiếu (Pha)","Lên đến 500m"], ["Chất liệu","Nhôm nguyên khối, sơn đen nhám"]] },
 

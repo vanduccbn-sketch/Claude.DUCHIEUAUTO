@@ -6,6 +6,7 @@
 .hero-content .subtitle { display: inline-block; color: var(--primary); background: rgba(255, 255, 255, 0.9); font-size: 14px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 18px; padding: 6px 18px 6px 45px; border-radius: 30px; position: relative; }
 .hero-content .subtitle::before { content: ''; position: absolute; left: 18px; top: 50%; transform: translateY(-50%); width: 18px; height: 2px; background-color: var(--primary); }
 .hero-content .title { font-family: var(--font-title); font-size: 80px; color: var(--white); line-height: 1.1; letter-spacing: 3px; margin-bottom: 25px; text-shadow: 0 10px 30px rgba(0, 0, 0, 0.6); }
+.hero-content .title .text-primary { display: inline-block; margin-top: 20px; }
 .hero-content .desc { font-size: 18px; color: var(--gray-light); margin-bottom: 40px; max-width: 600px; }
 .hero-buttons { display: flex; gap: 20px; }
 @media (max-width: 768px) {

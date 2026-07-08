@@ -173,6 +173,7 @@ Cấu trúc trang hiện có:
   - **JBL**: logo gốc là nền vuông cam + chữ "JBL" trắng + dòng "by HARMAN" — tách riêng path chữ "JBL" (có sẵn dạng vector trong file SVG lấy từ Wikimedia Commons), bỏ nền cam và dòng phụ, dựng SVG mới 1 màu cam JBL (`#FF3300`)
   - **BlackVue**: file gốc là PNG (không sửa path được như SVG) — dùng PowerShell + .NET `System.Drawing` dò từng pixel để xác định chính xác toạ độ, crop đúng vùng chữ "BLACKVUE", loại bỏ icon chim nhiều màu và dòng "VIETNAM". Lần crop đầu vẫn xấu (mờ nhòe như khối xám) — phát hiện nguyên nhân thật: nền ảnh gốc là **trắng đục hoàn toàn** (alpha=255), không phải trong suốt, chỉ "vô hình" vì các trang khác có nền trắng nên không lộ ra; khi invert thì nền trắng và chữ đều hoá trắng giống hệt nhau, gộp mất chữ. Đã quét lại từng pixel, gán alpha=0 cho toàn bộ vùng nền gần trắng, chỉ giữ đúng pixel chữ đen/xanh của "BLACKVUE"
   - **Khôi phục hover đúng như cũ**: `filter: none` khi hover (bỏ hẳn invert) để lộ đúng màu thật của từng logo, thay vì chỉ tăng opacity trắng như bản trước
+- [x] **Sửa dấu tiếng Việt bị dính chữ ở tiêu đề Hero** ("ĐẲNG CẤP XẾ YÊU" dính lên "PHONG CÁCH") — thử tăng `line-height` của cả khối tiêu đề trước (1.1→1.65) nhưng không đạt yêu cầu và làm thay đổi bố cục tổng thể; theo yêu cầu người dùng đã revert về `line-height: 1.1` nguyên bản, thay bằng cách đẩy riêng dòng thứ 2 (`.text-primary`) xuống bằng `margin-top` (chỉnh dần 10px → 20px theo phản hồi) — giữ nguyên nhịp giãn dòng tổng thể, chỉ nới đúng chỗ bị dính
 
 ## Việc cần làm tiếp theo (TODO)
 

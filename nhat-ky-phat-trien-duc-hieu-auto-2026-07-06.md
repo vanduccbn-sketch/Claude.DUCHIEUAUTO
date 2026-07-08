@@ -106,9 +106,55 @@ Cấu trúc trang hiện có:
   - Avery Dennison (3sp): Supreme Xtreme, Ultima Plus, Ultima — từ averydennisonvn.com, kèm logo. Trang "Supreme Wrap Film" (màu đổi màu) hiện không có sản phẩm nào công khai nên chỉ lấy 3 dòng PPF
   - Toàn bộ giá dạng "Liên hệ" đều do trang nguồn không công khai giá bán lẻ (mô hình báo giá theo tư vấn), không phải do thiếu sót thu thập
 
+## Việc đã làm hôm nay (2026-07-08)
+
+- [x] Bổ sung dữ liệu thật cho danh mục **"Đồ Bán Tải"** (20 sản phẩm, 4 thương hiệu, dữ liệu từ nova4x4.vn):
+  - **Aeroklas** (2sp): Nắp thùng cuộn điện E Roller LID cho Ford Ranger WildTrak 2023 và Ford Ranger & Raptor 2023 — phụ kiện FLA chính hãng được Ford khuyến nghị
+  - **King Springs** (7sp): Trọn bộ lò xo Ranger Raptor - Coils (07/2018+), Raptor NextGen 2023-ON, KFRR-121/121HD/121EHD/124, KFRS-121 (giữ nguyên chiều cao) — toàn bộ dòng lò xo Ranger Raptor thật hiện có, sản xuất tại Australia
+  - **TJM** (8sp, chia 2 loại Tời Điện / Giảm Xóc - Nhíp - Lò Xo): Tời Prime 12000lb, Torq 12000lb, Torq 9500lb; Full Set giảm xóc Colorado & D-Max; Lò xo Ranger Raptor; Bộ nhíp Hilux/Navara NP300/Ranger XGS
+  - **WARN** (3sp): Tời điện VR EVO 10-S, VR EVO 12-S, Móc tời Epic Sidewinder Gunmetal (xuất xứ Hoa Kỳ)
+  - Đã loại brand **Teraflex** dù nova4x4.vn có bán (kit nâng gầm) vì các sản phẩm này thực chất dành cho Jeep Wrangler, không phải xe bán tải — xác minh qua tiêu đề trang sản phẩm gốc trước khi quyết định loại bỏ
+  - Logo chính hãng đủ cả 4 thương hiệu (Aeroklas, King Springs, TJM, WARN từ chính trang chủ hãng)
+  - Ảnh sản phẩm tải về cục bộ vào `assets/images/products/<id>/anh-1.jpg`, không hotlink
+- [x] **Riêng danh mục "Đồ Bán Tải"**: đổi cấu trúc điều hướng thành **Nhóm Sản Phẩm → Thương Hiệu → Sản Phẩm** (khác với các danh mục khác đang là Thương Hiệu → Sản Phẩm), theo yêu cầu vì đây là nhóm phụ kiện đa dạng chủng loại chứ không phải 1 dòng sản phẩm/thương hiệu:
+  - 4 nhóm: Nắp Thùng Bán Tải (Aeroklas), Lò Xo - Giảm Xóc (King Springs, TJM), Nhíp (TJM), Tời Điện - Móc Tời (TJM, WARN)
+  - Kỹ thuật: tận dụng lại cơ chế "brand → types → products" có sẵn (dùng cho các mục như Nâng Cấp Ánh Sáng/Aozoom) — cấp "brands" của category đóng vai trò nhóm sản phẩm, cấp "types" bên trong đóng vai trò thương hiệu thật, không cần đổi cấu trúc catalog-render.js
+  - Bổ sung khả năng hiển thị **logo** ở cấp "types" (`catalog-render.js`) — trước đây chỉ brand cấp 1 mới có logo, giờ áp dụng chung cho mọi danh mục có dùng types
+- [x] **Nâng Cấp Ánh Sáng**: chia lại toàn bộ 3 thương hiệu Fogway, GTR, X-Light theo cấu trúc Thương Hiệu → Dòng Sản Phẩm (Bi LED / Bi Gầm) → Sản Phẩm, đồng bộ với cách Aozoom đã làm từ trước (trước đó 3 hãng này để sản phẩm dạng phẳng, trộn lẫn Bi LED và Bi Gầm trong cùng 1 danh sách):
+  - Fogway: Bi LED (Gen 3, Gen 5, Gen 9 - kể cả dòng Bi Laser Gen 9 xếp chung Bi LED theo đúng quy ước đã dùng cho Aozoom) / Bi Gầm (Gen 1)
+  - GTR: Bi LED (Limited 3.0, Limited 3.0 2024, Premium 2.0, Premium Ultra 2022) / Bi Gầm (G1 Turbo, G1 Turbo V2, G1 Pro, G1 Ultra)
+  - X-Light: Bi LED (V20L Quantum, Quantum X V2, Quantum X, V20 New 2025, F+ Pro V2, X5 Ultra) / Bi Gầm (F10 New 2025, X3 Ultra) — phân loại theo đúng field "Loại đèn" đã có sẵn trong specs của từng sản phẩm
+- [x] Tìm được logo chính hãng **70mai** (trích xuất trực tiếp từ SVG inline trên header trang chủ 70mai.com) và tái sử dụng logo **3M** có sẵn cho brand "3M" trong danh mục PPF - Wrap (cùng một công ty với 3M Film Cách Nhiệt)
+  - Logo **Titan** (Film Cách Nhiệt): vẫn chưa tìm được — trang phân phối titanwindowfilm.vn tiếp tục không truy cập được, thử qua Wayback Machine nhưng bị rate-limit (429) liên tục dù đã retry nhiều lần; không tìm thấy trang chính hãng US độc lập nào (có vẻ đây là sản phẩm nhập khẩu/gắn nhãn riêng cho thị trường VN, phân phối bởi AKauto)
+- [x] Rà soát toàn bộ catalog tìm ghi chú "thông số chưa công bố" — phát hiện và cập nhật **GTR Bi Gầm G1 Turbo V2**: trang gtrvietnam.com nay đã công bố đầy đủ bảng thông số kỹ thuật (trước đó chưa có), đã điền lại specs đầy đủ (công suất, diode laser, nhiệt độ màu, chống nước IP68, kích thước, bảo hành...)
+- [x] Quyết định **không bổ sung Kenwood** vào danh mục Âm Thanh Ô Tô theo yêu cầu — bỏ hẳn khỏi TODO (brand này chưa từng có trong dữ liệu nên không cần thao tác ẩn)
+- [x] **Tách cấu trúc "Dịch Vụ" (trang chủ) khỏi "Sản Phẩm" (san-pham.html)** — trước đây 2 mục dùng chung 1 danh sách `categories` phẳng (8 danh mục), giờ trang chủ gộp thành 3 nhóm dịch vụ lớn:
+  - **Nội Thất Ô Tô**: Màn Hình Ô Tô, Âm Thanh - Cách Âm Ô Tô, Android Box Ô Tô, Camera Hành Trình - 360 Độ
+  - **Ngoại Thất Ô Tô**: Film Cách Nhiệt, PPF - Wrap Đổi Màu, Nâng Cấp Ánh Sáng
+  - **Đồ Bán Tải**: không gộp nhóm, link thẳng vào trang danh mục hiện có (chỉ có 1 danh mục nên không cần trang trung gian) — xác nhận với người dùng trước khi làm vì thiếu rõ Camera Hành Trình thuộc nhóm nào
+  - Trang "Sản Phẩm" giữ nguyên hoàn toàn, vẫn hiển thị phẳng đủ 8 danh mục như cũ
+  - Kỹ thuật: thêm mảng `serviceGroups` mới trong `catalog-data.js` (độc lập với `categories`), thêm `renderServiceGrid()` + `renderServiceGroupDetail()` trong `catalog-render.js`, `category-chi-tiet.html` giờ nhận thêm param `?group=` (ngoài `?id=` cũ) để hiển thị trang trung gian liệt kê các danh mục con trong nhóm (dùng lại style `.service-card` từ `services.css`, thêm link CSS này vào `category-chi-tiet.html`)
+- [x] **Làm lại mục "Sản Phẩm Chiến Lược" (trang chủ)**: thay 3 sản phẩm placeholder (ảnh Unsplash, không có thật trong catalog) bằng đúng 3 sản phẩm thật theo yêu cầu — **JBL Bass pro LITE** (7.890.000₫), **Zestech ZX10 Bản Cao Cấp** (11.900.000₫), **Phim Cách Nhiệt 3M Xe 4 Chỗ** (14.800.000₫), dùng ảnh thật đã có sẵn trong `assets/images/products/`, link đúng `san-pham-chi-tiet.html?id=...`
+  - Giữ nguyên giá thật, không tạo giá gốc/giá gạch giả — tạo cảm giác "giá hời, giá sốc" bằng thiết kế: badge đỏ "⚡ Giá Sốc" có hiệu ứng nhấp nháy nhẹ (pulse), giá hiển thị to/đậm màu đỏ thương hiệu, tag phụ "Ưu đãi hôm nay / Giá tốt nhất tháng / Số lượng có hạn" cho từng sản phẩm
+  - Thay nút "Xem Tất Cả Danh Mục Sản Phẩm" dạng outline nhỏ bằng 1 banner CTA lớn full-width, nền gradient thương hiệu, mũi tên tròn trượt sang phải khi hover — dễ thu hút click hơn hẳn nút cũ
+- [x] **Áp dụng font UTM thật cho toàn bộ website**: `assets/fonts/` trước đó rỗng — biến CSS `--font-title: 'UTM Bebas'` / `--font-body: 'UTM Avo'` đã được khai báo từ trước nhưng chưa từng có file thật nên trình duyệt âm thầm dùng font dự phòng (Bebas Neue/Poppins qua Google Fonts). Đã tải và tích hợp đầy đủ:
+  - **UTM Bebas** (tiêu đề, logo, giá, section-title) — 1 kiểu duy nhất, phù hợp phong cách chữ hoa cao gầy đã dùng sẵn trên toàn site
+  - **UTM Avo** (nội dung/body) — đủ 4 kiểu Regular/Bold/Italic/BoldItalic, khai báo đúng `font-weight`/`font-style` trong `fonts.css` để trình duyệt tự chọn đúng mặt chữ khi có `<strong>`/in đậm hoặc in nghiêng
+  - Kiến trúc CSS gốc đã sẵn tốt (`body { font-family: var(--font-body) }` kế thừa toàn site, mọi tiêu đề/logo/giá dùng `var(--font-title)`, không có nơi nào hard-code font khác) nên chỉ cần bổ sung file font thật là áp dụng ngay toàn bộ 5 trang
+  - **Lưu ý bản quyền**: font UTM Bebas/UTM Avo tải từ các trang chia sẻ font (cufonfonts.com, GitHub mirror của `duykhuong/html-tncs` và `tree69/Web_Funring`) chỉ ghi rõ "Free for personal use" — chưa xác nhận chắc chắn cho mục đích thương mại. Đã hỏi và được người dùng xác nhận chấp nhận rủi ro này, dùng tạm cho tới khi có file bản quyền chính thức
+- [x] **Làm lại toàn bộ mục "Giới Thiệu" (About) lấy slogan công ty "Nâng Tầm Trải Nghiệm" làm trung tâm**, lấy cảm hứng từ phong cách các thương hiệu độ xe hàng đầu (typography lớn, số liệu ấn tượng, dải logo đối tác chạy ngang):
+  - Thêm khối slogan cỡ lớn ngay đầu section: "NÂNG TẦM" (trắng) + "TRẢI NGHIỆM" (hiệu ứng gradient chữ theo `--gradient-m-stripe` sẵn có của thương hiệu) + câu giải thích ý nghĩa slogan
+  - Thêm hàng số liệu thật đếm lên khi cuộn tới (JS IntersectionObserver + requestAnimationFrame): 240+ sản phẩm chính hãng, 30+ thương hiệu quốc tế, 8 danh mục dịch vụ — đếm chính xác từ `catalog-data.js` (246 sản phẩm/35 brand tổng, trừ 3 brand đang ẩn), không bịa số liệu marketing
+  - Thêm dải marquee chạy vô hạn liệt kê 24 logo thương hiệu chính hãng đang phân phối (dùng lại toàn bộ logo thật đã tải từ trước: XPEL, 3M, JBL, Infinity, Harman/Kardon, Pioneer, WARN, TJM, King Springs, Aeroklas, Fogway, Aozoom, Zestech, Teyes, Gotech, VIETMAP, UTOUR, BlackVue, Carlinkit, Elliview, AX Film, Avery Dennison, Global, 70mai), logo chuyển trắng mờ và sáng màu khi hover
+  - **Liên kết với hero**: giữ chung tông nền tối + gradient overlay 3 màu thương hiệu (m-blue → m-purple → primary) y hệt hero, cùng kiểu pill-badge nhãn nhỏ phía trên tiêu đề, cùng font UTM Bebas cỡ lớn — tạo cảm giác 2 section nối liền mạch thay vì tách biệt
+  - Bỏ heading cũ "Kiến Tạo Sự Khác Biệt Cho Đam Mê" (không phải slogan thật của công ty), giữ nguyên bộ 3 ảnh gallery
+- [x] **Thu gọn mục "Sản Phẩm Chiến Lược"** — trước đó card quá cao (ảnh 240px + padding rộng + mô tả không giới hạn dòng) khiến phải cuộn nhiều mới thấy hết cả 3 sản phẩm trong 1 màn hình, cảm giác trống trải. Đã tối ưu `product.css`: giảm padding section (100px → 70px), giảm chiều cao ảnh (240px → 175px), mô tả giới hạn 2 dòng (`-webkit-line-clamp`), giảm padding/margin nội bộ card, thu nhỏ banner CTA bên dưới — cả 3 card + CTA giờ gọn hơn hẳn, hiển thị đủ trong 1 khung nhìn ở màn hình desktop thông thường
+- [x] **Tinh chỉnh lại mục "Giới Thiệu" theo phản hồi** (slogan quá to, màu gradient-clip-text bị lỗi render/mờ nhòe, khó đọc trên nền tím):
+  - Bỏ khối slogan to chiếm hết chiều ngang phía trên; chuyển "Nâng Tầm Trải Nghiệm" vào thẳng cột phải, nằm ngay trên đoạn "Mỗi chi tiết chúng tôi nâng cấp...", giảm cỡ chữ nhiều lần (từ `clamp(3rem,8vw,6.2rem)` xuống `clamp(2rem,3.4vw,2.9rem)`), bỏ câu phụ để gọn hơn
+  - Bỏ hiệu ứng gradient chữ (`background-clip:text` + `filter:drop-shadow`) từng gây lem/mờ chữ ở phần "Trải Nghiệm" — đổi sang màu đỏ thương hiệu đặc (`var(--primary)`) kèm text-shadow phát sáng nhẹ, sang trọng và dễ đọc hơn hẳn
+  - Làm tối/trung tính lại lớp phủ nền `#about::before` (giảm hẳn sắc tím/xanh nổi bật, tăng tỉ lệ đen) để chữ luôn tương phản tốt bất kể ảnh nền `nen2.jpg` đang hiển thị vùng sáng/tối nào khi cuộn (do dùng `background-attachment: fixed`)
+  - Chuyển khối số liệu (240+ sản phẩm...) ra khỏi cột nội dung, đặt thành 1 dải riêng thu nhỏ (số liệu nhỏ lại, có viền phân cách) nằm ngay phía trên nhãn "Thương Hiệu Chính Hãng Chúng Tôi Phân Phối", đúng vị trí yêu cầu
+
 ## Việc cần làm tiếp theo (TODO)
 
-- [ ] Lấy dữ liệu sản phẩm thật cho mục "Đồ Bán Tải"
-- [ ] Tìm logo chính hãng Titan (Film Cách Nhiệt), 70mai và 3M (Wrap) khi có nguồn đáng tin cậy
-- [ ] Bổ sung Kenwood (màn hình/đầu CD) nếu cần mở rộng danh mục Âm thanh ô tô
-- [ ] Rà lại giá/thông số các sản phẩm có ghi chú "trang nguồn chưa cập nhật đầy đủ" khi có dữ liệu mới
+- [ ] Tìm logo chính hãng Titan (Film Cách Nhiệt) khi có nguồn đáng tin cậy mới (titanwindowfilm.vn đã ngừng hoạt động, Wayback Machine hiện bị rate-limit)

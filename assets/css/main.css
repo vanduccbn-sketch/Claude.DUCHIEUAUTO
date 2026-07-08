@@ -40,13 +40,14 @@ button { font-family: inherit; cursor: pointer; }
 .btn-primary:hover { background-color: transparent; border-color: var(--primary); color: var(--primary); transform: translateY(-3px); box-shadow: var(--shadow-md); }
 .btn-outline-dark { background-color: transparent; border-color: var(--text-color); color: var(--text-color); }
 .btn-outline-dark:hover { background-color: var(--text-color); color: var(--white); transform: translateY(-3px); }
-.back-to-top { position: fixed; bottom: 30px; right: 30px; width: 45px; height: 45px; background-color: var(--primary); color: var(--white); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; opacity: 0; visibility: hidden; transform: translateY(20px); transition: var(--transition); z-index: 999; box-shadow: var(--shadow-md); }
+.back-to-top { position: fixed; bottom: 24px; right: 20px; width: 44px; height: 44px; background-color: var(--primary); color: var(--white); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; opacity: 0; visibility: hidden; transform: translateY(20px); transition: var(--transition); z-index: 999; box-shadow: var(--shadow-md); }
 .back-to-top.show { opacity: 1; visibility: visible; transform: translateY(0); }
 .back-to-top:hover { background-color: var(--m-blue); color: var(--white); }
 
 /* ---------- Widget liên hệ nhanh (Zalo / Messenger / Điện thoại) ---------- */
-/* Mặc định MỞ SẴN (khách thấy ngay các kênh liên hệ), có nút bấm để thu gọn lại (.collapsed) */
-.quick-contact { position: fixed; right: 20px; bottom: 130px; z-index: 998; display: flex; flex-direction: column; align-items: center; }
+/* Mặc định MỞ SẴN (khách thấy ngay các kênh liên hệ), có nút bấm để thu gọn lại (.collapsed)
+   Xếp thẳng hàng, ngay phía trên nút back-to-top, cùng sát mép phải */
+.quick-contact { position: fixed; right: 20px; bottom: 80px; z-index: 998; display: flex; flex-direction: column; align-items: center; }
 .quick-contact-items { display: flex; flex-direction: column; align-items: center; gap: 12px; margin-bottom: 12px; max-height: 240px; opacity: 1; pointer-events: auto; overflow: hidden; transition: max-height 0.35s ease, opacity 0.25s ease, margin 0.35s ease; }
 .quick-contact.collapsed .quick-contact-items { max-height: 0; opacity: 0; pointer-events: none; margin-bottom: 0; }
 .qc-item { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; color: var(--white); box-shadow: var(--shadow-md); transition: var(--transition); flex-shrink: 0; }
@@ -69,9 +70,9 @@ button { font-family: inherit; cursor: pointer; }
     .container { padding: 0 16px; }
     .section-title { font-size: 1.7rem; margin-bottom: 25px; }
     .btn { padding: 12px 24px; font-size: 13px; }
-    .back-to-top { width: 44px; height: 44px; bottom: 20px; right: 12px; }
-    .quick-contact { right: 12px; bottom: 112px; }
-    .qc-item { width: 44px; height: 44px; font-size: 17px; }
-    .quick-contact-toggle { width: 40px; height: 40px; font-size: 15px; }
+    .back-to-top { width: 42px; height: 42px; bottom: 16px; right: 14px; }
+    .quick-contact { right: 14px; bottom: 68px; }
+    .qc-item { width: 42px; height: 42px; font-size: 16px; }
+    .quick-contact-toggle { width: 38px; height: 38px; font-size: 14px; }
     .qc-item span { display: none; }
 }

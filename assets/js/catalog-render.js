@@ -70,13 +70,13 @@ const BRAND_MARQUEE_ITEMS = [
     { logo: "assets/images/brands/infinity/logo.png", alt: "Infinity", href: "brand-san-pham.html?id=am-thanh-cach-am-oto&brand=infinity" },
     { logo: "assets/images/brands/harman-kardon/logo.png", alt: "Harman/Kardon", href: "brand-san-pham.html?id=am-thanh-cach-am-oto&brand=harman-kardon" },
     { logo: "assets/images/brands/pioneer/logo.png", alt: "Pioneer", href: "brand-san-pham.html?id=am-thanh-cach-am-oto&brand=pioneer" },
-    { logo: "assets/images/brands/warn/logo.svg", alt: "WARN", href: "brand-san-pham.html?id=do-ban-tai&brand=toi-dien&loai=warn" },
-    { logo: "assets/images/brands/tjm/logo.svg", alt: "TJM", href: "brand-san-pham.html?id=do-ban-tai&brand=toi-dien&loai=tjm" },
+    { logo: "assets/images/brands/warn/logo.svg", alt: "WARN", href: "brand-san-pham.html?id=do-ban-tai&brand=toi-dien&loai=warn", natural: true },
+    { logo: "assets/images/brands/tjm/logo.svg", alt: "TJM", href: "brand-san-pham.html?id=do-ban-tai&brand=toi-dien&loai=tjm", natural: true },
     { logo: "assets/images/brands/king-springs/logo.svg", alt: "King Springs", href: "brand-san-pham.html?id=do-ban-tai&brand=lo-xo-giam-xoc&loai=king-springs" },
     { logo: "assets/images/brands/aeroklas/logo.png", alt: "Aeroklas", href: "brand-san-pham.html?id=do-ban-tai&brand=nap-thung&loai=aeroklas" },
     { logo: "assets/images/brands/fogway/logo.png", alt: "Fogway", href: "brand-san-pham.html?id=do-den&brand=fogway" },
     { logo: "assets/images/brands/aozoom/logo.svg", alt: "Aozoom", href: "brand-san-pham.html?id=do-den&brand=aozoom" },
-    { logo: "assets/images/brands/zestech/logo.svg", alt: "Zestech", href: "brand-san-pham.html?id=man-hinh-o-to&brand=zestech" },
+    { logo: "assets/images/brands/zestech/logo.svg", alt: "Zestech", href: "brand-san-pham.html?id=man-hinh-o-to&brand=zestech", natural: true },
     { logo: "assets/images/brands/teyes/logo.png", alt: "Teyes", href: "brand-san-pham.html?id=man-hinh-o-to&brand=teyes" },
     { logo: "assets/images/brands/gotech/logo.png", alt: "Gotech", href: "brand-san-pham.html?id=man-hinh-o-to&brand=gotech" },
     { logo: "assets/images/brands/vietmap-cam/logo.png", alt: "VIETMAP", href: "brand-san-pham.html?id=camera-hanh-trinh&brand=vietmap-cam" },
@@ -95,7 +95,7 @@ function renderBrandMarquee(containerSelector) {
     if (!track) return;
 
     const itemHtml = (item) => `
-        <a class="brand-marquee-item" href="${item.href}" title="${item.alt}">
+        <a class="brand-marquee-item${item.natural ? " is-natural" : ""}" href="${item.href}" title="${item.alt}">
             <img src="${item.logo}" alt="${item.alt}" loading="lazy">
         </a>`;
 

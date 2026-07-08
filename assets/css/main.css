@@ -56,8 +56,8 @@ button { font-family: inherit; cursor: pointer; }
 .qc-zalo { background-color: #0068ff; }
 .qc-messenger { background: linear-gradient(45deg, #00b2ff, #a033ff, #ff5280, #ff7061); }
 .qc-phone { background-color: #25d366; }
-.quick-contact-toggle { width: 44px; height: 44px; border-radius: 50%; background-color: var(--dark); color: var(--white); border: none; font-size: 16px; display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow-md); cursor: pointer; transition: var(--transition); position: relative; }
-.quick-contact-toggle:hover { background-color: var(--primary); }
+.quick-contact-toggle { width: 44px; height: 44px; border-radius: 50%; background-color: rgba(255, 255, 255, 0.85); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); color: var(--dark); border: 1px solid rgba(255, 255, 255, 0.6); font-size: 16px; display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow-md); cursor: pointer; transition: var(--transition); position: relative; }
+.quick-contact-toggle:hover { background-color: var(--primary); color: var(--white); }
 .quick-contact-toggle i { transition: transform 0.3s ease; }
 .quick-contact:not(.collapsed) .quick-contact-toggle i { transform: rotate(135deg); }
 .quick-contact-toggle::before { content: ''; position: absolute; inset: -4px; border-radius: 50%; border: 2px solid var(--primary); opacity: 0; animation: none; }

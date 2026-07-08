@@ -1,7 +1,5 @@
 #footer { background-color: var(--dark); padding-top: 80px; border-top: 3px solid transparent; border-image: var(--gradient-m-stripe) 1; }
 .footer-inner { display: grid; grid-template-columns: 2fr 1fr 1fr 1.5fr; gap: 40px; margin-bottom: 50px; }
-.footer-logo { font-family: var(--font-title); font-size: 32px; color: var(--white); letter-spacing: 2px; display: inline-block; margin-bottom: 20px; }
-.footer-logo span { color: var(--primary); }
 .footer-desc { color: var(--gray); margin-bottom: 25px; }
 .brand-col .social-links a { width: 35px; height: 35px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; background-color: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); margin-right: 10px; color: var(--gray-light); transition: var(--transition); }
 .brand-col .social-links a:hover { background-color: var(--primary); border-color: var(--primary); color: var(--white); }

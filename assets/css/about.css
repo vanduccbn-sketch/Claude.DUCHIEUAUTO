@@ -29,7 +29,7 @@
 .about-content .about-desc { font-size: 1.05rem; line-height: 1.8; color: rgba(255, 255, 255, 0.82); }
 
 /* ---------- Stats: dải gọn, nằm giữa khối nội dung và dải thương hiệu ---------- */
-.about-stats { display: flex; justify-content: center; flex-wrap: wrap; margin: 56px 0 50px; padding-top: 32px; border-top: 1px solid rgba(255, 255, 255, 0.12); }
+.about-stats { display: flex; justify-content: center; flex-wrap: wrap; margin: 56px 0 30px; padding-top: 32px; border-top: 1px solid rgba(255, 255, 255, 0.12); }
 .stat-item { padding: 0 28px; text-align: center; }
 .stat-item:first-child { padding-left: 0; }
 .stat-item + .stat-item { border-left: 1px solid rgba(255, 255, 255, 0.16); }
@@ -38,6 +38,7 @@
 .stat-label { display: block; margin-top: 6px; font-size: 0.72rem; color: rgba(255, 255, 255, 0.65); text-transform: uppercase; letter-spacing: 1px; }
 
 /* ---------- Marquee thương hiệu chính hãng ---------- */
+.brand-marquee { margin-top: 20px; }
 .brand-marquee-label { display: block; text-align: center; font-size: 12px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: rgba(255, 255, 255, 0.7); margin-bottom: 30px; }
 .brand-marquee-viewport { overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
 .brand-marquee-track { display: flex; align-items: center; gap: 56px; width: max-content; animation: brandMarqueeScroll 34s linear infinite; }

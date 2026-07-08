@@ -139,7 +139,6 @@
 .brand-logo { flex-shrink: 0; width: 48%; height: 72px; display: flex; align-items: center; justify-content: center; padding-left: 16px; border-left: 1px solid var(--border-color-light); }
 .brand-logo img { max-height: 100%; max-width: 100%; object-fit: contain; }
 
-.brand-title { display: flex; align-items: center; gap: 16px; }
 .brand-title-logo { height: 40px; max-width: 130px; object-fit: contain; }
 
 .brand-card h3 {
@@ -157,6 +156,9 @@
 
 /* ---------- Grid sản phẩm theo thương hiệu ---------- */
 .brand-title {
+    display: flex;
+    align-items: center;
+    gap: 16px;
     font-family: var(--font-title);
     font-size: 2rem;
     margin-bottom: 30px;

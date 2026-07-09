@@ -48,6 +48,40 @@ function renderCategoryGrid(containerSelector) {
         .join("");
 }
 
+/* ---------- Dropdown "Sản Phẩm" trên header - mỗi danh mục kèm flyout thương hiệu thật khi rê chuột ---------- */
+const CATEGORY_NAV_ICON = {
+    "man-hinh-o-to": "fa-tablet-screen-button",
+    "am-thanh-cach-am-oto": "fa-volume-high",
+    "android-box-o-to": "fa-box",
+    "dan-phim-cach-nhiet": "fa-layer-group",
+    "camera-hanh-trinh": "fa-video",
+    "ppf-wrap-doi-mau": "fa-shield-halved",
+    "do-den": "fa-lightbulb",
+    "do-ban-tai": "fa-truck-pickup"
+};
+
+function renderNavProductsDropdown(containerSelector) {
+    const container = document.querySelector(containerSelector);
+    if (!container) return;
+
+    container.innerHTML = CATALOG.categories.map(cat => {
+        const brands = cat.brands.filter(b => !b.hidden);
+        const icon = CATEGORY_NAV_ICON[cat.id] || "fa-circle";
+        const flyoutHtml = brands.length
+            ? brands.map(b => `<a href="brand-san-pham.html?id=${cat.id}&brand=${b.id}">${b.name}</a>`).join("")
+            : `<span class="nav-brand-empty">Đang cập nhật</span>`;
+
+        return `
+        <div class="nav-product-row">
+            <a class="nav-product-link" href="category-chi-tiet.html?id=${cat.id}">
+                <span class="nav-product-label"><i class="fa-solid ${icon}"></i>${cat.name}</span>
+                <i class="fa-solid fa-chevron-right nav-product-arrow"></i>
+            </a>
+            <div class="nav-brand-flyout">${flyoutHtml}</div>
+        </div>`;
+    }).join("");
+}
+
 /* ---------- Dịch Vụ (index.html) - gộp nhóm: Nội Thất Ô Tô / Ngoại Thất Ô Tô / Đồ Bán Tải ---------- */
 function renderServiceGrid(containerSelector) {
     const container = document.querySelector(containerSelector);

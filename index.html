@@ -55,9 +55,39 @@
                 <ul>
                     <li><a href="#" class="active">Trang Chủ</a></li>
                     <li><a href="#about">Giới Thiệu</a></li>
-                    <li><a href="#service">Dịch Vụ</a></li>
-                    <li><a href="san-pham.html">Sản Phẩm</a></li>
-                    <li><a href="#project">Công Trình</a></li>
+                    <li class="has-dropdown">
+                        <div class="nav-item-row">
+                            <a href="#service">Dịch Vụ <i class="fa-solid fa-chevron-down nav-caret"></i></a>
+                            <button type="button" class="nav-dropdown-toggle" aria-label="Xem danh mục Dịch Vụ"><i class="fa-solid fa-chevron-down"></i></button>
+                        </div>
+                        <div class="nav-dropdown nav-dropdown-mega">
+                            <div class="nav-dropdown-col">
+                                <span class="nav-dropdown-heading">Nội Thất Ô Tô</span>
+                                <a href="category-chi-tiet.html?id=man-hinh-o-to"><i class="fa-solid fa-tablet-screen-button"></i> Màn Hình Ô Tô</a>
+                                <a href="category-chi-tiet.html?id=am-thanh-cach-am-oto"><i class="fa-solid fa-volume-high"></i> Âm Thanh - Cách Âm Ô Tô</a>
+                                <a href="category-chi-tiet.html?id=android-box-o-to"><i class="fa-solid fa-box"></i> Android Box Ô Tô</a>
+                                <a href="category-chi-tiet.html?id=camera-hanh-trinh"><i class="fa-solid fa-video"></i> Camera Hành Trình - 360 Độ</a>
+                            </div>
+                            <div class="nav-dropdown-col">
+                                <span class="nav-dropdown-heading">Ngoại Thất Ô Tô</span>
+                                <a href="category-chi-tiet.html?id=dan-phim-cach-nhiet"><i class="fa-solid fa-layer-group"></i> Film Cách Nhiệt</a>
+                                <a href="category-chi-tiet.html?id=ppf-wrap-doi-mau"><i class="fa-solid fa-shield-halved"></i> PPF - Wrap Đổi Màu</a>
+                                <a href="category-chi-tiet.html?id=do-den"><i class="fa-solid fa-lightbulb"></i> Nâng Cấp Ánh Sáng</a>
+                            </div>
+                            <div class="nav-dropdown-col">
+                                <span class="nav-dropdown-heading">Khác</span>
+                                <a href="category-chi-tiet.html?id=do-ban-tai"><i class="fa-solid fa-truck-pickup"></i> Đồ Bán Tải</a>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="has-dropdown">
+                        <div class="nav-item-row">
+                            <a href="san-pham.html">Sản Phẩm <i class="fa-solid fa-chevron-down nav-caret"></i></a>
+                            <button type="button" class="nav-dropdown-toggle" aria-label="Xem danh mục Sản Phẩm"><i class="fa-solid fa-chevron-down"></i></button>
+                        </div>
+                        <div class="nav-dropdown" id="navProductsDropdown"></div>
+                    </li>
+                    <li><a href="#tech">Công Nghệ</a></li>
                     <li><a href="#contact">Liên Hệ</a></li>
                 </ul>
             </nav>
@@ -240,35 +270,119 @@
             </div>
         </section>
 
-        <section id="project">
+        <section id="tech">
             <div class="container">
-                <div class="section-header"><h2 class="section-title">CÔNG TRÌNH TIÊU BIỂU</h2></div>
-                <div class="project-grid">
-                    <div class="project-item">
-                        <img src="https://images.unsplash.com/photo-1552519507-da3b142c6e3d?q=80&w=800&auto=format&fit=crop" alt="Công trình nâng cấp xe hơi số 1" loading="lazy">
-                    </div>
-                    <div class="project-item">
-                        <img src="https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?q=80&w=800&auto=format&fit=crop" alt="Công trình nâng cấp xe hơi số 2" loading="lazy">
-                    </div>
-                    <div class="project-item">
-                        <img src="https://images.unsplash.com/photo-1517524008697-84bbe3c3fd98?q=80&w=800&auto=format&fit=crop" alt="Công trình nâng cấp xe hơi số 3" loading="lazy">
-                    </div>
+                <div class="section-header">
+                    <span class="tech-eyebrow">Công Nghệ Thật - Sản Phẩm Thật</span>
+                    <h2 class="section-title">GIẢI MÃ CÔNG NGHỆ</h2>
+                    <p class="tech-intro">Không phải món "đồ chơi ô tô" nào cũng như nhau. Đây là 4 công nghệ thật sự đang được Đức Hiếu Auto tin dùng — mỗi sản phẩm một câu chuyện, một lý do khiến chúng tôi lựa chọn cho khách hàng.</p>
+                </div>
+
+                <div class="tech-story-grid">
+                    <a class="tech-story-card" href="san-pham-chi-tiet.html?id=xpel-ultimate-plus" data-aos="fade-up">
+                        <div class="tech-story-img">
+                            <img src="assets/images/products/xpel-ultimate-plus/anh-1.jpg" alt="XPEL Ultimate Plus" loading="lazy">
+                            <span class="tech-story-tag">PPF - Bảo Vệ Sơn Xe</span>
+                        </div>
+                        <div class="tech-story-body">
+                            <h3>Vết Xước Tự Biến Mất</h3>
+                            <p>Một lớp phim trong suốt có thể tự "chữa lành" vết xước chỉ sau vài phút dưới nắng — đó là điều <strong>XPEL Ultimate Plus</strong> làm được nhờ công nghệ Clear Coat tự phục hồi 4 lớp, gần như vô hình trên thân xe, chặn đứng tia UV và đá văng trên mọi hành trình.</p>
+                            <span class="tech-story-link">Tìm hiểu thêm <i class="fa-solid fa-arrow-right"></i></span>
+                        </div>
+                    </a>
+
+                    <a class="tech-story-card" href="san-pham-chi-tiet.html?id=gtr-premium-2-0" data-aos="fade-up" data-aos-delay="100">
+                        <div class="tech-story-img">
+                            <img src="assets/images/products/gtr-premium-2-0/anh-1.jpg" alt="GTR Premium 2.0" loading="lazy">
+                            <span class="tech-story-tag">Bi LED - Nâng Cấp Ánh Sáng</span>
+                        </div>
+                        <div class="tech-story-body">
+                            <h3>Ánh Sáng Đầu Tiên Trên Thế Giới</h3>
+                            <p><strong>GTR Premium 2.0</strong> là mẫu đèn bi LED đầu tiên trên thế giới dùng 14 nhân LED Osram, đạt chuẩn sản xuất Nhật Bản. Tản nhiệt độc quyền GTR Cooling Ai giữ ánh sáng ổn định suốt hành trình, lớp phủ AR Pro loại bỏ chói mắt xe đối diện — lái đêm an toàn và tự tin hơn.</p>
+                            <span class="tech-story-link">Tìm hiểu thêm <i class="fa-solid fa-arrow-right"></i></span>
+                        </div>
+                    </a>
+
+                    <a class="tech-story-card" href="san-pham-chi-tiet.html?id=jbl-club-605csq" data-aos="fade-up" data-aos-delay="200">
+                        <div class="tech-story-img">
+                            <img src="assets/images/products/jbl-club-605csq/anh-1.jpg" alt="JBL Club 605CSQ" loading="lazy">
+                            <span class="tech-story-tag">Loa Phân Tần - Âm Thanh</span>
+                        </div>
+                        <div class="tech-story-body">
+                            <h3>Sân Khấu Âm Nhạc Trong Cabin</h3>
+                            <p>Với bộ loa mid-bass, tweeter và phân tần tách rời, <strong>JBL Club 605CSQ</strong> cho phép bố trí "sân khấu âm thanh" theo đúng ý bạn — âm thanh tách bạch, chi tiết đến từng nốt nhạc. Lựa chọn của những ai không chấp nhận dàn âm thanh nguyên bản tầm thường.</p>
+                            <span class="tech-story-link">Tìm hiểu thêm <i class="fa-solid fa-arrow-right"></i></span>
+                        </div>
+                    </a>
+
+                    <a class="tech-story-card" href="san-pham-chi-tiet.html?id=warn-vr-evo-12s" data-aos="fade-up" data-aos-delay="300">
+                        <div class="tech-story-img">
+                            <img src="assets/images/products/warn-vr-evo-12s/anh-1.jpg" alt="WARN VR EVO 12-S" loading="lazy">
+                            <span class="tech-story-tag">Tời Điện - Cứu Hộ Địa Hình</span>
+                        </div>
+                        <div class="tech-story-body">
+                            <h3>Sẵn Sàng Cho Mọi Địa Hình</h3>
+                            <p>Khi bánh xe lún sâu trong bùn hay cần vượt chướng ngại, <strong>WARN VR EVO 12-S</strong> là người bạn đồng hành đáng tin cậy — chuẩn chống nước IP68, thân nhôm nguyên khối, sản xuất tại Hoa Kỳ, điều khiển 2 trong 1 có dây và không dây.</p>
+                            <span class="tech-story-link">Tìm hiểu thêm <i class="fa-solid fa-arrow-right"></i></span>
+                        </div>
+                    </a>
                 </div>
             </div>
         </section>
 
         <section id="contact">
-            <div class="container contact-container">
-                <div class="contact-info-text">
-                    <h2 class="section-title">LIÊN HỆ VỚI <br><span class="text-primary">ĐỨC HIẾU AUTO</span></h2>
-                    <p>Đội ngũ kỹ thuật viên luôn sẵn sàng tư vấn cho xế cưng của bạn.</p>
+            <div class="container">
+                <div class="section-header">
+                    <span class="tech-eyebrow">Luôn Sẵn Sàng Hỗ Trợ Bạn</span>
+                    <h2 class="section-title">KẾT NỐI VỚI <span class="text-primary">ĐỨC HIẾU AUTO</span></h2>
+                    <p class="tech-intro">Dù bạn muốn gọi ngay, nhắn tin nhanh hay ghé trực tiếp cửa hàng — chọn cách thuận tiện nhất với bạn. Đội ngũ kỹ thuật viên luôn sẵn sàng tư vấn cho xế cưng của bạn.</p>
                 </div>
-                <form class="contact-form" action="https://formspree.io/f/xdarpjzq" method="POST">
-                    <div class="form-group"><input type="text" name="name" placeholder="Họ và tên" required></div>
-                    <div class="form-group"><input type="email" name="email" placeholder="Email" required></div>
-                    <div class="form-group"><textarea name="message" rows="5" placeholder="Nội dung" required></textarea></div>
-                    <button type="submit" class="btn btn-primary">Gửi Yêu Cầu</button>
-                </form>
+
+                <div class="contact-channels">
+                    <a href="tel:0869110237" class="contact-channel-card">
+                        <div class="contact-channel-icon"><i class="fa-solid fa-phone-volume"></i></div>
+                        <h3>Gọi Ngay</h3>
+                        <p>Tư vấn trực tiếp, nhanh chóng</p>
+                        <span class="contact-channel-value">0869 110 237</span>
+                    </a>
+                    <a href="https://zalo.me/0869110237" target="_blank" rel="noopener" class="contact-channel-card">
+                        <div class="contact-channel-icon contact-channel-zalo"><i class="fa-solid fa-comment-dots"></i></div>
+                        <h3>Chat Zalo</h3>
+                        <p>Gửi ảnh xe, nhận báo giá tức thì</p>
+                        <span class="contact-channel-value">Nhắn tin ngay</span>
+                    </a>
+                    <a href="https://www.facebook.com/thanhphatautocar" target="_blank" rel="noopener" class="contact-channel-card">
+                        <div class="contact-channel-icon contact-channel-messenger"><i class="fa-brands fa-facebook-messenger"></i></div>
+                        <h3>Messenger</h3>
+                        <p>Kết nối qua Facebook</p>
+                        <span class="contact-channel-value">Nhắn tin ngay</span>
+                    </a>
+                    <a href="https://www.google.com/maps/search/?api=1&query=123+L%C3%BD+Th%C3%A1i+T%E1%BB%95+Bu%C3%B4n+Ma+Thu%E1%BA%ADt+%C4%90%C4%83k+L%C4%83k" target="_blank" rel="noopener" class="contact-channel-card">
+                        <div class="contact-channel-icon contact-channel-map"><i class="fa-solid fa-location-dot"></i></div>
+                        <h3>Ghé Cửa Hàng</h3>
+                        <p>123 Lý Thái Tổ, Buôn Ma Thuật</p>
+                        <span class="contact-channel-value">Xem chỉ đường</span>
+                    </a>
+                </div>
+
+                <div class="contact-main">
+                    <div class="contact-form-wrap">
+                        <h3>Để Lại Lời Nhắn</h3>
+                        <p>Điền thông tin bên dưới, chúng tôi sẽ liên hệ tư vấn trong thời gian sớm nhất.</p>
+                        <form class="contact-form" action="https://formspree.io/f/xdarpjzq" method="POST">
+                            <div class="form-row">
+                                <div class="form-group"><input type="text" name="name" placeholder="Họ và tên" required></div>
+                                <div class="form-group"><input type="tel" name="phone" placeholder="Số điện thoại" required></div>
+                            </div>
+                            <div class="form-group"><input type="email" name="email" placeholder="Email"></div>
+                            <div class="form-group"><textarea name="message" rows="4" placeholder="Bạn cần tư vấn dịch vụ gì?" required></textarea></div>
+                            <button type="submit" class="btn btn-primary"><i class="fa-solid fa-paper-plane"></i> Gửi Yêu Cầu Tư Vấn</button>
+                        </form>
+                    </div>
+                    <div class="contact-map-wrap">
+                        <iframe src="https://www.google.com/maps?q=123+L%C3%BD+Th%C3%A1i+T%E1%BB%95,+Bu%C3%B4n+Ma+Thu%E1%BA%ADt,+%C4%90%E1%BA%AFk+L%E1%BA%AFk&output=embed" width="100%" height="100%" style="border:0;" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Bản đồ Đức Hiếu Auto"></iframe>
+                    </div>
+                </div>
             </div>
         </section>
     </main>
@@ -276,40 +390,52 @@
     <footer id="footer">
         <div class="container footer-inner">
             <div class="footer-col brand-col">
-                <h3>ĐỨC HIẾU AUTO</h3>
-                <p class="footer-desc">Trung tâm nâng cấp và chăm sóc ô tô chuyên nghiệp.</p>
+                <h3>ĐỨC HIẾU <span>AUTO</span></h3>
+                <p class="footer-desc">Trung tâm nâng cấp và chăm sóc ô tô chuyên nghiệp tại Buôn Ma Thuột — màn hình, âm thanh, ánh sáng, PPF và phụ kiện bán tải chính hãng.</p>
+                <ul class="contact-info">
+                    <li><i class="fa-solid fa-location-dot"></i> 123 Lý Thái Tổ, Buôn Ma Thuột, Đắk Lắk</li>
+                    <li><i class="fa-solid fa-phone"></i> <a href="tel:0869110237">0869 110 237</a></li>
+                    <li><i class="fa-solid fa-envelope"></i> <a href="mailto:contact.duchieuauto47@gmail.com">contact.duchieuauto47@gmail.com</a></li>
+                </ul>
                 <div class="social-links">
-                    <a href="#" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
-                    <a href="#" aria-label="Zalo"><i class="fa-solid fa-comment-dots"></i></a>
-                    <a href="#" aria-label="Youtube"><i class="fa-brands fa-youtube"></i></a>
+                    <a href="https://www.facebook.com/thanhphatautocar" target="_blank" rel="noopener" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="https://zalo.me/0869110237" target="_blank" rel="noopener" aria-label="Zalo"><i class="fa-solid fa-comment-dots"></i></a>
                 </div>
             </div>
             <div class="footer-col">
-                <h3>Dịch Vụ</h3>
+                <h3>Nội Thất Ô Tô</h3>
                 <ul>
                     <li><a href="category-chi-tiet.html?id=man-hinh-o-to">Màn Hình Ô Tô</a></li>
-                    <li><a href="category-chi-tiet.html?id=am-thanh-cach-am-oto">Âm Thanh - Cách Âm Ô Tô</a></li>
-                    <li><a href="category-chi-tiet.html?id=camera-hanh-trinh">Camera Hành Trình - 360 Độ</a></li>
+                    <li><a href="category-chi-tiet.html?id=am-thanh-cach-am-oto">Âm Thanh - Cách Âm</a></li>
+                    <li><a href="category-chi-tiet.html?id=android-box-o-to">Android Box Ô Tô</a></li>
+                    <li><a href="category-chi-tiet.html?id=camera-hanh-trinh">Camera Hành Trình - 360</a></li>
                 </ul>
             </div>
             <div class="footer-col">
-                <h3>Liên Kết</h3>
+                <h3>Ngoại Thất & Khác</h3>
+                <ul>
+                    <li><a href="category-chi-tiet.html?id=dan-phim-cach-nhiet">Film Cách Nhiệt</a></li>
+                    <li><a href="category-chi-tiet.html?id=ppf-wrap-doi-mau">PPF - Wrap Đổi Màu</a></li>
+                    <li><a href="category-chi-tiet.html?id=do-den">Nâng Cấp Ánh Sáng</a></li>
+                    <li><a href="category-chi-tiet.html?id=do-ban-tai">Đồ Bán Tải</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>Liên Kết Nhanh</h3>
                 <ul>
                     <li><a href="index.html">Trang Chủ</a></li>
                     <li><a href="#about">Giới Thiệu</a></li>
                     <li><a href="san-pham.html">Sản Phẩm</a></li>
-                </ul>
-            </div>
-            <div class="footer-col">
-                <h3>Liên Hệ</h3>
-                <ul class="contact-info">
-                    <li><i class="fa-solid fa-location-dot"></i> 123 Lý Thái Tổ, Buôn Ma Thuật, Đăk Lăk</li>
-                    <li><i class="fa-solid fa-phone"></i> 0869 110 237</li>
+                    <li><a href="#tech">Công Nghệ</a></li>
+                    <li><a href="#contact">Liên Hệ</a></li>
                 </ul>
             </div>
         </div>
         <div class="footer-bottom">
-            <p>© 2026 Đức Hiếu Auto. All rights reserved.</p>
+            <div class="container footer-bottom-inner">
+                <p>© 2026 Đức Hiếu Auto. All rights reserved.</p>
+                <p class="footer-credit">Buôn Ma Thuột, Đắk Lắk</p>
+            </div>
         </div>
     </footer>
 
@@ -346,6 +472,9 @@
         // Render dải logo thương hiệu chạy - mỗi logo liên kết tới trang thương hiệu tương ứng
         renderBrandMarquee(".brand-marquee-track");
 
+        // Render dropdown "Sản Phẩm" trên header - mỗi danh mục kèm flyout thương hiệu thật khi rê chuột
+        renderNavProductsDropdown("#navProductsDropdown");
+
         // Khởi tạo hiệu ứng cuộn AOS
         AOS.init({ duration: 800, once: true });
 
@@ -370,6 +499,22 @@
         }, { threshold: 0.5 });
         statEls.forEach(el => statObserver.observe(el));
 
+        // Scroll-spy: tự động gạch chân đúng mục trên header khi cuộn qua từng section (Trang Chủ / Giới Thiệu / Dịch Vụ / Công Nghệ / Liên Hệ)
+        const spySections = document.querySelectorAll('#hero, #about, #service, #tech, #contact');
+        const navLinksSpy = document.querySelectorAll('.main-nav a[href^="#"]');
+        const setActiveNav = (id) => {
+            navLinksSpy.forEach(a => {
+                const href = a.getAttribute('href');
+                a.classList.toggle('active', id === 'hero' ? href === '#' : href === '#' + id);
+            });
+        };
+        const spyObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) setActiveNav(entry.target.id);
+            });
+        }, { rootMargin: '-40% 0px -55% 0px', threshold: 0 });
+        spySections.forEach(sec => spyObserver.observe(sec));
+
         // Khởi tạo Swiper cho slider sản phẩm
         new Swiper('.product-slider', {
             slidesPerView: 1,
@@ -391,6 +536,13 @@
         const nav = document.querySelector('.main-nav');
         menuToggle.addEventListener('click', () => {
             nav.classList.toggle('active');
+        });
+
+        // Xổ/thu dropdown "Dịch Vụ" / "Sản Phẩm" trên mobile (bấm nút mũi tên riêng)
+        document.querySelectorAll('.nav-dropdown-toggle').forEach(btn => {
+            btn.addEventListener('click', () => {
+                btn.closest('.has-dropdown').classList.toggle('dropdown-open');
+            });
         });
 
         // Nút Back to Top

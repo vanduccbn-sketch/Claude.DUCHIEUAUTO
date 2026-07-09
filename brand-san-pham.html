@@ -38,9 +38,39 @@
                 <ul>
                     <li><a href="index.html">Trang Chủ</a></li>
                     <li><a href="index.html#about">Giới Thiệu</a></li>
-                    <li><a href="index.html#service">Dịch Vụ</a></li>
-                    <li><a href="san-pham.html">Sản Phẩm</a></li>
-                    <li><a href="index.html#project">Công Trình</a></li>
+                    <li class="has-dropdown">
+                        <div class="nav-item-row">
+                            <a href="index.html#service">Dịch Vụ <i class="fa-solid fa-chevron-down nav-caret"></i></a>
+                            <button type="button" class="nav-dropdown-toggle" aria-label="Xem danh mục Dịch Vụ"><i class="fa-solid fa-chevron-down"></i></button>
+                        </div>
+                        <div class="nav-dropdown nav-dropdown-mega">
+                            <div class="nav-dropdown-col">
+                                <span class="nav-dropdown-heading">Nội Thất Ô Tô</span>
+                                <a href="category-chi-tiet.html?id=man-hinh-o-to"><i class="fa-solid fa-tablet-screen-button"></i> Màn Hình Ô Tô</a>
+                                <a href="category-chi-tiet.html?id=am-thanh-cach-am-oto"><i class="fa-solid fa-volume-high"></i> Âm Thanh - Cách Âm Ô Tô</a>
+                                <a href="category-chi-tiet.html?id=android-box-o-to"><i class="fa-solid fa-box"></i> Android Box Ô Tô</a>
+                                <a href="category-chi-tiet.html?id=camera-hanh-trinh"><i class="fa-solid fa-video"></i> Camera Hành Trình - 360 Độ</a>
+                            </div>
+                            <div class="nav-dropdown-col">
+                                <span class="nav-dropdown-heading">Ngoại Thất Ô Tô</span>
+                                <a href="category-chi-tiet.html?id=dan-phim-cach-nhiet"><i class="fa-solid fa-layer-group"></i> Film Cách Nhiệt</a>
+                                <a href="category-chi-tiet.html?id=ppf-wrap-doi-mau"><i class="fa-solid fa-shield-halved"></i> PPF - Wrap Đổi Màu</a>
+                                <a href="category-chi-tiet.html?id=do-den"><i class="fa-solid fa-lightbulb"></i> Nâng Cấp Ánh Sáng</a>
+                            </div>
+                            <div class="nav-dropdown-col">
+                                <span class="nav-dropdown-heading">Khác</span>
+                                <a href="category-chi-tiet.html?id=do-ban-tai"><i class="fa-solid fa-truck-pickup"></i> Đồ Bán Tải</a>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="has-dropdown">
+                        <div class="nav-item-row">
+                            <a href="san-pham.html">Sản Phẩm <i class="fa-solid fa-chevron-down nav-caret"></i></a>
+                            <button type="button" class="nav-dropdown-toggle" aria-label="Xem danh mục Sản Phẩm"><i class="fa-solid fa-chevron-down"></i></button>
+                        </div>
+                        <div class="nav-dropdown" id="navProductsDropdown"></div>
+                    </li>
+                    <li><a href="index.html#tech">Công Nghệ</a></li>
                     <li><a href="index.html#contact">Liên Hệ</a></li>
                 </ul>
             </nav>
@@ -72,31 +102,53 @@
     <footer id="footer">
         <div class="container footer-inner">
             <div class="footer-col brand-col">
-                <h3>ĐỨC HIẾU AUTO</h3>
-                <p class="footer-desc">Trung tâm nâng cấp và chăm sóc ô tô chuyên nghiệp.</p>
+                <h3>ĐỨC HIẾU <span>AUTO</span></h3>
+                <p class="footer-desc">Trung tâm nâng cấp và chăm sóc ô tô chuyên nghiệp tại Buôn Ma Thuột — màn hình, âm thanh, ánh sáng, PPF và phụ kiện bán tải chính hãng.</p>
+                <ul class="contact-info">
+                    <li><i class="fa-solid fa-location-dot"></i> 123 Lý Thái Tổ, Buôn Ma Thuột, Đắk Lắk</li>
+                    <li><i class="fa-solid fa-phone"></i> <a href="tel:0869110237">0869 110 237</a></li>
+                    <li><i class="fa-solid fa-envelope"></i> <a href="mailto:contact.duchieuauto47@gmail.com">contact.duchieuauto47@gmail.com</a></li>
+                </ul>
                 <div class="social-links">
-                    <a href="#" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
-                    <a href="#" aria-label="Zalo"><i class="fa-solid fa-comment-dots"></i></a>
-                    <a href="#" aria-label="Youtube"><i class="fa-brands fa-youtube"></i></a>
+                    <a href="https://www.facebook.com/thanhphatautocar" target="_blank" rel="noopener" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="https://zalo.me/0869110237" target="_blank" rel="noopener" aria-label="Zalo"><i class="fa-solid fa-comment-dots"></i></a>
                 </div>
             </div>
             <div class="footer-col">
-                <h3>Liên Kết</h3>
+                <h3>Nội Thất Ô Tô</h3>
+                <ul>
+                    <li><a href="category-chi-tiet.html?id=man-hinh-o-to">Màn Hình Ô Tô</a></li>
+                    <li><a href="category-chi-tiet.html?id=am-thanh-cach-am-oto">Âm Thanh - Cách Âm</a></li>
+                    <li><a href="category-chi-tiet.html?id=android-box-o-to">Android Box Ô Tô</a></li>
+                    <li><a href="category-chi-tiet.html?id=camera-hanh-trinh">Camera Hành Trình - 360</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>Ngoại Thất & Khác</h3>
+                <ul>
+                    <li><a href="category-chi-tiet.html?id=dan-phim-cach-nhiet">Film Cách Nhiệt</a></li>
+                    <li><a href="category-chi-tiet.html?id=ppf-wrap-doi-mau">PPF - Wrap Đổi Màu</a></li>
+                    <li><a href="category-chi-tiet.html?id=do-den">Nâng Cấp Ánh Sáng</a></li>
+                    <li><a href="category-chi-tiet.html?id=do-ban-tai">Đồ Bán Tải</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>Liên Kết Nhanh</h3>
                 <ul>
                     <li><a href="index.html">Trang Chủ</a></li>
                     <li><a href="index.html#about">Giới Thiệu</a></li>
                     <li><a href="san-pham.html">Sản Phẩm</a></li>
-                </ul>
-            </div>
-            <div class="footer-col">
-                <h3>Liên Hệ</h3>
-                <ul class="contact-info">
-                    <li><i class="fa-solid fa-location-dot"></i> 123 Lý Thái Tổ, Buôn Ma Thuật, Đăk Lăk</li>
-                    <li><i class="fa-solid fa-phone"></i> 0869 110 237</li>
+                    <li><a href="index.html#tech">Công Nghệ</a></li>
+                    <li><a href="index.html#contact">Liên Hệ</a></li>
                 </ul>
             </div>
         </div>
-        <div class="footer-bottom"><p>© 2026 Đức Hiếu Auto. All rights reserved.</p></div>
+        <div class="footer-bottom">
+            <div class="container footer-bottom-inner">
+                <p>© 2026 Đức Hiếu Auto. All rights reserved.</p>
+                <p class="footer-credit">Buôn Ma Thuột, Đắk Lắk</p>
+            </div>
+        </div>
     </footer>
 
     <!-- Widget liên hệ nhanh: Zalo / Messenger / Điện thoại -->
@@ -124,10 +176,18 @@
     <script src="assets/js/catalog-render.js"></script>
     <script>
         renderBrandProducts();
+        renderNavProductsDropdown("#navProductsDropdown");
 
         const menuToggle = document.querySelector('.menu-toggle');
         const nav = document.querySelector('.main-nav');
         menuToggle.addEventListener('click', () => nav.classList.toggle('active'));
+
+        // Xổ/thu dropdown "Dịch Vụ" / "Sản Phẩm" trên mobile (bấm nút mũi tên riêng)
+        document.querySelectorAll('.nav-dropdown-toggle').forEach(btn => {
+            btn.addEventListener('click', () => {
+                btn.closest('.has-dropdown').classList.toggle('dropdown-open');
+            });
+        });
 
         const quickContact = document.getElementById('quickContact');
         const quickContactToggle = document.getElementById('quickContactToggle');

@@ -1,4 +1,4 @@
-#contact { position: relative; padding: 100px 0 90px; background: linear-gradient(160deg, #15171c 0%, #1c1730 100%); color: var(--white); overflow: hidden; }
+#contact { position: relative; padding: 80px 0 70px; background: linear-gradient(160deg, #15171c 0%, #1c1730 100%); color: var(--white); overflow: hidden; }
 #contact::before { content: ''; position: absolute; top: -220px; right: -180px; width: 520px; height: 520px; border-radius: 50%; background: radial-gradient(circle, rgba(228, 0, 43, 0.18), transparent 70%); pointer-events: none; }
 #contact::after { content: ''; position: absolute; bottom: -220px; left: -180px; width: 520px; height: 520px; border-radius: 50%; background: radial-gradient(circle, rgba(0, 102, 179, 0.14), transparent 70%); pointer-events: none; }
 #contact .container { position: relative; z-index: 1; }
@@ -6,10 +6,10 @@
 #contact .tech-intro { color: var(--gray-light); }
 
 /* ---------- 4 kênh liên hệ nhanh ---------- */
-.contact-channels { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 60px; }
-.contact-channel-card { display: flex; flex-direction: column; align-items: flex-start; padding: 26px 22px; background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 14px; transition: var(--transition); color: inherit; }
+.contact-channels { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 36px; }
+.contact-channel-card { display: flex; flex-direction: column; align-items: flex-start; padding: 20px 20px; background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 14px; transition: var(--transition); color: inherit; }
 .contact-channel-card:hover { background: rgba(255, 255, 255, 0.07); border-color: var(--primary); transform: translateY(-6px); box-shadow: var(--shadow-lg); }
-.contact-channel-icon { width: 52px; height: 52px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; color: var(--white); background: var(--primary); margin-bottom: 16px; transition: var(--transition); }
+.contact-channel-icon { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 17px; color: var(--white); background: var(--primary); margin-bottom: 12px; transition: var(--transition); }
 .contact-channel-card:hover .contact-channel-icon { transform: scale(1.1) rotate(-6deg); }
 .contact-channel-zalo { background: #0068ff; }
 .contact-channel-messenger { background: linear-gradient(45deg, #00b2ff, #a033ff, #ff5280, #ff7061); }
@@ -20,31 +20,31 @@
 
 /* ---------- Form + bản đồ ---------- */
 .contact-main { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; align-items: stretch; }
-.contact-form-wrap { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; padding: 36px; }
-.contact-form-wrap h3 { font-family: var(--font-title); font-size: 26px; letter-spacing: 0.5px; color: var(--white); margin-bottom: 8px; }
-.contact-form-wrap > p { color: var(--gray-light); font-size: 14px; margin-bottom: 26px; line-height: 1.6; }
-.contact-form { display: flex; flex-direction: column; gap: 6px; }
+.contact-form-wrap { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; padding: 28px; }
+.contact-form-wrap h3 { font-family: var(--font-title); font-size: 24px; letter-spacing: 0.5px; color: var(--white); margin-bottom: 6px; }
+.contact-form-wrap > p { color: var(--gray-light); font-size: 14px; margin-bottom: 18px; line-height: 1.6; }
+.contact-form { display: flex; flex-direction: column; gap: 4px; }
 .form-row { display: flex; gap: 14px; }
 .form-row .form-group { flex: 1; }
-.form-group { margin-bottom: 15px; }
+.form-group { margin-bottom: 12px; }
 .form-group input, .form-group textarea, input, textarea { width: 100%; padding: 14px 16px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.12); color: var(--white); border-radius: 8px; font-family: inherit; font-size: 14px; transition: var(--transition); }
 input::placeholder, textarea::placeholder { color: var(--gray); }
 input:focus, textarea:focus { outline: none; border-color: var(--primary); background: rgba(255, 255, 255, 0.08); }
 .contact-form button { display: inline-flex; align-items: center; justify-content: center; gap: 10px; background: var(--primary); color: var(--white); padding: 15px 30px; border: none; border-radius: 8px; cursor: pointer; width: 100%; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; transition: var(--transition); }
 .contact-form button:hover { background: var(--m-blue); transform: translateY(-2px); box-shadow: var(--shadow-lg); }
 
-.contact-map-wrap { position: relative; border-radius: 16px; overflow: hidden; min-height: 320px; border: 1px solid rgba(255, 255, 255, 0.08); }
-.contact-map-wrap iframe { width: 100%; height: 100%; min-height: 320px; display: block; filter: grayscale(0.25) contrast(1.05) brightness(0.92); }
+.contact-map-wrap { position: relative; border-radius: 16px; overflow: hidden; min-height: 260px; border: 1px solid rgba(255, 255, 255, 0.08); }
+.contact-map-wrap iframe { width: 100%; height: 100%; min-height: 260px; display: block; filter: grayscale(0.25) contrast(1.05) brightness(0.92); }
 
 @media (max-width: 991px) {
     .contact-channels { grid-template-columns: repeat(2, 1fr); }
     .contact-main { grid-template-columns: 1fr; }
-    .contact-map-wrap { min-height: 260px; }
-    .contact-map-wrap iframe { min-height: 260px; }
+    .contact-map-wrap { min-height: 240px; }
+    .contact-map-wrap iframe { min-height: 240px; }
 }
 @media (max-width: 576px) {
-    #contact { padding: 60px 0; }
+    #contact { padding: 50px 0; }
     .contact-channels { grid-template-columns: 1fr; }
-    .contact-form-wrap { padding: 24px; }
+    .contact-form-wrap { padding: 22px; }
     .form-row { flex-direction: column; gap: 0; }
 }

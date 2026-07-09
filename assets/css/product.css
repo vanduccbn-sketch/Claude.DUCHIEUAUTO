@@ -1,6 +1,6 @@
-#product { padding: 70px 0; background-color: var(--bg-alt); position: relative; }
+#product { padding: 90px 0; background-color: var(--bg-alt); position: relative; }
 #product .section-title { margin-bottom: 24px; }
-.product-slider { padding: 10px 0 44px 0; }
+.product-slider { padding: 10px 0 30px 0; }
 .product-card { background-color: var(--dark); border-radius: 8px; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.06); transition: var(--transition); height: 100%; display: flex; flex-direction: column; box-shadow: var(--shadow-sm); }
 .product-card:hover { transform: translateY(-10px); box-shadow: var(--shadow-lg); border-color: var(--primary); }
 .product-img { position: relative; height: 175px; overflow: hidden; background-color: #1c1e24; }
@@ -22,7 +22,7 @@
 .product-price { font-family: var(--font-title); font-size: 22px; letter-spacing: 0.5px; font-weight: 700; color: var(--primary); }
 .product-price-tag { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #FF9F1C; background: rgba(255, 159, 28, 0.14); border: 1px solid rgba(255, 159, 28, 0.4); padding: 3px 9px; border-radius: 20px; }
 
-.view-all-cta { margin-top: 28px; display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 22px 32px; border-radius: 12px; background: var(--gradient-m-stripe); color: var(--white); text-decoration: none; box-shadow: var(--shadow-md); transition: var(--transition); }
+.view-all-cta { margin-top: 8px; display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 22px 32px; border-radius: 12px; background: var(--gradient-m-stripe); color: var(--white); text-decoration: none; box-shadow: var(--shadow-md); transition: var(--transition); }
 .view-all-cta:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
 .view-all-cta-label { display: block; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; opacity: 0.85; margin-bottom: 4px; }
 .view-all-cta-text h3 { font-family: var(--font-title); font-size: 23px; letter-spacing: 0.5px; margin: 0 0 4px; color: var(--white); }

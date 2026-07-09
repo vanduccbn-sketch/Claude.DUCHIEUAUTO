@@ -97,6 +97,60 @@
     50% { transform: translateY(6px); }
 }
 
+/* ---------- Nội dung chuẩn SEO (giới thiệu dịch vụ theo từng danh mục) ----------
+   Chỉ hiển thị khi category có field "seo" trong catalog-data.js - ảnh minh hoạ
+   trôi (float) bên phải trên desktop, xếp trên nội dung trên di động. */
+.category-seo-content {
+    max-width: 900px;
+    margin: 0 auto 40px;
+    color: var(--text-muted);
+    line-height: 1.75;
+}
+
+.category-seo-figure {
+    float: right;
+    width: 300px;
+    margin: 0 0 20px 28px;
+}
+
+.category-seo-figure img {
+    width: 100%;
+    border-radius: 10px;
+    box-shadow: var(--shadow-md);
+    display: block;
+}
+
+.category-seo-figure figcaption {
+    font-size: 12.5px;
+    color: var(--gray, var(--text-muted));
+    margin-top: 8px;
+    line-height: 1.5;
+}
+
+.category-seo-intro {
+    font-size: 1.05rem;
+    color: var(--text-color);
+    margin-bottom: 22px;
+}
+
+.category-seo-content h2 {
+    font-family: var(--font-title);
+    font-size: 1.5rem;
+    letter-spacing: 0.5px;
+    color: var(--text-color);
+    text-transform: uppercase;
+    margin: 28px 0 12px;
+}
+
+.category-seo-content p {
+    margin-bottom: 14px;
+}
+
+@media (max-width: 768px) {
+    .category-seo-figure { float: none; width: 100%; margin: 0 0 20px; }
+    .category-seo-content h2 { font-size: 1.25rem; }
+}
+
 /* ---------- Danh sách thương hiệu ----------
    Dùng flexbox (không phải grid) để hàng cuối thiếu ô (VD chỉ có 3 hãng)
    tự động canh giữa thay vì dạt về bên trái. */
@@ -114,9 +168,10 @@
     flex: 0 1 calc(25% - 12px);
     min-width: 220px;
     background-color: var(--bg-alt);
-    border: 1px solid var(--border-color-light);
+    border: 1px solid rgba(0, 0, 0, 0.12);
     border-radius: 8px;
     padding: 24px 20px;
+    box-shadow: var(--shadow-sm);
     transition: var(--transition);
 }
 

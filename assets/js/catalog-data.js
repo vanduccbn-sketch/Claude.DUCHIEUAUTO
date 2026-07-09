@@ -24,6 +24,27 @@ const CATALOG = {
       id: "man-hinh-o-to",
       name: "Màn Hình Ô Tô",
       poster: "assets/images/products-category/man-hinh-o-to/poster.jpg",
+      seo: {
+        title: "Màn Hình Android Ô Tô Chính Hãng Gotech, Zestech, Teyes | Đức Hiếu Auto",
+        metaDescription: "Lắp màn hình Android ô tô chính hãng Gotech, Zestech, Teyes tại Đức Hiếu Auto Buôn Ma Thuột - chip 8 nhân, camera 360, cảnh báo tốc độ, tư vấn đúng nhu cầu sử dụng thực tế.",
+        image: "assets/images/products/zestech-zx10-cao-cap/anh-1.jpg",
+        imageCaption: "Zestech ZX10 Bản Cao Cấp - một trong các dòng màn hình Android chính hãng tại Đức Hiếu Auto",
+        intro: "Một chiếc màn hình Android thay thế cụm radio/DVD zin không chỉ để xem to hơn - nó mở ra bản đồ chỉ đường, camera lùi/360, cảnh báo tốc độ và cả kho ứng dụng giải trí. Nhưng khác với TV hay điện thoại, thứ quyết định một màn hình ô tô dùng có mượt hay không lại nằm ở phần cấu hình bên trong chứ không phải kích thước màn hình, và đây cũng là chỗ nhiều người dễ chọn nhầm.",
+        sections: [
+          {
+            heading: "Chip xử lý và RAM - phần quyết định trải nghiệm dùng hàng ngày",
+            body: "Mức tối thiểu để máy chạy được là chip 4 nhân, xung nhịp 1.5GHz, nhưng đó chỉ là chuẩn cũ và dễ giật lag khi mở nhiều tác vụ cùng lúc. Chuẩn phổ biến hiện nay là chip 8 nhân xung nhịp 1.8-2.0GHz đi kèm RAM tối thiểu 4GB, đủ để vừa dẫn đường, vừa bật camera lùi, vừa nghe nhạc mà không đơ máy. ROM lớn cũng quan trọng không kém vì đây là nơi cài thêm ứng dụng - ROM nhỏ dễ khiến máy đầy bộ nhớ chỉ sau vài lần cập nhật."
+          },
+          {
+            heading: "Camera 360 có thật sự cần thiết với mọi xe?",
+            body: "Camera 360 ghép hình từ 4 camera quanh xe thành một góc nhìn từ trên xuống, rất hữu ích khi len lỏi trong bãi xe hẹp hay khu vực đông đúc. Nhưng nếu xe chủ yếu chạy đường trường, ít khi đỗ ở nơi chật hẹp, bản không camera 360 vẫn đáp ứng tốt nhu cầu mà chi phí thấp hơn hẳn. Đức Hiếu Auto luôn hỏi kỹ thói quen di chuyển của khách trước khi tư vấn, thay vì mặc định chọn bản cao nhất."
+          },
+          {
+            heading: "Kết nối không dây và cảnh báo tốc độ",
+            body: "CarPlay/Android Auto không dây giúp đồng bộ điện thoại ngay khi lên xe, không cần cắm dây mỗi lần sử dụng. Khe SIM 4G cho phép màn hình tự phát wifi và cập nhật dữ liệu bản đồ liên tục. Với các phần mềm dẫn đường có bản quyền tích hợp cảnh báo tốc độ và biển báo giao thông, đây không chỉ là tiện ích giải trí mà còn là yếu tố hỗ trợ lái xe an toàn hơn trên những cung đường lạ."
+          }
+        ]
+      },
       brands: [
         {
           id: "gotech", name: "Gotech", logo: "assets/images/brands/gotech/logo.png",
@@ -54,6 +75,31 @@ const CATALOG = {
       id: "am-thanh-cach-am-oto",
       name: "Âm Thanh - Cách Âm Ô Tô",
       poster: "assets/images/service/cach-am-oto/poster.jpg",
+      seo: {
+        title: "Độ Âm Thanh Ô Tô Đắk Lắk - Loa JBL, Infinity Chính Hãng | Đức Hiếu Auto",
+        metaDescription: "Nâng cấp âm thanh và cách âm ô tô tại Đức Hiếu Auto Buôn Ma Thuột - loa phân tần, DSP, cách âm gốc Butyl chuẩn kỹ thuật với loa JBL, Infinity, Harman/Kardon, Pioneer chính hãng.",
+        image: "assets/images/products/jbl-basspro-lite/anh-1.jpg",
+        imageCaption: "Loa sub JBL Bass Pro LITE - một trong các dòng loa chính hãng đang phân phối tại Đức Hiếu Auto",
+        intro: "Loa zin trên hầu hết xe phổ thông là loa full-range màng giấy mỏng, dùng chung amply tích hợp trên đầu radio với công suất thực chỉ khoảng 15-20W/kênh - đủ để phát nhạc nền chứ chưa thể tái tạo trọn vẹn một bản thu. Cộng thêm khoang lái vốn không được thiết kế cho mục đích nghe nhạc (tôn cửa mỏng, rung ở dải bass, tiếng ồn động cơ và mặt đường lọt vào liên tục), phần lớn chi tiết và chiều sâu của âm thanh gần như biến mất trước khi tới tai người nghe. Nâng cấp âm thanh ô tô đúng nghĩa là làm lại cả một hệ thống khép kín - loa, âm ly, bộ xử lý tín hiệu DSP và cách âm khoang xe - chứ không phải chỉ đổi vài chiếc loa.",
+        sections: [
+          {
+            heading: "Loa đồng trục và loa phân tần - khác nhau ở đâu?",
+            body: "Loa đồng trục (coaxial) gom cả loa mid và loa tweeter vào chung một củ loa, lắp nhanh, chi phí thấp, phù hợp nâng cấp cơ bản. Loa phân tần (component) tách rời loa mid, tweeter và bộ crossover thành các khối riêng, cho phép đặt tweeter đúng hướng tai người nghe - đây là yếu tố quyết định đến sân khấu âm thanh (soundstage), tức cảm giác âm thanh trải rộng và có chiều sâu thay vì dồn cục ở táp-lô. Đổi lại, loa phân tần đòi hỏi thi công tỉ mỉ hơn và gần như bắt buộc phải có âm ly ngoài đi kèm."
+          },
+          {
+            heading: "Bộ xử lý DSP - “nhạc trưởng” điều phối cả dàn âm thanh",
+            body: "DSP (Digital Signal Processor) đảm nhiệm 3 việc mà đầu phát zin không làm được: phân tần điện tử (chia đúng dải tần cho từng loa thay vì để loa gánh cả dải âm không phù hợp), chỉnh EQ theo đặc thù khoang nội thất của từng xe, và căn thời gian (time alignment) bù trừ khoảng cách vật lý từ mỗi loa đến vị trí ngồi. Thiếu bước này, dù lắp loa đắt tiền đến đâu, âm thanh vẫn lệch pha và mất cân bằng. Trong nghề, người ta hay nói kỹ thuật thi công và căn chỉnh DSP quyết định đến quá nửa chất lượng của cả hệ thống - không kém phần thiết bị."
+          },
+          {
+            heading: "Cách âm ô tô: 2 lớp vật liệu, 2 nhiệm vụ khác nhau",
+            body: "Cách âm đúng kỹ thuật không chỉ là dán một lớp cho có. Tấm cách âm gốc cao su Butyl dán ở cửa, sàn và trần có nhiệm vụ triệt rung - hấp thụ dao động của tôn xe, giúp màng loa không phải chống lại độ rung của chính vỏ xe, nhờ vậy tiếng bass gọn và sạch hơn hẳn. Trong khi đó, lớp cao su non phun gầm và hốc bánh xử lý một vấn đề khác: tiếng đá dăm bắn vào gầm, tiếng rít của lốp trên mặt đường nhựa, đồng thời chống ẩm và rỉ sét cho khung gầm. Hai lớp này bổ trợ cho nhau chứ không thay thế được nhau, và cũng là bước nền tảng thường bị bỏ qua khi khách chỉ tập trung đầu tư vào loa."
+          },
+          {
+            heading: "Lắp nhiều loa có chắc sẽ hay hơn?",
+            body: "Đây là hiểu lầm phổ biến nhất khi nói đến độ âm thanh xe hơi. Một hệ thống 4 loa được chọn đúng dải tần, đấu dây OFC chuẩn chống nhiễu và căn chỉnh DSP cẩn thận hoàn toàn có thể hay hơn một dàn 8-10 loa lắp vội mà không phối ghép. Tại Đức Hiếu Auto, mỗi ca lắp đặt đều bắt đầu từ khảo sát xe thực tế và thói quen nghe của khách, tư vấn đúng ngân sách - không đẩy thêm những hạng mục không cần thiết, và luôn đo kiểm, tinh chỉnh lại DSP sau khi lắp xong trước khi bàn giao xe."
+          }
+        ]
+      },
       brands: [
         {
           id: "jbl", name: "JBL", logo: "assets/images/brands/jbl/logo.png",
@@ -93,6 +139,23 @@ const CATALOG = {
       id: "android-box-o-to",
       name: "Android Box Ô Tô",
       poster: "assets/images/products-category/android-box-o-to/poster.jpg",
+      seo: {
+        title: "Android Box Ô Tô Chính Hãng - Biến Màn Hình Zin Thành Android | Đức Hiếu Auto",
+        metaDescription: "Lắp Android Box ô tô chính hãng VIETMAP, Zestech, Carlinkit, Elliview tại Đức Hiếu Auto - giữ nguyên màn hình zin, mở khoá Youtube, bản đồ, cảnh báo tốc độ với chi phí thấp hơn thay màn hình.",
+        image: "assets/images/products/vietmap-box-bs10/anh-1.jpg",
+        imageCaption: "VIETMAP Android Box BS10 - thiết bị biến màn hình zin thành màn hình thông minh, không cần thay màn hình mới",
+        intro: "Android Box là thiết bị cắm thêm vào cổng USB của màn hình zin (hoặc màn hình CarPlay/Android Auto có sẵn) để biến nó thành một màn hình Android đầy đủ tính năng, mà không cần tháo lắp hay thay nguyên cụm màn hình. Đây là giải pháp được nhiều chủ xe chọn khi màn hình zin vẫn còn tốt nhưng thiếu các tiện ích thông minh như bản đồ, camera lùi hay ứng dụng giải trí.",
+        sections: [
+          {
+            heading: "Android Box khác gì CarPlay/Android Auto không dây?",
+            body: "CarPlay và Android Auto là giao diện chiếu màn hình điện thoại lên xe, chỉ chạy được nhóm ứng dụng được Apple/Google cho phép như bản đồ hay nghe nhạc - không thể xem Youtube, Netflix hay dùng các app giải trí khác vì lý do an toàn của nhà sản xuất. Android Box thì khác: nó chạy một hệ điều hành Android độc lập với chip, RAM, ROM riêng, không phụ thuộc vào điện thoại, mở được toàn bộ kho ứng dụng Google Play và có thể gắn SIM 4G riêng để dùng mạng ngay trên xe."
+          },
+          {
+            heading: "Khi nào nên chọn Android Box thay vì đổi màn hình mới?",
+            body: "Nếu màn hình zin trên xe vẫn hiển thị tốt, cảm ứng nhạy và chỉ thiếu tính năng thông minh, lắp thêm Android Box là lựa chọn tiết kiệm hơn nhiều so với thay nguyên cụm màn hình, đồng thời không đụng chạm đến kết cấu hay hệ thống điện của xe. Ngược lại, nếu màn hình zin đã nhỏ, độ phân giải thấp hoặc xuống cấp, đầu tư hẳn một màn hình Android mới sẽ hợp lý hơn về lâu dài. Đức Hiếu Auto luôn kiểm tra màn hình hiện tại của khách trước khi tư vấn, để tránh đề xuất thừa những hạng mục không cần thiết."
+          }
+        ]
+      },
       brands: [
         { id: "vietmap-box", name: "VIETMAP", logo: "assets/images/brands/vietmap-cam/logo.png", products: ["vietmap-box-bs10","vietmap-box-bs10-lite","vietmap-box-bm9"] },
         { id: "zestech-box", name: "Zestech", logo: "assets/images/brands/zestech/logo.svg", products: ["zestech-box-dx165","zestech-box-dx265","zestech-box-dx300","zestech-box-dx350","zestech-box-dx14-plus"] },
@@ -104,6 +167,21 @@ const CATALOG = {
       id: "dan-phim-cach-nhiet",
       name: "Film Cách Nhiệt",
       poster: "assets/images/service/dan-phim-cach-nhiet/poster.jpg",
+      seo: {
+        title: "Dán Phim Cách Nhiệt Ô Tô Chính Hãng 3M, Titan, Global | Đức Hiếu Auto",
+        metaDescription: "Dán phim cách nhiệt ô tô chính hãng 3M, Titan, Global tại Đức Hiếu Auto Buôn Ma Thuột - công nghệ nano ceramic cản nhiệt cao, cản trên 99% tia UV, tư vấn đúng độ trong theo nhu cầu.",
+        intro: "Phim cách nhiệt thường bị nghĩ đơn giản là để làm tối kính cho đẹp hoặc kín đáo hơn, nhưng vai trò quan trọng nhất lại nằm ở khả năng cản nhiệt và cản tia cực tím - giảm nhiệt hấp thụ vào cabin để đỡ tốn điều hoà, đồng thời bảo vệ da và nội thất khỏi tác động của tia UV/hồng ngoại trong thời gian dài.",
+        sections: [
+          {
+            heading: "Nano ceramic và carbon - khác nhau ở khả năng cản nhiệt",
+            body: "Ở cùng một độ trong, phim nano ceramic cản tia hồng ngoại (nguồn nhiệt chính) hiệu quả hơn hẳn phim carbon, nhờ cơ chế vừa hấp thụ vừa phản xạ bớt nhiệt trước khi chạm tới kính. Điều này có nghĩa là một phim ceramic sáng màu, độ trong cao vẫn có thể mát hơn một phim carbon tối màu - khác với suy nghĩ thông thường rằng cứ phim tối là mát hơn. Về khả năng cản tia UV, cả hai công nghệ đều đạt trên 99% ở các dòng phim chính hãng."
+          },
+          {
+            heading: "Chọn độ trong sao cho vừa mát vừa không ảnh hưởng tầm nhìn",
+            body: "Độ trong của phim (VLT) là tỷ lệ ánh sáng xuyên qua được - phim càng tối, VLT càng thấp. Nhiều người có xu hướng chọn phim tối tối đa vì nghĩ vậy mới mát và kín đáo, nhưng phim quá tối lại ảnh hưởng tầm nhìn khi lái ban đêm, đặc biệt ở kính lái. Với phim ceramic chất lượng tốt, hoàn toàn có thể chọn độ trong cao hơn ở kính trước mà vẫn đảm bảo cản nhiệt tốt, trong khi để tối hơn ở kính sau và hông xe để tăng riêng tư - tuỳ theo nhu cầu thực tế của từng khách."
+          }
+        ]
+      },
       brands: [
         { id: "3m-film", name: "3M", logo: "assets/images/brands/3m-film/logo.png", products: ["3m-film-4-cho", "3m-film-5-cho", "3m-film-7-cho"] },
         {
@@ -126,6 +204,23 @@ const CATALOG = {
       id: "camera-hanh-trinh",
       name: "Camera Hành Trình - 360 Độ",
       poster: "assets/images/products-category/camera-hanh-trinh/poster.jpg",
+      seo: {
+        title: "Camera Hành Trình - Camera 360 Ô Tô Chính Hãng VIETMAP, 70mai | Đức Hiếu Auto",
+        metaDescription: "Lắp camera hành trình và camera 360 ô tô chính hãng VIETMAP, 70mai, UTOUR, BlackVue tại Đức Hiếu Auto - độ phân giải Full HD/2K, chống lóa WDR, cảnh báo va chạm G-Sensor.",
+        image: "assets/images/products/vietmap-sc620/anh-1.jpg",
+        imageCaption: "VIETMAP SC620 - camera hành trình trước sau, một trong các dòng chính hãng tại Đức Hiếu Auto",
+        intro: "Phần lớn chủ xe chỉ thật sự cần đến camera hành trình sau khi đã xảy ra va chạm hoặc bị trầy xước không rõ nguyên nhân khi đỗ xe - lúc đó mới nhận ra dữ liệu ghi hình quan trọng đến mức nào. Một hệ thống camera tốt làm được hai việc khác nhau: vừa lưu lại bằng chứng khi có sự cố, vừa hỗ trợ quan sát để tránh sự cố xảy ra ngay từ đầu.",
+        sections: [
+          {
+            heading: "Camera hành trình và camera 360 - khác nhau ở mục đích sử dụng",
+            body: "Camera hành trình (1-2 mắt, trước hoặc trước sau) tập trung vào việc ghi hình liên tục khi xe di chuyển và ghi hình đỗ xe khi đã tắt máy - phù hợp với người thường để xe ở nơi công cộng, không có chỗ đậu riêng. Camera 360 ghép hình từ 4 camera quanh xe thành một góc nhìn toàn cảnh từ trên xuống, hữu ích khi len lỏi trong khu vực đông đúc hoặc bãi đỗ chật hẹp. Hai loại phục vụ hai nhu cầu khác nhau, và không ít trường hợp cần kết hợp cả hai để vừa an toàn khi lái vừa yên tâm khi đỗ."
+          },
+          {
+            heading: "Những thông số không nên bỏ qua khi chọn camera",
+            body: "Độ phân giải nên từ Full HD (1080p) trở lên, nếu ngân sách cho phép thì 2K sẽ đọc rõ được cả biển số xe khác trong tình huống va chạm. Góc quay nên từ 120 độ trở lên để giảm điểm mù. Tính năng chống lóa WDR giúp hình ảnh không bị cháy sáng khi đi ngược nắng hoặc gặp đèn pha xe khác vào ban đêm, còn cảm biến hồng ngoại quyết định camera có nhìn rõ vào ban đêm hay không. Quan trọng không kém là cảm biến va chạm G-Sensor - khi phát hiện va chạm, nó tự động khoá đoạn video liên quan để không bị ghi đè, đảm bảo đúng đoạn bạn cần vẫn còn khi cần trích xuất."
+          }
+        ]
+      },
       brands: [
         { id: "utour", name: "UTOUR", logo: "assets/images/brands/utour/logo.png", products: ["utour-c2l","utour-c2-max","utour-c3l","utour-c3","utour-c3m"] },
         { id: "vietmap-cam", name: "VIETMAP", logo: "assets/images/brands/vietmap-cam/logo.png", products: ["vietmap-sc620","vietmap-v740","vietmap-l110","vietmap-s720","vietmap-r440","vietmap-s860","vietmap-speedmap-m2","vietmap-ts-c1l","vietmap-ts-5k","vietmap-ts-3k","vietmap-ts-2k-lite","vietmap-ts-c1"] },
@@ -138,6 +233,23 @@ const CATALOG = {
       id: "ppf-wrap-doi-mau",
       name: "PPF - Wrap Đổi Màu",
       poster: "assets/images/service/ppf-bao-ve-son-xe/poster.jpg",
+      seo: {
+        title: "PPF Bảo Vệ Sơn Và Wrap Đổi Màu Ô Tô Chính Hãng XPEL, AX Film | Đức Hiếu Auto",
+        metaDescription: "Dán PPF bảo vệ sơn và wrap đổi màu ô tô chính hãng XPEL, AX Film, 3M, Oracal, Avery Dennison tại Đức Hiếu Auto Buôn Ma Thuột - tư vấn đúng nhu cầu bảo vệ hay đổi diện mạo xe.",
+        image: "assets/images/products/xpel-ultimate-plus/anh-1.jpg",
+        imageCaption: "XPEL Ultimate Plus - dòng phim PPF cao cấp với công nghệ tự phục hồi, một trong các thương hiệu chính hãng tại Đức Hiếu Auto",
+        intro: "PPF và wrap đổi màu hay bị gộp chung vì cùng là “dán phim lên xe”, nhưng thực chất hai giải pháp này giải quyết hai nhu cầu hoàn toàn khác nhau - một bên bảo vệ lớp sơn zin, một bên thay đổi diện mạo xe theo sở thích. Hiểu rõ khác biệt sẽ giúp chọn đúng thứ mình thực sự cần thay vì trả tiền cho thứ không phù hợp.",
+        sections: [
+          {
+            heading: "PPF - lớp áo giáp trong suốt cho lớp sơn zin",
+            body: "PPF (Paint Protection Film) là màng phim trong suốt, gần như vô hình khi dán lên xe, thường được ưu tiên ở những vị trí dễ va chạm với đá dăm, côn trùng như nắp capo, cản trước, gương chiếu hậu. Các dòng PPF cao cấp dùng chất liệu TPU còn có khả năng tự phục hồi vết xước nhẹ dưới tác động nhiệt - chỉ cần đỗ xe ngoài nắng hoặc hơ nhẹ máy sấy, vết xước xoáy nhỏ sẽ mờ dần. Vì gần như không đổi màu sắc xe, PPF phù hợp với người muốn giữ nguyên vẹn lớp sơn theo thời gian."
+          },
+          {
+            heading: "Wrap đổi màu - đổi diện mạo, không thay được vai trò bảo vệ",
+            body: "Wrap dùng phim màu (thường gốc PVC/vinyl) để thay đổi màu sắc hoặc hoàn thiện bề mặt xe theo sở thích - từ nhám, bóng đến các tông màu đặc biệt mà không cần sơn lại, và có thể bóc ra để trả về màu zin ban đầu. Tuy nhiên, bản thân wrap không có khả năng chống trầy xước hay tự phục hồi như PPF - một viên đá dăm nhỏ vẫn có thể làm xước lớp phim màu. Nếu vừa muốn đổi màu vừa muốn bảo vệ sơn thật sự, cần kết hợp dán PPF ở các vị trí dễ va chạm trước khi wrap, hoặc chọn dòng phim wrap có thêm lớp bảo vệ."
+          }
+        ]
+      },
       brands: [
         { id: "xpel", name: "XPEL", logo: "assets/images/brands/xpel/logo.png", products: ["xpel-ultimate-plus","xpel-stealth","xpel-tracwrap","xpel-armor"] },
         { id: "ax-film", name: "AX Film", logo: "assets/images/brands/ax-film/logo.png", products: ["ax-ppf-g-series","ax-ppf-k-series-v2","ax-ppf-x-series-v2","ax-ppf-m-series","ax-ppf-s-series","ax-tpu-super-black"] },
@@ -150,6 +262,27 @@ const CATALOG = {
       id: "do-den",
       name: "Nâng Cấp Ánh Sáng",
       poster: "assets/images/service/do-den/poster.jpg",
+      seo: {
+        title: "Độ Đèn Bi-LED Ô Tô Chính Hãng Fogway, GTR, X-Light, Aozoom | Đức Hiếu Auto",
+        metaDescription: "Nâng cấp đèn bi-LED ô tô chính hãng Fogway, GTR, X-Light, Aozoom tại Đức Hiếu Auto Buôn Ma Thuột - ánh sáng trắng bám đường, đường cắt sáng chuẩn, không chói mắt xe đối diện.",
+        image: "assets/images/products/gtr-premium-2-0/anh-1.jpg",
+        imageCaption: "GTR Premium 2.0 - cụm bi LED chính hãng đang phân phối tại Đức Hiếu Auto",
+        intro: "Đèn halogen zin trên phần lớn xe phổ thông chỉ cho quang thông khoảng 800 lumen - khá đuối khi lái ban đêm, trời mưa hoặc đường không đèn. Nâng cấp lên bi-LED không đơn thuần là đổi bóng đèn sáng hơn; cần đúng cụm bi (projector) để ánh sáng được hội tụ và cắt đúng vị trí, thay vì chỉ tăng độ sáng rồi chiếu tán loạn gây chói mắt người đi ngược chiều.",
+        sections: [
+          {
+            heading: "Quang thông và nhiệt độ màu - hai chỉ số hay bị hiểu sai",
+            body: "Quang thông (đo bằng lumen) quyết định độ sáng thật của đèn - bi-LED chính hãng thường đạt 4000-9000 lumen, gấp nhiều lần bóng halogen zin. Nhiệt độ màu (đo bằng Kelvin) quyết định tông màu ánh sáng: khoảng 4300-6000K cho ánh sáng trắng bám đường tốt trong điều kiện mưa hoặc sương mù. Nhiều người chọn nhiệt độ màu quá cao (trên 6500K, ngả xanh) vì nhìn sang, nhưng thực tế loại ánh sáng này lại xuyên sương kém hơn hẳn ánh sáng trắng ấm."
+          },
+          {
+            heading: "Đường cắt sáng - yếu tố an toàn thường bị bỏ qua",
+            body: "Một cụm bi LED lắp đúng kỹ thuật phải tạo ra đường cắt sáng (cut-off) rõ ràng: ánh sáng tập trung chiếu vào mặt đường phía trước, không hắt lên cao làm chói mắt xe đối diện. Đây chính là điểm phân biệt giữa đèn độ đúng kỹ thuật với các loại đèn độ trôi nổi chỉ chạy theo độ sáng mà bỏ qua việc căn chỉnh, gây nguy hiểm cho người tham gia giao thông ngược chiều."
+          },
+          {
+            heading: "Bi-LED và bi-gầm - không dùng thay thế cho nhau được",
+            body: "Bi-LED lắp ở cụm đèn pha đảm nhiệm chiếu sáng chính khi lái xe ban đêm, trong khi bi-gầm (đèn sương mù) có góc chiếu thấp và rộng hơn, giúp nhìn rõ mặt đường sát xe trong điều kiện sương mù hoặc mưa lớn - lúc ánh sáng pha thông thường dễ bị phản xạ ngược gây loá mắt. Tuỳ theo điều kiện di chuyển thực tế của khách, Đức Hiếu Auto tư vấn nâng cấp riêng từng cụm hoặc kết hợp cả hai."
+          }
+        ]
+      },
       brands: [
         {
           id: "fogway", name: "Fogway", logo: "assets/images/brands/fogway/logo.png",
@@ -187,6 +320,25 @@ const CATALOG = {
       id: "do-ban-tai",
       name: "Đồ Bán Tải",
       poster: "assets/images/products-category/do-ban-tai/poster.jpg",
+      seo: {
+        title: "Đồ Chơi Bán Tải Chính Hãng - Nắp Thùng, Giảm Xóc, Tời Điện | Đức Hiếu Auto",
+        metaDescription: "Phụ kiện xe bán tải chính hãng Aeroklas, King Springs, TJM, WARN tại Đức Hiếu Auto Buôn Ma Thuột - nắp thùng, lò xo giảm xóc, nhíp, tời điện cho nhu cầu chở hàng và off-road thực tế.",
+        intro: "Khác với xe con, phần lớn phụ kiện nâng cấp cho bán tải không phải để “chơi cho đẹp” mà giải quyết đúng nhu cầu sử dụng của dòng xe chở hàng và đi địa hình. Mỗi nhóm sản phẩm dưới đây phục vụ một mục đích cụ thể - không phải cứ lắp nhiều hạng mục là xe sẽ tốt hơn, mà cần chọn đúng theo cách chiếc xe thực sự được sử dụng.",
+        sections: [
+          {
+            heading: "Nắp thùng - không chỉ để che mưa nắng",
+            body: "Nắp thùng dạng cuộn điện hay nắp cứng giúp bảo vệ hàng hoá khỏi mưa nắng, hạn chế trộm vặt khi đỗ xe nơi công cộng, đồng thời giảm sức cản gió khi chạy tốc độ cao so với để thùng trần - một chi tiết nhỏ nhưng ảnh hưởng thực tế đến mức tiêu hao nhiên liệu trên hành trình dài."
+          },
+          {
+            heading: "Lò xo - giảm xóc và nhíp: nâng tải đúng cách, không chỉ nâng gầm cho đẹp",
+            body: "Nhiều người nghĩ độ lò xo/giảm xóc chỉ để xe cao hơn cho ngầu, nhưng vai trò chính là tăng khả năng chịu tải khi chở nặng và giữ độ êm khi đi qua địa hình xấu. Nhíp (leaf spring) đảm nhiệm chịu tải ở cầu sau - cần chọn đúng theo tải trọng thực tế của xe và mục đích sử dụng (chở hàng thường xuyên hay thỉnh thoảng đi off-road), không phải cứ chọn loại cứng nhất là tối ưu nhất, vì lò xo quá cứng so với nhu cầu sẽ làm xe xóc hơn khi chạy không tải."
+          },
+          {
+            heading: "Tời điện - trang bị cho tình huống cần tự cứu hộ",
+            body: "Tời điện gần như là trang bị bắt buộc với những xe thường xuyên đi địa hình khó, giúp tự kéo xe ra khỏi vũng lầy hoặc cát lún mà không phải chờ xe khác hỗ trợ. Lực kéo nên chọn dựa trên trọng lượng thực tế của xe (thông thường tối thiểu gấp khoảng 1.5 lần trọng lượng xe), không phải cứ chọn tời lực kéo càng lớn càng tốt, vì tời quá nặng còn ảnh hưởng đến trọng lượng dồn lên đầu xe."
+          }
+        ]
+      },
       brands: [
         {
           id: "nap-thung", name: "Nắp Thùng Bán Tải",

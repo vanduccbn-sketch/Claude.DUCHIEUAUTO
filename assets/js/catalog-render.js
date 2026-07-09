@@ -153,7 +153,16 @@ function renderCategoryDetail() {
         return;
     }
 
-    document.title = cat.name + " | Đức Hiếu Auto";
+    document.title = (cat.seo && cat.seo.title) ? cat.seo.title : cat.name + " | Đức Hiếu Auto";
+    if (cat.seo && cat.seo.metaDescription) {
+        let metaDesc = document.querySelector('meta[name="description"]');
+        if (!metaDesc) {
+            metaDesc = document.createElement("meta");
+            metaDesc.setAttribute("name", "description");
+            document.head.appendChild(metaDesc);
+        }
+        metaDesc.setAttribute("content", cat.seo.metaDescription);
+    }
     const posterImg = document.querySelector(".category-poster img");
     posterImg.src = cat.poster;
     posterImg.alt = cat.name;
@@ -163,6 +172,20 @@ function renderCategoryDetail() {
     document.querySelector(".breadcrumb-parent").textContent = "Sản Phẩm";
     document.querySelector(".breadcrumb-parent").href = "san-pham.html";
     document.querySelector(".breadcrumb-current").textContent = cat.name;
+
+    const seoBox = document.querySelector(".category-seo-content");
+    if (cat.seo && (cat.seo.intro || cat.seo.sections)) {
+        seoBox.hidden = false;
+        const imgHtml = cat.seo.image
+            ? `<figure class="category-seo-figure"><img src="${cat.seo.image}" alt="${cat.name}" loading="lazy" onerror="this.closest('figure').remove()">${cat.seo.imageCaption ? `<figcaption>${cat.seo.imageCaption}</figcaption>` : ""}</figure>`
+            : "";
+        const sectionsHtml = (cat.seo.sections || []).map(s => `<h2>${s.heading}</h2><p>${s.body}</p>`).join("");
+        seoBox.innerHTML = `
+            ${imgHtml}
+            ${cat.seo.intro ? `<p class="category-seo-intro">${cat.seo.intro}</p>` : ""}
+            ${sectionsHtml}
+        `;
+    }
 
     const brandGrid = document.querySelector(".brand-grid");
     brandGrid.innerHTML = cat.brands.filter(brand => !brand.hidden).map(brand => {

@@ -93,7 +93,9 @@ function renderServiceGrid(containerSelector) {
         ...(doBanTai ? [{ ...doBanTai, href: `category-chi-tiet.html?id=${doBanTai.id}` }] : [])
     ];
 
-    container.innerHTML = items.map(serviceCardHtml).join("");
+    // Container này đồng thời là .swiper-wrapper (carousel Swiper trên trang chủ) nên mỗi thẻ
+    // cần bọc trong .swiper-slide.
+    container.innerHTML = items.map(item => `<div class="swiper-slide">${serviceCardHtml(item)}</div>`).join("");
 }
 
 /* ---------- Dải logo thương hiệu chạy (index.html) - mỗi logo dẫn thẳng tới trang thương hiệu ---------- */

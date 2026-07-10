@@ -178,7 +178,12 @@
         <section id="service">
             <div class="container">
                 <h2 class="section-title">DỊCH VỤ CHUYÊN NGHIỆP</h2>
-                <div class="services-grid service-catalog-grid"></div>
+                <div class="swiper service-slider">
+                    <div class="swiper-wrapper service-catalog-grid"></div>
+                    <div class="swiper-pagination"></div>
+                    <div class="swiper-button-next"></div>
+                    <div class="swiper-button-prev"></div>
+                </div>
             </div>
         </section>
 
@@ -278,8 +283,11 @@
                     <p class="tech-intro">Không phải món "đồ chơi ô tô" nào cũng như nhau. Đây là 4 công nghệ thật sự đang được Đức Hiếu Auto tin dùng — mỗi sản phẩm một câu chuyện, một lý do khiến chúng tôi lựa chọn cho khách hàng.</p>
                 </div>
 
-                <div class="tech-story-grid">
-                    <a class="tech-story-card" href="san-pham-chi-tiet.html?id=xpel-ultimate-plus" data-aos="fade-up">
+                <div class="swiper tech-slider">
+                    <div class="swiper-wrapper">
+
+                    <div class="swiper-slide">
+                    <a class="tech-story-card" href="san-pham-chi-tiet.html?id=xpel-ultimate-plus">
                         <div class="tech-story-img">
                             <img src="assets/images/products/xpel-ultimate-plus/anh-1.jpg" alt="XPEL Ultimate Plus" loading="lazy">
                             <span class="tech-story-tag">PPF - Bảo Vệ Sơn Xe</span>
@@ -290,8 +298,10 @@
                             <span class="tech-story-link">Tìm hiểu thêm <i class="fa-solid fa-arrow-right"></i></span>
                         </div>
                     </a>
+                    </div>
 
-                    <a class="tech-story-card" href="san-pham-chi-tiet.html?id=gtr-premium-2-0" data-aos="fade-up" data-aos-delay="100">
+                    <div class="swiper-slide">
+                    <a class="tech-story-card" href="san-pham-chi-tiet.html?id=gtr-premium-2-0">
                         <div class="tech-story-img">
                             <img src="assets/images/products/gtr-premium-2-0/anh-1.jpg" alt="GTR Premium 2.0" loading="lazy">
                             <span class="tech-story-tag">Bi LED - Nâng Cấp Ánh Sáng</span>
@@ -302,8 +312,10 @@
                             <span class="tech-story-link">Tìm hiểu thêm <i class="fa-solid fa-arrow-right"></i></span>
                         </div>
                     </a>
+                    </div>
 
-                    <a class="tech-story-card" href="san-pham-chi-tiet.html?id=jbl-club-605csq" data-aos="fade-up" data-aos-delay="200">
+                    <div class="swiper-slide">
+                    <a class="tech-story-card" href="san-pham-chi-tiet.html?id=jbl-club-605csq">
                         <div class="tech-story-img">
                             <img src="assets/images/products/jbl-club-605csq/anh-1.jpg" alt="JBL Club 605CSQ" loading="lazy">
                             <span class="tech-story-tag">Loa Phân Tần - Âm Thanh</span>
@@ -314,8 +326,10 @@
                             <span class="tech-story-link">Tìm hiểu thêm <i class="fa-solid fa-arrow-right"></i></span>
                         </div>
                     </a>
+                    </div>
 
-                    <a class="tech-story-card" href="san-pham-chi-tiet.html?id=warn-vr-evo-12s" data-aos="fade-up" data-aos-delay="300">
+                    <div class="swiper-slide">
+                    <a class="tech-story-card" href="san-pham-chi-tiet.html?id=warn-vr-evo-12s">
                         <div class="tech-story-img">
                             <img src="assets/images/products/warn-vr-evo-12s/anh-1.jpg" alt="WARN VR EVO 12-S" loading="lazy">
                             <span class="tech-story-tag">Tời Điện - Cứu Hộ Địa Hình</span>
@@ -326,6 +340,12 @@
                             <span class="tech-story-link">Tìm hiểu thêm <i class="fa-solid fa-arrow-right"></i></span>
                         </div>
                     </a>
+                    </div>
+
+                    </div>
+                    <div class="swiper-pagination"></div>
+                    <div class="swiper-button-next"></div>
+                    <div class="swiper-button-prev"></div>
                 </div>
             </div>
         </section>
@@ -515,19 +535,47 @@
         }, { rootMargin: '-40% 0px -55% 0px', threshold: 0 });
         spySections.forEach(sec => spyObserver.observe(sec));
 
+        // Cấu hình dùng chung cho cả 3 slider trên trang chủ (Dịch Vụ / Sản Phẩm Chiến Lược /
+        // Công Nghệ): luôn hiển thị đúng 2 thẻ ngang hàng, số còn lại lướt trái/phải để xem.
+        // Dùng "rewind" (lướt hết tới thẻ cuối, bấm tiếp sẽ về lại thẻ đầu) chứ không dùng
+        // "loop" - loop cần nhân bản đủ số thẻ đệm (>= slidesPerView*2), mà các slider này chỉ
+        // có 3-4 thẻ thật nên loop bị kẹt, bấm "tiếp" không chạy được nữa sau vài lần bấm.
+        const homeSliderBaseOptions = {
+            slidesPerView: 2,
+            spaceBetween: 14,
+            rewind: true,
+            breakpoints: {
+                768: { spaceBetween: 24 }
+            }
+        };
+
         // Khởi tạo Swiper cho slider sản phẩm
         new Swiper('.product-slider', {
-            slidesPerView: 1,
-            spaceBetween: 20,
-            loop: true,
+            ...homeSliderBaseOptions,
             pagination: { el: '.swiper-pagination', clickable: true },
             navigation: {
                 nextEl: '.swiper-button-next',
                 prevEl: '.swiper-button-prev'
-            },
-            breakpoints: {
-                640: { slidesPerView: 2 },
-                992: { slidesPerView: 3 }
+            }
+        });
+
+        // Slider "Dịch Vụ Chuyên Nghiệp" và "Giải Mã Công Nghệ" - cùng cơ chế lướt như slider sản phẩm
+        // ở trên (mỗi slider tự tìm nút/pagination bên trong chính nó nên không đụng nhau)
+        new Swiper('.service-slider', {
+            ...homeSliderBaseOptions,
+            pagination: { el: '.service-slider .swiper-pagination', clickable: true },
+            navigation: {
+                nextEl: '.service-slider .swiper-button-next',
+                prevEl: '.service-slider .swiper-button-prev'
+            }
+        });
+
+        new Swiper('.tech-slider', {
+            ...homeSliderBaseOptions,
+            pagination: { el: '.tech-slider .swiper-pagination', clickable: true },
+            navigation: {
+                nextEl: '.tech-slider .swiper-button-next',
+                prevEl: '.tech-slider .swiper-button-prev'
             }
         });
 

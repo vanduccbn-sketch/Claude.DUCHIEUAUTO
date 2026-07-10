@@ -9,8 +9,28 @@
 
 .services-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    /* minmax(0, 1fr) chứ không phải 1fr trần - nếu không, cột lưới sẽ không co nhỏ hơn
+       kích thước nội dung bên trong (ảnh, chữ), có thể đẩy cả lưới rộng hơn màn hình
+       trên di động */
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 30px;
+}
+
+/* --- Slider "Dịch Vụ Chuyên Nghiệp" (trang chủ) - dùng Swiper, lướt giống slider "Sản Phẩm
+   Chiến Lược" thay vì xếp lưới cố định. .service-catalog-grid ở đây là .swiper-wrapper nên
+   không còn display:grid như .services-grid ở trên. --- */
+.service-slider {
+    padding: 10px 0 30px;
+}
+.service-slider .swiper-slide {
+    height: auto;
+}
+.service-slider .service-card {
+    height: 100%;
+}
+.service-slider .swiper-button-next,
+.service-slider .swiper-button-prev {
+    top: 105px;
 }
 
 /* --- Card Dịch Vụ / Danh Mục Sản Phẩm (là <a> link, không còn popup) --- */
@@ -101,15 +121,31 @@
    ========================================= */
 @media (max-width: 991px) {
     .services-grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
 
 @media (max-width: 576px) {
+    /* Giữ dạng lưới 2 cột trên di động thay vì xếp chồng 1 cột dài dằng dặc -
+       để bố cục danh mục dịch vụ vẫn giữ được cảm giác "lưới" giống bản desktop,
+       chỉ thu nhỏ ảnh/chữ cho vừa cột hẹp */
     #service {
         padding: 60px 0;
     }
     .services-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+    }
+    .service-img { height: 110px; }
+    .service-overlay { font-size: 18px; }
+    .service-content { padding: 14px 14px 16px; }
+    .service-content h3 { font-size: 16px; margin-bottom: 6px; }
+    .service-content p { font-size: 12.5px; }
+    .service-more { font-size: 11px; margin-top: 8px; }
+    .service-slider .swiper-button-next,
+    .service-slider .swiper-button-prev {
+        top: 55px;
+        width: 30px;
+        height: 30px;
     }
 }

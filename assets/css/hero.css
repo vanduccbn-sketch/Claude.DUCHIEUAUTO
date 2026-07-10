@@ -2,7 +2,11 @@
 .hero-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-image: url('../images/nen1.webp'); background-size: cover; background-position: center; background-repeat: no-repeat; z-index: 1; overflow: hidden; }
 .hero-video { position: absolute; top: 50%; left: 50%; width: 100%; height: 100%; object-fit: cover; transform: translate(-50%, -50%); z-index: 1; }
 .hero-bg .overlay, .overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, rgba(21, 23, 28, 0.55) 0%, rgba(82, 36, 127, 0.35) 50%, rgba(0, 102, 179, 0.3) 100%), rgba(21, 23, 28, 0.35); z-index: 2; }
-.hero-content { position: relative; z-index: 3; max-width: 800px; }
+/* #hero là flex container nên .hero-content (dùng chung class .container) sẽ tự co lại
+   theo nội dung (shrink-to-fit) thay vì lấp đầy tới max-width:1200px - cần width:100%
+   để margin:0 auto căn giữa đúng khối 1200px, thẳng hàng với mọi section khác trên trang.
+   Bề rộng dòng chữ đã được giới hạn riêng ở .desc (max-width:600px). */
+.hero-content { position: relative; z-index: 3; width: 100%; }
 .hero-content .subtitle { display: inline-block; color: var(--primary); background: rgba(255, 255, 255, 0.9); font-size: 14px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 18px; padding: 6px 18px 6px 45px; border-radius: 30px; position: relative; }
 .hero-content .subtitle::before { content: ''; position: absolute; left: 18px; top: 50%; transform: translateY(-50%); width: 18px; height: 2px; background-color: var(--primary); }
 .hero-content .title { font-family: var(--font-title); font-size: 80px; color: var(--white); line-height: 1.1; letter-spacing: 3px; margin-bottom: 25px; text-shadow: 0 10px 30px rgba(0, 0, 0, 0.6); }

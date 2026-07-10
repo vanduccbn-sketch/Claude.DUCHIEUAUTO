@@ -31,7 +31,14 @@
 .view-all-cta:hover .view-all-cta-arrow { background: var(--white); color: var(--primary); transform: translateX(8px); }
 
 @media (max-width: 576px) {
-    .view-all-cta { flex-direction: column; text-align: center; padding: 24px 22px; }
+    /* Chừa thêm khoảng trống bên phải (78px) và ép dòng mô tả xuống dòng sớm hơn (max-width) -
+       nếu không, dù đã thêm padding, flex item vẫn không tự co theo (mặc định min-width:auto
+       của flex item khiến nó giữ nguyên độ rộng theo nội dung), khiến dòng "Hàng trăm sản phẩm..."
+       vẫn lấn vào vùng widget liên hệ nhanh (position:fixed, bám mép phải màn hình), chữ bị icon
+       đè lên trông như lỗi hiển thị. */
+    .view-all-cta { flex-direction: column; text-align: center; padding: 24px 78px 24px 22px; }
+    .view-all-cta-text { max-width: 100%; }
+    .view-all-cta-text p { max-width: 250px; margin-left: auto; margin-right: auto; }
 }
 /* Mũi tên căn theo vùng ảnh (không đè lên tên/mô tả sản phẩm bên dưới), làm mờ bớt cho nhẹ mắt */
 .swiper-button-next, .swiper-button-prev { top: 87px; color: var(--white); background-color: rgba(21, 23, 28, 0.5); width: 36px; height: 36px; border-radius: 50%; border: 1px solid rgba(255, 255, 255, 0.15); box-shadow: var(--shadow-sm); transition: var(--transition); }
@@ -39,6 +46,39 @@
 .swiper-button-next:hover, .swiper-button-prev:hover { background-color: var(--primary); border-color: var(--primary); }
 .swiper-pagination-bullet { background-color: var(--m-blue); opacity: 0.4; width: 8px; height: 8px; transition: var(--transition); }
 .swiper-pagination-bullet-active { background-color: var(--primary); opacity: 1; width: 22px; border-radius: 5px; }
+
+/* Gợi ý "Vuốt để xem thêm" - chỉ hiện trên di động, khi mỗi slider (Dịch Vụ / Sản Phẩm Chiến
+   Lược / Công Nghệ) thu về hiển thị đúng 1 thẻ/lần nên cần gợi ý rõ còn nội dung phía sau.
+   Dùng chung cho cả 3 slider (class .swipe-hint không gắn theo slider cụ thể). */
+.swipe-hint {
+    display: none;
+    align-items: center;
+    gap: 6px;
+    position: absolute;
+    left: 50%;
+    bottom: 2px;
+    transform: translateX(-50%);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+}
+.swipe-hint i {
+    color: var(--primary);
+    animation: swipeHintMove 1.6s ease-in-out infinite;
+}
+@keyframes swipeHintMove {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(5px); }
+}
+@media (max-width: 576px) {
+    .swipe-hint { display: flex; }
+    .product-slider { padding-bottom: 46px; }
+    .swiper-pagination { bottom: 24px; }
+}
+
 @media (max-width: 768px) {
     #product { padding: 50px 0; }
     .product-img { height: 190px; }

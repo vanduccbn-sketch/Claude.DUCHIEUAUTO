@@ -183,6 +183,7 @@
                     <div class="swiper-pagination"></div>
                     <div class="swiper-button-next"></div>
                     <div class="swiper-button-prev"></div>
+                    <span class="swipe-hint">Vuốt để xem thêm <i class="fa-solid fa-arrow-right"></i></span>
                 </div>
             </div>
         </section>
@@ -262,6 +263,7 @@
                     <div class="swiper-pagination"></div>
                     <div class="swiper-button-next"></div>
                     <div class="swiper-button-prev"></div>
+                    <span class="swipe-hint">Vuốt để xem thêm <i class="fa-solid fa-arrow-right"></i></span>
                 </div>
 
                 <a href="san-pham.html" class="view-all-cta">
@@ -346,6 +348,7 @@
                     <div class="swiper-pagination"></div>
                     <div class="swiper-button-next"></div>
                     <div class="swiper-button-prev"></div>
+                    <span class="swipe-hint">Vuốt để xem thêm <i class="fa-solid fa-arrow-right"></i></span>
                 </div>
             </div>
         </section>
@@ -536,15 +539,17 @@
         spySections.forEach(sec => spyObserver.observe(sec));
 
         // Cấu hình dùng chung cho cả 3 slider trên trang chủ (Dịch Vụ / Sản Phẩm Chiến Lược /
-        // Công Nghệ): luôn hiển thị đúng 2 thẻ ngang hàng, số còn lại lướt trái/phải để xem.
-        // Dùng "rewind" (lướt hết tới thẻ cuối, bấm tiếp sẽ về lại thẻ đầu) chứ không dùng
-        // "loop" - loop cần nhân bản đủ số thẻ đệm (>= slidesPerView*2), mà các slider này chỉ
-        // có 3-4 thẻ thật nên loop bị kẹt, bấm "tiếp" không chạy được nữa sau vài lần bấm.
+        // Công Nghệ): trên điện thoại chỉ hiển thị đúng 1 thẻ/lần (kèm gợi ý "Vuốt để xem thêm"),
+        // từ 576px trở lên hiển thị 2 thẻ ngang hàng. Dùng "rewind" (lướt hết tới thẻ cuối, bấm
+        // tiếp sẽ về lại thẻ đầu) chứ không dùng "loop" - loop cần nhân bản đủ số thẻ đệm
+        // (>= slidesPerView*2), mà các slider này chỉ có 3-4 thẻ thật nên loop bị kẹt, bấm "tiếp"
+        // không chạy được nữa sau vài lần bấm.
         const homeSliderBaseOptions = {
-            slidesPerView: 2,
+            slidesPerView: 1,
             spaceBetween: 14,
             rewind: true,
             breakpoints: {
+                576: { slidesPerView: 2, spaceBetween: 20 },
                 768: { spaceBetween: 24 }
             }
         };

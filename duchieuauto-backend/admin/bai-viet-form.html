@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Soạn Bài Viết | Quản Trị Đức Hiếu Auto</title>
+    <link rel="stylesheet" href="assets/admin.css">
+    <link href="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.snow.css" rel="stylesheet">
+</head>
+<body>
+    <div class="admin-topbar" id="adminTopbar"></div>
+
+    <main class="admin-main">
+        <div class="admin-header">
+            <div>
+                <h1 id="formTitle">Viết Bài Mới</h1>
+                <p class="desc">Điền đầy đủ thông tin, chọn "Lưu Nháp" nếu chưa muốn đăng công khai ngay.</p>
+            </div>
+            <a href="bai-viet.html" class="btn btn-secondary">← Quay Lại Danh Sách</a>
+        </div>
+
+        <div class="editor-layout">
+            <div class="editor-main">
+                <div class="form-group">
+                    <label for="title">Tiêu đề *</label>
+                    <input type="text" id="title" placeholder="VD: 5 Dấu Hiệu Cho Thấy Xe Bạn Cần Dán Phim Cách Nhiệt Ngay">
+                </div>
+
+                <div class="form-group">
+                    <label for="excerpt">Mô tả ngắn (hiện ở trang danh sách Tin Tức)</label>
+                    <textarea id="excerpt" rows="2" placeholder="1-2 câu tóm tắt hấp dẫn..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Nội dung bài viết *</label>
+                    <div id="quillToolbar">
+                        <span class="ql-formats">
+                            <select class="ql-header"><option value="2">Tiêu đề lớn</option><option value="3">Tiêu đề nhỏ</option><option selected></option></select>
+                        </span>
+                        <span class="ql-formats">
+                            <button class="ql-bold"></button>
+                            <button class="ql-italic"></button>
+                            <button class="ql-underline"></button>
+                        </span>
+                        <span class="ql-formats">
+                            <button class="ql-list" value="ordered"></button>
+                            <button class="ql-list" value="bullet"></button>
+                        </span>
+                        <span class="ql-formats">
+                            <button class="ql-link"></button>
+                            <button class="ql-image"></button>
+                        </span>
+                        <span class="ql-formats">
+                            <button class="ql-clean"></button>
+                        </span>
+                    </div>
+                    <div id="quillEditor"></div>
+                    <p class="form-hint">Bấm biểu tượng ảnh trên thanh công cụ để chèn ảnh vào giữa bài viết (tự động tải lên server).</p>
+                </div>
+            </div>
+
+            <div class="editor-side">
+                <div class="form-group">
+                    <label>Ảnh bìa</label>
+                    <div class="cover-preview" id="coverPreview">Chưa có ảnh bìa</div>
+                    <input type="file" id="coverInput" accept="image/jpeg,image/png,image/webp,image/gif" style="display:none;">
+                    <button type="button" class="btn btn-secondary" id="coverBtn" style="width:100%;">Chọn Ảnh Bìa</button>
+                    <input type="hidden" id="coverImageUrl">
+                </div>
+
+                <div class="form-group">
+                    <label for="category">Danh mục</label>
+                    <select id="category">
+                        <option value="">-- Không thuộc danh mục cụ thể --</option>
+                        <option>Màn Hình Ô Tô</option>
+                        <option>Âm Thanh - Cách Âm</option>
+                        <option>Android Box Ô Tô</option>
+                        <option>Camera Hành Trình - 360</option>
+                        <option>Film Cách Nhiệt</option>
+                        <option>PPF - Wrap Đổi Màu</option>
+                        <option>Nâng Cấp Ánh Sáng</option>
+                        <option>Đồ Bán Tải</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Trạng thái</label>
+                    <div class="toggle-row">
+                        <input type="checkbox" id="publishedToggle" checked style="width:auto;">
+                        <label for="publishedToggle" style="margin:0;font-weight:normal;">Đăng công khai ngay (bỏ chọn = lưu nháp)</label>
+                    </div>
+                </div>
+
+                <details style="margin-top:20px;">
+                    <summary style="cursor:pointer;font-size:13px;font-weight:700;">Tuỳ chọn SEO (nâng cao)</summary>
+                    <div class="form-group" style="margin-top:14px;">
+                        <label for="metaTitle">Meta title</label>
+                        <input type="text" id="metaTitle" placeholder="Để trống = dùng tiêu đề bài viết">
+                    </div>
+                    <div class="form-group">
+                        <label for="metaDescription">Meta description</label>
+                        <textarea id="metaDescription" rows="2" placeholder="Để trống = dùng mô tả ngắn"></textarea>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <div class="editor-actions">
+            <button type="button" class="btn btn-primary" id="saveBtn">Lưu Bài Viết</button>
+            <button type="button" class="btn btn-secondary" id="previewBtn">Xem Trước</button>
+            <span class="save-status" id="saveStatus"></span>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.min.js"></script>
+    <script src="assets/admin.js"></script>
+    <script>
+        const auth = requireAuth(["content", "super_admin"]);
+        let quill, postId = null;
+
+        if (auth) {
+            renderAdminNav(auth, "bai-viet");
+            initEditor();
+            initCoverUpload();
+
+            const params = new URLSearchParams(window.location.search);
+            postId = params.get("id");
+            if (postId) loadExistingPost(postId);
+
+            document.getElementById("saveBtn").addEventListener("click", savePost);
+            document.getElementById("previewBtn").addEventListener("click", openPreview);
+        }
+
+        function initEditor() {
+            quill = new Quill("#quillEditor", {
+                theme: "snow",
+                modules: { toolbar: "#quillToolbar" },
+                placeholder: "Viết nội dung bài viết ở đây..."
+            });
+
+            // Ghi đè nút chèn ảnh mặc định (Quill mặc định nhúng base64 làm nội dung DB phình to) -
+            // thay bằng upload thật lên server rồi chèn URL trả về.
+            quill.getModule("toolbar").addHandler("image", () => {
+                const input = document.createElement("input");
+                input.type = "file";
+                input.accept = "image/jpeg,image/png,image/webp,image/gif";
+                input.onchange = async () => {
+                    const file = input.files[0];
+                    if (!file) return;
+                    try {
+                        const url = await uploadImage(file);
+                        const range = quill.getSelection(true);
+                        quill.insertEmbed(range.index, "image", url);
+                        quill.setSelection(range.index + 1);
+                    } catch (err) {
+                        showToast(err.message, true);
+                    }
+                };
+                input.click();
+            });
+        }
+
+        function initCoverUpload() {
+            const coverBtn = document.getElementById("coverBtn");
+            const coverInput = document.getElementById("coverInput");
+            coverBtn.addEventListener("click", () => coverInput.click());
+            coverInput.addEventListener("change", async () => {
+                const file = coverInput.files[0];
+                if (!file) return;
+                coverBtn.disabled = true;
+                coverBtn.textContent = "Đang tải lên...";
+                try {
+                    const url = await uploadImage(file);
+                    document.getElementById("coverImageUrl").value = url;
+                    document.getElementById("coverPreview").innerHTML = `<img src="${url}" alt="Ảnh bìa">`;
+                } catch (err) {
+                    showToast(err.message, true);
+                } finally {
+                    coverBtn.disabled = false;
+                    coverBtn.textContent = "Chọn Ảnh Bìa";
+                }
+            });
+        }
+
+        async function uploadImage(file) {
+            const formData = new FormData();
+            formData.append("image", file);
+            const res = await apiFetch("/api/uploads", { method: "POST", body: formData });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || "Tải ảnh thất bại");
+            return data.url;
+        }
+
+        async function loadExistingPost(id) {
+            document.getElementById("formTitle").textContent = "Sửa Bài Viết";
+            try {
+                const res = await apiFetch(`/api/posts/admin/id/${id}`);
+                if (!res.ok) throw new Error("Không tìm thấy bài viết");
+                const post = await res.json();
+
+                document.getElementById("title").value = post.title;
+                document.getElementById("excerpt").value = post.excerpt || "";
+                document.getElementById("category").value = post.category || "";
+                document.getElementById("metaTitle").value = post.meta_title || "";
+                document.getElementById("metaDescription").value = post.meta_description || "";
+                document.getElementById("publishedToggle").checked = !!post.published;
+                quill.root.innerHTML = post.content || "";
+
+                if (post.cover_image) {
+                    document.getElementById("coverImageUrl").value = post.cover_image;
+                    document.getElementById("coverPreview").innerHTML = `<img src="${post.cover_image}" alt="Ảnh bìa">`;
+                }
+            } catch (err) {
+                showToast(err.message, true);
+            }
+        }
+
+        async function savePost() {
+            const title = document.getElementById("title").value.trim();
+            const content = quill.root.innerHTML.trim();
+            if (!title) return showToast("Vui lòng nhập tiêu đề", true);
+            if (quill.getText().trim().length === 0) return showToast("Vui lòng nhập nội dung bài viết", true);
+
+            const payload = {
+                title,
+                excerpt: document.getElementById("excerpt").value.trim() || null,
+                category: document.getElementById("category").value || null,
+                cover_image: document.getElementById("coverImageUrl").value || null,
+                content,
+                meta_title: document.getElementById("metaTitle").value.trim() || null,
+                meta_description: document.getElementById("metaDescription").value.trim() || null,
+                published: document.getElementById("publishedToggle").checked
+            };
+
+            const saveBtn = document.getElementById("saveBtn");
+            saveBtn.disabled = true;
+            saveBtn.textContent = "Đang lưu...";
+
+            try {
+                const res = postId
+                    ? await apiFetch(`/api/posts/${postId}`, { method: "PUT", body: payload })
+                    : await apiFetch("/api/posts", { method: "POST", body: payload });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || "Lưu thất bại");
+
+                showToast("Đã lưu bài viết thành công");
+                document.getElementById("saveStatus").textContent = "Đã lưu lúc " + new Date().toLocaleTimeString("vi-VN");
+                if (!postId && data.slug) {
+                    postId = data.id;
+                    window.history.replaceState(null, "", `bai-viet-form.html?id=${data.id}`);
+                    document.getElementById("formTitle").textContent = "Sửa Bài Viết";
+                }
+            } catch (err) {
+                showToast(err.message, true);
+            } finally {
+                saveBtn.disabled = false;
+                saveBtn.textContent = "Lưu Bài Viết";
+            }
+        }
+
+        function openPreview() {
+            const title = document.getElementById("title").value.trim() || "(Chưa có tiêu đề)";
+            const cover = document.getElementById("coverImageUrl").value;
+            const content = quill.root.innerHTML;
+            const win = window.open("", "_blank");
+            win.document.write(`
+                <!DOCTYPE html><html lang="vi"><head><meta charset="UTF-8">
+                <title>Xem trước: ${title}</title>
+                <style>
+                    body { font-family: Arial, sans-serif; max-width: 760px; margin: 40px auto; padding: 0 20px; color: #1a1a1f; line-height: 1.75; }
+                    h1 { font-size: 28px; margin-bottom: 20px; }
+                    img { max-width: 100%; border-radius: 8px; }
+                    .cover { width: 100%; height: 340px; object-fit: cover; border-radius: 10px; margin-bottom: 24px; }
+                    .preview-note { background: #fff8e6; color: #b7791f; padding: 10px 16px; border-radius: 6px; font-size: 13px; margin-bottom: 24px; }
+                </style></head><body>
+                <div class="preview-note">Đây là bản xem trước - chưa lưu vào hệ thống.</div>
+                ${cover ? `<img class="cover" src="${cover}" alt="">` : ""}
+                <h1>${title}</h1>
+                ${content}
+                </body></html>
+            `);
+            win.document.close();
+        }
+    </script>
+</body>
+</html>

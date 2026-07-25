@@ -1,0 +1,117 @@
+:root {
+    --primary: #E4002B;
+    --m-blue: #0066B3;
+    --dark: #15171C;
+    --bg: #F7F8FA;
+    --bg-alt: #FFFFFF;
+    --text: #1A1A1F;
+    --text-muted: #5B5F66;
+    --border: #E2E4E8;
+    --radius: 8px;
+    --shadow: 0 4px 12px rgba(21, 23, 28, 0.08);
+    --font: 'Segoe UI', Roboto, Arial, sans-serif;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: var(--font); background: var(--bg); color: var(--text); line-height: 1.5; }
+a { color: var(--m-blue); text-decoration: none; }
+a:hover { text-decoration: underline; }
+button { font-family: inherit; cursor: pointer; }
+
+/* ---------- Trang đăng nhập ---------- */
+.login-page { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, var(--dark) 0%, #2a1030 100%); padding: 20px; }
+.login-box { background: var(--bg-alt); border-radius: 12px; box-shadow: var(--shadow); padding: 40px 36px; width: 100%; max-width: 380px; }
+.login-box h1 { font-size: 22px; margin-bottom: 6px; text-align: center; }
+.login-box .sub { text-align: center; color: var(--text-muted); font-size: 13px; margin-bottom: 26px; }
+.login-box label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; margin-top: 16px; }
+.login-box input { width: 100%; padding: 11px 14px; border: 1px solid var(--border); border-radius: var(--radius); font-size: 14px; }
+.login-box input:focus { outline: none; border-color: var(--primary); }
+.login-box button[type="submit"] { width: 100%; margin-top: 24px; padding: 12px; background: var(--primary); color: #fff; border: none; border-radius: var(--radius); font-weight: 700; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; }
+.login-box button[type="submit"]:hover { background: #c40025; }
+.login-box button[type="submit"]:disabled { opacity: 0.6; cursor: not-allowed; }
+.login-error { background: #fdecea; color: #c0392b; padding: 10px 14px; border-radius: 6px; font-size: 13px; margin-top: 16px; display: none; }
+.login-error.show { display: block; }
+
+/* ---------- Bố cục chung sau đăng nhập ---------- */
+.admin-topbar { background: var(--dark); color: #fff; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; height: 60px; }
+.admin-topbar .brand { font-weight: 700; font-size: 16px; letter-spacing: 0.5px; }
+.admin-topbar .brand span { color: var(--primary); }
+.admin-nav { display: flex; align-items: center; gap: 4px; }
+.admin-nav a { color: #c9ccd1; padding: 8px 14px; border-radius: 6px; font-size: 14px; }
+.admin-nav a:hover, .admin-nav a.active { color: #fff; background: rgba(255,255,255,0.08); text-decoration: none; }
+.admin-user { display: flex; align-items: center; gap: 12px; font-size: 13px; color: #c9ccd1; }
+.role-badge { background: var(--m-blue); color: #fff; padding: 3px 9px; border-radius: 20px; font-size: 11px; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; }
+.role-badge.super_admin { background: var(--primary); }
+.role-badge.ads { background: #8e44ad; }
+.admin-user button { background: none; border: 1px solid #444; color: #c9ccd1; padding: 6px 12px; border-radius: 6px; font-size: 12px; }
+.admin-user button:hover { background: rgba(255,255,255,0.08); color: #fff; }
+
+.admin-main { max-width: 1100px; margin: 0 auto; padding: 32px 24px 60px; }
+.admin-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; flex-wrap: wrap; gap: 12px; }
+.admin-header h1 { font-size: 22px; }
+.admin-header .desc { color: var(--text-muted); font-size: 13px; margin-top: 4px; }
+
+.btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; border-radius: var(--radius); font-size: 13px; font-weight: 600; border: none; text-decoration: none; }
+.btn-primary { background: var(--primary); color: #fff; }
+.btn-primary:hover { background: #c40025; text-decoration: none; }
+.btn-secondary { background: #fff; color: var(--text); border: 1px solid var(--border); }
+.btn-secondary:hover { background: var(--bg); text-decoration: none; }
+.btn-danger { background: #fdecea; color: #c0392b; }
+.btn-danger:hover { background: #fadbd8; }
+.btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+/* ---------- Thẻ thống kê dashboard ---------- */
+.stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 32px; }
+.stat-card { background: var(--bg-alt); border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px; }
+.stat-card .num { font-size: 28px; font-weight: 700; color: var(--primary); }
+.stat-card .label { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+
+/* ---------- Bảng dữ liệu ---------- */
+.data-table { width: 100%; background: var(--bg-alt); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; border-collapse: collapse; }
+.data-table th, .data-table td { text-align: left; padding: 12px 16px; font-size: 13.5px; border-bottom: 1px solid var(--border); }
+.data-table th { background: var(--bg); font-weight: 700; color: var(--text-muted); text-transform: uppercase; font-size: 11px; letter-spacing: 0.5px; }
+.data-table tr:last-child td { border-bottom: none; }
+.data-table td.actions { display: flex; gap: 8px; }
+.data-table .empty-row td { text-align: center; color: var(--text-muted); padding: 40px 16px; }
+
+.badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; text-transform: uppercase; }
+.badge-published { background: #eafaf1; color: #27ae60; }
+.badge-draft { background: #fff8e6; color: #b7791f; }
+.badge-new { background: #eaf2fd; color: var(--m-blue); }
+.badge-contacted { background: #fff8e6; color: #b7791f; }
+.badge-done { background: #eafaf1; color: #27ae60; }
+
+select.status-select { padding: 6px 10px; border-radius: 6px; border: 1px solid var(--border); font-size: 13px; }
+
+/* ---------- Form soạn bài viết ---------- */
+.editor-layout { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; align-items: start; }
+.editor-main, .editor-side { background: var(--bg-alt); border-radius: var(--radius); box-shadow: var(--shadow); padding: 22px; }
+.form-group { margin-bottom: 18px; }
+.form-group label { display: block; font-size: 13px; font-weight: 700; margin-bottom: 6px; }
+.form-group input[type="text"], .form-group select, .form-group textarea { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; font-family: inherit; }
+.form-group textarea { resize: vertical; }
+.form-hint { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+#quillEditor { background: #fff; min-height: 320px; border-radius: 0 0 6px 6px; }
+.cover-preview { width: 100%; height: 160px; border-radius: 6px; background: var(--bg); background-size: cover; background-position: center; margin-bottom: 10px; border: 1px dashed var(--border); display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 12px; overflow: hidden; }
+.cover-preview img { width: 100%; height: 100%; object-fit: cover; }
+.toggle-row { display: flex; align-items: center; gap: 10px; }
+.editor-actions { display: flex; gap: 10px; margin-top: 24px; flex-wrap: wrap; }
+.save-status { font-size: 12px; color: var(--text-muted); margin-left: auto; align-self: center; }
+
+.toast { position: fixed; bottom: 24px; right: 24px; background: var(--dark); color: #fff; padding: 14px 20px; border-radius: 8px; font-size: 13px; box-shadow: var(--shadow); opacity: 0; transform: translateY(10px); transition: 0.25s; z-index: 999; }
+.toast.show { opacity: 1; transform: translateY(0); }
+.toast.error { background: #c0392b; }
+
+/* ---------- Banner / Cấu hình / Lịch sử ---------- */
+.inline-form-card { background: var(--bg-alt); border-radius: var(--radius); box-shadow: var(--shadow); padding: 22px; margin-bottom: 24px; }
+.inline-form-card h2 { font-size: 15px; margin-bottom: 16px; }
+.form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
+.form-grid .form-group { margin-bottom: 0; }
+.form-grid .full { grid-column: 1 / -1; }
+.thumb { width: 64px; height: 40px; object-fit: cover; border-radius: 4px; border: 1px solid var(--border); background: var(--bg); }
+.settings-section { background: var(--bg-alt); border-radius: var(--radius); box-shadow: var(--shadow); padding: 22px; margin-bottom: 20px; }
+.settings-section h2 { font-size: 15px; margin-bottom: 16px; }
+
+@media (max-width: 860px) {
+    .editor-layout { grid-template-columns: 1fr; }
+    .admin-nav { display: none; }
+}

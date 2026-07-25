@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Lịch Sử Chỉnh Sửa | Quản Trị Đức Hiếu Auto</title>
+    <link rel="stylesheet" href="assets/admin.css">
+</head>
+<body>
+    <div class="admin-topbar" id="adminTopbar"></div>
+
+    <main class="admin-main">
+        <div class="admin-header">
+            <div>
+                <h1>Lịch Sử Chỉnh Sửa</h1>
+                <p class="desc">Nhật ký thao tác của tất cả admin (bài viết, banner, cấu hình, liên hệ). Chỉ Super Admin xem được.</p>
+            </div>
+        </div>
+
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Thời gian</th>
+                    <th>Tài khoản</th>
+                    <th>Hành động</th>
+                    <th>Đối tượng</th>
+                </tr>
+            </thead>
+            <tbody id="logBody">
+                <tr class="empty-row"><td colspan="4">Đang tải...</td></tr>
+            </tbody>
+        </table>
+    </main>
+
+    <script src="assets/admin.js"></script>
+    <script>
+        const auth = requireAuth(["super_admin"]);
+        if (auth) {
+            renderAdminNav(auth, "lich-su");
+            loadLogs();
+        }
+
+        const ACTION_LABEL = {
+            create_post: "Tạo bài viết", update_post: "Sửa bài viết", delete_post: "Xoá bài viết",
+            update_contact_status: "Đổi trạng thái liên hệ",
+            create_banner: "Tạo banner", update_banner: "Sửa banner", delete_banner: "Xoá banner",
+            update_settings: "Sửa cấu hình chung"
+        };
+
+        async function loadLogs() {
+            try {
+                const res = await apiFetch("/api/activity");
+                const logs = await res.json();
+                const tbody = document.getElementById("logBody");
+
+                if (logs.length === 0) {
+                    tbody.innerHTML = `<tr class="empty-row"><td colspan="4">Chưa có hoạt động nào.</td></tr>`;
+                    return;
+                }
+
+                tbody.innerHTML = logs.map(l => `
+                    <tr>
+                        <td>${formatDateTime(l.created_at)}</td>
+                        <td>${l.admin_username}</td>
+                        <td>${ACTION_LABEL[l.action] || l.action}</td>
+                        <td>${l.target || "-"}</td>
+                    </tr>
+                `).join("");
+            } catch (err) {
+                showToast(err.message, true);
+            }
+        }
+    </script>
+</body>
+</html>

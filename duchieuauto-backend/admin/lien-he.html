@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Liên Hệ / Đặt Lịch | Quản Trị Đức Hiếu Auto</title>
+    <link rel="stylesheet" href="assets/admin.css">
+</head>
+<body>
+    <div class="admin-topbar" id="adminTopbar"></div>
+
+    <main class="admin-main">
+        <div class="admin-header">
+            <div>
+                <h1>Liên Hệ / Đặt Lịch</h1>
+                <p class="desc">Danh sách khách để lại thông tin qua form liên hệ và đặt lịch hẹn trên website.</p>
+            </div>
+        </div>
+
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Loại</th>
+                    <th>Khách hàng</th>
+                    <th>SĐT</th>
+                    <th>Dịch vụ</th>
+                    <th>Thời gian gửi</th>
+                    <th>Trạng thái</th>
+                </tr>
+            </thead>
+            <tbody id="contactsBody">
+                <tr class="empty-row"><td colspan="6">Đang tải...</td></tr>
+            </tbody>
+        </table>
+    </main>
+
+    <script src="assets/admin.js"></script>
+    <script>
+        const auth = requireAuth();
+        if (auth) {
+            renderAdminNav(auth, "lien-he");
+            loadContacts();
+        }
+
+        const STATUS_LABEL = { new: "Mới", contacted: "Đã liên hệ", done: "Hoàn tất" };
+
+        async function loadContacts() {
+            const res = await apiFetch("/api/contacts");
+            const contacts = await res.json();
+            const tbody = document.getElementById("contactsBody");
+
+            if (contacts.length === 0) {
+                tbody.innerHTML = `<tr class="empty-row"><td colspan="6">Chưa có liên hệ nào.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = contacts.map(c => `
+                <tr>
+                    <td>${c.type === "booking" ? "Đặt lịch" : "Liên hệ"}</td>
+                    <td>${c.name}${c.message ? `<div class="form-hint">${c.message}</div>` : ""}</td>
+                    <td><a href="tel:${c.phone}">${c.phone}</a></td>
+                    <td>${c.service || "-"}${c.preferred_date ? `<div class="form-hint">${c.preferred_date} ${c.preferred_time || ""}</div>` : ""}</td>
+                    <td>${formatDateTime(c.created_at)}</td>
+                    <td>
+                        <select class="status-select" data-id="${c.id}">
+                            <option value="new" ${c.status === "new" ? "selected" : ""}>Mới</option>
+                            <option value="contacted" ${c.status === "contacted" ? "selected" : ""}>Đã liên hệ</option>
+                            <option value="done" ${c.status === "done" ? "selected" : ""}>Hoàn tất</option>
+                        </select>
+                    </td>
+                </tr>
+            `).join("");
+
+            tbody.querySelectorAll(".status-select").forEach(sel => {
+                sel.addEventListener("change", () => updateStatus(sel.dataset.id, sel.value));
+            });
+        }
+
+        async function updateStatus(id, status) {
+            try {
+                const res = await apiFetch(`/api/contacts/${id}/status`, { method: "PUT", body: { status } });
+                if (!res.ok) throw new Error((await res.json()).error || "Cập nhật thất bại");
+                showToast("Đã cập nhật trạng thái");
+            } catch (err) {
+                showToast(err.message, true);
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Tổng Quan | Quản Trị Đức Hiếu Auto</title>
+    <link rel="stylesheet" href="assets/admin.css">
+</head>
+<body>
+    <div class="admin-topbar" id="adminTopbar"></div>
+
+    <main class="admin-main">
+        <div class="admin-header">
+            <div>
+                <h1>Tổng Quan</h1>
+                <p class="desc" id="welcomeMsg"></p>
+            </div>
+        </div>
+
+        <div class="stat-grid" id="statGrid">
+            <div class="stat-card"><div class="num">…</div><div class="label">Đang tải</div></div>
+        </div>
+
+        <div id="postsOnly">
+            <p style="margin-bottom:12px;"><a href="bai-viet.html">→ Quản lý bài viết</a></p>
+        </div>
+        <p style="margin-bottom:12px;"><a href="lien-he.html">→ Xem liên hệ / đặt lịch mới nhất</a></p>
+        <div id="adsOnly">
+            <p style="margin-bottom:12px;"><a href="banner.html">→ Quản lý banner / slider</a></p>
+            <p style="margin-bottom:12px;"><a href="cau-hinh.html">→ Cấu hình chung (Analytics, Pixel, social)</a></p>
+        </div>
+        <div id="superAdminOnly">
+            <p><a href="lich-su.html">→ Xem lịch sử chỉnh sửa</a></p>
+        </div>
+    </main>
+
+    <script src="assets/admin.js"></script>
+    <script>
+        const auth = requireAuth();
+        if (auth) {
+            renderAdminNav(auth, "dashboard");
+            document.getElementById("welcomeMsg").textContent = `Chào ${auth.username}, đây là tổng quan hệ thống.`;
+
+            const canEditPosts = auth.role === "content" || auth.role === "super_admin";
+            const canManageAds = auth.role === "ads" || auth.role === "super_admin";
+            if (!canEditPosts) document.getElementById("postsOnly").style.display = "none";
+            if (!canManageAds) document.getElementById("adsOnly").style.display = "none";
+            if (auth.role !== "super_admin") document.getElementById("superAdminOnly").style.display = "none";
+
+            (async () => {
+                const stats = [];
+                if (canEditPosts) {
+                    const res = await apiFetch("/api/posts/admin/all");
+                    const posts = await res.json();
+                    const publishedCount = posts.filter(p => p.published).length;
+                    stats.push({ num: posts.length, label: "Tổng bài viết" });
+                    stats.push({ num: publishedCount, label: "Đã đăng" });
+                    stats.push({ num: posts.length - publishedCount, label: "Bản nháp" });
+                }
+                if (canManageAds) {
+                    const bannersRes = await apiFetch("/api/banners/admin/all");
+                    const banners = await bannersRes.json();
+                    stats.push({ num: banners.length, label: "Tổng banner" });
+                }
+                const contactsRes = await apiFetch("/api/contacts");
+                const contacts = await contactsRes.json();
+                const newCount = contacts.filter(c => c.status === "new").length;
+                stats.push({ num: contacts.length, label: "Tổng liên hệ / đặt lịch" });
+                stats.push({ num: newCount, label: "Chưa xử lý" });
+
+                document.getElementById("statGrid").innerHTML = stats
+                    .map(s => `<div class="stat-card"><div class="num">${s.num}</div><div class="label">${s.label}</div></div>`)
+                    .join("");
+            })().catch(err => showToast(err.message, true));
+        }
+    </script>
+</body>
+</html>

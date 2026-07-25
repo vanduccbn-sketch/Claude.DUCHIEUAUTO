@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Cấu Hình Chung | Quản Trị Đức Hiếu Auto</title>
+    <link rel="stylesheet" href="assets/admin.css">
+</head>
+<body>
+    <div class="admin-topbar" id="adminTopbar"></div>
+
+    <main class="admin-main">
+        <div class="admin-header">
+            <div>
+                <h1>Cấu Hình Chung</h1>
+                <p class="desc">Mã tracking (Google Analytics/Facebook Pixel), liên kết mạng xã hội, SEO mặc định toàn site. Áp dụng ngay cho trang công khai sau khi lưu.</p>
+            </div>
+        </div>
+
+        <form id="settingsForm">
+            <div class="settings-section">
+                <h2>Mã Tracking</h2>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="google_analytics_id">Google Analytics Measurement ID</label>
+                        <input type="text" id="google_analytics_id" name="google_analytics_id" placeholder="VD: G-XXXXXXXXXX">
+                    </div>
+                    <div class="form-group">
+                        <label for="facebook_pixel_id">Facebook Pixel ID</label>
+                        <input type="text" id="facebook_pixel_id" name="facebook_pixel_id" placeholder="VD: 1234567890123456">
+                    </div>
+                    <div class="form-group full">
+                        <label for="google_search_console_verification">Mã xác minh Google Search Console (thẻ meta content)</label>
+                        <input type="text" id="google_search_console_verification" name="google_search_console_verification" placeholder="Dán riêng nội dung content= trong thẻ meta Google cấp">
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <h2>Liên Kết Mạng Xã Hội</h2>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="social_facebook">Link Facebook</label>
+                        <input type="text" id="social_facebook" name="social_facebook" placeholder="https://facebook.com/...">
+                    </div>
+                    <div class="form-group">
+                        <label for="social_zalo">Link/Số Zalo</label>
+                        <input type="text" id="social_zalo" name="social_zalo" placeholder="https://zalo.me/...">
+                    </div>
+                    <div class="form-group">
+                        <label for="social_youtube">Link Youtube</label>
+                        <input type="text" id="social_youtube" name="social_youtube" placeholder="https://youtube.com/...">
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <h2>SEO Mặc Định Toàn Site</h2>
+                <div class="form-grid">
+                    <div class="form-group full">
+                        <label for="seo_default_title">Meta Title mặc định</label>
+                        <input type="text" id="seo_default_title" name="seo_default_title" placeholder="Dùng cho trang không tự đặt title riêng">
+                    </div>
+                    <div class="form-group full">
+                        <label for="seo_default_description">Meta Description mặc định</label>
+                        <textarea id="seo_default_description" name="seo_default_description" rows="3" placeholder="120-160 ký tự"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="editor-actions">
+                <button type="submit" class="btn btn-primary">Lưu Cấu Hình</button>
+                <span class="save-status" id="saveStatus"></span>
+            </div>
+        </form>
+    </main>
+
+    <script src="assets/admin.js"></script>
+    <script>
+        const auth = requireAuth(["ads", "super_admin"]);
+        if (auth) {
+            renderAdminNav(auth, "cau-hinh");
+            loadSettings();
+        }
+
+        const FIELDS = [
+            "google_analytics_id", "facebook_pixel_id", "google_search_console_verification",
+            "social_facebook", "social_zalo", "social_youtube",
+            "seo_default_title", "seo_default_description"
+        ];
+
+        async function loadSettings() {
+            try {
+                const res = await apiFetch("/api/settings");
+                const data = await res.json();
+                FIELDS.forEach(key => {
+                    const el = document.getElementById(key);
+                    if (el) el.value = data[key] || "";
+                });
+            } catch (err) {
+                showToast(err.message, true);
+            }
+        }
+
+        document.getElementById("settingsForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const body = {};
+            FIELDS.forEach(key => { body[key] = document.getElementById(key).value.trim(); });
+
+            const submitBtn = e.target.querySelector("button[type=submit]");
+            submitBtn.disabled = true;
+            document.getElementById("saveStatus").textContent = "Đang lưu...";
+            try {
+                const res = await apiFetch("/api/settings", { method: "PUT", body });
+                if (!res.ok) throw new Error((await res.json()).error || "Lưu thất bại");
+                showToast("Đã lưu cấu hình");
+                document.getElementById("saveStatus").textContent = "Đã lưu lúc " + new Date().toLocaleTimeString("vi-VN");
+            } catch (err) {
+                showToast(err.message, true);
+                document.getElementById("saveStatus").textContent = "";
+            } finally {
+                submitBtn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>

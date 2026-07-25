@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Bài Viết | Quản Trị Đức Hiếu Auto</title>
+    <link rel="stylesheet" href="assets/admin.css">
+</head>
+<body>
+    <div class="admin-topbar" id="adminTopbar"></div>
+
+    <main class="admin-main">
+        <div class="admin-header">
+            <div>
+                <h1>Bài Viết</h1>
+                <p class="desc">Quản lý bài viết Tin Tức - tạo mới, sửa, xoá, đăng/ẩn.</p>
+            </div>
+            <a href="bai-viet-form.html" class="btn btn-primary">+ Viết Bài Mới</a>
+        </div>
+
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Tiêu đề</th>
+                    <th>Danh mục</th>
+                    <th>Trạng thái</th>
+                    <th>Cập nhật</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody id="postsBody">
+                <tr class="empty-row"><td colspan="5">Đang tải...</td></tr>
+            </tbody>
+        </table>
+    </main>
+
+    <script src="assets/admin.js"></script>
+    <script>
+        const auth = requireAuth(["content", "super_admin"]);
+        if (auth) {
+            renderAdminNav(auth, "bai-viet");
+            loadPosts();
+        }
+
+        async function loadPosts() {
+            const res = await apiFetch("/api/posts/admin/all");
+            const posts = await res.json();
+            const tbody = document.getElementById("postsBody");
+
+            if (posts.length === 0) {
+                tbody.innerHTML = `<tr class="empty-row"><td colspan="5">Chưa có bài viết nào. Bấm "+ Viết Bài Mới" để bắt đầu.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = posts.map(p => `
+                <tr>
+                    <td>${p.title}</td>
+                    <td>${p.category || "-"}</td>
+                    <td><span class="badge ${p.published ? "badge-published" : "badge-draft"}">${p.published ? "Đã đăng" : "Bản nháp"}</span></td>
+                    <td>${formatDateTime(p.updated_at)}</td>
+                    <td class="actions">
+                        <a href="bai-viet-form.html?id=${p.id}" class="btn btn-secondary">Sửa</a>
+                        <button type="button" class="btn btn-danger" data-delete="${p.id}" data-title="${p.title.replace(/"/g, "&quot;")}">Xoá</button>
+                    </td>
+                </tr>
+            `).join("");
+
+            tbody.querySelectorAll("[data-delete]").forEach(btn => {
+                btn.addEventListener("click", () => deletePost(btn.dataset.delete, btn.dataset.title));
+            });
+        }
+
+        async function deletePost(id, title) {
+            if (!confirm(`Xoá bài viết "${title}"? Không thể hoàn tác.`)) return;
+            try {
+                const res = await apiFetch(`/api/posts/${id}`, { method: "DELETE" });
+                if (!res.ok) throw new Error((await res.json()).error || "Xoá thất bại");
+                showToast("Đã xoá bài viết");
+                loadPosts();
+            } catch (err) {
+                showToast(err.message, true);
+            }
+        }
+    </script>
+</body>
+</html>

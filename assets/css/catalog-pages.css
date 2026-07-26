@@ -220,6 +220,26 @@
     text-transform: uppercase;
 }
 
+.product-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-bottom: 20px;
+    font-size: 13.5px;
+    color: var(--text-muted);
+}
+.product-toolbar select {
+    padding: 8px 14px;
+    border: 1px solid var(--border-color-light);
+    border-radius: 6px;
+    background-color: var(--bg-alt);
+    color: var(--text-color);
+    font-family: inherit;
+    font-size: 13.5px;
+    cursor: pointer;
+}
+
 .product-grid-catalog {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -466,6 +486,76 @@
     width: 260px;
     color: var(--text-muted);
     font-weight: 600;
+}
+
+/* ---------- FAQ theo danh mục (accordion, giống hệt faq.html để đồng bộ giao diện) ---------- */
+.category-faq-section { margin-top: 50px; }
+.category-faq-section h2 { font-size: 1.6rem; margin-bottom: 24px; text-transform: uppercase; text-align: center; }
+
+.category-faq-section .faq-list { max-width: 820px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px; }
+.category-faq-section .faq-item { background-color: var(--bg-alt); border: 1px solid var(--border-color-light); border-radius: 10px; box-shadow: var(--shadow-sm); overflow: hidden; }
+.category-faq-section .faq-question { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 18px 22px; background: none; border: none; text-align: left; font-family: var(--font-title); font-size: 17px; letter-spacing: 0.3px; color: var(--text-color); cursor: pointer; }
+.category-faq-section .faq-question i { flex-shrink: 0; color: var(--primary); transition: var(--transition); }
+.category-faq-section .faq-item.open .faq-question i { transform: rotate(180deg); }
+.category-faq-section .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
+.category-faq-section .faq-item.open .faq-answer { max-height: 500px; }
+.category-faq-section .faq-answer p { padding: 0 22px 20px; color: var(--text-muted); line-height: 1.75; font-size: 14.5px; }
+
+/* ---------- Đánh giá khách hàng / Sản phẩm liên quan / Đã xem gần đây ---------- */
+.product-reviews-section h2,
+.related-products-section h2,
+.recently-viewed-section h2 {
+    font-size: 1.6rem;
+    margin-bottom: 24px;
+    text-transform: uppercase;
+}
+
+.reviews-summary { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; font-size: 15px; color: var(--text-color); }
+.reviews-list { display: flex; flex-direction: column; gap: 16px; margin-bottom: 32px; }
+.reviews-empty { color: var(--text-muted); font-size: 14px; margin-bottom: 32px; }
+
+.review-item { background: var(--bg-alt); border: 1px solid var(--border-color-light); border-radius: 10px; padding: 16px 20px; }
+.review-item-header { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 8px; }
+.review-stars { color: #f5a623; font-size: 13px; letter-spacing: 2px; }
+.review-comment { color: var(--text-color); font-size: 14px; line-height: 1.6; margin-bottom: 8px; }
+.review-date { font-size: 12px; color: var(--text-muted); }
+
+.review-form-wrap { max-width: 520px; }
+.review-form-wrap h3 { font-size: 1.1rem; margin-bottom: 16px; }
+.review-form-wrap .form-group { margin-bottom: 16px; }
+.review-form-wrap label { display: block; font-size: 13px; font-weight: 600; color: var(--text-color); margin-bottom: 6px; }
+.review-form-wrap input,
+.review-form-wrap textarea {
+    width: 100%;
+    padding: 12px 16px;
+    background-color: var(--bg-color);
+    border: 1px solid var(--border-color-light);
+    color: var(--text-color);
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 14px;
+}
+.star-picker { display: flex; gap: 8px; }
+.star-picker button { background: none; border: none; font-size: 22px; color: var(--border-color-light); cursor: pointer; padding: 2px; transition: var(--transition); }
+.star-picker button.active { color: #f5a623; }
+
+.form-error {
+    background-color: rgba(220, 53, 69, 0.08);
+    border: 1px solid rgba(220, 53, 69, 0.3);
+    color: #dc3545;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 13.5px;
+    margin-bottom: 16px;
+}
+.form-success {
+    background-color: rgba(40, 167, 69, 0.08);
+    border: 1px solid rgba(40, 167, 69, 0.3);
+    color: #28a745;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 13.5px;
+    margin-bottom: 16px;
 }
 
 .specs-table td {

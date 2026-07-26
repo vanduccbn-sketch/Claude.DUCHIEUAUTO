@@ -253,6 +253,52 @@ async function renderCategoryDetail() {
             ${logoHtml}
         </a>`;
     }).join("");
+
+    renderCategoryFaqs(cat.faqs);
+}
+
+// FAQ riêng theo danh mục (nội dung thật do Content admin nhập qua trang quản trị) - cùng kiểu
+// accordion với faq.html (class faq-item/faq-question/faq-answer) để đồng bộ giao diện toàn site.
+// Kèm schema FAQPage - đúng khuyến nghị GEO 2026 (nội dung hỏi-đáp trực tiếp giúp AI trích dẫn).
+function renderCategoryFaqs(faqs) {
+    const section = document.getElementById("categoryFaqSection");
+    const list = document.getElementById("categoryFaqList");
+    if (!section || !list) return;
+
+    if (!faqs || !faqs.length) {
+        section.hidden = true;
+        return;
+    }
+
+    list.innerHTML = faqs.map(f => `
+        <div class="faq-item">
+            <button class="faq-question" type="button">
+                ${f.question}
+                <i class="fa-solid fa-chevron-down"></i>
+            </button>
+            <div class="faq-answer"><p>${f.answer}</p></div>
+        </div>`).join("");
+
+    list.querySelectorAll(".faq-question").forEach(btn => {
+        btn.addEventListener("click", () => {
+            const item = btn.closest(".faq-item");
+            const wasOpen = item.classList.contains("open");
+            list.querySelectorAll(".faq-item.open").forEach(el => el.classList.remove("open"));
+            if (!wasOpen) item.classList.add("open");
+        });
+    });
+
+    section.hidden = false;
+
+    injectJsonLd("faqSchema", {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": faqs.map(f => ({
+            "@type": "Question",
+            "name": f.question,
+            "acceptedAnswer": { "@type": "Answer", "text": f.answer }
+        }))
+    });
 }
 
 /* ---------- Trang chi tiết 1 nhóm dịch vụ (poster + danh sách danh mục con) ---------- */
@@ -385,19 +431,52 @@ async function renderBrandProducts() {
     }
 
     grid.classList.remove("type-grid");
+
+    // Bộ lọc/sắp xếp - chỉ hiện khi có từ 2 sản phẩm trở lên (sắp xếp 1 sản phẩm vô nghĩa)
+    const toolbar = document.getElementById("productToolbar");
+    const sortSelect = document.getElementById("sortSelect");
+    if (toolbar) toolbar.hidden = productList.length < 2;
+
+    function priceValue(p) {
+        // "Liên hệ" hoặc không có giá -> xếp cuối cùng dù sắp xếp chiều nào
+        const digits = (p.price || "").replace(/[^\d]/g, "");
+        return digits ? parseInt(digits, 10) : null;
+    }
+
+    function sortProducts(list, mode) {
+        if (mode === "default") return list;
+        const sorted = [...list];
+        sorted.sort((a, b) => {
+            const pa = priceValue(a), pb = priceValue(b);
+            if (pa === null && pb === null) return 0;
+            if (pa === null) return 1;
+            if (pb === null) return -1;
+            return mode === "price-asc" ? pa - pb : pb - pa;
+        });
+        return sorted;
+    }
+
     // Sản phẩm trong cây API đã có sẵn đủ field (name/price/image/brand) - không cần lookup thêm
     // như trước đây (findProduct(pid) trên dữ liệu tĩnh).
-    grid.innerHTML = productList.map(p => `
-        <a class="product-card-catalog" href="san-pham-chi-tiet.html?id=${p.id}">
-            <div class="product-img-catalog">
-                <img src="${p.image}" alt="${seoAlt(p.name)}" loading="lazy" onerror="this.src='assets/images/placeholder.svg'">
-            </div>
-            <div class="product-info-catalog">
-                <span class="product-brand-catalog">${p.brand}</span>
-                <h3>${p.name}</h3>
-                ${p.price ? `<span class="product-price-catalog">${p.price}</span>` : ""}
-            </div>
-        </a>`).join("");
+    function renderGrid(list) {
+        grid.innerHTML = list.map(p => `
+            <a class="product-card-catalog" href="san-pham-chi-tiet.html?id=${p.id}">
+                <div class="product-img-catalog">
+                    <img src="${p.image}" alt="${seoAlt(p.name)}" loading="lazy" onerror="this.src='assets/images/placeholder.svg'">
+                </div>
+                <div class="product-info-catalog">
+                    <span class="product-brand-catalog">${p.brand}</span>
+                    <h3>${p.name}</h3>
+                    ${p.price ? `<span class="product-price-catalog">${p.price}</span>` : ""}
+                </div>
+            </a>`).join("");
+    }
+
+    renderGrid(productList);
+    if (sortSelect) {
+        sortSelect.value = "default";
+        sortSelect.onchange = () => renderGrid(sortProducts(productList, sortSelect.value));
+    }
 }
 
 /* ---------- Phase 9.6 - Schema SEO/GEO dùng chung (Service, Breadcrumb) ---------- */
@@ -446,7 +525,7 @@ function injectServiceSchema(serviceName, description) {
 }
 
 /* ---------- Trang chi tiết sản phẩm ---------- */
-function injectProductSchema(p, img, absoluteImgUrl) {
+function injectProductSchema(p, img, absoluteImgUrl, reviewStats) {
     const priceDigits = (p.price || "").replace(/[^\d]/g, "");
     const schema = {
         "@context": "https://schema.org",
@@ -463,6 +542,15 @@ function injectProductSchema(p, img, absoluteImgUrl) {
             "price": priceDigits,
             "availability": "https://schema.org/InStock",
             "url": window.location.href
+        };
+    }
+    // Chỉ chèn AggregateRating khi có ít nhất 1 đánh giá THẬT đã được duyệt - không tự bịa số
+    // liệu (đúng nguyên tắc nội dung của dự án), rating giả sẽ vi phạm chính sách schema của Google.
+    if (reviewStats && reviewStats.count > 0) {
+        schema.aggregateRating = {
+            "@type": "AggregateRating",
+            "ratingValue": reviewStats.average,
+            "reviewCount": reviewStats.count
         };
     }
     injectJsonLd("productSchema", schema);
@@ -499,6 +587,180 @@ function renderProductDetailContent(html) {
             toggleBtn.hidden = true;
         }
     });
+}
+
+function miniProductCardHtml(p) {
+    const img = p.image || productImgFallback(p.id);
+    return `
+        <a class="product-card-catalog" href="san-pham-chi-tiet.html?id=${p.id}">
+            <div class="product-img-catalog">
+                <img src="${img}" alt="${seoAlt(p.name)}" loading="lazy" onerror="this.src='assets/images/placeholder.svg'">
+            </div>
+            <div class="product-info-catalog">
+                <span class="product-brand-catalog">${p.brand}</span>
+                <h3>${p.name}</h3>
+                ${p.price ? `<span class="product-price-catalog">${p.price}</span>` : ""}
+            </div>
+        </a>`;
+}
+
+// Sản phẩm liên quan - ưu tiên cùng thương hiệu trước, thiếu thì lấy thêm sản phẩm khác cùng
+// danh mục. Dùng loadApiCatalog() đã cache sẵn, không gọi thêm API riêng.
+async function renderRelatedProducts(p) {
+    const section = document.getElementById("relatedProductsSection");
+    const grid = document.getElementById("relatedProductsGrid");
+    if (!section || !grid) return;
+    try {
+        const categories = await loadApiCatalog();
+        const cat = findCategoryIn(categories, p.category_id);
+        if (!cat) return;
+
+        const all = [];
+        cat.brands.forEach(brand => {
+            const items = brand.types ? brand.types.flatMap(t => t.products) : brand.products;
+            all.push(...items);
+        });
+
+        const sameBrand = all.filter(x => x.id !== p.id && x.brand === p.brand);
+        const others = all.filter(x => x.id !== p.id && x.brand !== p.brand);
+        const picked = [...sameBrand, ...others].slice(0, 4);
+        if (!picked.length) return;
+
+        grid.innerHTML = picked.map(miniProductCardHtml).join("");
+        section.hidden = false;
+    } catch (err) { /* chỉ là gợi ý thêm - lỗi không chặn phần chính của trang */ }
+}
+
+// Sản phẩm đã xem gần đây - lưu trong localStorage của trình duyệt (không cần tài khoản), tối đa
+// 8 sản phẩm, mới nhất lên đầu.
+const RECENTLY_VIEWED_KEY = "dha_recently_viewed";
+const RECENTLY_VIEWED_MAX = 8;
+
+function readRecentlyViewed() {
+    try {
+        return JSON.parse(localStorage.getItem(RECENTLY_VIEWED_KEY) || "[]");
+    } catch (err) {
+        return [];
+    }
+}
+
+function pushRecentlyViewed(p, img) {
+    try {
+        let list = readRecentlyViewed().filter(x => x.id !== p.id);
+        list.unshift({ id: p.id, name: p.name, brand: p.brand, price: p.price, image: img });
+        localStorage.setItem(RECENTLY_VIEWED_KEY, JSON.stringify(list.slice(0, RECENTLY_VIEWED_MAX)));
+    } catch (err) { /* localStorage đầy/bị chặn (chế độ ẩn danh...) - bỏ qua, không chặn trang */ }
+}
+
+function renderRecentlyViewed(currentId) {
+    const section = document.getElementById("recentlyViewedSection");
+    const grid = document.getElementById("recentlyViewedGrid");
+    if (!section || !grid) return;
+
+    const list = readRecentlyViewed().filter(x => x.id !== currentId);
+    if (!list.length) return;
+
+    grid.innerHTML = list.map(miniProductCardHtml).join("");
+    section.hidden = false;
+}
+
+// ---------- Đánh giá khách hàng (hiển thị + gửi mới) ----------
+function starsHtml(rating) {
+    return Array.from({ length: 5 }, (_, i) => `<i class="fa-${i < rating ? "solid" : "regular"} fa-star"></i>`).join("");
+}
+
+function reviewItemHtml(r) {
+    const date = new Date(r.created_at.replace(" ", "T") + "Z").toLocaleDateString("vi-VN");
+    return `
+        <div class="review-item">
+            <div class="review-item-header">
+                <strong>${r.customer_name}</strong>
+                <span class="review-stars">${starsHtml(r.rating)}</span>
+            </div>
+            <p class="review-comment">${r.comment}</p>
+            <span class="review-date">${date}</span>
+        </div>`;
+}
+
+// Tải + hiển thị đánh giá đã duyệt, gắn sự kiện cho form gửi đánh giá mới. Trả về {count, average}
+// để injectProductSchema() chèn AggregateRating (chỉ khi có đánh giá thật, không tự bịa số liệu).
+async function initProductReviews(productId) {
+    const summaryEl = document.getElementById("reviewsSummary");
+    const listEl = document.getElementById("reviewsList");
+    let stats = { count: 0, average: 0 };
+
+    try {
+        const res = await fetch(`${API_BASE_URL}/api/reviews?product_id=${encodeURIComponent(productId)}`);
+        if (!res.ok) throw new Error();
+        const data = await res.json();
+        stats = { count: data.count, average: data.average };
+
+        if (data.count > 0) {
+            summaryEl.innerHTML = `<span class="review-stars">${starsHtml(Math.round(data.average))}</span> <strong>${data.average}/5</strong> <span>(${data.count} đánh giá)</span>`;
+            summaryEl.hidden = false;
+            listEl.innerHTML = data.reviews.map(reviewItemHtml).join("");
+        } else {
+            listEl.innerHTML = `<p class="reviews-empty">Chưa có đánh giá nào cho sản phẩm này. Hãy là người đầu tiên chia sẻ trải nghiệm!</p>`;
+        }
+    } catch (err) {
+        listEl.innerHTML = `<p class="reviews-empty">Không tải được đánh giá, vui lòng thử lại sau.</p>`;
+    }
+
+    const starPicker = document.getElementById("starPicker");
+    const reviewForm = document.getElementById("reviewForm");
+    if (!starPicker || !reviewForm) return stats;
+
+    let selectedRating = 0;
+    const starButtons = starPicker.querySelectorAll("button");
+    starButtons.forEach(btn => {
+        btn.addEventListener("click", () => {
+            selectedRating = parseInt(btn.dataset.star, 10);
+            starButtons.forEach(b => b.classList.toggle("active", parseInt(b.dataset.star, 10) <= selectedRating));
+        });
+    });
+
+    reviewForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const errorEl = document.getElementById("reviewError");
+        const successEl = document.getElementById("reviewSuccess");
+        errorEl.hidden = true;
+        successEl.hidden = true;
+
+        if (!selectedRating) {
+            errorEl.textContent = "Vui lòng chọn số sao đánh giá.";
+            errorEl.hidden = false;
+            return;
+        }
+
+        const submitBtn = reviewForm.querySelector('button[type="submit"]');
+        submitBtn.disabled = true;
+        try {
+            const res = await fetch(`${API_BASE_URL}/api/reviews`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    product_id: productId,
+                    customer_name: document.getElementById("rvName").value.trim(),
+                    rating: selectedRating,
+                    comment: document.getElementById("rvComment").value.trim()
+                })
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || "Gửi đánh giá thất bại");
+
+            successEl.hidden = false;
+            reviewForm.reset();
+            selectedRating = 0;
+            starButtons.forEach(b => b.classList.remove("active"));
+        } catch (err) {
+            errorEl.textContent = err.message;
+            errorEl.hidden = false;
+        } finally {
+            submitBtn.disabled = false;
+        }
+    });
+
+    return stats;
 }
 
 // Gọi API thật (Phase 7) thay vì đọc CATALOG.products tĩnh - cho phép admin sửa sản phẩm trong
@@ -542,7 +804,13 @@ async function renderProductDetail() {
         if (ogDesc && pageDesc) ogDesc.setAttribute("content", pageDesc);
 
         const absoluteImgUrl = new URL(img, window.location.href).href;
-        injectProductSchema(p, img, absoluteImgUrl);
+
+        pushRecentlyViewed(p, img);
+        renderRecentlyViewed(p.id);
+        renderRelatedProducts(p);
+        const reviewStats = await initProductReviews(p.id);
+
+        injectProductSchema(p, img, absoluteImgUrl, reviewStats);
         injectBreadcrumbSchema([
             { name: "Trang chủ", href: "index.html" },
             { name: "Sản Phẩm", href: "san-pham.html" },

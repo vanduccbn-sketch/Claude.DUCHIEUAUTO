@@ -45,6 +45,7 @@ router.get("/catalog", async (req, res) => {
         "SELECT id, category_id, brand_id, brand_type_id, name, price, image, sort_order FROM products WHERE hidden = 0 ORDER BY sort_order"
     ).all();
     const sections = await db.prepare("SELECT * FROM category_sections ORDER BY category_id, sort_order").all();
+    const faqs = await db.prepare("SELECT * FROM category_faqs ORDER BY category_id, sort_order").all();
 
     // Resolve tên thương hiệu hiển thị ngay trong bộ nhớ (đã có sẵn brands/types) thay vì query
     // DB thêm 242 lần - cùng quy tắc với resolveBrandName() ở trên (chỉ ưu tiên brand_types cho
@@ -93,6 +94,7 @@ router.get("/catalog", async (req, res) => {
                 intro: cat.seo_intro,
                 sections: sections.filter(s => s.category_id === cat.id).map(s => ({ heading: s.heading, body: s.body }))
             },
+            faqs: faqs.filter(f => f.category_id === cat.id).map(f => ({ question: f.question, answer: f.answer })),
             brands: catBrands
         };
     });
@@ -305,6 +307,51 @@ router.post("/admin/brand-types", canEditCatalog, async (req, res) => {
 
     await db.logActivity(req.admin, "create_brand_type", `brand_type:${category_id}/${brand_id}/${id}`);
     res.status(201).json({ id });
+});
+
+// GET /api/products/admin/categories/:id/faqs - liệt kê FAQ của 1 danh mục (kể cả khi rỗng)
+router.get("/admin/categories/:id/faqs", canEditCatalog, async (req, res) => {
+    const faqs = await db.prepare("SELECT * FROM category_faqs WHERE category_id = ? ORDER BY sort_order").all(req.params.id);
+    res.json(faqs);
+});
+
+// POST /api/products/admin/categories/:id/faqs - thêm 1 câu hỏi mới vào cuối danh sách
+router.post("/admin/categories/:id/faqs", canEditCatalog, async (req, res) => {
+    const { question, answer } = req.body;
+    if (!question || !answer) return res.status(400).json({ error: "Thiếu câu hỏi hoặc câu trả lời" });
+
+    const category = await db.prepare("SELECT id FROM categories WHERE id = ?").get(req.params.id);
+    if (!category) return res.status(404).json({ error: "Không tìm thấy danh mục" });
+
+    const info = await db.prepare(`
+        INSERT INTO category_faqs (category_id, question, answer, sort_order)
+        VALUES (?, ?, ?, (SELECT COALESCE(MAX(sort_order), -1) + 1 FROM category_faqs WHERE category_id = ?))
+    `).run(req.params.id, question, answer, req.params.id);
+
+    await db.logActivity(req.admin, "create_category_faq", `category:${req.params.id}`);
+    res.status(201).json({ id: info.lastInsertRowid });
+});
+
+// PUT /api/products/admin/faqs/:id - sửa 1 câu hỏi FAQ
+router.put("/admin/faqs/:id", canEditCatalog, async (req, res) => {
+    const { question, answer } = req.body;
+    const existing = await db.prepare("SELECT * FROM category_faqs WHERE id = ?").get(req.params.id);
+    if (!existing) return res.status(404).json({ error: "Không tìm thấy câu hỏi" });
+
+    await db.prepare("UPDATE category_faqs SET question = ?, answer = ? WHERE id = ?")
+        .run(question ?? existing.question, answer ?? existing.answer, req.params.id);
+
+    await db.logActivity(req.admin, "update_category_faq", `faq:${req.params.id}`);
+    res.json({ ok: true });
+});
+
+// DELETE /api/products/admin/faqs/:id - xoá 1 câu hỏi FAQ
+router.delete("/admin/faqs/:id", canEditCatalog, async (req, res) => {
+    const info = await db.prepare("DELETE FROM category_faqs WHERE id = ?").run(req.params.id);
+    if (info.changes === 0) return res.status(404).json({ error: "Không tìm thấy câu hỏi" });
+
+    await db.logActivity(req.admin, "delete_category_faq", `faq:${req.params.id}`);
+    res.json({ ok: true });
 });
 
 // PUT /api/products/admin/categories/:id - sửa nội dung SEO của 1 danh mục (không tạo/xoá danh

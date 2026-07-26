@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Danh Mục / FAQ | Quản Trị Đức Hiếu Auto</title>
+    <link rel="stylesheet" href="assets/admin.css">
+    <style>
+        .faq-row { display: grid; grid-template-columns: 1fr 1fr auto; gap: 10px; margin-bottom: 12px; align-items: start; }
+        .faq-row textarea { padding: 9px 11px; border: 1px solid var(--border); border-radius: 6px; font-size: 13.5px; font-family: inherit; resize: vertical; min-height: 60px; }
+        .faq-row .btn { align-self: start; }
+    </style>
+</head>
+<body>
+    <div class="admin-topbar" id="adminTopbar"></div>
+
+    <main class="admin-main">
+        <div class="admin-header">
+            <div>
+                <h1>Danh Mục / FAQ</h1>
+                <p class="desc">Câu hỏi thường gặp hiển thị riêng trên từng trang danh mục sản phẩm - giúp khách hiểu rõ dịch vụ ngay khi đang xem, đồng thời tăng khả năng được Google/AI trích dẫn.</p>
+            </div>
+        </div>
+
+        <div class="inline-form-card">
+            <div class="form-group">
+                <label for="categorySelect">Chọn danh mục</label>
+                <select id="categorySelect">
+                    <option value="">-- Chọn danh mục --</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="faqEditor" hidden>
+            <div id="faqList"></div>
+            <button type="button" class="btn btn-secondary" id="addFaqBtn">+ Thêm Câu Hỏi</button>
+        </div>
+    </main>
+
+    <script src="assets/admin.js"></script>
+    <script>
+        const auth = requireAuth(["content", "super_admin"]);
+        if (auth) {
+            renderAdminNav(auth, "danh-muc");
+            loadCategories();
+        }
+
+        const categorySelect = document.getElementById("categorySelect");
+        const faqEditor = document.getElementById("faqEditor");
+        const faqList = document.getElementById("faqList");
+
+        async function loadCategories() {
+            try {
+                const res = await apiFetch("/api/products/admin/categories");
+                const categories = await res.json();
+                categorySelect.innerHTML = `<option value="">-- Chọn danh mục --</option>` +
+                    categories.map(c => `<option value="${c.id}">${c.name}</option>`).join("");
+            } catch (err) {
+                showToast(err.message, true);
+            }
+        }
+
+        categorySelect.addEventListener("change", () => {
+            if (categorySelect.value) {
+                faqEditor.hidden = false;
+                loadFaqs(categorySelect.value);
+            } else {
+                faqEditor.hidden = true;
+            }
+        });
+
+        document.getElementById("addFaqBtn").addEventListener("click", () => addFaqRow(null, "", ""));
+
+        async function loadFaqs(categoryId) {
+            faqList.innerHTML = `<p class="form-hint">Đang tải...</p>`;
+            try {
+                const res = await apiFetch(`/api/products/admin/categories/${categoryId}/faqs`);
+                const faqs = await res.json();
+                faqList.innerHTML = "";
+                faqs.forEach(f => addFaqRow(f.id, f.question, f.answer));
+                if (faqs.length === 0) faqList.innerHTML = `<p class="form-hint">Chưa có câu hỏi nào cho danh mục này.</p>`;
+            } catch (err) {
+                showToast(err.message, true);
+            }
+        }
+
+        function addFaqRow(id, question, answer) {
+            if (faqList.querySelector(".form-hint")) faqList.innerHTML = "";
+
+            const row = document.createElement("div");
+            row.className = "faq-row";
+            row.dataset.id = id || "";
+            row.innerHTML = `
+                <textarea class="faq-question-input" placeholder="Câu hỏi">${question}</textarea>
+                <textarea class="faq-answer-input" placeholder="Câu trả lời">${answer}</textarea>
+                <div style="display:flex;flex-direction:column;gap:6px;">
+                    <button type="button" class="btn btn-primary btn-save-faq">Lưu</button>
+                    <button type="button" class="btn btn-danger btn-delete-faq" ${id ? "" : "hidden"}>Xoá</button>
+                </div>
+            `;
+            faqList.appendChild(row);
+
+            row.querySelector(".btn-save-faq").addEventListener("click", () => saveFaqRow(row));
+            row.querySelector(".btn-delete-faq").addEventListener("click", () => deleteFaqRow(row));
+        }
+
+        async function saveFaqRow(row) {
+            const question = row.querySelector(".faq-question-input").value.trim();
+            const answer = row.querySelector(".faq-answer-input").value.trim();
+            if (!question || !answer) return showToast("Cần nhập đủ câu hỏi và câu trả lời", true);
+
+            const categoryId = categorySelect.value;
+            const id = row.dataset.id;
+            try {
+                if (id) {
+                    const res = await apiFetch(`/api/products/admin/faqs/${id}`, { method: "PUT", body: { question, answer } });
+                    if (!res.ok) throw new Error((await res.json()).error || "Lưu thất bại");
+                    showToast("Đã lưu");
+                } else {
+                    const res = await apiFetch(`/api/products/admin/categories/${categoryId}/faqs`, { method: "POST", body: { question, answer } });
+                    const data = await res.json();
+                    if (!res.ok) throw new Error(data.error || "Tạo thất bại");
+                    row.dataset.id = data.id;
+                    row.querySelector(".btn-delete-faq").hidden = false;
+                    showToast("Đã tạo câu hỏi mới");
+                }
+            } catch (err) {
+                showToast(err.message, true);
+            }
+        }
+
+        async function deleteFaqRow(row) {
+            const id = row.dataset.id;
+            if (!id) { row.remove(); return; }
+            if (!confirm("Xoá câu hỏi này? Không thể hoàn tác.")) return;
+            try {
+                const res = await apiFetch(`/api/products/admin/faqs/${id}`, { method: "DELETE" });
+                if (!res.ok) throw new Error((await res.json()).error || "Xoá thất bại");
+                row.remove();
+                showToast("Đã xoá");
+            } catch (err) {
+                showToast(err.message, true);
+            }
+        }
+    </script>
+</body>
+</html>

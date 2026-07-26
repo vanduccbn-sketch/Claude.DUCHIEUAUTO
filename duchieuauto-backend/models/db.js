@@ -207,6 +207,29 @@ const ready = (async () => {
             spec_value TEXT NOT NULL,
             sort_order INTEGER NOT NULL DEFAULT 0
         );
+
+        -- Đánh giá khách hàng cho sản phẩm - khách tự gửi (public), mặc định "pending" chờ admin
+        -- duyệt mới hiện công khai (chống spam/nội dung bậy) - giống mô hình comment cần duyệt.
+        CREATE TABLE IF NOT EXISTS reviews (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            product_id TEXT NOT NULL REFERENCES products(id),
+            customer_name TEXT NOT NULL,
+            rating INTEGER NOT NULL,
+            comment TEXT NOT NULL,
+            status TEXT NOT NULL DEFAULT 'pending',
+            created_at TEXT NOT NULL DEFAULT (datetime('now'))
+        );
+
+        -- FAQ riêng theo từng danh mục (khác FAQ chung ở faq.html) - nội dung thật do Content admin
+        -- tự viết qua trang quản trị, không tự sinh - hiện ngay trên trang danh mục kèm schema
+        -- FAQPage để tăng khả năng được Google/AI trích dẫn (GEO).
+        CREATE TABLE IF NOT EXISTS category_faqs (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            category_id TEXT NOT NULL REFERENCES categories(id),
+            question TEXT NOT NULL,
+            answer TEXT NOT NULL,
+            sort_order INTEGER NOT NULL DEFAULT 0
+        );
     `);
 
     // Migration nhẹ: bảng "products" đã có dữ liệu thật trên Turso (242 sản phẩm import từ

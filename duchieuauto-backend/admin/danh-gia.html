@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Đánh Giá Sản Phẩm | Quản Trị Đức Hiếu Auto</title>
+    <link rel="stylesheet" href="assets/admin.css">
+</head>
+<body>
+    <div class="admin-topbar" id="adminTopbar"></div>
+
+    <main class="admin-main">
+        <div class="admin-header">
+            <div>
+                <h1>Đánh Giá Sản Phẩm</h1>
+                <p class="desc">Duyệt đánh giá khách gửi trước khi hiển thị công khai trên trang sản phẩm. Đánh giá "Chờ duyệt" chưa hiện cho khách xem.</p>
+            </div>
+        </div>
+
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Sản phẩm</th>
+                    <th>Khách hàng</th>
+                    <th>Số sao</th>
+                    <th>Nhận xét</th>
+                    <th>Thời gian</th>
+                    <th>Trạng thái</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody id="reviewsBody">
+                <tr class="empty-row"><td colspan="7">Đang tải...</td></tr>
+            </tbody>
+        </table>
+    </main>
+
+    <script src="assets/admin.js"></script>
+    <script>
+        const auth = requireAuth(["content", "super_admin"]);
+        if (auth) {
+            renderAdminNav(auth, "danh-gia");
+            loadReviews();
+        }
+
+        const STATUS_LABEL = { pending: "Chờ duyệt", approved: "Đã duyệt", rejected: "Đã từ chối" };
+
+        async function loadReviews() {
+            try {
+                const res = await apiFetch("/api/reviews/admin/all");
+                const reviews = await res.json();
+                const tbody = document.getElementById("reviewsBody");
+
+                if (reviews.length === 0) {
+                    tbody.innerHTML = `<tr class="empty-row"><td colspan="7">Chưa có đánh giá nào.</td></tr>`;
+                    return;
+                }
+
+                tbody.innerHTML = reviews.map(r => `
+                    <tr>
+                        <td><a href="../san-pham-chi-tiet.html?id=${r.product_id}" target="_blank">${r.product_name}</a></td>
+                        <td>${r.customer_name}</td>
+                        <td>${"★".repeat(r.rating)}${"☆".repeat(5 - r.rating)}</td>
+                        <td>${r.comment}</td>
+                        <td>${formatDateTime(r.created_at)}</td>
+                        <td>
+                            <select class="status-select" data-id="${r.id}">
+                                <option value="pending" ${r.status === "pending" ? "selected" : ""}>Chờ duyệt</option>
+                                <option value="approved" ${r.status === "approved" ? "selected" : ""}>Đã duyệt</option>
+                                <option value="rejected" ${r.status === "rejected" ? "selected" : ""}>Đã từ chối</option>
+                            </select>
+                        </td>
+                        <td class="actions">
+                            <button type="button" class="btn btn-danger" data-delete-id="${r.id}">Xoá</button>
+                        </td>
+                    </tr>
+                `).join("");
+
+                tbody.querySelectorAll(".status-select").forEach(sel => {
+                    sel.addEventListener("change", () => updateStatus(sel.dataset.id, sel.value));
+                });
+                tbody.querySelectorAll("[data-delete-id]").forEach(btn => {
+                    btn.addEventListener("click", () => deleteReview(btn.dataset.deleteId));
+                });
+            } catch (err) {
+                showToast(err.message, true);
+            }
+        }
+
+        async function updateStatus(id, status) {
+            try {
+                const res = await apiFetch(`/api/reviews/${id}/status`, { method: "PUT", body: { status } });
+                if (!res.ok) throw new Error((await res.json()).error || "Cập nhật thất bại");
+                showToast("Đã cập nhật trạng thái");
+            } catch (err) {
+                showToast(err.message, true);
+            }
+        }
+
+        async function deleteReview(id) {
+            if (!confirm("Xoá đánh giá này? Không thể hoàn tác.")) return;
+            try {
+                const res = await apiFetch(`/api/reviews/${id}`, { method: "DELETE" });
+                if (!res.ok) throw new Error((await res.json()).error || "Xoá thất bại");
+                showToast("Đã xoá đánh giá");
+                loadReviews();
+            } catch (err) {
+                showToast(err.message, true);
+            }
+        }
+    </script>
+</body>
+</html>

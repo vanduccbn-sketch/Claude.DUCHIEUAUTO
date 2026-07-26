@@ -25,7 +25,11 @@
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html { scroll-behavior: smooth; scroll-padding-top: 80px; overflow-x: hidden; max-width: 100vw; }
-body { background-color: var(--bg-color); color: var(--text-color); font-family: var(--font-body); line-height: 1.6; overflow-x: hidden; max-width: 100vw; }
+/* KHÔNG đặt overflow-x: hidden ở đây (dù html đã có) - đặt overflow-x trên CẢ html lẫn body cùng
+   lúc phá vỡ position: sticky (header không ghim được nữa, cuộn trôi theo trang bình thường) vì
+   body tự trở thành 1 vùng cuộn riêng thay vì propagate lên viewport như khi chỉ html có overflow.
+   html.overflow-x:hidden đã đủ để chặn thanh cuộn ngang toàn trang, không cần lặp lại ở body. */
+body { background-color: var(--bg-color); color: var(--text-color); font-family: var(--font-body); line-height: 1.6; max-width: 100vw; }
 img { max-width: 100%; display: block; }
 a { text-decoration: none; color: inherit; }
 ul { list-style: none; }

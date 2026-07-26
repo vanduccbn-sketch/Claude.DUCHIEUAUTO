@@ -90,6 +90,7 @@
             try {
                 const fd = new FormData();
                 fd.append("image", file);
+                fd.append("purpose", "cover");
                 const res = await apiFetch("/api/uploads", { method: "POST", body: fd });
                 if (!res.ok) throw new Error((await res.json()).error || "Tải ảnh thất bại");
                 const data = await res.json();

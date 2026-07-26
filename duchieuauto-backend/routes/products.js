@@ -102,7 +102,11 @@ router.get("/catalog", async (req, res) => {
 
 // GET /api/products/:id - chi tiết 1 sản phẩm (public, dùng cho trang chi tiết sản phẩm)
 router.get("/:id", async (req, res) => {
-    const p = await db.prepare("SELECT * FROM products WHERE id = ? AND hidden = 0").get(req.params.id);
+    const p = await db.prepare(`
+        SELECT products.*, categories.name as category_name
+        FROM products JOIN categories ON categories.id = products.category_id
+        WHERE products.id = ? AND products.hidden = 0
+    `).get(req.params.id);
     if (!p) return res.status(404).json({ error: "Không tìm thấy sản phẩm" });
 
     const specs = await db.prepare("SELECT spec_key, spec_value FROM product_specs WHERE product_id = ? ORDER BY sort_order").all(req.params.id);

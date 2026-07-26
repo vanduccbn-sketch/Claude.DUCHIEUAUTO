@@ -1,22 +1,32 @@
 /* =========================================================
    CATALOG RENDER - Hàm dùng chung cho các trang:
    category-chi-tiet.html, brand-san-pham.html, san-pham-chi-tiet.html, san-pham.html
+
+   [Phase 7] categories/brands/products giờ lấy từ API /api/products/catalog (database thật,
+   admin sửa được qua trang quản trị) thay vì đọc CATALOG tĩnh trong catalog-data.js.
+   CATALOG.serviceGroups vẫn giữ tĩnh - đó chỉ là cách NHÓM HIỂN THỊ ở trang chủ (Nội Thất/Ngoại
+   Thất Ô Tô), không phải dữ liệu sản phẩm nên không thuộc phạm vi CMS sản phẩm.
    ========================================================= */
+
+let apiCatalogCache = null;
+async function loadApiCatalog() {
+    if (apiCatalogCache) return apiCatalogCache;
+    const res = await fetch(`${API_BASE_URL}/api/products/catalog`);
+    if (!res.ok) throw new Error("Không tải được danh mục sản phẩm");
+    apiCatalogCache = await res.json();
+    return apiCatalogCache;
+}
 
 function getParam(name) {
     return new URLSearchParams(window.location.search).get(name);
 }
 
-function findCategory(id) {
-    return CATALOG.categories.find(c => c.id === id);
+function findCategoryIn(categories, id) {
+    return categories.find(c => c.id === id);
 }
 
 function findServiceGroup(id) {
     return CATALOG.serviceGroups.find(g => g.id === id);
-}
-
-function findProduct(id) {
-    return CATALOG.products[id] || null;
 }
 
 function productImgFallback(id) {
@@ -39,13 +49,18 @@ function serviceCardHtml(item) {
 }
 
 /* ---------- Danh mục Sản Phẩm (san-pham.html) - giữ nguyên phẳng, đủ 8 danh mục ---------- */
-function renderCategoryGrid(containerSelector) {
+async function renderCategoryGrid(containerSelector) {
     const container = document.querySelector(containerSelector);
     if (!container) return;
 
-    container.innerHTML = CATALOG.categories
-        .map(cat => serviceCardHtml({ ...cat, href: `category-chi-tiet.html?id=${cat.id}` }))
-        .join("");
+    try {
+        const categories = await loadApiCatalog();
+        container.innerHTML = categories
+            .map(cat => serviceCardHtml({ ...cat, href: `category-chi-tiet.html?id=${cat.id}` }))
+            .join("");
+    } catch (err) {
+        container.innerHTML = `<p style="grid-column:1/-1;text-align:center;color:var(--text-muted);">Không tải được danh mục sản phẩm. Vui lòng thử lại sau.</p>`;
+    }
 }
 
 /* ---------- Dropdown "Sản Phẩm" trên header - mỗi danh mục kèm flyout thương hiệu thật khi rê chuột ---------- */
@@ -60,42 +75,55 @@ const CATEGORY_NAV_ICON = {
     "do-ban-tai": "fa-truck-pickup"
 };
 
-function renderNavProductsDropdown(containerSelector) {
+async function renderNavProductsDropdown(containerSelector) {
     const container = document.querySelector(containerSelector);
     if (!container) return;
 
-    container.innerHTML = CATALOG.categories.map(cat => {
-        const brands = cat.brands.filter(b => !b.hidden);
-        const icon = CATEGORY_NAV_ICON[cat.id] || "fa-circle";
-        const flyoutHtml = brands.length
-            ? brands.map(b => `<a href="brand-san-pham.html?id=${cat.id}&brand=${b.id}">${b.name}</a>`).join("")
-            : `<span class="nav-brand-empty">Đang cập nhật</span>`;
+    try {
+        const categories = await loadApiCatalog();
+        // API /catalog đã chỉ trả brand có hidden=0 sẵn, không cần filter lại ở đây.
+        container.innerHTML = categories.map(cat => {
+            const brands = cat.brands;
+            const icon = CATEGORY_NAV_ICON[cat.id] || "fa-circle";
+            const flyoutHtml = brands.length
+                ? brands.map(b => `<a href="brand-san-pham.html?id=${cat.id}&brand=${b.id}">${b.name}</a>`).join("")
+                : `<span class="nav-brand-empty">Đang cập nhật</span>`;
 
-        return `
-        <div class="nav-product-row">
-            <a class="nav-product-link" href="category-chi-tiet.html?id=${cat.id}">
-                <span class="nav-product-label"><i class="fa-solid ${icon}"></i>${cat.name}</span>
-                <i class="fa-solid fa-chevron-right nav-product-arrow"></i>
-            </a>
-            <div class="nav-brand-flyout">${flyoutHtml}</div>
-        </div>`;
-    }).join("");
+            return `
+            <div class="nav-product-row">
+                <a class="nav-product-link" href="category-chi-tiet.html?id=${cat.id}">
+                    <span class="nav-product-label"><i class="fa-solid ${icon}"></i>${cat.name}</span>
+                    <i class="fa-solid fa-chevron-right nav-product-arrow"></i>
+                </a>
+                <div class="nav-brand-flyout">${flyoutHtml}</div>
+            </div>`;
+        }).join("");
+    } catch (err) {
+        // Dropdown menu không phải nội dung chính - lỗi tải không nên chặn cả trang, chỉ để trống.
+    }
 }
 
 /* ---------- Dịch Vụ (index.html) - gộp nhóm: Nội Thất Ô Tô / Ngoại Thất Ô Tô / Đồ Bán Tải ---------- */
-function renderServiceGrid(containerSelector) {
+async function renderServiceGrid(containerSelector) {
     const container = document.querySelector(containerSelector);
     if (!container) return;
 
-    const doBanTai = findCategory("do-ban-tai");
-    const items = [
-        ...CATALOG.serviceGroups.map(g => ({ ...g, href: `category-chi-tiet.html?group=${g.id}` })),
-        ...(doBanTai ? [{ ...doBanTai, href: `category-chi-tiet.html?id=${doBanTai.id}` }] : [])
-    ];
+    try {
+        const categories = await loadApiCatalog();
+        const doBanTai = findCategoryIn(categories, "do-ban-tai");
+        const items = [
+            ...CATALOG.serviceGroups.map(g => ({ ...g, href: `category-chi-tiet.html?group=${g.id}` })),
+            ...(doBanTai ? [{ ...doBanTai, href: `category-chi-tiet.html?id=${doBanTai.id}` }] : [])
+        ];
 
-    // Container này đồng thời là .swiper-wrapper (carousel Swiper trên trang chủ) nên mỗi thẻ
-    // cần bọc trong .swiper-slide.
-    container.innerHTML = items.map(item => `<div class="swiper-slide">${serviceCardHtml(item)}</div>`).join("");
+        // Container này đồng thời là .swiper-wrapper (carousel Swiper trên trang chủ) nên mỗi thẻ
+        // cần bọc trong .swiper-slide.
+        container.innerHTML = items.map(item => `<div class="swiper-slide">${serviceCardHtml(item)}</div>`).join("");
+    } catch (err) {
+        container.innerHTML = CATALOG.serviceGroups
+            .map(g => `<div class="swiper-slide">${serviceCardHtml({ ...g, href: `category-chi-tiet.html?group=${g.id}` })}</div>`)
+            .join("");
+    }
 }
 
 /* ---------- Dải logo thương hiệu chạy (index.html) - mỗi logo dẫn thẳng tới trang thương hiệu ---------- */
@@ -140,7 +168,7 @@ function renderBrandMarquee(containerSelector) {
 }
 
 /* ---------- Trang chi tiết danh mục (poster + danh sách thương hiệu) ---------- */
-function renderCategoryDetail() {
+async function renderCategoryDetail() {
     const groupId = getParam("group");
     if (groupId) {
         renderServiceGroupDetail(groupId);
@@ -148,7 +176,14 @@ function renderCategoryDetail() {
     }
 
     const id = getParam("id");
-    const cat = findCategory(id);
+    let cat;
+    try {
+        const categories = await loadApiCatalog();
+        cat = findCategoryIn(categories, id);
+    } catch (err) {
+        document.querySelector(".category-detail-wrap").innerHTML = "<p>Không tải được danh mục. Vui lòng thử lại sau.</p>";
+        return;
+    }
 
     if (!cat) {
         document.querySelector(".category-detail-wrap").innerHTML = "<p>Không tìm thấy danh mục.</p>";
@@ -207,7 +242,7 @@ function renderCategoryDetail() {
 }
 
 /* ---------- Trang chi tiết 1 nhóm dịch vụ (poster + danh sách danh mục con) ---------- */
-function renderServiceGroupDetail(groupId) {
+async function renderServiceGroupDetail(groupId) {
     const group = findServiceGroup(groupId);
 
     if (!group) {
@@ -232,23 +267,38 @@ function renderServiceGroupDetail(groupId) {
     const grid = document.querySelector(".brand-grid");
     grid.classList.remove("brand-grid");
     grid.classList.add("services-grid");
-    grid.innerHTML = group.categories
-        .map(catId => findCategory(catId))
-        .filter(Boolean)
-        .map(cat => serviceCardHtml({ ...cat, href: `category-chi-tiet.html?id=${cat.id}` }))
-        .join("");
+
+    try {
+        const categories = await loadApiCatalog();
+        grid.innerHTML = group.categories
+            .map(catId => findCategoryIn(categories, catId))
+            .filter(Boolean)
+            .map(cat => serviceCardHtml({ ...cat, href: `category-chi-tiet.html?id=${cat.id}` }))
+            .join("");
+    } catch (err) {
+        grid.innerHTML = `<p style="grid-column:1/-1;text-align:center;color:var(--text-muted);">Không tải được danh mục. Vui lòng thử lại sau.</p>`;
+    }
 }
 
 /* ---------- Trang sản phẩm theo thương hiệu (hỗ trợ thêm cấp "loại": hãng -> loại -> sản phẩm) ---------- */
-function renderBrandProducts() {
+async function renderBrandProducts() {
     const id = getParam("id");
     const brandId = getParam("brand");
     const typeId = getParam("loai");
-    const cat = findCategory(id);
-    const brand = cat ? cat.brands.find(b => b.id === brandId) : null;
+    const wrap = document.querySelector(".brand-products-wrap");
+
+    let cat, brand;
+    try {
+        const categories = await loadApiCatalog();
+        cat = findCategoryIn(categories, id);
+        brand = cat ? cat.brands.find(b => b.id === brandId) : null;
+    } catch (err) {
+        wrap.innerHTML = "<p>Không tải được dữ liệu. Vui lòng thử lại sau.</p>";
+        return;
+    }
 
     if (!cat || !brand) {
-        document.querySelector(".brand-products-wrap").innerHTML = "<p>Không tìm thấy thương hiệu.</p>";
+        wrap.innerHTML = "<p>Không tìm thấy thương hiệu.</p>";
         return;
     }
 
@@ -288,14 +338,14 @@ function renderBrandProducts() {
         return;
     }
 
-    let productIds;
+    let productList;
     if (brand.types) {
         const t = brand.types.find(x => x.id === typeId);
         if (!t) {
-            document.querySelector(".brand-products-wrap").innerHTML = "<p>Không tìm thấy loại sản phẩm.</p>";
+            wrap.innerHTML = "<p>Không tìm thấy loại sản phẩm.</p>";
             return;
         }
-        productIds = t.products;
+        productList = t.products;
 
         breadcrumbBrandSep.hidden = false;
         breadcrumbBrand.hidden = false;
@@ -305,7 +355,7 @@ function renderBrandProducts() {
         document.title = brand.name + " - " + t.name + " | Đức Hiếu Auto";
         setBrandTitle(brand.name + " - " + t.name, t.logo || brand.logo);
     } else {
-        productIds = brand.products;
+        productList = brand.products;
         breadcrumbBrandSep.hidden = true;
         breadcrumbBrand.hidden = true;
         document.querySelector(".breadcrumb-current").textContent = brand.name;
@@ -314,22 +364,19 @@ function renderBrandProducts() {
     }
 
     grid.classList.remove("type-grid");
-    grid.innerHTML = productIds.map(pid => {
-        const p = findProduct(pid);
-        if (!p) return "";
-        const img = p.image || productImgFallback(pid);
-        return `
-        <a class="product-card-catalog" href="san-pham-chi-tiet.html?id=${pid}">
+    // Sản phẩm trong cây API đã có sẵn đủ field (name/price/image/brand) - không cần lookup thêm
+    // như trước đây (findProduct(pid) trên dữ liệu tĩnh).
+    grid.innerHTML = productList.map(p => `
+        <a class="product-card-catalog" href="san-pham-chi-tiet.html?id=${p.id}">
             <div class="product-img-catalog">
-                <img src="${img}" alt="${p.name}" loading="lazy" onerror="this.src='assets/images/placeholder.svg'">
+                <img src="${p.image}" alt="${p.name}" loading="lazy" onerror="this.src='assets/images/placeholder.svg'">
             </div>
             <div class="product-info-catalog">
                 <span class="product-brand-catalog">${p.brand}</span>
                 <h3>${p.name}</h3>
                 ${p.price ? `<span class="product-price-catalog">${p.price}</span>` : ""}
             </div>
-        </a>`;
-    }).join("");
+        </a>`).join("");
 }
 
 /* ---------- Trang chi tiết sản phẩm ---------- */

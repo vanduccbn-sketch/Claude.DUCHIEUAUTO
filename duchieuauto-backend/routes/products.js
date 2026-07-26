@@ -14,6 +14,23 @@ function productImagePath(id, image) {
     return image || `assets/images/products/${id}/anh-1.jpg`;
 }
 
+// "Đồ Bán Tải" là danh mục DUY NHẤT có cấu trúc đảo ngược: brand_id trên bảng products là NHÓM
+// sản phẩm (Nắp Thùng, Lò Xo...), thương hiệu thật nằm ở brand_type_id. Mọi danh mục khác:
+// brand_id đã LÀ thương hiệu thật, brand_type_id (nếu có) chỉ là phân loại tính năng trong hãng
+// (VD JBL -> "Loa Ô Tô"/"Loa Sub"), KHÔNG PHẢI tên thương hiệu khác - [Phase 7] bug phát hiện lúc
+// nối frontend: coi mọi brand_type_id là "thương hiệu thật" làm sản phẩm JBL hiển thị nhầm
+// "Loa Ô Tô" thay vì "JBL". Chỉ ưu tiên brand_type_id cho đúng danh mục này.
+const CATEGORIES_WITH_PRODUCT_GROUPS = ["do-ban-tai"];
+
+async function resolveBrandName(categoryId, brandId, brandTypeId) {
+    if (brandTypeId && CATEGORIES_WITH_PRODUCT_GROUPS.includes(categoryId)) {
+        const t = await db.prepare("SELECT name FROM brand_types WHERE category_id = ? AND brand_id = ? AND id = ?").get(categoryId, brandId, brandTypeId);
+        if (t) return t.name;
+    }
+    const b = await db.prepare("SELECT name FROM brands WHERE category_id = ? AND id = ?").get(categoryId, brandId);
+    return b ? b.name : brandTypeId || brandId;
+}
+
 /* =========================================================
    PUBLIC - đọc dữ liệu cho frontend
    ========================================================= */
@@ -29,6 +46,18 @@ router.get("/catalog", async (req, res) => {
     ).all();
     const sections = await db.prepare("SELECT * FROM category_sections ORDER BY category_id, sort_order").all();
 
+    // Resolve tên thương hiệu hiển thị ngay trong bộ nhớ (đã có sẵn brands/types) thay vì query
+    // DB thêm 242 lần - cùng quy tắc với resolveBrandName() ở trên (chỉ ưu tiên brand_types cho
+    // danh mục "do-ban-tai").
+    function brandDisplayName(p) {
+        if (p.brand_type_id && CATEGORIES_WITH_PRODUCT_GROUPS.includes(p.category_id)) {
+            const t = types.find(t => t.category_id === p.category_id && t.brand_id === p.brand_id && t.id === p.brand_type_id);
+            if (t) return t.name;
+        }
+        const b = brands.find(b => b.category_id === p.category_id && b.id === p.brand_id);
+        return b ? b.name : p.brand_type_id || p.brand_id;
+    }
+
     const result = categories.map(cat => {
         const catBrands = brands.filter(b => b.category_id === cat.id).map(brand => {
             const brandTypes = types.filter(t => t.category_id === cat.id && t.brand_id === brand.id);
@@ -42,12 +71,12 @@ router.get("/catalog", async (req, res) => {
                     logo: t.logo,
                     products: brandProducts
                         .filter(p => p.brand_type_id === t.id)
-                        .map(p => ({ id: p.id, name: p.name, price: p.price, image: productImagePath(p.id, p.image) }))
+                        .map(p => ({ id: p.id, name: p.name, price: p.price, image: productImagePath(p.id, p.image), brand: brandDisplayName(p) }))
                 }));
             } else {
                 brandOut.products = brandProducts
                     .filter(p => !p.brand_type_id)
-                    .map(p => ({ id: p.id, name: p.name, price: p.price, image: productImagePath(p.id, p.image) }));
+                    .map(p => ({ id: p.id, name: p.name, price: p.price, image: productImagePath(p.id, p.image), brand: brandDisplayName(p) }));
             }
             return brandOut;
         });
@@ -77,18 +106,12 @@ router.get("/:id", async (req, res) => {
     if (!p) return res.status(404).json({ error: "Không tìm thấy sản phẩm" });
 
     const specs = await db.prepare("SELECT spec_key, spec_value FROM product_specs WHERE product_id = ? ORDER BY sort_order").all(req.params.id);
-
-    // Tên thương hiệu hiển thị: nếu sản phẩm có brand_type_id (VD Đồ Bán Tải: brand_id là NHÓM
-    // sản phẩm, brand_type_id mới là thương hiệu thật) thì lấy tên từ brand_types, ngược lại lấy
-    // thẳng từ brands (trường hợp thường: brand_id đã là thương hiệu thật).
-    const brandName = p.brand_type_id
-        ? (await db.prepare("SELECT name FROM brand_types WHERE category_id = ? AND brand_id = ? AND id = ?").get(p.category_id, p.brand_id, p.brand_type_id))?.name
-        : (await db.prepare("SELECT name FROM brands WHERE category_id = ? AND id = ?").get(p.category_id, p.brand_id))?.name;
+    const brandName = await resolveBrandName(p.category_id, p.brand_id, p.brand_type_id);
 
     res.json({
         ...p,
         image: productImagePath(p.id, p.image),
-        brand: brandName || p.brand_type_id || p.brand_id,
+        brand: brandName,
         specs: specs.map(s => [s.spec_key, s.spec_value])
     });
 });
@@ -100,12 +123,12 @@ router.get("/:id", async (req, res) => {
 // GET /api/products/admin/list - danh sách đầy đủ cho trang quản trị, hỗ trợ lọc + tìm kiếm
 router.get("/admin/list", canEditCatalog, async (req, res) => {
     const { category, brand, q } = req.query;
-    // brand_name ưu tiên lấy từ brand_types nếu sản phẩm có brand_type_id (VD Đồ Bán Tải: cột
-    // brand_id trên products là NHÓM sản phẩm chứ không phải thương hiệu thật) - xem cùng logic ở
-    // GET /:id bên dưới.
+    // brand_name: chỉ ưu tiên brand_types cho danh mục "do-ban-tai" (CATEGORIES_WITH_PRODUCT_GROUPS
+    // ở đầu file) - mọi danh mục khác brand_id đã là thương hiệu thật, brand_type_id chỉ là phân
+    // loại tính năng trong hãng (VD "Loa Ô Tô"), không phải tên thương hiệu khác.
     let sql = `
         SELECT p.*, c.name as category_name, b.name as group_name,
-               COALESCE(bt.name, b.name) as brand_name
+               CASE WHEN p.category_id = 'do-ban-tai' THEN COALESCE(bt.name, b.name) ELSE b.name END as brand_name
         FROM products p
         JOIN categories c ON c.id = p.category_id
         JOIN brands b ON b.category_id = p.category_id AND b.id = p.brand_id

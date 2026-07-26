@@ -4,11 +4,35 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Đức Hiếu Auto | Nâng Cấp & Chăm Sóc Xe Chuyên Nghiệp</title>
-    <meta name="description" content="Đức Hiếu Auto - Trung tâm nâng cấp và chăm sóc ô tô chuyên nghiệp tại TP.HCM. Dịch vụ uy tín, chất lượng hàng đầu.">
+    <meta name="description" content="Đức Hiếu Auto - Trung tâm nâng cấp và chăm sóc ô tô chuyên nghiệp tại Buôn Ma Thuột, Đắk Lắk. Màn hình, âm thanh, phim cách nhiệt, PPF, đèn LED - dịch vụ uy tín, chất lượng hàng đầu.">
     <meta property="og:title" content="Đức Hiếu Auto | Nâng Cấp & Chăm Sóc Xe Chuyên Nghiệp">
-    <meta property="og:description" content="Chuyên nâng cấp đèn, âm thanh, phủ ceramic và chăm sóc xe hơi uy tín.">
-    <meta property="og:image" content="assets/images/logo-duchieu.jpg">
+    <meta property="og:description" content="Trung tâm nâng cấp và chăm sóc ô tô chuyên nghiệp tại Buôn Ma Thuột - màn hình, âm thanh, phim cách nhiệt, PPF, đèn LED.">
+    <meta property="og:image" content="https://vanduccbn-sketch.github.io/Claude.DUCHIEUAUTO/assets/images/logo-duchieu.jpg">
     <meta property="og:type" content="website">
+    <meta property="og:url" content="https://vanduccbn-sketch.github.io/Claude.DUCHIEUAUTO/index.html">
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "AutoRepair",
+        "name": "Đức Hiếu Auto",
+        "image": "https://vanduccbn-sketch.github.io/Claude.DUCHIEUAUTO/assets/images/logo-duchieu.jpg",
+        "url": "https://vanduccbn-sketch.github.io/Claude.DUCHIEUAUTO/index.html",
+        "telephone": "+84869110237",
+        "email": "contact.duchieuauto47@gmail.com",
+        "priceRange": "$$",
+        "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "123 Lý Thái Tổ",
+            "addressLocality": "Buôn Ma Thuột",
+            "addressRegion": "Đắk Lắk",
+            "addressCountry": "VN"
+        },
+        "sameAs": [
+            "https://www.facebook.com/thanhphatautocar",
+            "https://zalo.me/0869110237"
+        ]
+    }
+    </script>
     <link rel="icon" type="image/png" href="assets/images/favicon.png">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -126,13 +150,13 @@
                     <div class="about-image" data-aos="fade-right">
                         <div class="about-gallery">
                             <div class="img-wrapper main">
-                                <img src="https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?q=80&w=1000&auto=format&fit=crop" alt="Xe thể thao được chăm sóc chuyên nghiệp tại Đức Hiếu Auto">
+                                <img src="https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?q=80&w=1000&auto=format&fit=crop" alt="Xe thể thao được chăm sóc chuyên nghiệp tại Đức Hiếu Auto" loading="lazy">
                             </div>
                             <div class="img-wrapper small">
-                                <img src="assets/images/about/detail-1.jpg" alt="Kỹ thuật viên đánh bóng và phủ ceramic cho xe">
+                                <img src="assets/images/about/detail-1.jpg" alt="Kỹ thuật viên đánh bóng và phủ ceramic cho xe" loading="lazy">
                             </div>
                             <div class="img-wrapper small">
-                                <img src="assets/images/about/detail-2.jpg" alt="Nội thất xe sang trọng sau khi chăm sóc">
+                                <img src="assets/images/about/detail-2.jpg" alt="Nội thất xe sang trọng sau khi chăm sóc" loading="lazy">
                             </div>
                         </div>
                     </div>
@@ -449,8 +473,10 @@
                     <li><a href="index.html">Trang Chủ</a></li>
                     <li><a href="#about">Giới Thiệu</a></li>
                     <li><a href="san-pham.html">Sản Phẩm</a></li>
-                    <li><a href="#tech">Công Nghệ</a></li>
-                    <li><a href="#contact">Liên Hệ</a></li>
+                    <li><a href="tin-tuc.html">Tin Tức</a></li>
+                    <li><a href="dat-lich-hen.html">Đặt Lịch Hẹn</a></li>
+                    <li><a href="faq.html">Câu Hỏi Thường Gặp</a></li>
+                    <li><a href="chinh-sach.html">Chính Sách</a></li>
                 </ul>
             </div>
         </div>
@@ -486,11 +512,15 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="assets/js/api-config.js"></script>
+    <script src="assets/js/site-settings.js"></script>
     <script src="assets/js/catalog-data.js"></script>
     <script src="assets/js/catalog-render.js"></script>
     <script>
         // Render danh sách dịch vụ theo nhóm: Nội Thất / Ngoại Thất / Đồ Bán Tải (link ra trang riêng, không còn popup)
-        renderServiceGrid(".service-catalog-grid");
+        // [Phase 7] renderServiceGrid gọi API bất đồng bộ - giữ lại promise để gọi Swiper.update()
+        // sau khi có dữ liệu thật (xem chỗ khởi tạo new Swiper('.service-slider', ...) bên dưới).
+        const renderServiceGridPromise = renderServiceGrid(".service-catalog-grid");
 
         // Render dải logo thương hiệu chạy - mỗi logo liên kết tới trang thương hiệu tương ứng
         renderBrandMarquee(".brand-marquee-track");
@@ -539,20 +569,30 @@
         spySections.forEach(sec => spyObserver.observe(sec));
 
         // Cấu hình dùng chung cho cả 3 slider trên trang chủ (Dịch Vụ / Sản Phẩm Chiến Lược /
-        // Công Nghệ): trên điện thoại chỉ hiển thị đúng 1 thẻ/lần (kèm gợi ý "Vuốt để xem thêm"),
-        // từ 576px trở lên hiển thị 2 thẻ ngang hàng. Dùng "rewind" (lướt hết tới thẻ cuối, bấm
-        // tiếp sẽ về lại thẻ đầu) chứ không dùng "loop" - loop cần nhân bản đủ số thẻ đệm
-        // (>= slidesPerView*2), mà các slider này chỉ có 3-4 thẻ thật nên loop bị kẹt, bấm "tiếp"
-        // không chạy được nữa sau vài lần bấm.
+        // Công Nghệ): điện thoại hiển thị 1 thẻ/lần, từ 576px lên 2 thẻ, từ 992px (desktop) lên
+        // đúng 3 thẻ/lần - khớp đúng số thẻ thật của Dịch Vụ/Sản Phẩm Chiến Lược nên 2 mục đó sẽ
+        // không cần lướt nữa ở desktop, riêng Công Nghệ có 4 thẻ nên vẫn lướt được. Dùng "rewind"
+        // (lướt hết tới thẻ cuối, bấm tiếp sẽ về lại thẻ đầu) chứ không dùng "loop" - loop cần
+        // nhân bản đủ số thẻ đệm (>= slidesPerView*2), mà các slider này chỉ có 3-4 thẻ thật nên
+        // loop bị kẹt, bấm "tiếp" không chạy được nữa sau vài lần bấm.
         const homeSliderBaseOptions = {
             slidesPerView: 1,
             spaceBetween: 14,
             rewind: true,
             breakpoints: {
                 576: { slidesPerView: 2, spaceBetween: 20 },
-                768: { spaceBetween: 24 }
+                992: { slidesPerView: 3, spaceBetween: 24 }
             }
         };
+
+        // Chỉ hiện "Vuốt để xem thêm" khi slider đó thật sự có nhiều thẻ hơn số thẻ đang hiển thị
+        // cùng lúc (VD: Công Nghệ có 4 thẻ nhưng desktop chỉ hiện 3 -> vẫn cần gợi ý lướt; Dịch Vụ/
+        // Sản Phẩm Chiến Lược chỉ có đúng 3 thẻ nên ở desktop (hiện đủ 3) sẽ tự ẩn gợi ý).
+        function updateSwipeHint(swiper) {
+            const hint = swiper.el.querySelector('.swipe-hint');
+            if (!hint) return;
+            hint.classList.toggle('is-visible', swiper.slides.length > swiper.params.slidesPerView);
+        }
 
         // Khởi tạo Swiper cho slider sản phẩm
         new Swiper('.product-slider', {
@@ -561,18 +601,27 @@
             navigation: {
                 nextEl: '.swiper-button-next',
                 prevEl: '.swiper-button-prev'
-            }
+            },
+            on: { init: updateSwipeHint, breakpoint: updateSwipeHint }
         });
 
         // Slider "Dịch Vụ Chuyên Nghiệp" và "Giải Mã Công Nghệ" - cùng cơ chế lướt như slider sản phẩm
         // ở trên (mỗi slider tự tìm nút/pagination bên trong chính nó nên không đụng nhau)
-        new Swiper('.service-slider', {
+        const serviceSwiper = new Swiper('.service-slider', {
             ...homeSliderBaseOptions,
             pagination: { el: '.service-slider .swiper-pagination', clickable: true },
             navigation: {
                 nextEl: '.service-slider .swiper-button-next',
                 prevEl: '.service-slider .swiper-button-prev'
-            }
+            },
+            on: { init: updateSwipeHint, breakpoint: updateSwipeHint }
+        });
+        // [Phase 7] renderServiceGrid giờ gọi API bất đồng bộ nên slide chưa có kịp lúc Swiper vừa
+        // khởi tạo ở trên (chạy đồng bộ ngay khi trang load) - phải gọi lại update() sau khi có
+        // dữ liệu thật, nếu không slider sẽ coi như không có thẻ nào (0 slide).
+        renderServiceGridPromise.then(() => {
+            serviceSwiper.update();
+            updateSwipeHint(serviceSwiper);
         });
 
         new Swiper('.tech-slider', {
@@ -581,7 +630,8 @@
             navigation: {
                 nextEl: '.tech-slider .swiper-button-next',
                 prevEl: '.tech-slider .swiper-button-prev'
-            }
+            },
+            on: { init: updateSwipeHint, breakpoint: updateSwipeHint }
         });
 
         // Toggle menu mobile

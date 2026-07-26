@@ -1,6 +1,6 @@
 #product { padding: 90px 0; background-color: var(--bg-alt); position: relative; }
 #product .section-title { margin-bottom: 24px; }
-.product-slider { padding: 10px 0 30px 0; }
+.product-slider { padding: 10px 0 46px 0; }
 .product-card { background-color: var(--dark); border-radius: 8px; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.06); transition: var(--transition); height: 100%; display: flex; flex-direction: column; box-shadow: var(--shadow-sm); }
 .product-card:hover { transform: translateY(-10px); box-shadow: var(--shadow-lg); border-color: var(--primary); }
 .product-img { position: relative; height: 175px; overflow: hidden; background-color: #1c1e24; }
@@ -47,16 +47,25 @@
 .swiper-pagination-bullet { background-color: var(--m-blue); opacity: 0.4; width: 8px; height: 8px; transition: var(--transition); }
 .swiper-pagination-bullet-active { background-color: var(--primary); opacity: 1; width: 22px; border-radius: 5px; }
 
-/* Gợi ý "Vuốt để xem thêm" - chỉ hiện trên di động, khi mỗi slider (Dịch Vụ / Sản Phẩm Chiến
-   Lược / Công Nghệ) thu về hiển thị đúng 1 thẻ/lần nên cần gợi ý rõ còn nội dung phía sau.
-   Dùng chung cho cả 3 slider (class .swipe-hint không gắn theo slider cụ thể). */
+/* Swiper tự focus() vào slide vừa lướt tới (hỗ trợ bàn phím/đọc màn hình) - đặt sẵn khung
+   focus gọn, đúng thương hiệu ở cấp .swiper-slide (áp dụng chung cho cả 3 slider trang chủ),
+   thay vì để trình duyệt vẽ viền mặc định theo màu accent hệ điều hành của từng máy. */
+.swiper-slide:focus-visible {
+    outline: 2px solid var(--m-blue);
+    outline-offset: -2px;
+}
+
+/* Gợi ý "Vuốt để xem thêm" - hiện bất kể kích thước màn hình, MIỄN LÀ slider đó có nhiều thẻ
+   thật hơn số thẻ đang hiển thị cùng lúc (JS tự bật/tắt class .is-visible khi khởi tạo và mỗi
+   khi đổi breakpoint - xem hàm updateSwipeHint trong index.html). Dùng chung cho cả 3 slider
+   (class .swipe-hint không gắn theo slider cụ thể). */
 .swipe-hint {
     display: none;
     align-items: center;
     gap: 6px;
     position: absolute;
     left: 50%;
-    bottom: 2px;
+    bottom: 0;
     transform: translateX(-50%);
     font-size: 11px;
     font-weight: 600;
@@ -64,6 +73,9 @@
     text-transform: uppercase;
     letter-spacing: 0.5px;
     white-space: nowrap;
+}
+.swipe-hint.is-visible {
+    display: flex;
 }
 .swipe-hint i {
     color: var(--primary);
@@ -73,11 +85,7 @@
     0%, 100% { transform: translateX(0); }
     50% { transform: translateX(5px); }
 }
-@media (max-width: 576px) {
-    .swipe-hint { display: flex; }
-    .product-slider { padding-bottom: 46px; }
-    .swiper-pagination { bottom: 24px; }
-}
+.swiper-pagination { bottom: 37px; }
 
 @media (max-width: 768px) {
     #product { padding: 50px 0; }

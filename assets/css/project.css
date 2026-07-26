@@ -5,7 +5,7 @@
 /* --- Slider "Giải Mã Công Nghệ" (trang chủ) - dùng Swiper, lướt giống slider "Sản Phẩm
    Chiến Lược" thay vì xếp lưới cố định. --- */
 .tech-slider {
-    padding: 10px 0 30px;
+    padding: 10px 0 46px;
 }
 .tech-slider .swiper-slide {
     height: auto;
@@ -19,6 +19,11 @@
 }
 .tech-story-card { display: flex; flex-direction: column; background: var(--bg-alt); border-radius: 14px; overflow: hidden; border: 1px solid var(--border-color-light); box-shadow: var(--shadow-sm); transition: var(--transition); color: inherit; }
 .tech-story-card:hover { transform: translateY(-8px); box-shadow: var(--shadow-lg); border-color: var(--primary); }
+/* Swiper tự gọi .focus() lên thẻ vừa lướt tới (hỗ trợ bàn phím/đọc màn hình) - nếu không tự
+   định nghĩa, trình duyệt vẽ khung viền focus mặc định theo màu accent hệ điều hành của từng
+   máy (có máy ra màu đỏ, trông như 1 khung/nút lạ đè lên thẻ) nên cần khung focus riêng, gọn
+   và đúng thương hiệu hơn. */
+.tech-story-card:focus-visible { outline: 2px solid var(--m-blue); outline-offset: 3px; }
 
 .tech-story-img { position: relative; height: 200px; overflow: hidden; background-color: #e9eaed; }
 .tech-story-img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
@@ -40,5 +45,4 @@
         width: 30px;
         height: 30px;
     }
-    .tech-slider { padding-bottom: 46px; }
 }

@@ -20,7 +20,7 @@
    Chiến Lược" thay vì xếp lưới cố định. .service-catalog-grid ở đây là .swiper-wrapper nên
    không còn display:grid như .services-grid ở trên. --- */
 .service-slider {
-    padding: 10px 0 30px;
+    padding: 10px 0 46px;
 }
 .service-slider .swiper-slide {
     height: auto;
@@ -49,6 +49,13 @@
     transform: translateY(-8px);
     box-shadow: var(--shadow-lg);
     border-color: var(--primary);
+}
+
+/* Swiper tự focus() thẻ vừa lướt tới - dùng khung focus riêng thay vì để trình duyệt vẽ
+   viền mặc định theo màu accent hệ điều hành (xem ghi chú tương tự ở tech-story-card) */
+.service-card:focus-visible {
+    outline: 2px solid var(--m-blue);
+    outline-offset: 3px;
 }
 
 .service-img {
@@ -148,5 +155,4 @@
         width: 30px;
         height: 30px;
     }
-    .service-slider { padding-bottom: 46px; }
 }

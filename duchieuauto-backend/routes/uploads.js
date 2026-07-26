@@ -1,28 +1,26 @@
-const path = require("path");
-const fs = require("fs");
-const crypto = require("crypto");
 const express = require("express");
 const multer = require("multer");
+const { v2: cloudinary } = require("cloudinary");
 const { requireRole } = require("../middleware/auth");
 
 const router = express.Router();
 
-const UPLOAD_DIR = path.join(__dirname, "..", "uploads");
-if (!fs.existsSync(UPLOAD_DIR)) fs.mkdirSync(UPLOAD_DIR, { recursive: true });
+// Lưu ảnh lên Cloudinary (free tier, không cần thẻ tín dụng) thay vì ổ đĩa cục bộ của Render -
+// ổ đĩa free tier không persistent qua mỗi lần deploy lại (đúng vấn đề y hệt SQLite trước khi
+// chuyển sang Turso), nên ảnh admin tải lên (bìa bài viết, banner, ảnh sản phẩm) sẽ mất mỗi lần
+// deploy code mới nếu vẫn lưu cục bộ. Cloudinary trả về URL CDN cố định, không phụ thuộc Render.
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
+});
 
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
 
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => cb(null, UPLOAD_DIR),
-    filename: (req, file, cb) => {
-        const ext = path.extname(file.originalname).toLowerCase();
-        const randomName = crypto.randomBytes(16).toString("hex");
-        cb(null, `${randomName}${ext}`);
-    }
-});
-
+// memoryStorage: giữ file trong RAM (buffer) rồi đẩy thẳng lên Cloudinary, không ghi ra đĩa cục bộ
+// ở bất kỳ bước nào - tránh phụ thuộc filesystem của Render hoàn toàn.
 const upload = multer({
-    storage,
+    storage: multer.memoryStorage(),
     limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
     fileFilter: (req, file, cb) => {
         if (!ALLOWED_TYPES.includes(file.mimetype)) {
@@ -32,13 +30,8 @@ const upload = multer({
     }
 });
 
-// POST /api/uploads - upload 1 ảnh, dùng chung cho 2 nơi: ảnh bìa/ảnh chèn bài viết (Content
-// admin) VÀ ảnh banner (Ads admin) - [Phase 6] phát hiện lúc rà soát quyền: bản đầu chỉ cho
-// content/super_admin nên Ads admin thật sẽ bị 403 khi upload ảnh banner, đã sửa lại cho đủ cả 2
-// vai trò cần dùng endpoint này. Trả về URL tương đối "/uploads/<ten-file>.jpg" - lưu trực tiếp
-// trên đĩa server, phục vụ qua express.static (xem server.js). LƯU Ý: ổ đĩa Render free tier không
-// persistent qua mỗi lần deploy lại - ảnh có thể mất, nên cân nhắc chuyển sang lưu trữ đối tượng
-// (Cloudflare R2/S3...) khi lượng ảnh nhiều/quan trọng hơn.
+// POST /api/uploads - upload 1 ảnh, dùng chung cho ảnh bìa/ảnh chèn bài viết (Content admin), ảnh
+// banner (Ads admin), và ảnh sản phẩm (Content admin).
 router.post("/", requireRole("content", "ads", "super_admin"), (req, res) => {
     upload.single("image")(req, res, (err) => {
         if (err) {
@@ -47,7 +40,18 @@ router.post("/", requireRole("content", "ads", "super_admin"), (req, res) => {
         if (!req.file) {
             return res.status(400).json({ error: "Thiếu file ảnh" });
         }
-        res.status(201).json({ url: `/uploads/${req.file.filename}` });
+
+        const stream = cloudinary.uploader.upload_stream(
+            { folder: "duchieuauto" },
+            (error, result) => {
+                if (error) {
+                    console.error("Lỗi upload Cloudinary:", error.message);
+                    return res.status(502).json({ error: "Tải ảnh lên thất bại, vui lòng thử lại" });
+                }
+                res.status(201).json({ url: result.secure_url });
+            }
+        );
+        stream.end(req.file.buffer);
     });
 });
 

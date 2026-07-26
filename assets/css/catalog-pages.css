@@ -646,7 +646,11 @@
 }
 
 .reviews-summary { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; font-size: 15px; color: var(--text-color); }
-.reviews-list { display: flex; flex-direction: column; gap: 16px; margin-bottom: 32px; }
+/* min-height xấp xỉ 1 thẻ đánh giá - giảm bớt layout shift khi API trả kết quả thay thế dòng
+   "Đang tải đánh giá..." (phát hiện qua Lighthouse: đây là nguyên nhân layout shift lớn nhất trên
+   trang chi tiết sản phẩm, CLS 0.234 - không loại bỏ hết được vì số đánh giá thay đổi theo sản
+   phẩm, nhưng giảm biên độ cho trường hợp phổ biến 0-1 đánh giá). */
+.reviews-list { display: flex; flex-direction: column; gap: 16px; margin-bottom: 32px; min-height: 90px; }
 .reviews-empty { color: var(--text-muted); font-size: 14px; margin-bottom: 32px; }
 
 .review-item { background: var(--bg-alt); border: 1px solid var(--border-color-light); border-radius: 10px; padding: 16px 20px; }

@@ -5,6 +5,20 @@
    ========================================================= */
 const STORAGE_KEY = "dha_admin";
 
+// Domain frontend thật (GitHub Pages) - dùng để dựng URL ảnh cho 242 sản phẩm gốc chưa từng
+// upload lại qua Cloudinary (cột "image" trong DB đang NULL, quy ước cũ là đường dẫn tương đối
+// "assets/images/products/<id>/anh-1.jpg" CHỈ đúng khi mở từ chính domain frontend - trang admin
+// nằm ở domain Render hoàn toàn khác nên phải ghép domain này vào, không thể dùng đường dẫn tương
+// đối hay "../" như code cũ (đã gây lỗi ảnh vỡ trong danh sách sản phẩm/form sửa).
+const FRONTEND_BASE_URL = "https://vanduccbn-sketch.github.io/Claude.DUCHIEUAUTO";
+
+// Trả về URL ảnh sản phẩm dùng được từ trang admin: ảnh mới (Cloudinary, đã là URL đầy đủ) giữ
+// nguyên, ảnh cũ (đường dẫn tương đối hoặc chưa có) tự ghép domain frontend vào.
+function productImageUrl(p) {
+    if (p.image && /^https?:\/\//.test(p.image)) return p.image;
+    return `${FRONTEND_BASE_URL}/${p.image || `assets/images/products/${p.id}/anh-1.jpg`}`;
+}
+
 function getAuth() {
     try {
         const raw = localStorage.getItem(STORAGE_KEY);

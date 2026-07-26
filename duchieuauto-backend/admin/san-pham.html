@@ -123,7 +123,7 @@
             }
 
             tbody.innerHTML = products.slice(0, 100).map(p => {
-                const img = p.image || `../assets/images/products/${p.id}/anh-1.jpg`;
+                const img = productImageUrl(p);
                 return `
                 <tr>
                     <td><img class="thumb" src="${img}" alt="" onerror="this.style.visibility='hidden'"></td>

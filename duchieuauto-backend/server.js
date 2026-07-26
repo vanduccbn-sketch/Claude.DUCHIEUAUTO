@@ -30,7 +30,11 @@ app.use(helmet({
             defaultSrc: ["'self'"],
             scriptSrc: ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net"],
             styleSrc: ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net"],
-            imgSrc: ["'self'", "data:", "blob:"],
+            // Cho phép ảnh từ GitHub Pages (242 sản phẩm gốc chưa upload lại qua Cloudinary, xem
+            // productImageUrl() trong admin.js) và Cloudinary (ảnh upload mới qua CMS) - phát hiện
+            // khi sửa lỗi ảnh vỡ trong trang quản trị sản phẩm: logic JS đúng nhưng CSP mặc định
+            // chỉ cho "'self'" nên trình duyệt tự chặn tải ảnh từ 2 domain ngoài này.
+            imgSrc: ["'self'", "data:", "blob:", "https://vanduccbn-sketch.github.io", "https://res.cloudinary.com"],
             connectSrc: ["'self'"],
             fontSrc: ["'self'", "data:"],
             objectSrc: ["'none'"],

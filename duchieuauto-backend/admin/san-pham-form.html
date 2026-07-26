@@ -336,12 +336,8 @@
                 populateBrandSelect(p.brand_id);
                 populateTypeSelect(p.brand_type_id);
 
-                if (p.image) {
-                    document.getElementById("imageUrl").value = p.image;
-                    document.getElementById("imagePreview").innerHTML = `<img src="${p.image}" alt="">`;
-                } else {
-                    document.getElementById("imagePreview").innerHTML = `<img src="../assets/images/products/${p.id}/anh-1.jpg" alt="" onerror="this.parentElement.textContent='Chưa có ảnh (dùng ảnh mặc định theo mã sản phẩm)'">`;
-                }
+                if (p.image) document.getElementById("imageUrl").value = p.image;
+                document.getElementById("imagePreview").innerHTML = `<img src="${productImageUrl(p)}" alt="" onerror="this.parentElement.textContent='Chưa có ảnh (dùng ảnh mặc định theo mã sản phẩm)'">`;
 
                 document.getElementById("specsList").innerHTML = "";
                 (p.specs || []).forEach(([k, v]) => addSpecRow(k, v));

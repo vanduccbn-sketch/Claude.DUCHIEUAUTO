@@ -116,4 +116,14 @@ router.put("/:id/status", canViewContacts, async (req, res) => {
     res.json({ ok: true });
 });
 
+// DELETE /api/contacts/:id - xoá hẳn 1 liên hệ/đặt lịch/đăng ký nhắc bảo dưỡng (VD dữ liệu test,
+// spam) - trước đây chưa có endpoint này nên không xoá được, chỉ đổi trạng thái.
+router.delete("/:id", canViewContacts, async (req, res) => {
+    const info = await db.prepare("DELETE FROM contacts WHERE id = ?").run(req.params.id);
+    if (info.changes === 0) return res.status(404).json({ error: "Không tìm thấy" });
+
+    await db.logActivity(req.admin, "delete_contact", `contact:${req.params.id}`);
+    res.json({ ok: true });
+});
+
 module.exports = router;

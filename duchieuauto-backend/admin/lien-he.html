@@ -27,10 +27,11 @@
                     <th>Dịch vụ</th>
                     <th>Thời gian gửi</th>
                     <th>Trạng thái</th>
+                    <th>Thao tác</th>
                 </tr>
             </thead>
             <tbody id="contactsBody">
-                <tr class="empty-row"><td colspan="6">Đang tải...</td></tr>
+                <tr class="empty-row"><td colspan="7">Đang tải...</td></tr>
             </tbody>
         </table>
     </main>
@@ -51,7 +52,7 @@
             const tbody = document.getElementById("contactsBody");
 
             if (contacts.length === 0) {
-                tbody.innerHTML = `<tr class="empty-row"><td colspan="6">Chưa có liên hệ nào.</td></tr>`;
+                tbody.innerHTML = `<tr class="empty-row"><td colspan="7">Chưa có liên hệ nào.</td></tr>`;
                 return;
             }
 
@@ -69,11 +70,17 @@
                             <option value="done" ${c.status === "done" ? "selected" : ""}>Hoàn tất</option>
                         </select>
                     </td>
+                    <td class="actions">
+                        <button type="button" class="btn btn-danger" data-delete-id="${c.id}">Xoá</button>
+                    </td>
                 </tr>
             `).join("");
 
             tbody.querySelectorAll(".status-select").forEach(sel => {
                 sel.addEventListener("change", () => updateStatus(sel.dataset.id, sel.value));
+            });
+            tbody.querySelectorAll("[data-delete-id]").forEach(btn => {
+                btn.addEventListener("click", () => deleteContact(btn.dataset.deleteId));
             });
         }
 
@@ -82,6 +89,18 @@
                 const res = await apiFetch(`/api/contacts/${id}/status`, { method: "PUT", body: { status } });
                 if (!res.ok) throw new Error((await res.json()).error || "Cập nhật thất bại");
                 showToast("Đã cập nhật trạng thái");
+            } catch (err) {
+                showToast(err.message, true);
+            }
+        }
+
+        async function deleteContact(id) {
+            if (!confirm("Xoá liên hệ này? Không thể hoàn tác.")) return;
+            try {
+                const res = await apiFetch(`/api/contacts/${id}`, { method: "DELETE" });
+                if (!res.ok) throw new Error((await res.json()).error || "Xoá thất bại");
+                showToast("Đã xoá");
+                loadContacts();
             } catch (err) {
                 showToast(err.message, true);
             }

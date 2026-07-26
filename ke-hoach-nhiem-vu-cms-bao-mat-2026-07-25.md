@@ -145,6 +145,71 @@ lại chủ đề này ở đầu buổi làm việc tiếp theo sau khi Phase 4
 - [ ] Trỏ domain riêng, cấu hình SSL
 - [ ] (Optional, nếu cần) bổ sung giỏ hàng/thanh toán VNPay/Momo — chưa nằm trong phạm vi hiện tại
 
+## PHASE 9 — Nâng cấp trải nghiệm & độ tin cậy thương hiệu (nhóm "nội dung tay nghề thật" + "trải nghiệm mượt")
+
+**[MỚI 2026-07-26]** User yêu cầu: ưu tiên tự động chuẩn SEO + GEO (Geo/local SEO và cả
+Generative-Engine Optimization - nội dung dễ được AI Overview/ChatGPT trích dẫn), ảnh tự tuỳ
+chỉnh đúng tỷ lệ hiển thị, tham khảo chuẩn quốc tế để nâng mặt bằng thiết kế/nội dung, làm theo
+trải nghiệm người dùng thật, không lan man.
+
+**Nguyên tắc xuyên suốt:** không tự bịa số liệu/thành tích (đúng quy tắc đã có trong
+`huong-dan-viet-content-nhan-vien.md` mục 5) - mọi số liệu (số năm hoạt động, số xe đã phục vụ,
+tên/kinh nghiệm kỹ thuật viên) phải do user cung cấp thật, Claude chỉ dựng khung + tự động hoá.
+
+### 9.1 — Nghiên cứu chuẩn quốc tế trước khi thiết kế (input, không phải code)
+- [ ] Tham khảo 2-3 trang dịch vụ ô tô uy tín ở nước ngoài (Mỹ/Úc/Anh) qua WebSearch: cấu trúc
+  trang "About Us", cách trình bày gallery trước/sau, schema.org họ dùng, cách viết nội dung dễ
+  được AI trích dẫn (trả lời trực tiếp ngay đầu đoạn, có số liệu cụ thể, định dạng hỏi-đáp rõ ràng).
+  Chỉ học **cấu trúc/định dạng**, không sao chép nội dung (đúng nguyên tắc mục 5 mọi khi).
+- [ ] Rút ra 1 khung mẫu áp dụng cho Đức Hiếu Auto - áp dụng ở các mục bên dưới.
+
+### 9.2 — Trang "Về Chúng Tôi" chuẩn SEO + GEO
+- [ ] Trang mới `ve-chung-toi.html` - viết theo khối hỏi-đáp trực tiếp ("Đức Hiếu Auto hoạt động
+  bao nhiêu năm?", "Phục vụ khu vực nào?"...) để cả Google lẫn AI Overview dễ trích dẫn.
+- [ ] Schema.org `AutoRepair`/`Organization` mở rộng (đã có bản cơ bản ở `index.html` từ Phase 5) -
+  bổ sung `foundingDate`, `areaServed` (Buôn Ma Thuột + Đắk Lắk và vùng lân cận), `employee`/`founder`
+  nếu user muốn nêu tên kỹ thuật viên chính.
+- [ ] **Cần từ user (không tự bịa):** số năm hoạt động thật, số xe/khách đã phục vụ (ước tính thật),
+  tên + kinh nghiệm kỹ thuật viên chính (nếu muốn nêu), ảnh xưởng + đội ngũ thật (không dùng ảnh AI/stock).
+
+### 9.3 — Portfolio "Dự Án Đã Làm" theo dịch vụ (tái dùng hạ tầng blog có sẵn, không tạo bảng mới)
+- [ ] Thêm 1 danh mục bài viết riêng "Dự Án Đã Làm" trong hệ thống Tin Tức hiện có (tái dùng
+  `posts` + `routes/posts.js` đã có sẵn CRUD/rich-text/upload ảnh - không cần bảng DB mới, đúng
+  tinh thần không tạo trừu tượng thừa khi cái cũ đã đáp ứng đủ).
+  - Mỗi bài: ảnh trước/sau (2 ảnh), dịch vụ liên quan, khu vực khách hàng (phục vụ GEO local).
+- [ ] Trang liệt kê riêng (lọc theo danh mục này) đặt link ngay trong mỗi trang dịch vụ liên quan
+  (category-chi-tiet.html) - khách xem dịch vụ thấy ngay ví dụ thực tế, không phải tìm ở trang khác.
+- [ ] **Cần từ user:** ảnh trước/sau thật của các dự án đã làm (càng nhiều dịch vụ càng tốt).
+
+### 9.4 — Pipeline ảnh tự động chuẩn hoá (dùng Cloudinary transformation có sẵn, không viết xử lý ảnh riêng)
+- [ ] Cấu hình Cloudinary transformation preset (crop theo tỷ lệ chuẩn khớp từng vị trí hiển thị:
+  vuông cho thumbnail, 16:9 cho ảnh bìa, giữ nguyên tỷ lệ gốc cho before/after) ngay trong URL trả
+  về từ `routes/uploads.js` - Cloudinary xử lý tự động phía server của họ, không cần cài thêm thư
+  viện xử lý ảnh (sharp/canvas) ở backend, tận dụng dịch vụ đã có sẵn.
+- [ ] Auto alt text theo template ghép chữ (không phải AI mô tả ảnh): `"{tên dịch vụ/sản phẩm} tại
+  Đức Hiếu Auto Buôn Ma Thuột"` - tự sinh khi admin nhập tên, không cần gõ tay, chuẩn cả SEO ảnh
+  lẫn ngữ cảnh cho AI/GEO.
+- [ ] Watermark logo nhỏ góc ảnh (mục đã hoãn ở Phase 2) - làm gộp luôn ở bước này vì cùng pipeline
+  Cloudinary transformation, không tốn thêm công sức riêng.
+
+### 9.5 — Trải nghiệm cuộn trang (nhóm 4, thuần JS, không thêm thư viện nặng)
+- [ ] Counter animation cho số liệu thật (số năm, số xe đã phục vụ...) khi cuộn tới - dùng
+  `IntersectionObserver` + `requestAnimationFrame`, không dùng thư viện ngoài để giữ hiệu năng đã
+  tối ưu từ Phase 5.
+- [ ] Fade-in nhẹ cho từng section khi cuộn tới (cùng cơ chế `IntersectionObserver`).
+
+### 9.6 — Mở rộng SEO + GEO ra toàn site (không chỉ trang chủ)
+- [ ] Thêm `Service` schema riêng cho từng trang dịch vụ (`category-chi-tiet.html`) - hiện tại
+  Phase 5 mới có `Product`/`AutoRepair` schema, chưa có `Service` schema riêng từng dịch vụ.
+- [ ] Thêm `BreadcrumbList` schema cho các trang con (sản phẩm/dịch vụ/bài viết) - giúp cả Google
+  hiển thị breadcrumb trong kết quả tìm kiếm lẫn AI hiểu cấu trúc site khi trích dẫn.
+- [ ] Rà soát lại meta description toàn site đảm bảo nhắc đúng khu vực địa lý phục vụ (Buôn Ma
+  Thuột, Đắk Lắk, vùng lân cận) ở mọi trang, không chỉ trang chủ.
+
+**Thứ tự đề xuất khi bắt đầu:** 9.1 (nghiên cứu) → 9.4 (pipeline ảnh, làm 1 lần dùng mãi) → 9.6
+(SEO/GEO, không cần chờ nội dung mới) có thể làm ngay bằng dữ liệu hiện có. Riêng 9.2 và 9.3 phải
+**chờ user cung cấp thông tin/ảnh thật** mới làm được (không thể tự bịa số liệu/ảnh).
+
 ---
 
 ## Ghi chú khi làm (cập nhật liên tục)

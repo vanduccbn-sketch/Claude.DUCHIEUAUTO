@@ -10,8 +10,8 @@ const canManageBanners = requireRole("ads", "super_admin");
 
 // GET /api/banners - public, chỉ trả banner đang trong khoảng hiển thị (start_date/end_date),
 // dùng cho slider/banner ở trang công khai (Phase 5+).
-router.get("/", (req, res) => {
-    const banners = db.prepare(`
+router.get("/", async (req, res) => {
+    const banners = await db.prepare(`
         SELECT * FROM banners
         WHERE (start_date IS NULL OR start_date = '' OR date(start_date) <= date('now'))
           AND (end_date IS NULL OR end_date = '' OR date(end_date) >= date('now'))
@@ -22,19 +22,19 @@ router.get("/", (req, res) => {
 
 // GET /api/banners/admin/all - tất cả banner kể cả hết hạn/chưa tới ngày (cần đăng nhập, chỉ
 // Ads/super_admin - dùng cho trang quản trị).
-router.get("/admin/all", canManageBanners, (req, res) => {
-    const banners = db.prepare("SELECT * FROM banners ORDER BY sort_order ASC, id DESC").all();
+router.get("/admin/all", canManageBanners, async (req, res) => {
+    const banners = await db.prepare("SELECT * FROM banners ORDER BY sort_order ASC, id DESC").all();
     res.json(banners);
 });
 
 // POST /api/banners - tạo banner mới
-router.post("/", canManageBanners, (req, res) => {
+router.post("/", canManageBanners, async (req, res) => {
     const { title, image, link, sort_order, start_date, end_date } = req.body;
     if (!title || !image) {
         return res.status(400).json({ error: "Thiếu title hoặc image" });
     }
 
-    const info = db.prepare(`
+    const info = await db.prepare(`
         INSERT INTO banners (title, image, link, sort_order, start_date, end_date)
         VALUES (@title, @image, @link, @sort_order, @start_date, @end_date)
     `).run({
@@ -46,13 +46,13 @@ router.post("/", canManageBanners, (req, res) => {
         end_date: end_date || null
     });
 
-    db.logActivity(req.admin, "create_banner", `banner:${info.lastInsertRowid}`);
+    await db.logActivity(req.admin, "create_banner", `banner:${info.lastInsertRowid}`);
     res.status(201).json({ id: info.lastInsertRowid });
 });
 
 // PUT /api/banners/:id - sửa banner
-router.put("/:id", canManageBanners, (req, res) => {
-    const existing = db.prepare("SELECT * FROM banners WHERE id = ?").get(req.params.id);
+router.put("/:id", canManageBanners, async (req, res) => {
+    const existing = await db.prepare("SELECT * FROM banners WHERE id = ?").get(req.params.id);
     if (!existing) return res.status(404).json({ error: "Không tìm thấy banner" });
 
     const merged = {
@@ -64,22 +64,22 @@ router.put("/:id", canManageBanners, (req, res) => {
         end_date: req.body.end_date !== undefined ? req.body.end_date : existing.end_date,
         id: existing.id
     };
-    db.prepare(`
+    await db.prepare(`
         UPDATE banners SET title=@title, image=@image, link=@link, sort_order=@sort_order,
         start_date=@start_date, end_date=@end_date WHERE id=@id
     `).run(merged);
 
-    db.logActivity(req.admin, "update_banner", `banner:${existing.id}`);
+    await db.logActivity(req.admin, "update_banner", `banner:${existing.id}`);
     res.json({ ok: true });
 });
 
 // DELETE /api/banners/:id
-router.delete("/:id", canManageBanners, (req, res) => {
-    const existing = db.prepare("SELECT id FROM banners WHERE id = ?").get(req.params.id);
+router.delete("/:id", canManageBanners, async (req, res) => {
+    const existing = await db.prepare("SELECT id FROM banners WHERE id = ?").get(req.params.id);
     if (!existing) return res.status(404).json({ error: "Không tìm thấy banner" });
 
-    db.prepare("DELETE FROM banners WHERE id = ?").run(req.params.id);
-    db.logActivity(req.admin, "delete_banner", `banner:${existing.id}`);
+    await db.prepare("DELETE FROM banners WHERE id = ?").run(req.params.id);
+    await db.logActivity(req.admin, "delete_banner", `banner:${existing.id}`);
     res.json({ ok: true });
 });
 

@@ -1,16 +1,17 @@
 {
   "name": "duchieuauto-backend",
   "version": "0.1.0",
-  "description": "Backend CMS cho website Đức Hiếu Auto - Node.js + Express + SQLite. Xem README.md để biết hướng dẫn cài đặt và deploy.",
+  "description": "Backend CMS cho website Đức Hiếu Auto - Node.js + Express + Turso (libSQL). Xem README.md để biết hướng dẫn cài đặt và deploy.",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
     "dev": "node --watch server.js"
   },
   "engines": {
-    "node": ">=22.5.0"
+    "node": ">=18.0.0"
   },
   "dependencies": {
+    "@libsql/client": "^0.17.4",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",

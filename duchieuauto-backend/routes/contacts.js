@@ -9,14 +9,14 @@ const router = express.Router();
 const canViewContacts = requireRole();
 
 // POST /api/contacts - nhận form liên hệ / đặt lịch hẹn từ frontend (public)
-router.post("/", (req, res) => {
+router.post("/", async (req, res) => {
     const { type, name, phone, email, service, preferred_date, preferred_time, message } = req.body;
 
     if (!name || !phone) {
         return res.status(400).json({ error: "Thiếu họ tên hoặc số điện thoại" });
     }
 
-    const info = db.prepare(`
+    const info = await db.prepare(`
         INSERT INTO contacts (type, name, phone, email, service, preferred_date, preferred_time, message)
         VALUES (@type, @name, @phone, @email, @service, @preferred_date, @preferred_time, @message)
     `).run({
@@ -33,21 +33,21 @@ router.post("/", (req, res) => {
 });
 
 // GET /api/contacts - danh sách liên hệ/đặt lịch (mọi admin đã đăng nhập)
-router.get("/", canViewContacts, (req, res) => {
-    const contacts = db.prepare("SELECT * FROM contacts ORDER BY created_at DESC").all();
+router.get("/", canViewContacts, async (req, res) => {
+    const contacts = await db.prepare("SELECT * FROM contacts ORDER BY created_at DESC").all();
     res.json(contacts);
 });
 
 // PUT /api/contacts/:id/status - cập nhật trạng thái xử lý (mọi admin đã đăng nhập)
-router.put("/:id/status", canViewContacts, (req, res) => {
+router.put("/:id/status", canViewContacts, async (req, res) => {
     const { status } = req.body;
     if (!["new", "contacted", "done"].includes(status)) {
         return res.status(400).json({ error: "status không hợp lệ" });
     }
-    const info = db.prepare("UPDATE contacts SET status = ? WHERE id = ?").run(status, req.params.id);
+    const info = await db.prepare("UPDATE contacts SET status = ? WHERE id = ?").run(status, req.params.id);
     if (info.changes === 0) return res.status(404).json({ error: "Không tìm thấy" });
 
-    db.logActivity(req.admin, "update_contact_status", `contact:${req.params.id}:${status}`);
+    await db.logActivity(req.admin, "update_contact_status", `contact:${req.params.id}:${status}`);
     res.json({ ok: true });
 });
 

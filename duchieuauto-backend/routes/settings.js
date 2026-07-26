@@ -24,8 +24,8 @@ const ALLOWED_KEYS = [
 
 // GET /api/settings - public (trang công khai cần đọc mã GA/Pixel/social links để hiển thị,
 // không có gì nhạy cảm trong các giá trị này - đều sẽ hiện ra HTML công khai)
-router.get("/", (req, res) => {
-    const rows = db.prepare("SELECT key, value FROM settings").all();
+router.get("/", async (req, res) => {
+    const rows = await db.prepare("SELECT key, value FROM settings").all();
     const map = {};
     ALLOWED_KEYS.forEach(k => { map[k] = ""; });
     rows.forEach(r => { if (ALLOWED_KEYS.includes(r.key)) map[r.key] = r.value || ""; });
@@ -33,19 +33,19 @@ router.get("/", (req, res) => {
 });
 
 // PUT /api/settings - cập nhật hàng loạt (chỉ Ads admin/super_admin), body: { key: value, ... }
-router.put("/", canEditSettings, (req, res) => {
+router.put("/", canEditSettings, async (req, res) => {
     const upsert = db.prepare(`
         INSERT INTO settings (key, value, updated_at) VALUES (@key, @value, @updated_at)
         ON CONFLICT(key) DO UPDATE SET value = @value, updated_at = @updated_at
     `);
     const now = new Date().toISOString();
-    ALLOWED_KEYS.forEach(key => {
+    for (const key of ALLOWED_KEYS) {
         if (Object.prototype.hasOwnProperty.call(req.body, key)) {
-            upsert.run({ key, value: req.body[key] ?? "", updated_at: now });
+            await upsert.run({ key, value: req.body[key] ?? "", updated_at: now });
         }
-    });
+    }
 
-    db.logActivity(req.admin, "update_settings", null);
+    await db.logActivity(req.admin, "update_settings", null);
     res.json({ ok: true });
 });
 

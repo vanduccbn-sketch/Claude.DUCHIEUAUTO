@@ -1,19 +1,28 @@
 # Đức Hiếu Auto — Backend CMS
 
-Node.js + Express + SQLite (module `node:sqlite` có sẵn trong Node.js, không phải gói ngoài).
-Xem quyết định kiến trúc đầy đủ tại `../ke-hoach-nhiem-vu-cms-bao-mat-2026-07-25.md` (Phase 0-3).
+Node.js + Express + **Turso (libSQL)** - database SQLite chạy trên mạng (không phải file cục bộ).
+Xem quyết định kiến trúc đầy đủ tại `../ke-hoach-nhiem-vu-cms-bao-mat-2026-07-25.md` (Phase 0-5).
 
-**Yêu cầu Node.js >= 22.5.0** (bản có `node:sqlite`). Toàn bộ dependency đều là JS thuần, **không
-gói nào cần biên dịch native** (không cần cài Python/Visual Studio Build Tools) - cố tình chọn
-`node:sqlite` thay vì `better-sqlite3` và `bcryptjs` thay vì `bcrypt` vì lý do này, sau khi gặp lỗi
-build thật trên Windows lúc test (xem mục "Đã test thật" bên dưới).
+**Vì sao Turso thay vì file SQLite cục bộ:** ban đầu dùng `node:sqlite` (module tích hợp sẵn
+Node.js, không cần biên dịch native) với file `.db` cục bộ. Khi chuẩn bị deploy lên Render.com mới
+phát hiện free tier của Render **không có persistent disk** - mỗi lần deploy code mới sẽ xoá sạch
+file SQLite. Turso lưu dữ liệu trên server riêng (miễn phí, không cần thẻ tín dụng), tách khỏi
+filesystem của hosting nên deploy lại bao nhiêu lần cũng không mất dữ liệu. Toàn bộ route/script
+gọi database đã chuyển sang `async/await` để phù hợp API bất đồng bộ của `@libsql/client`.
 
-**Đã test thật** (2026-07-25, Node v24.18.0 trên Windows): `npm install` sạch (0 vulnerabilities),
-chạy server, gọi đủ API qua curl - health check, đăng nhập đúng/sai, CRUD bài viết (kèm chặn
-XSS), phân quyền role (Ads admin bị chặn 403 khi tạo bài viết nhưng vẫn xem được liên hệ), form
-liên hệ/đặt lịch. Phát hiện và sửa 3 lỗi thật trong lúc test (xem lịch sử trong file kế hoạch):
-đổi `better-sqlite3` → `node:sqlite`, đổi `bcrypt` → `bcryptjs`, sửa route `PUT /api/posts/:id`
-(node:sqlite không cho object binding có field thừa không khớp tham số SQL).
+Các lựa chọn JS thuần khác vẫn giữ nguyên (không gói nào cần biên dịch native): `bcryptjs` thay vì
+`bcrypt`, tránh lỗi build từng gặp trên Windows lúc test.
+
+**Đã test thật:**
+- **2026-07-25** (Node v24.18.0, Windows, lúc còn dùng `node:sqlite`): `npm install` sạch (0
+  vulnerabilities), gọi đủ API qua curl - health check, đăng nhập đúng/sai, CRUD bài viết (kèm
+  chặn XSS), phân quyền role, form liên hệ/đặt lịch. Sửa 3 lỗi thật lúc đó: đổi `better-sqlite3` →
+  `node:sqlite`, đổi `bcrypt` → `bcryptjs`, sửa lỗi object binding thừa field trong `PUT /api/posts/:id`.
+- **2026-07-26** (migrate sang Turso): chuyển toàn bộ `models/db.js` + 6 file route + 2 script sang
+  async/await, test lại đầy đủ 12 kịch bản qua curl (đăng nhập, CRUD bài viết/banner, phân quyền,
+  settings, activity log) - tất cả PASS, hành vi giống hệt trước. Xác nhận thêm bằng screenshot
+  Chrome headless (tự đăng nhập bằng token thật, chụp 5 trang admin + trang Tin Tức công khai) -
+  toàn bộ hiển thị đúng, số liệu khớp Turso.
 
 **Lưu ý khi tự test bằng curl trên Windows (Git Bash):** `curl -d '{"title":"chữ có dấu"}'` với
 tiếng Việt gõ trực tiếp trong đối số dòng lệnh có thể bị corrupt encoding (lỗi của curl.exe trên
@@ -37,20 +46,26 @@ Bảng `admins` có cột `role`: `content` | `ads` | `super_admin`. Vai trò đ
 
 ```
 duchieuauto-backend/
-├── server.js           # entry point
+├── server.js           # entry point, chờ db.ready trước khi app.listen
 ├── routes/
 │   ├── auth.js          # POST /api/auth/login (trả JWT kèm role)
 │   ├── posts.js         # CRUD bài viết (ghi: chỉ content/super_admin), sanitize-html chống XSS
-│   └── contacts.js      # nhận form liên hệ/đặt lịch (public) + xem danh sách (mọi admin)
+│   ├── contacts.js      # nhận form liên hệ/đặt lịch (public) + xem danh sách (mọi admin)
+│   ├── settings.js      # cấu hình chung (GA/Pixel/Search Console/social) - chỉ ads/super_admin ghi
+│   ├── banners.js       # CRUD banner/slider - chỉ ads/super_admin
+│   ├── activity.js      # xem nhật ký thao tác - chỉ super_admin
+│   └── uploads.js       # upload ảnh (multer) - chỉ content/super_admin
 ├── middleware/
 │   └── auth.js          # xác thực JWT + phân quyền (requireRole, requireAdmin)
 ├── models/
-│   └── db.js             # khởi tạo node:sqlite + schema (admins+role, posts, contacts,
-│                          # activity_log, settings, banners) + helper logActivity() + migration cột role
-├── admin/
-│   └── README.md         # placeholder cho Phase 4 (trang quản trị)
+│   └── db.js             # tạo Turso client (@libsql/client) + shim prepare().get/all/run (async)
+│                          # tương thích ngược với cách gọi cũ + schema (admins+role, posts,
+│                          # contacts, activity_log, settings, banners) + helper logActivity()
+├── admin/                # trang quản trị tĩnh (login, dashboard, bài viết, liên hệ, banner,
+│                          # cấu hình, lịch sử) - phục vụ qua express.static, cùng domain API
 ├── scripts/
-│   └── seed-admin.js     # tạo tài khoản admin đầu tiên (hỗ trợ chọn role)
+│   ├── seed-admin.js            # tạo tài khoản admin (hỗ trợ chọn role)
+│   └── migrate-static-posts.js  # migrate 4 bài viết tĩnh cũ (Phase 1) vào database, chạy 1 lần
 ├── .env.example
 └── package.json
 ```
@@ -62,6 +77,8 @@ cd duchieuauto-backend
 npm install
 cp .env.example .env
 # Mở .env, đổi JWT_SECRET sang chuỗi ngẫu nhiên dài, đổi FRONTEND_ORIGIN nếu cần
+# Điền TURSO_DATABASE_URL và TURSO_AUTH_TOKEN (lấy từ app.turso.tech - tạo 1 database free,
+# không cần thẻ tín dụng)
 
 node scripts/seed-admin.js admin "mat-khau-du-manh-8-ky-tu-tro-len" super_admin
 # Sau này tạo thêm tài khoản Content/Ads: node scripts/seed-admin.js content1 "mat-khau..." content
@@ -78,22 +95,22 @@ curl -X POST http://localhost:4000/api/auth/login -H "Content-Type: application/
 
 ## Deploy lên Render.com (free tier, không cần thẻ tín dụng)
 
-1. Tạo repo Git riêng cho `duchieuauto-backend/` (hoặc dùng monorepo, trỏ Render vào đúng thư mục con này).
-2. Đăng ký tài khoản tại [render.com](https://render.com) bằng GitHub.
-3. **New +** → **Web Service** → chọn repo backend.
-4. Cấu hình:
+Vì dữ liệu đã nằm trên Turso (không phụ thuộc filesystem của Render), deploy lại code bao nhiêu
+lần cũng không mất dữ liệu - không cần Render Disks hay backup thủ công nữa.
+
+1. Đăng nhập [render.com](https://render.com) (tài khoản đã có).
+2. **New +** → **Web Service** → kết nối GitHub → chọn repo `Claude.DUCHIEUAUTO`.
+3. Cấu hình:
+   - **Root Directory:** `duchieuauto-backend`
    - **Build Command:** `npm install`
    - **Start Command:** `npm start`
-   - **Environment Variables:** thêm `JWT_SECRET`, `FRONTEND_ORIGIN` (domain GitHub Pages), `DB_PATH=./data/duchieuauto.db`
-5. **Lưu ý về SQLite trên Render free tier:** ổ đĩa free tier không persistent qua mỗi lần deploy lại (ephemeral filesystem) — dữ liệu SQLite có thể bị mất khi Render khởi động lại instance. Với dữ liệu quan trọng (bài viết, liên hệ khách hàng), nên:
-   - Dùng **Render Disks** (persistent disk, có phí nhỏ) để giữ file `.db`, hoặc
-   - Backup định kỳ file `.db` về nơi khác (Phase 6 - "Backup định kỳ SQLite"), hoặc
-   - Cân nhắc chuyển sang Render PostgreSQL free tier nếu dữ liệu quan trọng hơn chi phí chuyển đổi.
-6. Sau khi deploy, chạy `seed-admin.js` qua Render Shell (tab "Shell" trong dashboard) để tạo tài khoản admin đầu tiên trên server thật.
-7. Cập nhật `FRONTEND_ORIGIN` đúng domain GitHub Pages đang publish (`https://vanduccbn-sketch.github.io`) để CORS hoạt động.
+   - **Environment Variables:** `JWT_SECRET`, `FRONTEND_ORIGIN` (domain GitHub Pages thật), `TURSO_DATABASE_URL`, `TURSO_AUTH_TOKEN` (copy nguyên giá trị đang có trong `.env` local)
+4. Deploy xong, gọi thử `<địa-chỉ-render>/api/health` để xác nhận chạy được.
+5. **Không cần chạy lại `seed-admin.js`** - tài khoản admin/bài viết đã có sẵn trên Turso từ lúc test local, dùng chung luôn cho production. Cân nhắc đổi mật khẩu tài khoản test (`admin`/`TestPass2026!`) trước khi dùng thật lâu dài.
+6. Cập nhật `assets/js/api-config.js` ở frontend (`PRODUCTION_API_URL`) thành đúng domain Render vừa deploy.
 
 ## Khi mua hosting thật (Phase 8)
 
 Không cần viết lại — chỉ cần deploy đúng thư mục `duchieuauto-backend/` này lên hosting mới
-(VPS/shared hosting hỗ trợ Node.js), đổi `DB_PATH`/biến môi trường cho phù hợp. Đây chính là lý
-do chọn kiến trúc Node.js + SQLite portable thay vì phụ thuộc nền tảng CMS khác.
+(VPS/shared hosting hỗ trợ Node.js), giữ nguyên biến môi trường Turso. Đây chính là lý do chọn
+kiến trúc Node.js + Turso portable thay vì phụ thuộc nền tảng CMS khác.

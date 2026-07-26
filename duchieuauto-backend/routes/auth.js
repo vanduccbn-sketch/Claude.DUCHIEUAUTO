@@ -12,7 +12,7 @@ const failedAttempts = new Map(); // ip -> { count, lockedUntil }
 const MAX_ATTEMPTS = 5;
 const LOCK_MINUTES = 15;
 
-router.post("/login", (req, res) => {
+router.post("/login", async (req, res) => {
     const { username, password } = req.body;
     const ip = req.ip;
 
@@ -26,7 +26,7 @@ router.post("/login", (req, res) => {
         return res.status(429).json({ error: `Đăng nhập sai quá nhiều lần, thử lại sau ${minutesLeft} phút` });
     }
 
-    const admin = db.prepare("SELECT * FROM admins WHERE username = ?").get(username);
+    const admin = await db.prepare("SELECT * FROM admins WHERE username = ?").get(username);
     const passwordOk = admin && bcrypt.compareSync(password, admin.password_hash);
 
     if (!passwordOk) {

@@ -3,6 +3,7 @@ const path = require("path");
 const express = require("express");
 const cors = require("cors");
 
+const db = require("./models/db");
 const authRoutes = require("./routes/auth");
 const postsRoutes = require("./routes/posts");
 const contactsRoutes = require("./routes/contacts");
@@ -14,8 +15,18 @@ const activityRoutes = require("./routes/activity");
 const app = express();
 
 app.use(express.json());
+
+// Luôn cho phép domain frontend thật (FRONTEND_ORIGIN) + luôn cho phép localhost/127.0.0.1 bất kể
+// môi trường - phục vụ test frontend tĩnh trên máy dev mà không phải nới lỏng CORS cho domain lạ.
+const allowedOrigins = (process.env.FRONTEND_ORIGIN || "*").split(",").map(s => s.trim());
 app.use(cors({
-    origin: process.env.FRONTEND_ORIGIN || "*"
+    origin: (origin, callback) => {
+        if (!origin) return callback(null, true);
+        if (allowedOrigins.includes("*")) return callback(null, true);
+        if (allowedOrigins.includes(origin)) return callback(null, true);
+        if (/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin)) return callback(null, true);
+        return callback(new Error("CORS: origin không được phép"));
+    }
 }));
 
 app.get("/api/health", (req, res) => res.json({ ok: true, time: new Date().toISOString() }));
@@ -45,4 +56,11 @@ app.get("/robots.txt", (req, res) => {
 app.use((req, res) => res.status(404).json({ error: "Không tìm thấy route" }));
 
 const PORT = process.env.PORT || 4000;
-app.listen(PORT, () => console.log(`Đức Hiếu Auto backend đang chạy tại cổng ${PORT}`));
+// Chờ schema Turso khởi tạo xong (CREATE TABLE IF NOT EXISTS) trước khi nhận request - tránh
+// trường hợp request đầu tiên chạy trước khi bảng được tạo xong.
+db.ready
+    .then(() => app.listen(PORT, () => console.log(`Đức Hiếu Auto backend đang chạy tại cổng ${PORT}`)))
+    .catch(err => {
+        console.error("Không kết nối được Turso:", err.message);
+        process.exit(1);
+    });

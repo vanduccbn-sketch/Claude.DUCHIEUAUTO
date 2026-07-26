@@ -92,6 +92,16 @@
                     </div>
                 </div>
 
+                <div class="form-group">
+                    <label for="ctaText">Kêu gọi hành động (CTA cuối bài)</label>
+                    <input type="text" id="ctaText" placeholder="VD: Xem chi tiết dịch vụ Film Cách Nhiệt">
+                </div>
+                <div class="form-group">
+                    <label for="ctaLink">Link CTA</label>
+                    <input type="text" id="ctaLink" placeholder="VD: category-chi-tiet.html?id=dan-phim-cach-nhiet">
+                    <p class="form-hint">Hiện thành nút ở cuối bài viết, dẫn khách về đúng trang danh mục/sản phẩm liên quan.</p>
+                </div>
+
                 <details style="margin-top:20px;">
                     <summary style="cursor:pointer;font-size:13px;font-weight:700;">Tuỳ chọn SEO (nâng cao)</summary>
                     <div class="form-group" style="margin-top:14px;">
@@ -204,6 +214,8 @@
                 document.getElementById("category").value = post.category || "";
                 document.getElementById("metaTitle").value = post.meta_title || "";
                 document.getElementById("metaDescription").value = post.meta_description || "";
+                document.getElementById("ctaText").value = post.cta_text || "";
+                document.getElementById("ctaLink").value = post.cta_link || "";
                 document.getElementById("publishedToggle").checked = !!post.published;
                 quill.root.innerHTML = post.content || "";
 
@@ -230,6 +242,8 @@
                 content,
                 meta_title: document.getElementById("metaTitle").value.trim() || null,
                 meta_description: document.getElementById("metaDescription").value.trim() || null,
+                cta_text: document.getElementById("ctaText").value.trim() || null,
+                cta_link: document.getElementById("ctaLink").value.trim() || null,
                 published: document.getElementById("publishedToggle").checked
             };
 

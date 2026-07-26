@@ -123,6 +123,86 @@ const ready = (async () => {
             end_date TEXT,
             created_at TEXT NOT NULL DEFAULT (datetime('now'))
         );
+
+        -- Phase 7: quản lý sản phẩm qua CMS. Giữ nguyên đúng slug/id hiện có trong
+        -- assets/js/catalog-data.js để không đổi URL/đường dẫn ảnh đang dùng.
+        CREATE TABLE IF NOT EXISTS categories (
+            id TEXT PRIMARY KEY,
+            name TEXT NOT NULL,
+            poster TEXT,
+            sort_order INTEGER NOT NULL DEFAULT 0,
+            seo_title TEXT,
+            seo_meta_description TEXT,
+            seo_image TEXT,
+            seo_image_caption TEXT,
+            seo_intro TEXT,
+            created_at TEXT NOT NULL DEFAULT (datetime('now')),
+            updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+        );
+
+        CREATE TABLE IF NOT EXISTS category_sections (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            category_id TEXT NOT NULL REFERENCES categories(id),
+            heading TEXT NOT NULL,
+            body TEXT NOT NULL,
+            sort_order INTEGER NOT NULL DEFAULT 0
+        );
+
+        -- "brands" = cấp thứ 2 sau danh mục. Với 7/8 danh mục đây là thương hiệu thật (JBL,
+        -- Gotech...). Riêng "Đồ Bán Tải" đây là NHÓM SẢN PHẨM (Nắp Thùng, Lò Xo...), thương hiệu
+        -- thật nằm ở "brand_types" bên dưới - xem ghi chú ở bảng đó.
+        -- Khoá chính là (category_id, id) chứ KHÔNG PHẢI id đơn: id chỉ duy nhất TRONG PHẠM VI 1
+        -- danh mục, không phải toàn cục (đã xác nhận qua dữ liệu thật trước khi tạo bảng).
+        CREATE TABLE IF NOT EXISTS brands (
+            category_id TEXT NOT NULL REFERENCES categories(id),
+            id TEXT NOT NULL,
+            name TEXT NOT NULL,
+            logo TEXT,
+            hidden INTEGER NOT NULL DEFAULT 0,
+            sort_order INTEGER NOT NULL DEFAULT 0,
+            PRIMARY KEY (category_id, id)
+        );
+
+        -- "brand_types" = cấp thứ 3 (tuỳ chọn). Với danh mục thường: phân loại theo tính năng
+        -- trong 1 thương hiệu (VD JBL -> "Loa Ô Tô"/"Loa Sub"/"Âm Ly"). Với "Đồ Bán Tải": đây mới
+        -- là THƯƠNG HIỆU THẬT (Aeroklas, TJM...) nằm trong 1 nhóm sản phẩm.
+        -- Khoá chính (category_id, brand_id, id): 1 brand id (VD "tjm") có thể lặp lại ở NHIỀU
+        -- nhóm sản phẩm khác nhau trong cùng danh mục Đồ Bán Tải (xác nhận qua dữ liệu thật: TJM
+        -- xuất hiện ở cả 3 nhóm Lò Xo/Nhíp/Tời Điện với sản phẩm khác nhau) - nếu chỉ khoá theo id
+        -- sẽ bị trùng khoá.
+        CREATE TABLE IF NOT EXISTS brand_types (
+            category_id TEXT NOT NULL,
+            brand_id TEXT NOT NULL,
+            id TEXT NOT NULL,
+            name TEXT NOT NULL,
+            logo TEXT,
+            sort_order INTEGER NOT NULL DEFAULT 0,
+            PRIMARY KEY (category_id, brand_id, id),
+            FOREIGN KEY (category_id, brand_id) REFERENCES brands(category_id, id)
+        );
+
+        CREATE TABLE IF NOT EXISTS products (
+            id TEXT PRIMARY KEY,
+            category_id TEXT NOT NULL REFERENCES categories(id),
+            brand_id TEXT NOT NULL,
+            brand_type_id TEXT,
+            name TEXT NOT NULL,
+            price TEXT,
+            description TEXT,
+            image TEXT,
+            hidden INTEGER NOT NULL DEFAULT 0,
+            sort_order INTEGER NOT NULL DEFAULT 0,
+            created_at TEXT NOT NULL DEFAULT (datetime('now')),
+            updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+        );
+
+        CREATE TABLE IF NOT EXISTS product_specs (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            product_id TEXT NOT NULL REFERENCES products(id),
+            spec_key TEXT NOT NULL,
+            spec_value TEXT NOT NULL,
+            sort_order INTEGER NOT NULL DEFAULT 0
+        );
     `);
 })();
 

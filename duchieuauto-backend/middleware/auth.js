@@ -1,5 +1,10 @@
 const jwt = require("jsonwebtoken");
 
+// [Phase 6] Không cần CSRF protection: xác thực dùng JWT gửi qua header "Authorization: Bearer
+// ..." (đọc ở verifyToken bên dưới), KHÔNG dùng cookie/session. CSRF khai thác việc trình duyệt tự
+// động đính kèm cookie khi gửi request từ site khác - ở đây trình duyệt không tự gắn header
+// Authorization, nên 1 form/script trên site lạ không thể mạo danh request có token hợp lệ. Chỉ
+// cần đổi sang lưu token bằng cookie thì mới cần thêm CSRF token thật sự.
 function verifyToken(req, res, next) {
     const header = req.headers.authorization || "";
     const token = header.startsWith("Bearer ") ? header.slice(7) : null;

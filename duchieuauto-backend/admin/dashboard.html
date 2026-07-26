@@ -23,6 +23,7 @@
         </div>
 
         <div id="postsOnly">
+            <p style="margin-bottom:12px;"><a href="san-pham.html">→ Quản lý sản phẩm</a></p>
             <p style="margin-bottom:12px;"><a href="bai-viet.html">→ Quản lý bài viết</a></p>
         </div>
         <p style="margin-bottom:12px;"><a href="lien-he.html">→ Xem liên hệ / đặt lịch mới nhất</a></p>
@@ -51,6 +52,10 @@
             (async () => {
                 const stats = [];
                 if (canEditPosts) {
+                    const productsRes = await apiFetch("/api/products/admin/list");
+                    const products = await productsRes.json();
+                    stats.push({ num: products.length, label: "Tổng sản phẩm" });
+
                     const res = await apiFetch("/api/posts/admin/all");
                     const posts = await res.json();
                     const publishedCount = posts.filter(p => p.published).length;

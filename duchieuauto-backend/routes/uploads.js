@@ -32,12 +32,14 @@ const upload = multer({
     }
 });
 
-// POST /api/uploads - upload 1 ảnh (dùng cho ảnh bìa bài viết + ảnh chèn trong nội dung rich-text).
-// Chỉ Content admin / super_admin được upload. Trả về URL tương đối "/uploads/<ten-file>.jpg" -
-// lưu trực tiếp trên đĩa server, phục vụ qua express.static (xem server.js). LƯU Ý (giống SQLite):
-// ổ đĩa Render free tier không persistent qua mỗi lần deploy lại - ảnh có thể mất, nên cân nhắc
-// chuyển sang lưu trữ đối tượng (Cloudflare R2/S3...) khi lượng ảnh nhiều/quan trọng hơn.
-router.post("/", requireRole("content", "super_admin"), (req, res) => {
+// POST /api/uploads - upload 1 ảnh, dùng chung cho 2 nơi: ảnh bìa/ảnh chèn bài viết (Content
+// admin) VÀ ảnh banner (Ads admin) - [Phase 6] phát hiện lúc rà soát quyền: bản đầu chỉ cho
+// content/super_admin nên Ads admin thật sẽ bị 403 khi upload ảnh banner, đã sửa lại cho đủ cả 2
+// vai trò cần dùng endpoint này. Trả về URL tương đối "/uploads/<ten-file>.jpg" - lưu trực tiếp
+// trên đĩa server, phục vụ qua express.static (xem server.js). LƯU Ý: ổ đĩa Render free tier không
+// persistent qua mỗi lần deploy lại - ảnh có thể mất, nên cân nhắc chuyển sang lưu trữ đối tượng
+// (Cloudflare R2/S3...) khi lượng ảnh nhiều/quan trọng hơn.
+router.post("/", requireRole("content", "ads", "super_admin"), (req, res) => {
     upload.single("image")(req, res, (err) => {
         if (err) {
             return res.status(400).json({ error: err.message });

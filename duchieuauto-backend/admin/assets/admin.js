@@ -75,6 +75,7 @@ function renderAdminNav(auth, activePage) {
     const canEditPosts = auth.role === "content" || auth.role === "super_admin";
     const canManageAds = auth.role === "ads" || auth.role === "super_admin";
     const links = [{ href: "dashboard.html", label: "Tổng Quan", key: "dashboard" }];
+    if (canEditPosts) links.push({ href: "san-pham.html", label: "Sản Phẩm", key: "san-pham" });
     if (canEditPosts) links.push({ href: "bai-viet.html", label: "Bài Viết", key: "bai-viet" });
     links.push({ href: "lien-he.html", label: "Liên Hệ / Đặt Lịch", key: "lien-he" });
     if (canManageAds) links.push({ href: "banner.html", label: "Banner", key: "banner" });

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Sản Phẩm | Quản Trị Đức Hiếu Auto</title>
+    <link rel="stylesheet" href="assets/admin.css">
+</head>
+<body>
+    <div class="admin-topbar" id="adminTopbar"></div>
+
+    <main class="admin-main">
+        <div class="admin-header">
+            <div>
+                <h1>Sản Phẩm</h1>
+                <p class="desc">Quản lý toàn bộ sản phẩm, danh mục, thương hiệu - tìm kiếm hoặc lọc theo danh mục/thương hiệu bên dưới.</p>
+            </div>
+            <a href="san-pham-form.html" class="btn btn-primary">+ Thêm Sản Phẩm</a>
+        </div>
+
+        <div class="inline-form-card">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="filterCategory">Danh mục</label>
+                    <select id="filterCategory">
+                        <option value="">-- Tất cả danh mục --</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="filterBrand">Thương hiệu</label>
+                    <select id="filterBrand">
+                        <option value="">-- Tất cả thương hiệu --</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="filterSearch">Tìm theo tên</label>
+                    <input type="text" id="filterSearch" placeholder="VD: JBL Club, đèn LED...">
+                </div>
+            </div>
+        </div>
+
+        <p class="form-hint" id="resultCount" style="margin-bottom:10px;"></p>
+
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Ảnh</th>
+                    <th>Tên sản phẩm</th>
+                    <th>Danh mục</th>
+                    <th>Thương hiệu</th>
+                    <th>Giá</th>
+                    <th>Trạng thái</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody id="productsBody">
+                <tr class="empty-row"><td colspan="7">Đang tải...</td></tr>
+            </tbody>
+        </table>
+    </main>
+
+    <script src="assets/admin.js"></script>
+    <script>
+        const auth = requireAuth(["content", "super_admin"]);
+        let categoriesData = [];
+        let debounceTimer;
+
+        if (auth) {
+            renderAdminNav(auth, "san-pham");
+            loadCategories().then(loadProducts);
+
+            document.getElementById("filterCategory").addEventListener("change", () => {
+                populateBrandFilter();
+                loadProducts();
+            });
+            document.getElementById("filterBrand").addEventListener("change", loadProducts);
+            document.getElementById("filterSearch").addEventListener("input", () => {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(loadProducts, 350);
+            });
+        }
+
+        async function loadCategories() {
+            const res = await apiFetch("/api/products/admin/categories");
+            categoriesData = await res.json();
+            const sel = document.getElementById("filterCategory");
+            sel.innerHTML = `<option value="">-- Tất cả danh mục --</option>` +
+                categoriesData.map(c => `<option value="${c.id}">${c.name}</option>`).join("");
+        }
+
+        function populateBrandFilter() {
+            const catId = document.getElementById("filterCategory").value;
+            const sel = document.getElementById("filterBrand");
+            const cat = categoriesData.find(c => c.id === catId);
+            if (!cat) {
+                sel.innerHTML = `<option value="">-- Tất cả thương hiệu --</option>`;
+                return;
+            }
+            sel.innerHTML = `<option value="">-- Tất cả thương hiệu --</option>` +
+                cat.brands.map(b => `<option value="${b.id}">${b.name}</option>`).join("");
+        }
+
+        async function loadProducts() {
+            const category = document.getElementById("filterCategory").value;
+            const brand = document.getElementById("filterBrand").value;
+            const q = document.getElementById("filterSearch").value.trim();
+
+            const params = new URLSearchParams();
+            if (category) params.set("category", category);
+            if (brand) params.set("brand", brand);
+            if (q) params.set("q", q);
+
+            const res = await apiFetch(`/api/products/admin/list?${params.toString()}`);
+            const products = await res.json();
+            const tbody = document.getElementById("productsBody");
+
+            document.getElementById("resultCount").textContent = `${products.length} sản phẩm`;
+
+            if (products.length === 0) {
+                tbody.innerHTML = `<tr class="empty-row"><td colspan="7">Không tìm thấy sản phẩm nào.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = products.slice(0, 100).map(p => {
+                const img = p.image || `../assets/images/products/${p.id}/anh-1.jpg`;
+                return `
+                <tr>
+                    <td><img class="thumb" src="${img}" alt="" onerror="this.style.visibility='hidden'"></td>
+                    <td>${p.name}</td>
+                    <td>${p.category_name}</td>
+                    <td>${p.brand_name}</td>
+                    <td>${p.price || "-"}</td>
+                    <td><span class="badge ${p.hidden ? "badge-draft" : "badge-published"}">${p.hidden ? "Đã ẩn" : "Đang hiện"}</span></td>
+                    <td class="actions">
+                        <a href="san-pham-form.html?id=${p.id}" class="btn btn-secondary">Sửa</a>
+                        <button type="button" class="btn btn-danger" data-delete="${p.id}" data-name="${p.name.replace(/"/g, "&quot;")}">Xoá</button>
+                    </td>
+                </tr>`;
+            }).join("") + (products.length > 100 ? `<tr class="empty-row"><td colspan="7">... còn ${products.length - 100} sản phẩm nữa, thu hẹp tìm kiếm để xem hết.</td></tr>` : "");
+
+            tbody.querySelectorAll("[data-delete]").forEach(btn => {
+                btn.addEventListener("click", () => deleteProduct(btn.dataset.delete, btn.dataset.name));
+            });
+        }
+
+        async function deleteProduct(id, name) {
+            if (!confirm(`Xoá sản phẩm "${name}"? Không thể hoàn tác.`)) return;
+            try {
+                const res = await apiFetch(`/api/products/${id}`, { method: "DELETE" });
+                if (!res.ok) throw new Error((await res.json()).error || "Xoá thất bại");
+                showToast("Đã xoá sản phẩm");
+                loadProducts();
+            } catch (err) {
+                showToast(err.message, true);
+            }
+        }
+    </script>
+</body>
+</html>

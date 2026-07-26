@@ -15,8 +15,15 @@ function lookupIpv4Only(hostname, options, callback) {
 // cần đăng ký thêm dịch vụ email ngoài. Cần bật "Xác minh 2 bước" trên tài khoản Google đó rồi
 // tạo "Mật khẩu ứng dụng" (App Password) tại myaccount.google.com/apppasswords, KHÔNG dùng mật
 // khẩu Gmail thật (Google chặn đăng nhập SMTP bằng mật khẩu thường vì lý do bảo mật).
+// Dùng thẳng host/port 587 (STARTTLS) thay vì shorthand service:"gmail" (mặc định cổng 465, SSL
+// trực tiếp) - phát hiện thật trên Render: sau khi ép IPv4 xong, cổng 465 vẫn bị treo "Connection
+// timeout" (gói tin không có phản hồi, khác hẳn ENETUNREACH lúc trước) - dấu hiệu cổng 465 bị
+// chặn ở tầng mạng outbound của Render. Nhiều nhà cung cấp host chỉ chặn 465, vẫn cho qua 587.
 const transporter = nodemailer.createTransport({
-    service: "gmail",
+    host: "smtp.gmail.com",
+    port: 587,
+    secure: false,
+    requireTLS: true,
     auth: {
         user: process.env.GMAIL_USER,
         pass: process.env.GMAIL_APP_PASSWORD

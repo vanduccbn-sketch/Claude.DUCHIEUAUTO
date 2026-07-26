@@ -81,6 +81,7 @@ function renderAdminNav(auth, activePage) {
     if (canManageAds) links.push({ href: "banner.html", label: "Banner", key: "banner" });
     if (canManageAds) links.push({ href: "cau-hinh.html", label: "Cấu Hình", key: "cau-hinh" });
     if (auth.role === "super_admin") links.push({ href: "lich-su.html", label: "Lịch Sử", key: "lich-su" });
+    links.push({ href: "tai-khoan.html", label: "Tài Khoản", key: "tai-khoan" });
 
     nav.innerHTML = `
         <div class="brand">ĐỨC HIẾU <span>ADMIN</span></div>

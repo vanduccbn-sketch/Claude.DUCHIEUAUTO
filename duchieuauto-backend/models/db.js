@@ -64,6 +64,9 @@ const ready = (async () => {
             username TEXT NOT NULL UNIQUE,
             password_hash TEXT NOT NULL,
             role TEXT NOT NULL DEFAULT 'content',
+            email TEXT,
+            reset_token TEXT,
+            reset_token_expires TEXT,
             created_at TEXT NOT NULL DEFAULT (datetime('now'))
         );
 
@@ -212,6 +215,19 @@ const ready = (async () => {
     const productColumns = (await prepare("PRAGMA table_info(products)").all()).map(c => c.name);
     if (!productColumns.includes("detail_content")) {
         await exec("ALTER TABLE products ADD COLUMN detail_content TEXT");
+    }
+
+    // Migration tương tự cho "admins" - đã có tài khoản thật (admin, ads1) trước khi thêm email +
+    // cơ chế quên mật khẩu qua token.
+    const adminColumnsCheck = (await prepare("PRAGMA table_info(admins)").all()).map(c => c.name);
+    if (!adminColumnsCheck.includes("email")) {
+        await exec("ALTER TABLE admins ADD COLUMN email TEXT");
+    }
+    if (!adminColumnsCheck.includes("reset_token")) {
+        await exec("ALTER TABLE admins ADD COLUMN reset_token TEXT");
+    }
+    if (!adminColumnsCheck.includes("reset_token_expires")) {
+        await exec("ALTER TABLE admins ADD COLUMN reset_token_expires TEXT");
     }
 })();
 

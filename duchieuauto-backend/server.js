@@ -14,6 +14,7 @@ const settingsRoutes = require("./routes/settings");
 const bannersRoutes = require("./routes/banners");
 const activityRoutes = require("./routes/activity");
 const productsRoutes = require("./routes/products");
+const adminsRoutes = require("./routes/admins");
 
 const app = express();
 
@@ -42,15 +43,21 @@ app.use(express.json());
 // Luôn cho phép domain frontend thật (FRONTEND_ORIGIN) + luôn cho phép localhost/127.0.0.1 bất kể
 // môi trường - phục vụ test frontend tĩnh trên máy dev mà không phải nới lỏng CORS cho domain lạ.
 const allowedOrigins = (process.env.FRONTEND_ORIGIN || "*").split(",").map(s => s.trim());
-app.use(cors({
-    origin: (origin, callback) => {
-        if (!origin) return callback(null, true);
-        if (allowedOrigins.includes("*")) return callback(null, true);
-        if (allowedOrigins.includes(origin)) return callback(null, true);
-        if (/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin)) return callback(null, true);
-        return callback(new Error("CORS: origin không được phép"));
-    }
-}));
+app.use((req, res, next) => {
+    cors({
+        origin: (origin, callback) => {
+            if (!origin) return callback(null, true);
+            if (allowedOrigins.includes("*")) return callback(null, true);
+            if (allowedOrigins.includes(origin)) return callback(null, true);
+            if (/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin)) return callback(null, true);
+            // Trang /admin và API nằm cùng domain (same-origin) - trình duyệt vẫn tự gắn header
+            // Origin cho request POST/PUT dù là same-origin thật, nên phải cho phép trường hợp này,
+            // nếu không mọi request từ trang quản trị (kể cả đăng nhập) sẽ bị chặn nhầm là CORS lạ.
+            if (origin === `${req.protocol}://${req.get("host")}`) return callback(null, true);
+            return callback(new Error("CORS: origin không được phép"));
+        }
+    })(req, res, next);
+});
 
 // Rate limiting (Phase 6) - chặn spam/DoS đơn giản theo IP. Giới hạn chung cho toàn API, và giới
 // hạn chặt hơn riêng cho đăng nhập (bổ sung thêm lớp bảo vệ ngoài cơ chế khoá 5-lần-sai đã có sẵn
@@ -68,6 +75,15 @@ app.use("/api/auth/login", rateLimit({
     standardHeaders: true,
     legacyHeaders: false,
     message: { error: "Quá nhiều lần thử đăng nhập, vui lòng thử lại sau ít phút" }
+}));
+// Giới hạn chặt cho quên mật khẩu - mỗi request đều gửi email thật (tốn quota Gmail), tránh bị
+// lợi dụng spam email tới 1 địa chỉ hoặc dò quét username tồn tại.
+app.use("/api/auth/forgot-password", rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 5,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { error: "Quá nhiều yêu cầu đặt lại mật khẩu, vui lòng thử lại sau ít phút" }
 }));
 
 // Log truy cập bất thường (Phase 6) - ghi lại mọi request bị từ chối do thiếu/sai quyền (401/403)
@@ -92,6 +108,7 @@ app.use("/api/settings", settingsRoutes);
 app.use("/api/banners", bannersRoutes);
 app.use("/api/activity", activityRoutes);
 app.use("/api/products", productsRoutes);
+app.use("/api/admins", adminsRoutes);
 
 // Ảnh upload (ảnh bìa bài viết, ảnh chèn nội dung) - phục vụ trực tiếp file tĩnh
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
@@ -108,6 +125,17 @@ app.get("/robots.txt", (req, res) => {
 });
 
 app.use((req, res) => res.status(404).json({ error: "Không tìm thấy route" }));
+
+// Handler lỗi chung - PHẢI trả JSON, không để Express rơi về trang lỗi HTML mặc định. Trang lỗi
+// HTML sẽ khiến mọi fetch().json() ở client vỡ với lỗi "Unexpected token '<'" khó hiểu, thay vì
+// hiện đúng thông báo lỗi (đây chính là nguyên nhân lỗi đăng nhập gặp phải trước đó).
+app.use((err, req, res, next) => {
+    if (err && typeof err.message === "string" && err.message.startsWith("CORS")) {
+        return res.status(403).json({ error: "Origin không được phép" });
+    }
+    console.error("[loi-server]", err);
+    res.status(500).json({ error: "Lỗi máy chủ, vui lòng thử lại sau" });
+});
 
 const PORT = process.env.PORT || 4000;
 // Chờ schema Turso khởi tạo xong (CREATE TABLE IF NOT EXISTS) trước khi nhận request - tránh

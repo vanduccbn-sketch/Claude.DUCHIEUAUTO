@@ -69,6 +69,17 @@
                 </div>
             </div>
 
+            <div class="settings-section">
+                <h2>Đặt Lịch Hẹn</h2>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="booking_slot_capacity">Số lịch hẹn tối đa / khung giờ</label>
+                        <input type="number" id="booking_slot_capacity" name="booking_slot_capacity" min="1" placeholder="Mặc định: 2">
+                        <p class="form-hint">Khi 1 khung giờ đã đủ số lượng này, khách sẽ không chọn được khung giờ đó nữa trên trang Đặt Lịch Hẹn.</p>
+                    </div>
+                </div>
+            </div>
+
             <div class="editor-actions">
                 <button type="submit" class="btn btn-primary">Lưu Cấu Hình</button>
                 <span class="save-status" id="saveStatus"></span>
@@ -87,7 +98,8 @@
         const FIELDS = [
             "google_analytics_id", "facebook_pixel_id", "google_search_console_verification",
             "social_facebook", "social_zalo", "social_youtube",
-            "seo_default_title", "seo_default_description"
+            "seo_default_title", "seo_default_description",
+            "booking_slot_capacity"
         ];
 
         async function loadSettings() {

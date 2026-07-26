@@ -59,6 +59,12 @@ router.post("/", async (req, res) => {
     }
 
     const isBooking = type === "booking";
+    // "maintenance" = đăng ký nhắc bảo dưỡng định kỳ - tái dùng nguyên bảng/API contacts (cùng bản
+    // chất "khách để lại thông tin, admin theo dõi/liên hệ lại") thay vì tạo bảng riêng gần như
+    // giống hệt. Hiện chưa có cơ chế TỰ ĐỘNG gửi nhắc (email/SMS) - admin xem danh sách và chủ động
+    // gọi lại theo đúng thời điểm, xem huong-dan-viet-content-nhan-vien.md.
+    const VALID_TYPES = ["booking", "contact", "maintenance"];
+    const resolvedType = VALID_TYPES.includes(type) ? type : "contact";
 
     // Chặn trùng lịch ngay ở server (không chỉ dựa vào UI đã disable) - phòng trường hợp 2 khách
     // cùng gửi gần như đồng thời trước khi UI kịp cập nhật lại trạng thái đầy chỗ.
@@ -79,7 +85,7 @@ router.post("/", async (req, res) => {
         INSERT INTO contacts (type, name, phone, email, service, preferred_date, preferred_time, message)
         VALUES (@type, @name, @phone, @email, @service, @preferred_date, @preferred_time, @message)
     `).run({
-        type: isBooking ? "booking" : "contact",
+        type: resolvedType,
         name, phone,
         email: email || null,
         service: service || null,

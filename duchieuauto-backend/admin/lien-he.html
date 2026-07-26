@@ -57,7 +57,7 @@
 
             tbody.innerHTML = contacts.map(c => `
                 <tr>
-                    <td>${c.type === "booking" ? "Đặt lịch" : "Liên hệ"}</td>
+                    <td>${c.type === "booking" ? "Đặt lịch" : c.type === "maintenance" ? "Nhắc bảo dưỡng" : "Liên hệ"}</td>
                     <td>${c.name}${c.message ? `<div class="form-hint">${c.message}</div>` : ""}</td>
                     <td><a href="tel:${c.phone}">${c.phone}</a></td>
                     <td>${c.service || "-"}${c.preferred_date ? `<div class="form-hint">${c.preferred_date} ${c.preferred_time || ""}</div>` : ""}</td>

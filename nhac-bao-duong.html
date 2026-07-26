@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng Ký Nhắc Bảo Dưỡng Định Kỳ | Đức Hiếu Auto</title>
+    <meta name="description" content="Đăng ký để Đức Hiếu Auto chủ động gọi nhắc lịch bảo dưỡng xe của bạn theo đúng chu kỳ - không lo quên, không lo hỏng hóc phát sinh do bảo dưỡng trễ.">
+    <link rel="icon" type="image/png" href="assets/images/favicon.png">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#15171C">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link rel="stylesheet" href="assets/css/fonts.css">
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/header.css">
+    <link rel="stylesheet" href="assets/css/services.css">
+    <link rel="stylesheet" href="assets/css/footer.css">
+    <link rel="stylesheet" href="assets/css/catalog-pages.css">
+    <link rel="stylesheet" href="assets/css/pages.css">
+</head>
+<body>
+
+    <div id="top-bar">
+        <div class="container top-bar-inner">
+            <div class="top-bar-left">
+                <span><i class="fa-solid fa-location-dot"></i> 123 Lý Thái Tổ, Phường Buôn Ma Thuột, Đắk Lắk</span>
+                <span><i class="fa-solid fa-envelope"></i> duchieuauto47@gmail.com</span>
+            </div>
+            <div class="top-bar-right">
+                <span class="hotline"><i class="fa-solid fa-phone-volume"></i> Hotline: <strong>0869 110 237</strong></span>
+            </div>
+        </div>
+    </div>
+
+    <header id="header">
+        <div class="container header-inner">
+            <a href="index.html" class="logo">ĐỨC HIẾU <span>AUTO</span></a>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="index.html">Trang Chủ</a></li>
+                    <li><a href="index.html#about">Giới Thiệu</a></li>
+                    <li class="has-dropdown">
+                        <div class="nav-item-row">
+                            <a href="index.html#service">Dịch Vụ <i class="fa-solid fa-chevron-down nav-caret"></i></a>
+                            <button type="button" class="nav-dropdown-toggle" aria-label="Xem danh mục Dịch Vụ"><i class="fa-solid fa-chevron-down"></i></button>
+                        </div>
+                        <div class="nav-dropdown nav-dropdown-mega">
+                            <div class="nav-dropdown-col">
+                                <span class="nav-dropdown-heading">Nội Thất Ô Tô</span>
+                                <a href="category-chi-tiet.html?id=man-hinh-o-to"><i class="fa-solid fa-tablet-screen-button"></i> Màn Hình Ô Tô</a>
+                                <a href="category-chi-tiet.html?id=am-thanh-cach-am-oto"><i class="fa-solid fa-volume-high"></i> Âm Thanh - Cách Âm Ô Tô</a>
+                                <a href="category-chi-tiet.html?id=android-box-o-to"><i class="fa-solid fa-box"></i> Android Box Ô Tô</a>
+                                <a href="category-chi-tiet.html?id=camera-hanh-trinh"><i class="fa-solid fa-video"></i> Camera Hành Trình - 360 Độ</a>
+                            </div>
+                            <div class="nav-dropdown-col">
+                                <span class="nav-dropdown-heading">Ngoại Thất Ô Tô</span>
+                                <a href="category-chi-tiet.html?id=dan-phim-cach-nhiet"><i class="fa-solid fa-layer-group"></i> Film Cách Nhiệt</a>
+                                <a href="category-chi-tiet.html?id=ppf-wrap-doi-mau"><i class="fa-solid fa-shield-halved"></i> PPF - Wrap Đổi Màu</a>
+                                <a href="category-chi-tiet.html?id=do-den"><i class="fa-solid fa-lightbulb"></i> Nâng Cấp Ánh Sáng</a>
+                            </div>
+                            <div class="nav-dropdown-col">
+                                <span class="nav-dropdown-heading">Khác</span>
+                                <a href="category-chi-tiet.html?id=do-ban-tai"><i class="fa-solid fa-truck-pickup"></i> Đồ Bán Tải</a>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="has-dropdown">
+                        <div class="nav-item-row">
+                            <a href="san-pham.html">Sản Phẩm <i class="fa-solid fa-chevron-down nav-caret"></i></a>
+                            <button type="button" class="nav-dropdown-toggle" aria-label="Xem danh mục Sản Phẩm"><i class="fa-solid fa-chevron-down"></i></button>
+                        </div>
+                        <div class="nav-dropdown" id="navProductsDropdown"></div>
+                    </li>
+                    <li><a href="tin-tuc.html">Tin Tức</a></li>
+                    <li><a href="index.html#contact">Liên Hệ</a></li>
+                </ul>
+            </nav>
+            <div class="header-actions">
+                <a href="dat-lich-hen.html" class="btn btn-primary">Đặt Lịch Hẹn</a>
+                <button class="menu-toggle" aria-label="Mở menu"><i class="fa-solid fa-bars"></i></button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section id="product-catalog-page">
+            <div class="container">
+                <div class="breadcrumb">
+                    <a href="index.html">Trang Chủ</a>
+                    <span class="sep">/</span>
+                    <span class="breadcrumb-current">Nhắc Bảo Dưỡng</span>
+                </div>
+                <h1 class="section-title">ĐĂNG KÝ NHẮC BẢO DƯỠNG ĐỊNH KỲ</h1>
+                <p class="page-intro">Để lại thông tin xe của bạn, Đức Hiếu Auto sẽ chủ động gọi nhắc đúng thời điểm cần bảo dưỡng tiếp theo - không lo quên lịch, không lo hỏng hóc phát sinh do bảo dưỡng trễ.</p>
+
+                <div class="booking-trust-strip">
+                    <div class="booking-trust-item"><i class="fa-solid fa-phone-volume"></i> Nhân viên gọi nhắc trực tiếp, không spam tin nhắn</div>
+                    <div class="booking-trust-item"><i class="fa-solid fa-shield-halved"></i> Thông tin chỉ dùng để nhắc lịch, không chia sẻ bên thứ 3</div>
+                </div>
+
+                <div class="booking-wrap">
+                    <form class="booking-form" id="maintenanceForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="mtName">Họ và tên *</label>
+                                <input type="text" id="mtName" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="mtPhone">Số điện thoại *</label>
+                                <input type="tel" id="mtPhone" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="mtCar">Dòng xe *</label>
+                            <input type="text" id="mtCar" required placeholder="VD: Ford Ranger Wildtrak 2023">
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="mtLastService">Lần bảo dưỡng/thi công gần nhất (nếu nhớ)</label>
+                                <input type="date" id="mtLastService">
+                            </div>
+                            <div class="form-group">
+                                <label for="mtInterval">Chu kỳ nhắc *</label>
+                                <select id="mtInterval" required>
+                                    <option value="3 tháng/lần">3 tháng/lần</option>
+                                    <option value="6 tháng/lần" selected>6 tháng/lần</option>
+                                    <option value="12 tháng/lần">12 tháng/lần</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="mtNote">Ghi chú thêm</label>
+                            <textarea id="mtNote" rows="3" placeholder="Hạng mục muốn được nhắc kiểm tra (nếu có)"></textarea>
+                        </div>
+
+                        <div class="form-error" id="maintenanceError" hidden></div>
+
+                        <button type="submit"><i class="fa-solid fa-bell"></i> Đăng Ký Nhắc Lịch</button>
+                    </form>
+
+                    <div class="booking-success" id="maintenanceSuccess">
+                        <i class="fa-solid fa-circle-check"></i>
+                        <h3>Đã đăng ký thành công!</h3>
+                        <p>Cảm ơn bạn. Đức Hiếu Auto đã lưu thông tin và sẽ gọi nhắc đúng chu kỳ đã chọn. Nếu cần hỗ trợ ngay, vui lòng gọi hotline <a href="tel:0869110237">0869 110 237</a>.</p>
+                    </div>
+
+                    <div class="booking-note">
+                        <i class="fa-solid fa-circle-info"></i>
+                        <span>Đây là dịch vụ nhắc lịch qua điện thoại (không phải tin nhắn/email tự động) - nhân viên Đức Hiếu Auto sẽ chủ động liên hệ đúng thời điểm bạn đã đăng ký.</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer id="footer">
+        <div class="container footer-inner">
+            <div class="footer-col brand-col">
+                <h3>ĐỨC HIẾU <span>AUTO</span></h3>
+                <p class="footer-desc">Trung tâm nâng cấp và chăm sóc ô tô chuyên nghiệp tại Buôn Ma Thuột — màn hình, âm thanh, ánh sáng, PPF và phụ kiện bán tải chính hãng.</p>
+                <ul class="contact-info">
+                    <li><i class="fa-solid fa-location-dot"></i> 123 Lý Thái Tổ, Buôn Ma Thuột, Đắk Lắk</li>
+                    <li><i class="fa-solid fa-phone"></i> <a href="tel:0869110237">0869 110 237</a></li>
+                    <li><i class="fa-solid fa-envelope"></i> <a href="mailto:duchieuauto47@gmail.com">duchieuauto47@gmail.com</a></li>
+                </ul>
+                <div class="social-links">
+                    <a href="https://www.facebook.com/thanhphatautocar" target="_blank" rel="noopener" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="https://zalo.me/0869110237" target="_blank" rel="noopener" aria-label="Zalo"><i class="fa-solid fa-comment-dots"></i></a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h3>Nội Thất Ô Tô</h3>
+                <ul>
+                    <li><a href="category-chi-tiet.html?id=man-hinh-o-to">Màn Hình Ô Tô</a></li>
+                    <li><a href="category-chi-tiet.html?id=am-thanh-cach-am-oto">Âm Thanh - Cách Âm</a></li>
+                    <li><a href="category-chi-tiet.html?id=android-box-o-to">Android Box Ô Tô</a></li>
+                    <li><a href="category-chi-tiet.html?id=camera-hanh-trinh">Camera Hành Trình - 360</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>Ngoại Thất & Khác</h3>
+                <ul>
+                    <li><a href="category-chi-tiet.html?id=dan-phim-cach-nhiet">Film Cách Nhiệt</a></li>
+                    <li><a href="category-chi-tiet.html?id=ppf-wrap-doi-mau">PPF - Wrap Đổi Màu</a></li>
+                    <li><a href="category-chi-tiet.html?id=do-den">Nâng Cấp Ánh Sáng</a></li>
+                    <li><a href="category-chi-tiet.html?id=do-ban-tai">Đồ Bán Tải</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>Liên Kết Nhanh</h3>
+                <ul>
+                    <li><a href="index.html">Trang Chủ</a></li>
+                    <li><a href="san-pham.html">Sản Phẩm</a></li>
+                    <li><a href="tin-tuc.html">Tin Tức</a></li>
+                    <li><a href="dat-lich-hen.html">Đặt Lịch Hẹn</a></li>
+                    <li><a href="nhac-bao-duong.html">Nhắc Bảo Dưỡng</a></li>
+                    <li><a href="faq.html">Câu Hỏi Thường Gặp</a></li>
+                    <li><a href="chinh-sach.html">Chính Sách</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="container footer-bottom-inner">
+                <p>© 2026 Đức Hiếu Auto. All rights reserved.</p>
+                <p class="footer-credit">Buôn Ma Thuột, Đắk Lắk</p>
+            </div>
+        </div>
+    </footer>
+
+    <div class="quick-contact" id="quickContact">
+        <div class="quick-contact-items">
+            <a class="qc-item qc-zalo" href="https://zalo.me/0869110237" target="_blank" rel="noopener" aria-label="Chat Zalo">
+                <i class="fa-solid fa-comment-dots"></i>
+                <span>Chat Zalo</span>
+            </a>
+            <a class="qc-item qc-messenger" href="https://www.facebook.com/thanhphatautocar" target="_blank" rel="noopener" aria-label="Nhắn tin Messenger">
+                <i class="fa-brands fa-facebook-messenger"></i>
+                <span>Messenger</span>
+            </a>
+            <a class="qc-item qc-phone" href="tel:0869110237" aria-label="Gọi điện thoại">
+                <i class="fa-solid fa-phone"></i>
+                <span>0869 110 237</span>
+            </a>
+        </div>
+        <button type="button" class="quick-contact-toggle" id="quickContactToggle" aria-label="Mở/đóng liên hệ nhanh">
+            <i class="fa-solid fa-plus"></i>
+        </button>
+    </div>
+
+    <script src="assets/js/api-config.js"></script>
+    <script src="assets/js/pwa-init.js"></script>
+    <script src="assets/js/site-settings.js"></script>
+    <script src="assets/js/header-scroll.js"></script>
+    <script src="assets/js/catalog-data.js"></script>
+    <script src="assets/js/catalog-render.js"></script>
+    <script src="assets/js/site-search.js"></script>
+    <script>
+        renderNavProductsDropdown("#navProductsDropdown");
+
+        const menuToggle = document.querySelector('.menu-toggle');
+        const nav = document.querySelector('.main-nav');
+        menuToggle.addEventListener('click', () => nav.classList.toggle('active'));
+
+        document.querySelectorAll('.nav-dropdown-toggle').forEach(btn => {
+            btn.addEventListener('click', () => {
+                btn.closest('.has-dropdown').classList.toggle('dropdown-open');
+            });
+        });
+
+        const quickContact = document.getElementById('quickContact');
+        const quickContactToggle = document.getElementById('quickContactToggle');
+        quickContactToggle.addEventListener('click', () => quickContact.classList.toggle('collapsed'));
+
+        document.getElementById('mtLastService').max = new Date().toISOString().split('T')[0];
+
+        const maintenanceForm = document.getElementById('maintenanceForm');
+        const maintenanceError = document.getElementById('maintenanceError');
+        maintenanceForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            maintenanceError.hidden = true;
+
+            const lastService = document.getElementById('mtLastService').value;
+            const interval = document.getElementById('mtInterval').value;
+            const note = document.getElementById('mtNote').value.trim();
+            const messageLines = [`Dòng xe: ${document.getElementById('mtCar').value.trim()}`, `Chu kỳ nhắc: ${interval}`];
+            if (lastService) messageLines.push(`Lần gần nhất: ${lastService}`);
+            if (note) messageLines.push(`Ghi chú: ${note}`);
+
+            const payload = {
+                type: 'maintenance',
+                name: document.getElementById('mtName').value.trim(),
+                phone: document.getElementById('mtPhone').value.trim(),
+                message: messageLines.join(' | ')
+            };
+
+            const submitBtn = maintenanceForm.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang gửi...';
+            try {
+                const res = await fetch(`${API_BASE_URL}/api/contacts`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || 'Gửi thất bại');
+
+                maintenanceForm.style.display = 'none';
+                document.getElementById('maintenanceSuccess').style.display = 'block';
+            } catch (err) {
+                maintenanceError.textContent = err.message + ' - vui lòng thử lại hoặc gọi hotline 0869 110 237.';
+                maintenanceError.hidden = false;
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fa-solid fa-bell"></i> Đăng Ký Nhắc Lịch';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -262,7 +262,7 @@ function renderBrandProducts() {
 
     const brandTitleEl = document.querySelector(".brand-title");
     const setBrandTitle = (text, logoSrc) => {
-        brandTitleEl.innerHTML = (logoSrc ? `<img class="brand-title-logo" src="${logoSrc}" alt="${text}">` : "") + `<span>${text}</span>`;
+        brandTitleEl.innerHTML = (logoSrc ? `<img class="brand-title-logo" src="${logoSrc}" alt="${text}" loading="lazy">` : "") + `<span>${text}</span>`;
     };
 
     // Hãng có phân loại (VD: Loa Ô Tô / Loa Sub / Âm Ly) và chưa chọn loại cụ thể -> hiển thị danh sách loại
@@ -333,31 +333,112 @@ function renderBrandProducts() {
 }
 
 /* ---------- Trang chi tiết sản phẩm ---------- */
-function renderProductDetail() {
-    const id = getParam("id");
-    const p = findProduct(id);
+function injectProductSchema(p, img, absoluteImgUrl) {
+    const priceDigits = (p.price || "").replace(/[^\d]/g, "");
+    const schema = {
+        "@context": "https://schema.org",
+        "@type": "Product",
+        "name": p.name,
+        "image": absoluteImgUrl,
+        "description": p.description || "",
+        "brand": { "@type": "Brand", "name": p.brand || "Đức Hiếu Auto" }
+    };
+    if (priceDigits) {
+        schema.offers = {
+            "@type": "Offer",
+            "priceCurrency": "VND",
+            "price": priceDigits,
+            "availability": "https://schema.org/InStock",
+            "url": window.location.href
+        };
+    }
 
-    if (!p) {
-        document.querySelector(".product-detail-wrap").innerHTML = "<p>Không tìm thấy sản phẩm.</p>";
+    let script = document.getElementById("productSchema");
+    if (!script) {
+        script = document.createElement("script");
+        script.type = "application/ld+json";
+        script.id = "productSchema";
+        document.head.appendChild(script);
+    }
+    script.textContent = JSON.stringify(schema);
+}
+
+// Hiện/ẩn nút "Xem Thêm / Thu Gọn" cho khối mô tả chi tiết - chỉ hiện nút nếu nội dung thực sự
+// dài hơn chiều cao giới hạn (max-height đặt trong catalog-pages.css), tránh hiện nút thừa cho
+// sản phẩm có mô tả ngắn.
+function renderProductDetailContent(html) {
+    const section = document.querySelector(".product-detail-content-section");
+    const contentEl = document.querySelector(".product-detail-content");
+    const wrap = document.querySelector(".product-detail-content-wrap");
+    const toggleBtn = document.querySelector(".detail-toggle-btn");
+
+    if (!html || !html.trim()) {
+        section.hidden = true;
         return;
     }
 
-    document.title = p.name + " | Đức Hiếu Auto";
-    const img = p.image || productImgFallback(id);
-    const detailImg = document.querySelector(".product-detail-img img");
-    detailImg.src = img;
-    detailImg.alt = p.name;
-    detailImg.onerror = () => { detailImg.onerror = null; detailImg.src = "assets/images/placeholder.svg"; };
-    document.querySelector(".product-detail-brand").textContent = p.brand;
-    document.querySelector(".product-detail-name").textContent = p.name;
-    document.querySelector(".product-detail-price").textContent = p.price || "Liên hệ để biết giá";
-    document.querySelector(".product-detail-desc").textContent = p.desc || "Thông tin chi tiết đang được cập nhật. Vui lòng liên hệ hotline để được tư vấn.";
+    section.hidden = false;
+    contentEl.innerHTML = html;
 
-    const specsSection = document.querySelector(".product-detail-specs");
-    if (p.specs && p.specs.length) {
-        specsSection.querySelector(".specs-table").innerHTML = p.specs.map(([k, v]) => `<tr><th>${k}</th><td>${v}</td></tr>`).join("");
-        specsSection.hidden = false;
-    } else {
-        specsSection.hidden = true;
+    requestAnimationFrame(() => {
+        if (contentEl.scrollHeight > contentEl.clientHeight + 10) {
+            wrap.classList.add("has-fade");
+            toggleBtn.hidden = false;
+            toggleBtn.addEventListener("click", () => {
+                const expanded = contentEl.classList.toggle("expanded");
+                wrap.classList.toggle("has-fade", !expanded);
+                toggleBtn.querySelector(".toggle-label").textContent = expanded ? "Thu Gọn" : "Xem Thêm";
+                toggleBtn.querySelector("i").className = expanded ? "fa-solid fa-chevron-up" : "fa-solid fa-chevron-down";
+            });
+        } else {
+            toggleBtn.hidden = true;
+        }
+    });
+}
+
+// Gọi API thật (Phase 7) thay vì đọc CATALOG.products tĩnh - cho phép admin sửa sản phẩm trong
+// trang quản trị và thấy ngay kết quả trên trang công khai.
+async function renderProductDetail() {
+    const id = getParam("id");
+    const wrap = document.querySelector(".product-detail-wrap");
+
+    try {
+        const res = await fetch(`${API_BASE_URL}/api/products/${encodeURIComponent(id)}`);
+        if (!res.ok) throw new Error("Không tìm thấy sản phẩm");
+        const p = await res.json();
+
+        const img = p.image || productImgFallback(id);
+        const detailImg = document.querySelector(".product-detail-img img");
+        detailImg.src = img;
+        detailImg.alt = p.name;
+        detailImg.onerror = () => { detailImg.onerror = null; detailImg.src = "assets/images/placeholder.svg"; };
+        document.querySelector(".product-detail-brand").textContent = p.brand;
+        document.querySelector(".product-detail-name").textContent = p.name;
+        document.querySelector(".product-detail-price").textContent = p.price || "Liên hệ để biết giá";
+        document.querySelector(".product-detail-desc").textContent = p.description || "Thông tin chi tiết đang được cập nhật. Vui lòng liên hệ hotline để được tư vấn.";
+
+        const specsSection = document.querySelector(".product-detail-specs");
+        if (p.specs && p.specs.length) {
+            specsSection.querySelector(".specs-table").innerHTML = p.specs.map(([k, v]) => `<tr><th>${k}</th><td>${v}</td></tr>`).join("");
+            specsSection.hidden = false;
+        } else {
+            specsSection.hidden = true;
+        }
+
+        renderProductDetailContent(p.detail_content);
+
+        const pageDesc = (p.description || "").slice(0, 155);
+        document.title = `${p.name} - ${p.brand} | Đức Hiếu Auto`;
+        const metaDesc = document.querySelector('meta[name="description"]');
+        if (metaDesc && pageDesc) metaDesc.setAttribute("content", pageDesc);
+        const ogTitle = document.querySelector('meta[property="og:title"]');
+        if (ogTitle) ogTitle.setAttribute("content", `${p.name} | Đức Hiếu Auto`);
+        const ogDesc = document.querySelector('meta[property="og:description"]');
+        if (ogDesc && pageDesc) ogDesc.setAttribute("content", pageDesc);
+
+        const absoluteImgUrl = new URL(img, window.location.href).href;
+        injectProductSchema(p, img, absoluteImgUrl);
+    } catch (err) {
+        wrap.innerHTML = "<p>Không tìm thấy sản phẩm.</p>";
     }
 }

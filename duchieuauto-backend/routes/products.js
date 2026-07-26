@@ -1,6 +1,7 @@
 const express = require("express");
 const db = require("../models/db");
 const { requireRole } = require("../middleware/auth");
+const { sanitizeContent } = require("../utils/sanitize-content");
 
 const router = express.Router();
 
@@ -172,7 +173,7 @@ async function saveSpecs(productId, specs) {
 
 // POST /api/products - tạo sản phẩm mới
 router.post("/", canEditCatalog, async (req, res) => {
-    const { category_id, brand_id, brand_type_id, name, price, description, image, specs } = req.body;
+    const { category_id, brand_id, brand_type_id, name, price, description, detail_content, image, specs } = req.body;
     if (!category_id || !brand_id || !name) {
         return res.status(400).json({ error: "Thiếu category_id, brand_id hoặc name" });
     }
@@ -185,14 +186,15 @@ router.post("/", canEditCatalog, async (req, res) => {
     if (exists) id = `${id}-${Date.now()}`;
 
     await db.prepare(`
-        INSERT INTO products (id, category_id, brand_id, brand_type_id, name, price, description, image, hidden, sort_order)
-        VALUES (@id, @category_id, @brand_id, @brand_type_id, @name, @price, @description, @image, 0, 0)
+        INSERT INTO products (id, category_id, brand_id, brand_type_id, name, price, description, detail_content, image, hidden, sort_order)
+        VALUES (@id, @category_id, @brand_id, @brand_type_id, @name, @price, @description, @detail_content, @image, 0, 0)
     `).run({
         id, category_id, brand_id,
         brand_type_id: brand_type_id || null,
         name,
         price: price || null,
         description: description || null,
+        detail_content: detail_content ? sanitizeContent(detail_content) : null,
         image: image || null
     });
 
@@ -213,6 +215,7 @@ router.put("/:id", canEditCatalog, async (req, res) => {
         name: req.body.name ?? existing.name,
         price: req.body.price !== undefined ? req.body.price : existing.price,
         description: req.body.description !== undefined ? req.body.description : existing.description,
+        detail_content: req.body.detail_content !== undefined ? sanitizeContent(req.body.detail_content || "") : existing.detail_content,
         image: req.body.image !== undefined ? req.body.image : existing.image,
         hidden: req.body.hidden === undefined ? existing.hidden : (req.body.hidden ? 1 : 0),
         updated_at: new Date().toISOString(),
@@ -221,7 +224,7 @@ router.put("/:id", canEditCatalog, async (req, res) => {
 
     await db.prepare(`
         UPDATE products SET category_id=@category_id, brand_id=@brand_id, brand_type_id=@brand_type_id,
-        name=@name, price=@price, description=@description, image=@image, hidden=@hidden,
+        name=@name, price=@price, description=@description, detail_content=@detail_content, image=@image, hidden=@hidden,
         updated_at=@updated_at WHERE id=@id
     `).run(merged);
 

@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chi Tiết Sản Phẩm | Đức Hiếu Auto</title>
+    <meta name="description" content="Xem chi tiết thông số, giá và hình ảnh sản phẩm chính hãng tại Đức Hiếu Auto - Buôn Ma Thuột.">
+    <meta property="og:title" content="Chi Tiết Sản Phẩm | Đức Hiếu Auto">
+    <meta property="og:description" content="Xem chi tiết thông số, giá và hình ảnh sản phẩm chính hãng tại Đức Hiếu Auto - Buôn Ma Thuột.">
+    <meta property="og:type" content="product">
     <link rel="icon" type="image/png" href="assets/images/favicon.png">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -98,6 +102,16 @@
             <h2>Thông Số Kỹ Thuật</h2>
             <table class="specs-table"></table>
         </div>
+        <div class="container product-detail-content-section" hidden>
+            <h2>Đặc Điểm Nổi Bật</h2>
+            <div class="product-detail-content-wrap">
+                <div class="product-detail-content"></div>
+            </div>
+            <button type="button" class="detail-toggle-btn" hidden>
+                <span class="toggle-label">Xem Thêm</span>
+                <i class="fa-solid fa-chevron-down"></i>
+            </button>
+        </div>
     </main>
 
     <footer id="footer">
@@ -139,8 +153,10 @@
                     <li><a href="index.html">Trang Chủ</a></li>
                     <li><a href="index.html#about">Giới Thiệu</a></li>
                     <li><a href="san-pham.html">Sản Phẩm</a></li>
-                    <li><a href="index.html#tech">Công Nghệ</a></li>
-                    <li><a href="index.html#contact">Liên Hệ</a></li>
+                    <li><a href="tin-tuc.html">Tin Tức</a></li>
+                    <li><a href="dat-lich-hen.html">Đặt Lịch Hẹn</a></li>
+                    <li><a href="faq.html">Câu Hỏi Thường Gặp</a></li>
+                    <li><a href="chinh-sach.html">Chính Sách</a></li>
                 </ul>
             </div>
         </div>
@@ -173,6 +189,8 @@
         </button>
     </div>
 
+    <script src="assets/js/api-config.js"></script>
+    <script src="assets/js/site-settings.js"></script>
     <script src="assets/js/catalog-data.js"></script>
     <script src="assets/js/catalog-render.js"></script>
     <script>

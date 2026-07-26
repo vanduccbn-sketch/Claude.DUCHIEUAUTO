@@ -1,32 +1,13 @@
 const express = require("express");
-const sanitizeHtml = require("sanitize-html");
 const db = require("../models/db");
 const { requireRole } = require("../middleware/auth");
+const { sanitizeContent } = require("../utils/sanitize-content");
 
 const router = express.Router();
 
 // Chỉ Content admin (hoặc super_admin) được tạo/sửa/xoá bài viết - Ads admin không có quyền
 // này (đúng yêu cầu phân quyền: Ads admin chỉ quản banner/tracking/xem lead, không đụng bài viết).
 const canEditPosts = requireRole("content", "super_admin");
-
-// Cấu hình cho phép đúng các thẻ/thuộc tính mà trình soạn thảo rich-text (Quill/TipTap ở Phase 4)
-// tạo ra - chặn stored-XSS (VD: <script>, onerror=...) do nội dung được lưu vào DB rồi hiển thị
-// lại cho MỌI khách xem blog, nếu không sanitize thì 1 bài viết độc hại có thể chạy JS trên máy
-// mọi khách truy cập trang Tin Tức.
-const SANITIZE_OPTIONS = {
-    allowedTags: [
-        "p", "br", "strong", "b", "em", "i", "u", "s", "blockquote",
-        "h2", "h3", "h4", "ul", "ol", "li", "a", "img", "figure", "figcaption"
-    ],
-    allowedAttributes: {
-        a: ["href", "target", "rel"],
-        img: ["src", "alt", "loading"]
-    },
-    allowedSchemes: ["http", "https", "mailto"],
-    transformTags: {
-        a: sanitizeHtml.simpleTransform("a", { rel: "noopener noreferrer", target: "_blank" })
-    }
-};
 
 function slugify(str) {
     return str
@@ -94,7 +75,7 @@ router.post("/", canEditPosts, async (req, res) => {
         category: category || null,
         excerpt: excerpt || null,
         cover_image: cover_image || null,
-        content: sanitizeHtml(content, SANITIZE_OPTIONS),
+        content: sanitizeContent(content),
         meta_title: meta_title || title,
         meta_description: meta_description || excerpt || null,
         cta_text: cta_text || null,
@@ -119,7 +100,7 @@ router.put("/:id", canEditPosts, async (req, res) => {
         category: req.body.category ?? existing.category,
         excerpt: req.body.excerpt ?? existing.excerpt,
         cover_image: req.body.cover_image ?? existing.cover_image,
-        content: req.body.content ? sanitizeHtml(req.body.content, SANITIZE_OPTIONS) : existing.content,
+        content: req.body.content ? sanitizeContent(req.body.content) : existing.content,
         meta_title: req.body.meta_title ?? existing.meta_title,
         meta_description: req.body.meta_description ?? existing.meta_description,
         cta_text: req.body.cta_text ?? existing.cta_text,

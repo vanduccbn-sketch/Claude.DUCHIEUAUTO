@@ -189,6 +189,7 @@ const ready = (async () => {
             name TEXT NOT NULL,
             price TEXT,
             description TEXT,
+            detail_content TEXT,
             image TEXT,
             hidden INTEGER NOT NULL DEFAULT 0,
             sort_order INTEGER NOT NULL DEFAULT 0,
@@ -204,6 +205,14 @@ const ready = (async () => {
             sort_order INTEGER NOT NULL DEFAULT 0
         );
     `);
+
+    // Migration nhẹ: bảng "products" đã có dữ liệu thật trên Turso (242 sản phẩm import từ
+    // catalog-data.js) trước khi thêm cột "detail_content" - CREATE TABLE IF NOT EXISTS ở trên
+    // không tự thêm cột mới vào bảng đã tồn tại, nên phải kiểm tra và ALTER TABLE thủ công.
+    const productColumns = (await prepare("PRAGMA table_info(products)").all()).map(c => c.name);
+    if (!productColumns.includes("detail_content")) {
+        await exec("ALTER TABLE products ADD COLUMN detail_content TEXT");
+    }
 })();
 
 module.exports = { prepare, exec, logActivity, ready };

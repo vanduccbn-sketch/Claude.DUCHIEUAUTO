@@ -368,6 +368,100 @@
     border-bottom: 1px solid var(--border-color-light);
 }
 
+/* ---------- Mô tả chi tiết sản phẩm (rich-text, có thể Xem thêm/Thu gọn) ---------- */
+.product-detail-content-section {
+    padding-bottom: 80px;
+}
+
+.product-detail-content-section h2 {
+    font-family: var(--font-title);
+    font-size: 1.6rem;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.product-detail-content-wrap {
+    position: relative;
+}
+
+.product-detail-content {
+    max-height: 480px;
+    overflow: hidden;
+    color: var(--text-muted);
+    line-height: 1.85;
+    font-size: 1.02rem;
+}
+
+.product-detail-content.expanded {
+    max-height: none;
+}
+
+.product-detail-content-wrap.has-fade:not(.expanded)::after {
+    content: '';
+    position: absolute;
+    bottom: 44px;
+    left: 0;
+    right: 0;
+    height: 90px;
+    background: linear-gradient(to bottom, rgba(247, 248, 250, 0), var(--bg-color));
+    pointer-events: none;
+}
+
+.product-detail-content h2,
+.product-detail-content h3 {
+    font-family: var(--font-title);
+    color: var(--text-color);
+    letter-spacing: 0.5px;
+    margin: 26px 0 12px;
+}
+
+.product-detail-content p { margin-bottom: 14px; }
+
+.product-detail-content img {
+    max-width: 100%;
+    border-radius: 8px;
+    margin: 16px 0 4px;
+    display: block;
+}
+
+/* Chữ in nghiêng dùng làm chú thích ảnh - CHỈ áp dụng khi cả đoạn (thẻ p) chỉ toàn chữ nghiêng
+   (:only-child = không có chữ nào khác cùng đoạn), để phân biệt với in nghiêng dùng nhấn mạnh
+   1 từ giữa câu bình thường (trường hợp đó phải giữ nguyên inline, không được thành khối riêng) */
+.product-detail-content p > em:only-child,
+.product-detail-content p > i:only-child {
+    display: block;
+    text-align: center;
+    font-size: 12.5px;
+    color: var(--text-muted);
+    margin-top: -8px;
+    margin-bottom: 18px;
+}
+
+.detail-toggle-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 16px auto 0;
+    background: var(--bg-alt);
+    border: 1px solid var(--border-color-light);
+    padding: 11px 26px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-color);
+    position: relative;
+    z-index: 1;
+}
+
+.detail-toggle-btn:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
 .specs-table th {
     width: 260px;
     color: var(--text-muted);

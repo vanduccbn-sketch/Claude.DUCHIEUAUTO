@@ -1,0 +1,14 @@
+{
+    "name": "Đức Hiếu Auto - Nâng Cấp & Chăm Sóc Xe Chuyên Nghiệp",
+    "short_name": "Đức Hiếu Auto",
+    "description": "Trung tâm nâng cấp và chăm sóc ô tô chuyên nghiệp tại Buôn Ma Thuột - màn hình, âm thanh, phim cách nhiệt, PPF, đèn LED, phụ kiện bán tải.",
+    "start_url": "./index.html",
+    "scope": "./",
+    "display": "standalone",
+    "background_color": "#15171C",
+    "theme_color": "#15171C",
+    "lang": "vi",
+    "icons": [
+        { "src": "assets/images/favicon.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+    ]
+}

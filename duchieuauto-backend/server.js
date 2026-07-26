@@ -53,7 +53,11 @@ app.use((req, res, next) => {
             // Trang /admin và API nằm cùng domain (same-origin) - trình duyệt vẫn tự gắn header
             // Origin cho request POST/PUT dù là same-origin thật, nên phải cho phép trường hợp này,
             // nếu không mọi request từ trang quản trị (kể cả đăng nhập) sẽ bị chặn nhầm là CORS lạ.
-            if (origin === `${req.protocol}://${req.get("host")}`) return callback(null, true);
+            // So sánh theo host thôi (bỏ qua protocol) vì Render/Cloudflare đứng trước server nên
+            // req.protocol Express nhận được là "http" nội bộ dù khách truy cập bằng "https" thật.
+            try {
+                if (new URL(origin).host === req.get("host")) return callback(null, true);
+            } catch (e) { /* origin không parse được thì rơi xuống bị từ chối bên dưới */ }
             return callback(new Error("CORS: origin không được phép"));
         }
     })(req, res, next);

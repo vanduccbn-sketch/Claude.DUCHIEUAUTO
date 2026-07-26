@@ -9,6 +9,47 @@ function seoAlt(name) {
     return `${name} - Đức Hiếu Auto Buôn Ma Thuột`;
 }
 
+// Liên kết chéo blog -> sản phẩm: field "category" của bài viết là danh sách chữ cố định do admin
+// chọn từ dropdown (bai-viet-form.html), khớp tay 1 lần với đúng 8 danh mục sản phẩm thật (id lấy
+// từ /api/products/catalog) - không cần đổi cấu trúc dữ liệu bài viết hiện có.
+const BLOG_CATEGORY_TO_PRODUCT_CATEGORY = {
+    "Màn Hình Ô Tô": "man-hinh-o-to",
+    "Âm Thanh - Cách Âm": "am-thanh-cach-am-oto",
+    "Android Box Ô Tô": "android-box-o-to",
+    "Camera Hành Trình - 360": "camera-hanh-trinh",
+    "Film Cách Nhiệt": "dan-phim-cach-nhiet",
+    "PPF - Wrap Đổi Màu": "ppf-wrap-doi-mau",
+    "Nâng Cấp Ánh Sáng": "do-den",
+    "Đồ Bán Tải": "do-ban-tai"
+};
+
+// Gợi ý vài sản phẩm thật cùng danh mục với bài viết - tái dùng loadApiCatalog()/miniProductCardHtml()
+// đã có sẵn trong catalog-render.js (cùng nạp trên trang bai-viet-chi-tiet.html, chia sẻ scope toàn cục).
+async function renderBlogRelatedProducts(postCategory) {
+    const categoryId = BLOG_CATEGORY_TO_PRODUCT_CATEGORY[postCategory];
+    const section = document.getElementById("blogRelatedProductsSection");
+    const grid = document.getElementById("blogRelatedProductsGrid");
+    if (!categoryId || !section || !grid || typeof loadApiCatalog !== "function") return;
+
+    try {
+        const categories = await loadApiCatalog();
+        const cat = categories.find(c => c.id === categoryId);
+        if (!cat) return;
+
+        const all = [];
+        cat.brands.forEach(brand => {
+            const items = brand.types ? brand.types.flatMap(t => t.products) : brand.products;
+            all.push(...items);
+        });
+        // Xáo thứ tự nhẹ để mỗi lần ghé bài viết không luôn thấy đúng 4 sản phẩm đầu danh mục
+        const picked = all.sort(() => Math.random() - 0.5).slice(0, 4);
+        if (!picked.length) return;
+
+        grid.innerHTML = picked.map(miniProductCardHtml).join("");
+        section.hidden = false;
+    } catch (err) { /* chỉ là gợi ý thêm - lỗi không chặn nội dung chính bài viết */ }
+}
+
 function formatBlogDate(sqlDateStr) {
     if (!sqlDateStr) return "";
     const d = new Date(sqlDateStr.replace(" ", "T") + "Z");
@@ -176,7 +217,13 @@ async function renderBlogDetail() {
             <h1 class="blog-detail-title">${post.title}</h1>
             ${post.cover_image ? `<div class="blog-detail-cover"><img src="${post.cover_image}" alt="${seoAlt(post.title)}"></div>` : ""}
             <div class="blog-detail-body">${post.content}</div>
-            ${ctaHtml}`;
+            ${ctaHtml}
+            <div class="related-products-section" id="blogRelatedProductsSection" hidden>
+                <h2>Sản Phẩm Liên Quan</h2>
+                <div class="product-grid-catalog" id="blogRelatedProductsGrid"></div>
+            </div>`;
+
+        renderBlogRelatedProducts(post.category);
     } catch (err) {
         wrap.innerHTML = `
             <div class="blog-load-error">

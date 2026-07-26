@@ -179,6 +179,44 @@ Cấu trúc trang hiện có:
   - **Dọn CSS chết**: xóa `.bg-alt`, `.btn-outline-dark` (rác từ lần đổi nút CTA trang chủ), `.footer-logo` (rác từ lần đơn giản hóa logo footer) — không dùng ở đâu trong code
   - **Gộp rule `.brand-title` bị định nghĩa trùng 2 lần** trong `catalog-pages.css` thành 1 rule duy nhất; bổ sung `margin-top` riêng cho `.brand-marquee` (trước đó phụ thuộc hoàn toàn vào margin-bottom của phần tử liền trước, không tự chủ khoảng cách)
 
+## Việc đã làm (2026-07-25)
+
+- [x] **Bắt đầu triển khai kế hoạch CMS** (`ke-hoach-nhiem-vu-cms-bao-mat-2026-07-25.md`) — buổi làm việc đầu tiên, hoàn thành Phase 1 trọn vẹn + Phase 0 + phần lớn Phase 3:
+  - 6 trang tĩnh mới: Tin Tức (`tin-tuc.html` + `bai-viet-chi-tiet.html`, 4 bài viết thật về phim cách nhiệt/loa ô tô/PPF/đèn LED, dữ liệu ở `assets/js/blog-data.js` + `assets/js/blog-render.js`), Đặt Lịch Hẹn (`dat-lich-hen.html`, gửi qua Formspree AJAX), Chính Sách (`chinh-sach.html`), FAQ (`faq.html`, dạng accordion), 404 tuỳ chỉnh, `sitemap.xml` + `robots.txt`
+  - CSS dùng chung `assets/css/pages.css`, tái dùng `catalog-pages.css`/`main.css` sẵn có để đồng bộ giao diện, không phát sinh style rời rạc
+  - Cập nhật nav + footer "Liên Kết Nhanh" ở cả 5 trang cũ trỏ tới trang mới
+  - **Lỗi phát hiện + sửa ngay trong buổi**: thêm cả "Tin Tức" và "Đặt Lịch Hẹn" vào nav chính làm nav tràn 2 dòng ở độ rộng desktop/tablet (992-1280px). Đã bỏ "Đặt Lịch Hẹn" khỏi nav (giữ qua footer + link ngữ cảnh trong FAQ/blog thay vì chiếm chỗ nav), xác nhận lại bằng screenshot
+  - Scaffold `duchieuauto-backend/` (Node.js + Express + SQLite) — viết đủ code cho auth (JWT + bcrypt + chặn brute-force), CRUD bài viết, nhận liên hệ/đặt lịch, nhưng **chưa test chạy được** vì máy soạn thảo không có Node.js/npm cài sẵn. Cần cài Node ở máy khác hoặc test thẳng trên Render.com trước khi tin tưởng đưa vào dùng thật
+  - Rà soát `console.log` + secret/API key lộ trong code client-side hiện tại: kết quả sạch, không có vấn đề
+
+- [x] **Phase 0 hoàn thành 100%**: user xác nhận đã đăng ký xong tài khoản Render.com bằng `vanduc.cbn@gmail.com`
+- [x] **Hoàn thành toàn bộ phần code còn lại của Phase 3** (mô hình 2 admin - Content/Ads, phân quyền theo vai trò):
+  - `models/db.js`: thêm cột `role` cho `admins` (có migration tự động), thêm bảng `activity_log`/`settings`/`banners`, helper `db.logActivity()`
+  - `middleware/auth.js`: viết lại thành `requireRole(...roles)` phân quyền theo vai trò, giữ `requireAdmin` cũ tương thích ngược
+  - `routes/auth.js`: JWT + response trả kèm `role`
+  - `routes/posts.js`: thêm `sanitize-html` chống stored-XSS, chỉ `content`/`super_admin` được ghi (Ads admin bị chặn), ghi `activity_log` cho tạo/sửa/xoá
+  - `routes/contacts.js`: mọi admin đều xem được (đúng yêu cầu Ads admin cần xem lead), ghi `activity_log` khi đổi trạng thái
+  - `scripts/seed-admin.js`: hỗ trợ chọn role khi tạo tài khoản
+  - Cập nhật `duchieuauto-backend/README.md` giải thích mô hình quyền
+  - **Chưa làm**: API cho bảng `settings`/`banners` (đúng phạm vi, để làm cùng Phase 4 UI); deploy + test thật trên Render (vẫn thiếu môi trường Node.js để test trước)
+- [x] **User tự cài Node.js (v24.18.0), test toàn bộ backend thật qua curl** — phát hiện và sửa 3 lỗi thật:
+  - `better-sqlite3` không cài được (cần biên dịch native, máy thiếu Python/Visual Studio Build Tools, không có bản build sẵn cho Node quá mới) → đổi sang `node:sqlite` (module SQLite tích hợp sẵn Node.js từ bản 22.5+, không cần biên dịch, API tương thích gần như 100%)
+  - `bcrypt` kéo theo 6 lỗ hổng bảo mật qua bộ công cụ build native, không sửa được bằng `npm audit fix` → đổi sang `bcryptjs` (JS thuần, cùng API) → còn **0 vulnerabilities**
+  - `PUT /api/posts/:id` lỗi 500 "Unknown named parameter" — `node:sqlite` nghiêm ngặt hơn `better-sqlite3` về object binding thừa field → sửa lại query
+  - Phát hiện thêm (không phải bug code): `curl -d` với tiếng Việt gõ trực tiếp trong Windows Git Bash bị lỗi encoding — phải test bằng file (`--data-binary @file.json`), đã ghi chú vào README để không mất công điều tra lại lần sau
+  - Test đầy đủ PASS: health check, đăng nhập đúng/sai, CRUD bài viết (kể cả tiếng Việt có dấu), chặn XSS, phân quyền role (Ads admin bị 403 đúng chỗ), form liên hệ/đặt lịch, chặn không có token
+
+- [x] **Xây xong Phase 4 (trang Admin thật, phần cốt lõi cho Content admin)** — chi tiết đầy đủ ghi trong `ke-hoach-nhiem-vu-cms-bao-mat-2026-07-25.md` (mục "2026-07-26"), tóm tắt:
+  - 5 trang: đăng nhập, tổng quan, danh sách bài viết, soạn/sửa bài (rich-text Quill + upload ảnh + xem trước + đăng/nháp), liên hệ/đặt lịch
+  - Backend thêm: API upload ảnh, 2 API mới cho admin xem cả bài nháp, robots.txt riêng chặn index domain backend
+  - User đã tự đăng nhập, soạn thử bài, upload ảnh trên trình duyệt thật — xác nhận **"Tốt"**
+  - Đã viết lại `huong-dan-viet-content-nhan-vien.md` theo đúng công cụ thật (trước đó chỉ có hướng dẫn tạm vì chưa có trang quản trị)
+- [x] **User xác nhận muốn làm Phase 7** (admin sửa được toàn bộ sản phẩm/danh mục/thông số/ảnh) — đã nêu rõ đánh đổi kiến trúc trước khi user chốt, đồng ý làm nhưng chia nhỏ nhiều buổi (xem chi tiết trong file kế hoạch)
+
 ## Việc cần làm tiếp theo (TODO)
 
+- [ ] Deploy backend thật lên Render.com (tài khoản đã có, code đã test kỹ ở local) theo hướng dẫn trong `duchieuauto-backend/README.md`
+- [ ] Phase 7 (quản lý sản phẩm qua CMS) — làm theo từng bước nhỏ đã liệt kê trong file kế hoạch, không dồn 1 buổi
+- [ ] 3 trang Ads admin còn thiếu (Banner, Cấu hình chung, Activity log) — dời làm cùng Phase 7
+- [ ] Phase 2 còn thiếu: minify CSS/JS, đánh giá Cloudflare, reCAPTCHA cho form (cần quyết định/tài khoản từ user)
 - [ ] Tìm logo chính hãng Titan (Film Cách Nhiệt) khi có nguồn đáng tin cậy mới (titanwindowfilm.vn đã ngừng hoạt động, Wayback Machine hiện bị rate-limit)

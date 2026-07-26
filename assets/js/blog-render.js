@@ -2,6 +2,13 @@
    RENDER TIN TỨC / BLOG (Phase 5 - gọi API /api/posts thật thay vì dữ liệu tĩnh cũ)
    Cần nạp assets/js/api-config.js TRƯỚC file này để có biến API_BASE_URL.
    ========================================================= */
+// Phase 9.4 - tự thêm hậu tố khu vực vào alt text ảnh bìa bài viết, không bắt viết tay (chuẩn SEO
+// ảnh + GEO). Định nghĩa riêng ở đây (không dùng chung với catalog-render.js) vì 2 file phục vụ
+// 2 nhóm trang khác nhau, không có bundler để chia sẻ hàm nhỏ này.
+function seoAlt(name) {
+    return `${name} - Đức Hiếu Auto Buôn Ma Thuột`;
+}
+
 function formatBlogDate(sqlDateStr) {
     if (!sqlDateStr) return "";
     const d = new Date(sqlDateStr.replace(" ", "T") + "Z");
@@ -13,7 +20,7 @@ function blogCardHtml(post) {
     return `
         <a class="blog-card" href="bai-viet-chi-tiet.html?slug=${post.slug}">
             <div class="blog-card-img">
-                <img src="${cover}" alt="${post.title}" loading="lazy">
+                <img src="${cover}" alt="${seoAlt(post.title)}" loading="lazy">
             </div>
             <div class="blog-card-body">
                 <span class="blog-card-meta"><i class="fa-solid fa-tag"></i> ${post.category || "Tin tức"} <span>&middot;</span> ${formatBlogDate(post.created_at)}</span>
@@ -84,6 +91,19 @@ function setMetaTag(attr, key, content) {
     tag.setAttribute("content", content);
 }
 
+// Phase 9.6 - Article + BreadcrumbList schema cho trang chi tiết bài viết, cùng cơ chế với
+// injectJsonLd() trong catalog-render.js nhưng định nghĩa riêng vì 2 file không dùng chung bundler.
+function injectJsonLdBlog(id, schema) {
+    let script = document.getElementById(id);
+    if (!script) {
+        script = document.createElement("script");
+        script.type = "application/ld+json";
+        script.id = id;
+        document.head.appendChild(script);
+    }
+    script.textContent = JSON.stringify(schema);
+}
+
 async function renderBlogDetail() {
     const wrap = document.querySelector(".blog-detail-wrap");
     if (!wrap) return;
@@ -121,6 +141,27 @@ async function renderBlogDetail() {
         const breadcrumbCurrent = document.querySelector(".breadcrumb-current");
         if (breadcrumbCurrent) breadcrumbCurrent.textContent = post.title;
 
+        injectJsonLdBlog("breadcrumbSchema", {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+                { "@type": "ListItem", "position": 1, "name": "Trang chủ", "item": new URL("index.html", window.location.href).href },
+                { "@type": "ListItem", "position": 2, "name": "Tin Tức", "item": new URL("tin-tuc.html", window.location.href).href },
+                { "@type": "ListItem", "position": 3, "name": post.title, "item": window.location.href }
+            ]
+        });
+        injectJsonLdBlog("articleSchema", {
+            "@context": "https://schema.org",
+            "@type": "Article",
+            "headline": post.title,
+            "description": post.meta_description || post.excerpt || "",
+            "image": post.cover_image ? [new URL(post.cover_image, API_BASE_URL).href] : undefined,
+            "datePublished": post.created_at,
+            "dateModified": post.updated_at || post.created_at,
+            "author": { "@type": "Organization", "name": "Đức Hiếu Auto" },
+            "publisher": { "@type": "Organization", "name": "Đức Hiếu Auto" }
+        });
+
         const ctaHtml = post.cta_text && post.cta_link ? `
             <a href="${post.cta_link}" class="view-all-cta blog-detail-cta">
                 <div class="view-all-cta-text">
@@ -133,7 +174,7 @@ async function renderBlogDetail() {
         wrap.innerHTML = `
             <div class="blog-detail-meta"><i class="fa-solid fa-tag"></i> ${post.category || "Tin tức"} <span>&middot;</span> ${formatBlogDate(post.created_at)}</div>
             <h1 class="blog-detail-title">${post.title}</h1>
-            ${post.cover_image ? `<div class="blog-detail-cover"><img src="${post.cover_image}" alt="${post.title}"></div>` : ""}
+            ${post.cover_image ? `<div class="blog-detail-cover"><img src="${post.cover_image}" alt="${seoAlt(post.title)}"></div>` : ""}
             <div class="blog-detail-body">${post.content}</div>
             ${ctaHtml}`;
     } catch (err) {

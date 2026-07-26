@@ -8,6 +8,13 @@
    Thất Ô Tô), không phải dữ liệu sản phẩm nên không thuộc phạm vi CMS sản phẩm.
    ========================================================= */
 
+// Phase 9.4 - tự thêm hậu tố tên thương hiệu + khu vực vào alt text ảnh sản phẩm/danh mục, không
+// bắt admin gõ tay - vừa chuẩn SEO ảnh (Google Images) vừa cho GEO/AI hiểu rõ ngữ cảnh địa lý khi
+// trích dẫn ("dán phim cách nhiệt Buôn Ma Thuột" thay vì chỉ tên sản phẩm chung chung).
+function seoAlt(name) {
+    return `${name} - Đức Hiếu Auto Buôn Ma Thuột`;
+}
+
 let apiCatalogCache = null;
 async function loadApiCatalog() {
     if (apiCatalogCache) return apiCatalogCache;
@@ -38,7 +45,7 @@ function serviceCardHtml(item) {
     return `
         <a class="service-card" href="${item.href}">
             <div class="service-img">
-                <img src="${item.poster}" alt="${item.name}" loading="lazy" onerror="this.src='assets/images/placeholder.svg'">
+                <img src="${item.poster}" alt="${seoAlt(item.name)}" loading="lazy" onerror="this.src='assets/images/placeholder.svg'">
                 <div class="service-overlay"><i class="fa-solid fa-magnifying-glass-plus"></i></div>
             </div>
             <div class="service-content">
@@ -202,7 +209,7 @@ async function renderCategoryDetail() {
     }
     const posterImg = document.querySelector(".category-poster img");
     posterImg.src = cat.poster;
-    posterImg.alt = cat.name;
+    posterImg.alt = seoAlt(cat.name);
     posterImg.onerror = () => { posterImg.onerror = null; posterImg.src = "assets/images/placeholder.svg"; };
     document.querySelector(".category-title").textContent = cat.name;
 
@@ -210,11 +217,18 @@ async function renderCategoryDetail() {
     document.querySelector(".breadcrumb-parent").href = "san-pham.html";
     document.querySelector(".breadcrumb-current").textContent = cat.name;
 
+    injectBreadcrumbSchema([
+        { name: "Trang chủ", href: "index.html" },
+        { name: "Sản Phẩm", href: "san-pham.html" },
+        { name: cat.name, href: `category-chi-tiet.html?id=${cat.id}` }
+    ]);
+    injectServiceSchema(cat.name, cat.seo && cat.seo.metaDescription);
+
     const seoBox = document.querySelector(".category-seo-content");
     if (cat.seo && (cat.seo.intro || cat.seo.sections)) {
         seoBox.hidden = false;
         const imgHtml = cat.seo.image
-            ? `<figure class="category-seo-figure"><img src="${cat.seo.image}" alt="${cat.name}" loading="lazy" onerror="this.closest('figure').remove()">${cat.seo.imageCaption ? `<figcaption>${cat.seo.imageCaption}</figcaption>` : ""}</figure>`
+            ? `<figure class="category-seo-figure"><img src="${cat.seo.image}" alt="${seoAlt(cat.name)}" loading="lazy" onerror="this.closest('figure').remove()">${cat.seo.imageCaption ? `<figcaption>${cat.seo.imageCaption}</figcaption>` : ""}</figure>`
             : "";
         const sectionsHtml = (cat.seo.sections || []).map(s => `<h2>${s.heading}</h2><p>${s.body}</p>`).join("");
         seoBox.innerHTML = `
@@ -253,13 +267,20 @@ async function renderServiceGroupDetail(groupId) {
     document.title = group.name + " | Đức Hiếu Auto";
     const posterImg = document.querySelector(".category-poster img");
     posterImg.src = group.poster;
-    posterImg.alt = group.name;
+    posterImg.alt = seoAlt(group.name);
     posterImg.onerror = () => { posterImg.onerror = null; posterImg.src = "assets/images/placeholder.svg"; };
     document.querySelector(".category-title").textContent = group.name;
 
     document.querySelector(".breadcrumb-parent").textContent = "Dịch Vụ";
     document.querySelector(".breadcrumb-parent").href = "index.html#service";
     document.querySelector(".breadcrumb-current").textContent = group.name;
+
+    injectBreadcrumbSchema([
+        { name: "Trang chủ", href: "index.html" },
+        { name: "Dịch Vụ", href: "index.html#service" },
+        { name: group.name, href: `category-chi-tiet.html?group=${group.id}` }
+    ]);
+    injectServiceSchema(group.name);
 
     const scrollCueText = document.querySelector(".scroll-cue span");
     if (scrollCueText) scrollCueText.textContent = "Xem danh mục";
@@ -369,7 +390,7 @@ async function renderBrandProducts() {
     grid.innerHTML = productList.map(p => `
         <a class="product-card-catalog" href="san-pham-chi-tiet.html?id=${p.id}">
             <div class="product-img-catalog">
-                <img src="${p.image}" alt="${p.name}" loading="lazy" onerror="this.src='assets/images/placeholder.svg'">
+                <img src="${p.image}" alt="${seoAlt(p.name)}" loading="lazy" onerror="this.src='assets/images/placeholder.svg'">
             </div>
             <div class="product-info-catalog">
                 <span class="product-brand-catalog">${p.brand}</span>
@@ -377,6 +398,51 @@ async function renderBrandProducts() {
                 ${p.price ? `<span class="product-price-catalog">${p.price}</span>` : ""}
             </div>
         </a>`).join("");
+}
+
+/* ---------- Phase 9.6 - Schema SEO/GEO dùng chung (Service, Breadcrumb) ---------- */
+// Chèn/cập nhật 1 thẻ <script type="application/ld+json"> theo id cố định - dùng chung cho mọi
+// loại schema động (Product, Service, BreadcrumbList...) để không lặp code tạo/tìm thẻ script.
+function injectJsonLd(id, schema) {
+    let script = document.getElementById(id);
+    if (!script) {
+        script = document.createElement("script");
+        script.type = "application/ld+json";
+        script.id = id;
+        document.head.appendChild(script);
+    }
+    script.textContent = JSON.stringify(schema);
+}
+
+// items: [{name, href}] - href tương đối, tự quy về URL tuyệt đối theo domain đang chạy (không
+// hardcode domain vì sau này có thể đổi sang domain riêng - xem Phase 8).
+function injectBreadcrumbSchema(items) {
+    injectJsonLd("breadcrumbSchema", {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": items.map((it, i) => ({
+            "@type": "ListItem",
+            "position": i + 1,
+            "name": it.name,
+            "item": new URL(it.href, window.location.href).href
+        }))
+    });
+}
+
+// Service schema cho từng trang danh mục/dịch vụ - giúp AI/Google hiểu đây là 1 dịch vụ cụ thể
+// của Đức Hiếu Auto phục vụ đúng khu vực Buôn Ma Thuột/Đắk Lắk (GEO), không chỉ 1 trang liệt kê
+// sản phẩm chung chung.
+function injectServiceSchema(serviceName, description) {
+    injectJsonLd("serviceSchema", {
+        "@context": "https://schema.org",
+        "@type": "Service",
+        "serviceType": serviceName,
+        "name": `${serviceName} - Đức Hiếu Auto`,
+        "description": description || `Dịch vụ ${serviceName} tại Đức Hiếu Auto, Buôn Ma Thuột.`,
+        "provider": { "@type": "AutoRepair", "name": "Đức Hiếu Auto" },
+        "areaServed": ["Buôn Ma Thuột", "Đắk Lắk"],
+        "url": window.location.href
+    });
 }
 
 /* ---------- Trang chi tiết sản phẩm ---------- */
@@ -399,15 +465,7 @@ function injectProductSchema(p, img, absoluteImgUrl) {
             "url": window.location.href
         };
     }
-
-    let script = document.getElementById("productSchema");
-    if (!script) {
-        script = document.createElement("script");
-        script.type = "application/ld+json";
-        script.id = "productSchema";
-        document.head.appendChild(script);
-    }
-    script.textContent = JSON.stringify(schema);
+    injectJsonLd("productSchema", schema);
 }
 
 // Hiện/ẩn nút "Xem Thêm / Thu Gọn" cho khối mô tả chi tiết - chỉ hiện nút nếu nội dung thực sự
@@ -457,7 +515,7 @@ async function renderProductDetail() {
         const img = p.image || productImgFallback(id);
         const detailImg = document.querySelector(".product-detail-img img");
         detailImg.src = img;
-        detailImg.alt = p.name;
+        detailImg.alt = seoAlt(p.name);
         detailImg.onerror = () => { detailImg.onerror = null; detailImg.src = "assets/images/placeholder.svg"; };
         document.querySelector(".product-detail-brand").textContent = p.brand;
         document.querySelector(".product-detail-name").textContent = p.name;
@@ -485,6 +543,12 @@ async function renderProductDetail() {
 
         const absoluteImgUrl = new URL(img, window.location.href).href;
         injectProductSchema(p, img, absoluteImgUrl);
+        injectBreadcrumbSchema([
+            { name: "Trang chủ", href: "index.html" },
+            { name: "Sản Phẩm", href: "san-pham.html" },
+            ...(p.category_name ? [{ name: p.category_name, href: `category-chi-tiet.html?id=${p.category_id}` }] : []),
+            { name: p.name, href: `san-pham-chi-tiet.html?id=${p.id}` }
+        ]);
     } catch (err) {
         wrap.innerHTML = "<p>Không tìm thấy sản phẩm.</p>";
     }

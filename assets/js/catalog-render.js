@@ -15,6 +15,41 @@ function seoAlt(name) {
     return `${name} - Đức Hiếu Auto Buôn Ma Thuột`;
 }
 
+// Ảnh responsive - trả về thuộc tính srcset/sizes để trình duyệt tải đúng kích thước ảnh theo
+// màn hình, thay vì luôn tải nguyên bản ảnh gốc (800-1200px) dù chỉ hiển thị ~300px trong lưới sản
+// phẩm trên di động. 2 nguồn ảnh khác nhau nên xử lý khác nhau:
+// - Ảnh local (đa số 242 sản phẩm cũ): scripts/generate-responsive-images.js đã tạo sẵn bản
+//   "-400w" cùng thư mục với ảnh gốc. Nhãn "800w" cho ảnh gốc chỉ là ước lượng tương đối (kích
+//   thước thật dao động ~700-1300px) - trình duyệt chỉ dùng để SO SÁNH giữa các lựa chọn, không
+//   cần chính xác tuyệt đối. Nếu file "-400w" thiếu (ảnh thêm tay, chưa chạy lại script), thẻ
+//   onerror có sẵn ở mỗi nơi gọi hàm này sẽ chuyển sang placeholder thay vì vỡ ảnh.
+// - Ảnh Cloudinary (sản phẩm upload mới qua trang quản trị): CDN tự resize on-the-fly, chỉ cần đổi
+//   số trong "w_800" của URL, không cần file riêng.
+const PRODUCT_IMG_SIZES = "(max-width: 640px) 45vw, (max-width: 1024px) 28vw, 260px";
+
+function productSrcsetParts(img) {
+    if (!img) return null;
+
+    if (/^https?:\/\//i.test(img)) {
+        if (img.includes("res.cloudinary.com") && /\/upload\/[^/]*w_\d+/.test(img)) {
+            const small = img.replace(/(\/upload\/[^/]*)w_\d+/, "$1w_400");
+            return { srcset: `${small} 400w, ${img} 800w`, sizes: PRODUCT_IMG_SIZES };
+        }
+        return null;
+    }
+
+    const dot = img.lastIndexOf(".");
+    if (dot === -1) return null;
+    const small = `${img.slice(0, dot)}-400w${img.slice(dot)}`;
+    return { srcset: `${small} 400w, ${img} 800w`, sizes: PRODUCT_IMG_SIZES };
+}
+
+// Bản dùng trong template string (HTML) - trả sẵn 2 thuộc tính srcset/sizes gộp thành 1 chuỗi.
+function productSrcsetAttrs(img) {
+    const parts = productSrcsetParts(img);
+    return parts ? `srcset="${parts.srcset}" sizes="${parts.sizes}"` : "";
+}
+
 // Khung chờ (skeleton) dùng chung cho mọi lưới danh mục/thương hiệu/sản phẩm khi đang gọi API -
 // tái dùng đúng class .skeleton-card/.skeleton-block đã có sẵn từ blog (assets/css/pages.css),
 // tránh khoảng trắng trống trơn lúc backend free tier khởi động chậm lần đầu.
@@ -601,7 +636,7 @@ async function renderBrandProducts() {
                         <input type="checkbox" class="compare-check" data-id="${p.id}" data-name="${p.name}">
                         <span>So sánh</span>
                     </label>
-                    <img src="${p.image}" alt="${seoAlt(p.name)}" loading="lazy" onerror="this.src='assets/images/placeholder.svg'">
+                    <img src="${p.image}" ${productSrcsetAttrs(p.image)} alt="${seoAlt(p.name)}" loading="lazy" onerror="this.src='assets/images/placeholder.svg'">
                 </div>
                 <div class="product-info-catalog">
                     <span class="product-brand-catalog">${p.brand}</span>
@@ -735,7 +770,7 @@ function miniProductCardHtml(p) {
     return `
         <a class="product-card-catalog" href="san-pham-chi-tiet.html?id=${p.id}">
             <div class="product-img-catalog">
-                <img src="${img}" alt="${seoAlt(p.name)}" loading="lazy" onerror="this.src='assets/images/placeholder.svg'">
+                <img src="${img}" ${productSrcsetAttrs(img)} alt="${seoAlt(p.name)}" loading="lazy" onerror="this.src='assets/images/placeholder.svg'">
             </div>
             <div class="product-info-catalog">
                 <span class="product-brand-catalog">${p.brand}</span>
@@ -927,7 +962,7 @@ function strategicProductCardHtml(item) {
             <div class="product-card">
                 <div class="product-img">
                     ${badgeHtml}
-                    <img src="${item.image}" alt="${seoAlt(item.name)}" loading="lazy" onerror="this.src='assets/images/placeholder.svg'">
+                    <img src="${item.image}" ${productSrcsetAttrs(item.image)} alt="${seoAlt(item.name)}" loading="lazy" onerror="this.src='assets/images/placeholder.svg'">
                 </div>
                 <div class="product-info">
                     <span class="product-brand">${item.brand}</span>
@@ -951,7 +986,7 @@ function techStoryCardHtml(item) {
         <div class="swiper-slide">
         <a class="tech-story-card" href="san-pham-chi-tiet.html?id=${item.productId}">
             <div class="tech-story-img">
-                <img src="${item.image}" alt="${seoAlt(item.name)}" loading="lazy" onerror="this.src='assets/images/placeholder.svg'">
+                <img src="${item.image}" ${productSrcsetAttrs(item.image)} alt="${seoAlt(item.name)}" loading="lazy" onerror="this.src='assets/images/placeholder.svg'">
                 ${tagHtml}
             </div>
             <div class="tech-story-body">
@@ -1065,7 +1100,10 @@ async function renderProductDetail() {
         const detailImg = document.querySelector(".product-detail-img img");
         detailImg.src = img;
         detailImg.alt = seoAlt(p.name);
-        detailImg.onerror = () => { detailImg.onerror = null; detailImg.src = "assets/images/placeholder.svg"; };
+        const srcsetParts = productSrcsetParts(img);
+        detailImg.srcset = srcsetParts ? srcsetParts.srcset : "";
+        detailImg.sizes = srcsetParts ? "(max-width: 900px) 92vw, 500px" : "";
+        detailImg.onerror = () => { detailImg.onerror = null; detailImg.srcset = ""; detailImg.src = "assets/images/placeholder.svg"; };
         document.querySelector(".product-detail-brand").textContent = p.brand;
         document.querySelector(".product-detail-name").textContent = p.name;
         document.querySelector(".product-detail-price").textContent = p.price || "Liên hệ để biết giá";
@@ -1162,7 +1200,7 @@ async function renderCompareTable() {
                         ${products.map(p => `
                             <th>
                                 <a href="${removeUrl(p.id)}" class="compare-remove" title="Bỏ khỏi so sánh"><i class="fa-solid fa-xmark"></i></a>
-                                <img src="${p.image}" alt="${seoAlt(p.name)}" loading="lazy" onerror="this.src='assets/images/placeholder.svg'">
+                                <img src="${p.image}" ${productSrcsetAttrs(p.image)} alt="${seoAlt(p.name)}" loading="lazy" onerror="this.src='assets/images/placeholder.svg'">
                                 <a href="san-pham-chi-tiet.html?id=${p.id}" class="compare-product-name">${p.name}</a>
                                 <span class="compare-product-brand">${p.brand}</span>
                             </th>`).join("")}

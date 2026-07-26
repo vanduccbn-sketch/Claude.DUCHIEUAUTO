@@ -44,6 +44,8 @@ File nhiệm vụ này **đang chạy**, nên lần cập nhật này giữ nguy
 - [x] `sitemap.xml` + `robots.txt`
 
 ## PHASE 2 — Bảo mật & ẩn thông tin cho phần tĩnh hiện có (làm ngay, không cần chờ backend)
+**[HOÃN 2026-07-26]** User quyết định để dành các mục còn thiếu dưới đây tới khi thuê domain/hosting
+riêng (thoát giới hạn GitHub Pages + Render free tier). Danh sách TODO khi quay lại:
 - [ ] Minify `assets/js/*.js`, `assets/css/*.css` trước khi deploy bản production — cần chọn công cụ build (chưa làm, xem ghi chú bên dưới)
 - [x] Rà soát xoá `console.log`, comment nội bộ nhạy cảm trong JS/HTML hiện có — **kết quả: sạch, không có `console.log` nào trong toàn bộ `assets/js/*.js` và các trang HTML**
 - [ ] Chống hotlink ảnh sản phẩm (nếu hosting cho phép chỉnh — ghi chú: GitHub Pages hạn chế header tuỳ chỉnh, có thể cần Cloudflare đứng trước)
@@ -51,6 +53,9 @@ File nhiệm vụ này **đang chạy**, nên lần cập nhật này giữ nguy
 - [ ] reCAPTCHA cho form liên hệ/đặt lịch (chống spam bot) — cần user tự tạo site key tại Google reCAPTCHA trước
 - [x] Kiểm tra không có API key/secret nào lộ trong code client-side hiện tại — **kết quả: sạch**, grep toàn bộ `*.html/*.js/*.css` tìm `api-key/secret/password/token` chỉ khớp các biến/field name phía backend (server-side, không lộ ra client), Formspree endpoint ID không phải secret (thiết kế công khai theo đúng cơ chế Formspree)
 - [ ] Đánh giá đưa site qua **Cloudflare** (miễn phí) để có HTTPS chuẩn, security headers, chống DDoS cơ bản — bước này gỡ luôn hạn chế của GitHub Pages ở trên
+- [ ] **[HOÃN]** Làm lại tính năng gửi email quên mật khẩu thật (xem "lần 8" bên dưới) - Render free tier chặn SMTP, cần domain/hosting riêng rồi mới dùng lại được Gmail App Password hoặc đổi sang Resend/Brevo/Gmail API
+- [ ] **[HOÃN]** Đổi đúng đuôi `.webp` cho 5 ảnh sản phẩm nhóm `zestech-box-dx*` hiện đang bị đặt nhầm đuôi `.jpg` (không khẩn, không ảnh hưởng hiển thị)
+- [ ] **[HOÃN]** Đánh giá ảnh hưởng SEO khi nội dung sản phẩm/blog chuyển từ tĩnh sang gọi API (không khẩn, Google hiện vẫn chạy JS khi index)
 
 ## PHASE 3 — Xây Backend CMS (Node.js + Express + SQLite)
 - [x] Model dữ liệu: `posts` (bài viết), `admins` (tài khoản quản trị), `contacts` (form liên hệ/đặt lịch gửi về) — `duchieuauto-backend/models/db.js`

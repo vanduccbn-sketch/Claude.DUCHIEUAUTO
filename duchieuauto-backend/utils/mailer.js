@@ -14,7 +14,10 @@ const transporter = nodemailer.createTransport({
     // lỗi - khiến cả API "quên mật khẩu" bị treo theo (đã gặp thật khi test trên Render).
     connectionTimeout: 10000,
     greetingTimeout: 10000,
-    socketTimeout: 10000
+    socketTimeout: 10000,
+    // Ép dùng IPv4 - phát hiện thật trên Render: smtp.gmail.com trả về cả IPv4 lẫn IPv6, Node chọn
+    // nhầm địa chỉ IPv6 nhưng mạng outbound của Render không route được IPv6 -> lỗi ENETUNREACH.
+    family: 4
 });
 
 async function sendMail({ to, subject, html, text }) {

@@ -9,7 +9,12 @@ const transporter = nodemailer.createTransport({
     auth: {
         user: process.env.GMAIL_USER,
         pass: process.env.GMAIL_APP_PASSWORD
-    }
+    },
+    // Không đặt timeout thì khi mạng/Gmail chặn kết nối, request sẽ treo vô thời hạn thay vì báo
+    // lỗi - khiến cả API "quên mật khẩu" bị treo theo (đã gặp thật khi test trên Render).
+    connectionTimeout: 10000,
+    greetingTimeout: 10000,
+    socketTimeout: 10000
 });
 
 async function sendMail({ to, subject, html, text }) {

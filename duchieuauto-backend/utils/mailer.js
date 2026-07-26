@@ -1,4 +1,11 @@
 const nodemailer = require("nodemailer");
+const dns = require("dns");
+
+// Ép Node ưu tiên IPv4 khi phân giải DNS trên toàn app - phát hiện thật trên Render: smtp.gmail.com
+// trả về cả bản ghi IPv4 lẫn IPv6, mạng outbound của Render không route được IPv6 nên kết nối
+// SMTP bị treo/lỗi ENETUNREACH khi Node chọn nhầm địa chỉ IPv6. Đặt ở đây (chạy 1 lần lúc require
+// module) vì option "family" riêng của nodemailer không đủ hiệu lực khi dùng shorthand service:"gmail".
+dns.setDefaultResultOrder("ipv4first");
 
 // Gửi email qua Gmail SMTP dùng chính email cửa hàng (contact.duchieuauto47@gmail.com) - không
 // cần đăng ký thêm dịch vụ email ngoài. Cần bật "Xác minh 2 bước" trên tài khoản Google đó rồi
@@ -15,8 +22,6 @@ const transporter = nodemailer.createTransport({
     connectionTimeout: 10000,
     greetingTimeout: 10000,
     socketTimeout: 10000,
-    // Ép dùng IPv4 - phát hiện thật trên Render: smtp.gmail.com trả về cả IPv4 lẫn IPv6, Node chọn
-    // nhầm địa chỉ IPv6 nhưng mạng outbound của Render không route được IPv6 -> lỗi ENETUNREACH.
     family: 4
 });
 

@@ -15,6 +15,20 @@ function seoAlt(name) {
     return `${name} - Đức Hiếu Auto Buôn Ma Thuột`;
 }
 
+// Khung chờ (skeleton) dùng chung cho mọi lưới danh mục/thương hiệu/sản phẩm khi đang gọi API -
+// tái dùng đúng class .skeleton-card/.skeleton-block đã có sẵn từ blog (assets/css/pages.css),
+// tránh khoảng trắng trống trơn lúc backend free tier khởi động chậm lần đầu.
+function catalogSkeletonCardsHtml(count) {
+    return Array.from({ length: count }).map(() => `
+        <div class="skeleton-card">
+            <div class="skeleton-block img"></div>
+            <div class="skeleton-body">
+                <div class="skeleton-block line w60"></div>
+                <div class="skeleton-block line title"></div>
+            </div>
+        </div>`).join("");
+}
+
 let apiCatalogCache = null;
 async function loadApiCatalog() {
     if (apiCatalogCache) return apiCatalogCache;
@@ -60,11 +74,27 @@ async function renderCategoryGrid(containerSelector) {
     const container = document.querySelector(containerSelector);
     if (!container) return;
 
+    container.innerHTML = catalogSkeletonCardsHtml(8);
     try {
         const categories = await loadApiCatalog();
         container.innerHTML = categories
             .map(cat => serviceCardHtml({ ...cat, href: `category-chi-tiet.html?id=${cat.id}` }))
             .join("");
+
+        injectBreadcrumbSchema([
+            { name: "Trang chủ", href: "index.html" },
+            { name: "Sản Phẩm", href: "san-pham.html" }
+        ]);
+        injectJsonLd("categoryListSchema", {
+            "@context": "https://schema.org",
+            "@type": "ItemList",
+            "itemListElement": categories.map((cat, i) => ({
+                "@type": "ListItem",
+                "position": i + 1,
+                "name": cat.name,
+                "url": new URL(`category-chi-tiet.html?id=${cat.id}`, window.location.href).href
+            }))
+        });
     } catch (err) {
         container.innerHTML = `<p style="grid-column:1/-1;text-align:center;color:var(--text-muted);">Không tải được danh mục sản phẩm. Vui lòng thử lại sau.</p>`;
     }
@@ -183,6 +213,9 @@ async function renderCategoryDetail() {
     }
 
     const id = getParam("id");
+    const brandGridEl = document.querySelector(".brand-grid");
+    if (brandGridEl) brandGridEl.innerHTML = catalogSkeletonCardsHtml(6);
+
     let cat;
     try {
         const categories = await loadApiCatalog();
@@ -348,11 +381,88 @@ async function renderServiceGroupDetail(groupId) {
 }
 
 /* ---------- Trang sản phẩm theo thương hiệu (hỗ trợ thêm cấp "loại": hãng -> loại -> sản phẩm) ---------- */
+// ---------- So sánh sản phẩm - chọn tối đa 3 sản phẩm, lưu tạm trong sessionStorage (chỉ trong
+// phiên duyệt web hiện tại, không cần lưu lâu dài như "đã xem gần đây") ----------
+const COMPARE_KEY = "dha_compare_ids";
+const COMPARE_MAX = 3;
+
+function getCompareItems() {
+    try {
+        return JSON.parse(sessionStorage.getItem(COMPARE_KEY) || "[]");
+    } catch (err) {
+        return [];
+    }
+}
+
+function setCompareItems(items) {
+    try { sessionStorage.setItem(COMPARE_KEY, JSON.stringify(items)); } catch (err) { /* bỏ qua nếu bị chặn */ }
+}
+
+function initCompareCheckboxes(scopeEl) {
+    const current = getCompareItems();
+    scopeEl.querySelectorAll(".compare-check").forEach(cb => {
+        cb.checked = current.some(it => it.id === cb.dataset.id);
+        cb.addEventListener("click", (e) => e.stopPropagation()); // không cho bấm checkbox làm mở link sản phẩm
+        cb.addEventListener("change", () => {
+            let items = getCompareItems();
+            if (cb.checked) {
+                if (items.length >= COMPARE_MAX) {
+                    cb.checked = false;
+                    showShareToast(`Chỉ so sánh được tối đa ${COMPARE_MAX} sản phẩm`);
+                    return;
+                }
+                items.push({ id: cb.dataset.id, name: cb.dataset.name });
+            } else {
+                items = items.filter(it => it.id !== cb.dataset.id);
+            }
+            setCompareItems(items);
+            renderCompareBar();
+        });
+    });
+    renderCompareBar();
+}
+
+// Thanh so sánh nổi ở đáy màn hình - tự thêm vào <body> 1 lần duy nhất, cập nhật số lượng đã chọn
+// mỗi khi tick/bỏ tick checkbox "So sánh" trên bất kỳ thẻ sản phẩm nào.
+function renderCompareBar() {
+    const items = getCompareItems();
+    let bar = document.getElementById("compareBar");
+
+    if (!items.length) {
+        if (bar) bar.hidden = true;
+        return;
+    }
+
+    if (!bar) {
+        bar = document.createElement("div");
+        bar.id = "compareBar";
+        bar.className = "compare-bar";
+        document.body.appendChild(bar);
+    }
+
+    bar.innerHTML = `
+        <span class="compare-bar-count">Đã chọn ${items.length}/${COMPARE_MAX} sản phẩm để so sánh</span>
+        <div class="compare-bar-actions">
+            <button type="button" class="btn btn-secondary btn-sm" id="compareClearBtn">Bỏ chọn hết</button>
+            <a href="so-sanh.html?ids=${items.map(it => it.id).join(",")}" class="btn btn-primary btn-sm" ${items.length < 2 ? "aria-disabled=\"true\" onclick=\"return false;\"" : ""}>So Sánh Ngay</a>
+        </div>`;
+    bar.hidden = false;
+
+    document.getElementById("compareClearBtn").addEventListener("click", () => {
+        setCompareItems([]);
+        document.querySelectorAll(".compare-check:checked").forEach(cb => { cb.checked = false; });
+        renderCompareBar();
+    });
+}
+
 async function renderBrandProducts() {
     const id = getParam("id");
     const brandId = getParam("brand");
     const typeId = getParam("loai");
     const wrap = document.querySelector(".brand-products-wrap");
+
+    const gridEl = document.querySelector(".product-grid-catalog");
+    if (gridEl) gridEl.innerHTML = catalogSkeletonCardsHtml(6);
 
     let cat, brand;
     try {
@@ -389,6 +499,13 @@ async function renderBrandProducts() {
         breadcrumbBrandSep.hidden = true;
         breadcrumbBrand.hidden = true;
         document.querySelector(".breadcrumb-current").textContent = brand.name;
+
+        injectBreadcrumbSchema([
+            { name: "Trang chủ", href: "index.html" },
+            { name: "Sản Phẩm", href: "san-pham.html" },
+            { name: cat.name, href: `category-chi-tiet.html?id=${cat.id}` },
+            { name: brand.name, href: `brand-san-pham.html?id=${cat.id}&brand=${brand.id}` }
+        ]);
 
         grid.classList.add("type-grid");
         grid.innerHTML = brand.types.map(t => {
@@ -430,6 +547,24 @@ async function renderBrandProducts() {
         setBrandTitle(brand.name, brand.logo);
     }
 
+    injectBreadcrumbSchema([
+        { name: "Trang chủ", href: "index.html" },
+        { name: "Sản Phẩm", href: "san-pham.html" },
+        { name: cat.name, href: `category-chi-tiet.html?id=${cat.id}` },
+        ...(brand.types ? [{ name: brand.name, href: `brand-san-pham.html?id=${cat.id}&brand=${brand.id}` }] : []),
+        { name: document.querySelector(".breadcrumb-current").textContent, href: window.location.pathname + window.location.search }
+    ]);
+    injectJsonLd("productListSchema", {
+        "@context": "https://schema.org",
+        "@type": "ItemList",
+        "itemListElement": productList.map((p, i) => ({
+            "@type": "ListItem",
+            "position": i + 1,
+            "name": p.name,
+            "url": new URL(`san-pham-chi-tiet.html?id=${p.id}`, window.location.href).href
+        }))
+    });
+
     grid.classList.remove("type-grid");
 
     // Bộ lọc/sắp xếp - chỉ hiện khi có từ 2 sản phẩm trở lên (sắp xếp 1 sản phẩm vô nghĩa)
@@ -462,6 +597,10 @@ async function renderBrandProducts() {
         grid.innerHTML = list.map(p => `
             <a class="product-card-catalog" href="san-pham-chi-tiet.html?id=${p.id}">
                 <div class="product-img-catalog">
+                    <label class="compare-checkbox">
+                        <input type="checkbox" class="compare-check" data-id="${p.id}" data-name="${p.name}">
+                        <span>So sánh</span>
+                    </label>
                     <img src="${p.image}" alt="${seoAlt(p.name)}" loading="lazy" onerror="this.src='assets/images/placeholder.svg'">
                 </div>
                 <div class="product-info-catalog">
@@ -470,6 +609,8 @@ async function renderBrandProducts() {
                     ${p.price ? `<span class="product-price-catalog">${p.price}</span>` : ""}
                 </div>
             </a>`).join("");
+
+        initCompareCheckboxes(grid);
     }
 
     renderGrid(productList);
@@ -857,6 +998,60 @@ async function renderHomepageHighlights() {
     }
 }
 
+// Thanh CTA dính đáy màn hình - hiện khi nút "Đặt Lịch Ngay" gốc (đầu trang) đã cuộn khuất khỏi
+// màn hình, để khách luôn bấm đặt lịch được dù đang xem thông số/mô tả/đánh giá ở phía dưới.
+function setupStickyProductCta(p) {
+    const originalBtn = document.getElementById("productCtaBtn");
+    const stickyBar = document.getElementById("stickyProductCta");
+    if (!originalBtn || !stickyBar) return;
+
+    document.getElementById("stickyProductName").textContent = p.name;
+    document.getElementById("stickyProductPrice").textContent = p.price || "Liên hệ";
+
+    const observer = new IntersectionObserver(
+        (entries) => { stickyBar.hidden = entries[0].isIntersecting; },
+        { threshold: 0 }
+    );
+    observer.observe(originalBtn);
+}
+
+// Chia sẻ sản phẩm - dùng Web Share API trên thiết bị hỗ trợ (đa số điện thoại), copy link vào
+// clipboard làm phương án dự phòng cho trình duyệt desktop chưa hỗ trợ.
+function setupShareProductButton(p) {
+    const btn = document.getElementById("shareProductBtn");
+    if (!btn) return;
+
+    btn.addEventListener("click", async () => {
+        const shareData = { title: p.name, text: `${p.name} - Đức Hiếu Auto`, url: window.location.href };
+        if (navigator.share) {
+            try { await navigator.share(shareData); } catch (err) { /* khách tự huỷ chia sẻ - không cần báo lỗi */ }
+        } else if (navigator.clipboard) {
+            try {
+                await navigator.clipboard.writeText(window.location.href);
+                showShareToast("Đã sao chép liên kết sản phẩm");
+            } catch (err) {
+                showShareToast("Không thể sao chép liên kết, vui lòng copy thủ công");
+            }
+        }
+    });
+}
+
+// Toast nhỏ dùng chung cho trang công khai (khác showToast() của trang admin) - trang công khai
+// chưa có sẵn cơ chế thông báo nào, viết gọn 1 hàm nhỏ thay vì kéo cả hệ thống toast của admin.
+function showShareToast(message) {
+    let toast = document.getElementById("shareToast");
+    if (!toast) {
+        toast = document.createElement("div");
+        toast.id = "shareToast";
+        toast.className = "share-toast";
+        document.body.appendChild(toast);
+    }
+    toast.textContent = message;
+    toast.classList.add("show");
+    clearTimeout(showShareToast._timer);
+    showShareToast._timer = setTimeout(() => toast.classList.remove("show"), 2500);
+}
+
 async function renderProductDetail() {
     const id = getParam("id");
     const wrap = document.querySelector(".product-detail-wrap");
@@ -875,6 +1070,9 @@ async function renderProductDetail() {
         document.querySelector(".product-detail-name").textContent = p.name;
         document.querySelector(".product-detail-price").textContent = p.price || "Liên hệ để biết giá";
         document.querySelector(".product-detail-desc").textContent = p.description || "Thông tin chi tiết đang được cập nhật. Vui lòng liên hệ hotline để được tư vấn.";
+
+        setupStickyProductCta(p);
+        setupShareProductButton(p);
 
         const specsSection = document.querySelector(".product-detail-specs");
         if (p.specs && p.specs.length) {
@@ -912,4 +1110,81 @@ async function renderProductDetail() {
     } catch (err) {
         wrap.innerHTML = "<p>Không tìm thấy sản phẩm.</p>";
     }
+}
+
+// ---------- Trang so-sanh.html - đọc ?ids=id1,id2,id3 từ thanh so sánh nổi ----------
+async function renderCompareTable() {
+    const content = document.getElementById("compareContent");
+    const ids = (getParam("ids") || "").split(",").map(s => s.trim()).filter(Boolean);
+
+    if (ids.length < 2) {
+        content.innerHTML = `<p style="text-align:center;color:var(--text-muted);">Cần chọn ít nhất 2 sản phẩm để so sánh. <a href="san-pham.html">Quay lại chọn sản phẩm</a>.</p>`;
+        return;
+    }
+
+    let products;
+    try {
+        const results = await Promise.all(ids.map(id =>
+            fetch(`${API_BASE_URL}/api/products/${encodeURIComponent(id)}`).then(res => res.ok ? res.json() : null)
+        ));
+        products = results.filter(Boolean);
+    } catch (err) {
+        content.innerHTML = `<p style="text-align:center;color:var(--text-muted);">Không tải được dữ liệu so sánh. Vui lòng thử lại sau.</p>`;
+        return;
+    }
+
+    if (products.length < 2) {
+        content.innerHTML = `<p style="text-align:center;color:var(--text-muted);">Không đủ sản phẩm để so sánh (có thể sản phẩm đã bị ẩn/xoá). <a href="san-pham.html">Quay lại chọn sản phẩm</a>.</p>`;
+        return;
+    }
+
+    // Gộp toàn bộ tên thông số xuất hiện ở bất kỳ sản phẩm nào thành danh sách hàng chung - sản
+    // phẩm nào không có thông số đó thì hiện "-", không bỏ sót thông số riêng của từng sản phẩm.
+    const specKeys = [];
+    products.forEach(p => (p.specs || []).forEach(([k]) => { if (!specKeys.includes(k)) specKeys.push(k); }));
+
+    function specValue(p, key) {
+        const found = (p.specs || []).find(([k]) => k === key);
+        return found ? found[1] : "-";
+    }
+
+    function removeUrl(excludeId) {
+        const remaining = products.filter(p => p.id !== excludeId).map(p => p.id);
+        return remaining.length >= 2 ? `so-sanh.html?ids=${remaining.join(",")}` : "san-pham.html";
+    }
+
+    content.innerHTML = `
+        <div class="compare-table-wrap">
+            <table class="compare-table">
+                <thead>
+                    <tr>
+                        <th class="compare-row-label"></th>
+                        ${products.map(p => `
+                            <th>
+                                <a href="${removeUrl(p.id)}" class="compare-remove" title="Bỏ khỏi so sánh"><i class="fa-solid fa-xmark"></i></a>
+                                <img src="${p.image}" alt="${seoAlt(p.name)}" loading="lazy" onerror="this.src='assets/images/placeholder.svg'">
+                                <a href="san-pham-chi-tiet.html?id=${p.id}" class="compare-product-name">${p.name}</a>
+                                <span class="compare-product-brand">${p.brand}</span>
+                            </th>`).join("")}
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="compare-row-label">Giá</td>
+                        ${products.map(p => `<td class="compare-price">${p.price || "Liên hệ"}</td>`).join("")}
+                    </tr>
+                    ${specKeys.map(key => `
+                        <tr>
+                            <td class="compare-row-label">${key}</td>
+                            ${products.map(p => `<td>${specValue(p, key)}</td>`).join("")}
+                        </tr>`).join("")}
+                    <tr>
+                        <td class="compare-row-label"></td>
+                        ${products.map(p => `<td><a href="dat-lich-hen.html" class="btn btn-primary btn-sm">Đặt Lịch Ngay</a></td>`).join("")}
+                    </tr>
+                </tbody>
+            </table>
+        </div>`;
+
+    document.title = `So Sánh ${products.map(p => p.name).join(" vs ")} | Đức Hiếu Auto`;
 }

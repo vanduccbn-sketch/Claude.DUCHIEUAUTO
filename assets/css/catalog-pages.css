@@ -263,9 +263,54 @@
 }
 
 .product-img-catalog {
+    position: relative;
     height: 180px;
     background-color: #e9eaed;
     overflow: hidden;
+}
+
+.compare-checkbox {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255, 255, 255, 0.92);
+    padding: 5px 10px 5px 8px;
+    border-radius: 20px;
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--text-color);
+    cursor: pointer;
+    box-shadow: var(--shadow-sm);
+}
+.compare-checkbox input { margin: 0; cursor: pointer; }
+
+.compare-bar {
+    position: fixed;
+    left: 50%;
+    bottom: 20px;
+    transform: translateX(-50%);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    background-color: var(--dark);
+    color: var(--white);
+    padding: 14px 22px;
+    border-radius: 10px;
+    box-shadow: var(--shadow-lg);
+    max-width: calc(100vw - 32px);
+    flex-wrap: wrap;
+    justify-content: center;
+}
+.compare-bar-count { font-size: 13.5px; font-weight: 600; }
+.compare-bar-actions { display: flex; gap: 10px; }
+.compare-bar-actions .btn[aria-disabled="true"] { opacity: 0.5; cursor: not-allowed; pointer-events: none; }
+@media (max-width: 480px) {
+    .compare-bar { left: 16px; right: 16px; bottom: 16px; transform: none; max-width: none; }
 }
 
 .product-img-catalog img {
@@ -312,9 +357,99 @@
     border-radius: 10px;
     overflow: hidden;
     box-shadow: var(--shadow-md);
-    background-color: #e9eaed;
     height: 420px;
+    /* Khung chờ (skeleton shimmer) trong lúc gọi API - ảnh thật (object-fit: cover, phủ kín 100%)
+       sẽ tự che mất nền này ngay khi tải xong, không cần JS bật/tắt trạng thái riêng. */
+    background: linear-gradient(90deg, #eceef1 25%, #f6f7f9 37%, #eceef1 63%);
+    background-size: 400% 100%;
+    animation: skeleton-shimmer-detail 1.4s ease infinite;
 }
+@keyframes skeleton-shimmer-detail { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+.product-detail-img img[src=""] { visibility: hidden; }
+
+.product-detail-brand:empty, .product-detail-name:empty, .product-detail-price:empty, .product-detail-desc:empty {
+    display: block;
+    background: linear-gradient(90deg, #eceef1 25%, #f6f7f9 37%, #eceef1 63%);
+    background-size: 400% 100%;
+    animation: skeleton-shimmer-detail 1.4s ease infinite;
+    border-radius: 6px;
+    color: transparent;
+}
+.product-detail-brand:empty { width: 90px; height: 13px; margin-bottom: 4px; }
+.product-detail-name:empty { width: 75%; height: 30px; margin-bottom: 10px; }
+.product-detail-price:empty { width: 130px; height: 20px; margin-bottom: 14px; }
+.product-detail-desc:empty { width: 100%; height: 70px; margin-bottom: 20px; }
+
+.product-detail-actions { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.btn-share {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: none;
+    border: 1px solid var(--border-color-light);
+    color: var(--text-color);
+    padding: 13px 20px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+}
+.btn-share:hover { border-color: var(--primary); color: var(--primary); }
+
+/* Thanh CTA dính đáy màn hình - hiện khi khách cuộn qua khỏi nút đặt lịch chính, giúp luôn bấm
+   được ngay dù đang xem thông số/mô tả/đánh giá ở dưới (assets/js/catalog-render.js điều khiển
+   ẩn/hiện qua IntersectionObserver theo dõi nút CTA gốc). */
+.sticky-product-cta {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 950;
+    background-color: var(--bg-alt);
+    border-top: 1px solid var(--border-color-light);
+    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.08);
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+.sticky-product-cta-info { display: flex; flex-direction: column; min-width: 0; }
+.sticky-product-cta-info strong { font-size: 13.5px; color: var(--text-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sticky-product-cta-info span { font-size: 13px; color: var(--primary); font-weight: 700; }
+.sticky-product-cta .btn { flex-shrink: 0; padding: 11px 22px; }
+
+.share-toast {
+    position: fixed;
+    left: 50%;
+    bottom: 90px;
+    transform: translateX(-50%) translateY(20px);
+    background-color: var(--dark);
+    color: var(--white);
+    padding: 12px 22px;
+    border-radius: 8px;
+    font-size: 13.5px;
+    z-index: 1100;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+}
+.share-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ---------- Bảng so sánh sản phẩm (so-sanh.html) ---------- */
+.compare-table-wrap { overflow-x: auto; margin-bottom: 40px; }
+.compare-table { width: 100%; border-collapse: collapse; min-width: 600px; }
+.compare-table th, .compare-table td { padding: 14px 18px; text-align: center; border-bottom: 1px solid var(--border-color-light); vertical-align: middle; }
+.compare-table thead th { position: relative; background-color: var(--bg-alt); vertical-align: top; padding-top: 30px; min-width: 180px; }
+.compare-table thead th img { width: 100px; height: 100px; object-fit: cover; border-radius: 8px; margin: 0 auto 10px; display: block; }
+.compare-product-name { display: block; font-weight: 700; color: var(--text-color); margin-bottom: 4px; }
+.compare-product-name:hover { color: var(--primary); }
+.compare-product-brand { font-size: 12px; color: var(--text-muted); }
+.compare-remove { position: absolute; top: 8px; right: 8px; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: rgba(0,0,0,0.06); color: var(--text-muted); font-size: 12px; }
+.compare-remove:hover { background: var(--primary); color: var(--white); }
+.compare-row-label { text-align: left !important; font-weight: 600; color: var(--text-muted); white-space: nowrap; background-color: var(--bg-alt); }
+.compare-price { font-weight: 700; color: var(--primary); }
 
 .product-detail-img img {
     width: 100%;

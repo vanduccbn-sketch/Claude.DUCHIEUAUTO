@@ -96,9 +96,7 @@
                 <p class="page-intro">Điền thông tin bên dưới, đội ngũ tư vấn Đức Hiếu Auto sẽ gọi điện xác nhận lịch hẹn trong thời gian sớm nhất — thường trong vòng 30-60 phút giờ hành chính.</p>
 
                 <div class="booking-wrap">
-                    <form class="booking-form" id="bookingForm" action="https://formspree.io/f/xdarpjzq" method="POST">
-                        <input type="hidden" name="_subject" value="Đặt lịch hẹn mới - Đức Hiếu Auto">
-
+                    <form class="booking-form" id="bookingForm">
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="bkName">Họ và tên *</label>
@@ -126,18 +124,15 @@
                             </select>
                         </div>
 
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="bkDate">Ngày hẹn mong muốn *</label>
-                                <input type="date" id="bkDate" name="date" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="bkTime">Khung giờ mong muốn *</label>
-                                <select id="bkTime" name="time" required>
-                                    <option value="" disabled selected>-- Chọn khung giờ --</option>
-                                    <option value="Sáng (8h - 11h30)">Sáng (8h - 11h30)</option>
-                                    <option value="Chiều (13h30 - 17h30)">Chiều (13h30 - 17h30)</option>
-                                </select>
+                        <div class="form-group">
+                            <label for="bkDate">Ngày hẹn mong muốn *</label>
+                            <input type="date" id="bkDate" name="date" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Khung giờ mong muốn *</label>
+                            <div class="slot-picker" id="slotPicker">
+                                <p class="slot-picker-hint">Chọn ngày hẹn ở trên để xem khung giờ còn trống.</p>
                             </div>
                         </div>
 
@@ -150,6 +145,8 @@
                             <label for="bkNote">Ghi chú thêm</label>
                             <textarea id="bkNote" name="message" rows="3" placeholder="Mô tả thêm nhu cầu của bạn (nếu có)"></textarea>
                         </div>
+
+                        <div class="form-error" id="bookingError" hidden></div>
 
                         <button type="submit"><i class="fa-solid fa-calendar-check"></i> Xác Nhận Đặt Lịch</button>
                     </form>
@@ -250,6 +247,7 @@
     <script src="assets/js/site-settings.js"></script>
     <script src="assets/js/catalog-data.js"></script>
     <script src="assets/js/catalog-render.js"></script>
+    <script src="assets/js/site-search.js"></script>
     <script>
         renderNavProductsDropdown("#navProductsDropdown");
 
@@ -268,22 +266,23 @@
         quickContactToggle.addEventListener('click', () => quickContact.classList.toggle('collapsed'));
 
         // Không cho chọn ngày trong quá khứ
-        document.getElementById('bkDate').min = new Date().toISOString().split('T')[0];
+        const bkDateInput = document.getElementById('bkDate');
+        bkDateInput.min = new Date().toISOString().split('T')[0];
 
         // Zalo cá nhân (không phải Official Account) không cho gửi tin nhắn tự động qua API,
         // nên giải pháp khả thi là: soạn sẵn nội dung đặt lịch, copy vào clipboard, rồi mở khung
         // chat Zalo để khách chỉ cần dán (Ctrl+V) và bấm gửi.
-        function buildZaloBookingMessage(formData) {
+        function buildZaloBookingMessage(data) {
             const lines = [
                 'ĐẶT LỊCH HẸN - ĐỨC HIẾU AUTO',
-                `Họ tên: ${formData.get('name')}`,
-                `SĐT: ${formData.get('phone')}`,
-                `Dịch vụ: ${formData.get('service')}`,
-                `Ngày hẹn: ${formData.get('date')}`,
-                `Khung giờ: ${formData.get('time')}`
+                `Họ tên: ${data.name}`,
+                `SĐT: ${data.phone}`,
+                `Dịch vụ: ${data.service}`,
+                `Ngày hẹn: ${data.preferred_date}`,
+                `Khung giờ: ${data.preferred_time}`
             ];
-            if (formData.get('car')) lines.push(`Dòng xe: ${formData.get('car')}`);
-            if (formData.get('message')) lines.push(`Ghi chú: ${formData.get('message')}`);
+            if (data.car) lines.push(`Dòng xe: ${data.car}`);
+            if (data.message) lines.push(`Ghi chú: ${data.message}`);
             return lines.join('\n');
         }
 
@@ -293,34 +292,92 @@
             }
         }
 
-        // Gửi form bằng fetch (AJAX) để hiện thông báo thành công ngay trên trang thay vì
-        // chuyển hướng sang trang riêng của Formspree
+        // ---------- Chọn khung giờ theo ngày (kiểm tra còn chỗ qua API thật) ----------
+        const slotPicker = document.getElementById('slotPicker');
+        let selectedSlot = null;
+
+        function slotButtonHtml(s) {
+            return `<button type="button" class="slot-btn${s.full ? ' full' : ''}" data-slot="${s.slot}" ${s.full ? 'disabled' : ''}>
+                ${s.slot}${s.full ? '<span>Đã đầy</span>' : ''}
+            </button>`;
+        }
+
+        async function loadSlots(date) {
+            selectedSlot = null;
+            slotPicker.innerHTML = `<p class="slot-picker-hint">Đang tải khung giờ...</p>`;
+            try {
+                const res = await fetch(`${API_BASE_URL}/api/contacts/availability?date=${encodeURIComponent(date)}`);
+                if (!res.ok) throw new Error();
+                const data = await res.json();
+                slotPicker.innerHTML = data.slots.map(slotButtonHtml).join('');
+                slotPicker.querySelectorAll('.slot-btn:not(.full)').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        slotPicker.querySelectorAll('.slot-btn').forEach(b => b.classList.remove('selected'));
+                        btn.classList.add('selected');
+                        selectedSlot = btn.dataset.slot;
+                    });
+                });
+            } catch (err) {
+                slotPicker.innerHTML = `<p class="slot-picker-hint">Không tải được khung giờ, vui lòng thử lại hoặc gọi hotline 0869 110 237.</p>`;
+            }
+        }
+
+        bkDateInput.addEventListener('change', () => {
+            if (bkDateInput.value) loadSlots(bkDateInput.value);
+        });
+
+        // Gửi form bằng fetch tới API thật (/api/contacts) thay vì Formspree - để lịch hẹn hiện
+        // đúng trong trang quản trị "Liên Hệ / Đặt Lịch" và kiểm tra được trùng khung giờ.
         const bookingForm = document.getElementById('bookingForm');
+        const bookingError = document.getElementById('bookingError');
         bookingForm.addEventListener('submit', async (e) => {
             e.preventDefault();
+            bookingError.hidden = true;
+
+            if (!selectedSlot) {
+                bookingError.textContent = 'Vui lòng chọn khung giờ mong muốn.';
+                bookingError.hidden = false;
+                return;
+            }
+
+            const payload = {
+                type: 'booking',
+                name: document.getElementById('bkName').value.trim(),
+                phone: document.getElementById('bkPhone').value.trim(),
+                service: document.getElementById('bkService').value,
+                preferred_date: bkDateInput.value,
+                preferred_time: selectedSlot,
+                car: document.getElementById('bkCar').value.trim(),
+                message: document.getElementById('bkNote').value.trim()
+            };
+
             const submitBtn = bookingForm.querySelector('button[type="submit"]');
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang gửi...';
             try {
-                const formData = new FormData(bookingForm);
-                const res = await fetch(bookingForm.action, {
+                const res = await fetch(`${API_BASE_URL}/api/contacts`, {
                     method: 'POST',
-                    body: formData,
-                    headers: { 'Accept': 'application/json' }
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
                 });
-                if (res.ok) {
-                    const zaloText = buildZaloBookingMessage(formData);
-                    copyToClipboard(zaloText);
-                    const zaloBtn = document.getElementById('zaloSendBtn');
-                    zaloBtn.addEventListener('click', () => copyToClipboard(zaloText));
-
-                    bookingForm.style.display = 'none';
-                    document.getElementById('bookingSuccess').style.display = 'block';
-                } else {
-                    throw new Error('Gửi thất bại');
+                const data = await res.json();
+                if (!res.ok) {
+                    // 409 = khung giờ vừa đầy chỗ (người khác vừa đặt trước) - tải lại danh sách
+                    // khung giờ để khách chọn khung giờ khác thay vì chỉ báo lỗi chung chung.
+                    if (res.status === 409) loadSlots(bkDateInput.value);
+                    throw new Error(data.error || 'Gửi thất bại');
                 }
+
+                const zaloText = buildZaloBookingMessage(payload);
+                copyToClipboard(zaloText);
+                const zaloBtn = document.getElementById('zaloSendBtn');
+                zaloBtn.addEventListener('click', () => copyToClipboard(zaloText));
+
+                bookingForm.style.display = 'none';
+                document.getElementById('bookingSuccess').style.display = 'block';
             } catch (err) {
-                alert('Có lỗi xảy ra, vui lòng gọi trực tiếp hotline 0869 110 237 hoặc thử lại sau.');
+                bookingError.textContent = err.message + ' - nếu cần gấp, vui lòng gọi trực tiếp hotline 0869 110 237.';
+                bookingError.hidden = false;
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = '<i class="fa-solid fa-calendar-check"></i> Xác Nhận Đặt Lịch';
             }

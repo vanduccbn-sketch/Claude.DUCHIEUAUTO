@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /.claude/
+Disallow: /*.md$
+
+Sitemap: https://vanduccbn-sketch.github.io/Claude.DUCHIEUAUTO/sitemap.xml

@@ -1,0 +1,146 @@
+/* =========================================================
+   RENDER TIN TỨC / BLOG (Phase 5 - gọi API /api/posts thật thay vì dữ liệu tĩnh cũ)
+   Cần nạp assets/js/api-config.js TRƯỚC file này để có biến API_BASE_URL.
+   ========================================================= */
+function formatBlogDate(sqlDateStr) {
+    if (!sqlDateStr) return "";
+    const d = new Date(sqlDateStr.replace(" ", "T") + "Z");
+    return d.toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" });
+}
+
+function blogCardHtml(post) {
+    const cover = post.cover_image || "assets/images/favicon.png";
+    return `
+        <a class="blog-card" href="bai-viet-chi-tiet.html?slug=${post.slug}">
+            <div class="blog-card-img">
+                <img src="${cover}" alt="${post.title}" loading="lazy">
+            </div>
+            <div class="blog-card-body">
+                <span class="blog-card-meta"><i class="fa-solid fa-tag"></i> ${post.category || "Tin tức"} <span>&middot;</span> ${formatBlogDate(post.created_at)}</span>
+                <h3>${post.title}</h3>
+                <p>${post.excerpt || ""}</p>
+                <span class="blog-card-link">Đọc tiếp <i class="fa-solid fa-arrow-right"></i></span>
+            </div>
+        </a>`;
+}
+
+function blogSkeletonCardsHtml(count) {
+    return Array.from({ length: count }).map(() => `
+        <div class="skeleton-card">
+            <div class="skeleton-block img"></div>
+            <div class="skeleton-body">
+                <div class="skeleton-block line w60"></div>
+                <div class="skeleton-block line title"></div>
+                <div class="skeleton-block line"></div>
+                <div class="skeleton-block line"></div>
+            </div>
+        </div>`).join("");
+}
+
+async function renderBlogGrid(containerSelector) {
+    const container = document.querySelector(containerSelector);
+    if (!container) return;
+
+    container.innerHTML = blogSkeletonCardsHtml(6);
+
+    try {
+        const res = await fetch(`${API_BASE_URL}/api/posts`);
+        if (!res.ok) throw new Error("Không tải được danh sách bài viết");
+        const posts = await res.json();
+
+        if (posts.length === 0) {
+            container.innerHTML = `<p style="grid-column:1/-1;text-align:center;color:var(--text-muted);">Chưa có bài viết nào.</p>`;
+            return;
+        }
+        container.innerHTML = posts.map(blogCardHtml).join("");
+    } catch (err) {
+        container.innerHTML = `
+            <div class="blog-load-error" style="grid-column:1/-1;">
+                <p>Không tải được danh sách bài viết. Vui lòng thử lại sau.</p>
+                <button type="button" class="btn btn-secondary" onclick="renderBlogGrid('${containerSelector}')">Thử lại</button>
+            </div>`;
+    }
+}
+
+function blogDetailSkeletonHtml() {
+    return `
+        <div class="blog-detail-skeleton">
+            <div class="skeleton-block title"></div>
+            <div class="skeleton-block cover"></div>
+            <div class="skeleton-block line"></div>
+            <div class="skeleton-block line"></div>
+            <div class="skeleton-block line short"></div>
+        </div>`;
+}
+
+function setMetaTag(attr, key, content) {
+    if (!content) return;
+    let tag = document.querySelector(`meta[${attr}="${key}"]`);
+    if (!tag) {
+        tag = document.createElement("meta");
+        tag.setAttribute(attr, key);
+        document.head.appendChild(tag);
+    }
+    tag.setAttribute("content", content);
+}
+
+async function renderBlogDetail() {
+    const wrap = document.querySelector(".blog-detail-wrap");
+    if (!wrap) return;
+    wrap.innerHTML = blogDetailSkeletonHtml();
+
+    const params = new URLSearchParams(window.location.search);
+    const slug = params.get("slug");
+    if (!slug) {
+        wrap.innerHTML = `<p style="text-align:center;color:var(--text-muted);">Không tìm thấy bài viết. <a href="tin-tuc.html">Quay lại Tin Tức</a></p>`;
+        return;
+    }
+
+    try {
+        const res = await fetch(`${API_BASE_URL}/api/posts/${encodeURIComponent(slug)}`);
+        if (!res.ok) {
+            wrap.innerHTML = `<p style="text-align:center;color:var(--text-muted);">Không tìm thấy bài viết. <a href="tin-tuc.html">Quay lại Tin Tức</a></p>`;
+            return;
+        }
+        const post = await res.json();
+
+        // Cập nhật SEO động (title/description/Open Graph) - lưu ý: vì trang render bằng JS,
+        // các trình thu thập dữ liệu KHÔNG chạy JS (đa số bot chia sẻ mạng xã hội) sẽ chỉ thấy
+        // được thẻ meta mặc định trong HTML gốc, không thấy bản cập nhật này. Google hiện tại có
+        // chạy JS khi index nên vẫn đọc được. Nếu cần preview đẹp khi share Zalo/Facebook, cần
+        // render phía server (ngoài phạm vi Phase 5 hiện tại).
+        document.title = (post.meta_title || post.title) + " | Đức Hiếu Auto";
+        const metaDesc = document.querySelector('meta[name="description"]');
+        if (metaDesc) metaDesc.setAttribute("content", post.meta_description || post.excerpt || "");
+        setMetaTag("property", "og:title", post.meta_title || post.title);
+        setMetaTag("property", "og:description", post.meta_description || post.excerpt || "");
+        if (post.cover_image) setMetaTag("property", "og:image", new URL(post.cover_image, API_BASE_URL).href);
+        setMetaTag("property", "og:type", "article");
+        setMetaTag("property", "og:url", window.location.href);
+
+        const breadcrumbCurrent = document.querySelector(".breadcrumb-current");
+        if (breadcrumbCurrent) breadcrumbCurrent.textContent = post.title;
+
+        const ctaHtml = post.cta_text && post.cta_link ? `
+            <a href="${post.cta_link}" class="view-all-cta blog-detail-cta">
+                <div class="view-all-cta-text">
+                    <span class="view-all-cta-label">Tìm hiểu thêm</span>
+                    <h3>${post.cta_text}</h3>
+                </div>
+                <div class="view-all-cta-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+            </a>` : "";
+
+        wrap.innerHTML = `
+            <div class="blog-detail-meta"><i class="fa-solid fa-tag"></i> ${post.category || "Tin tức"} <span>&middot;</span> ${formatBlogDate(post.created_at)}</div>
+            <h1 class="blog-detail-title">${post.title}</h1>
+            ${post.cover_image ? `<div class="blog-detail-cover"><img src="${post.cover_image}" alt="${post.title}"></div>` : ""}
+            <div class="blog-detail-body">${post.content}</div>
+            ${ctaHtml}`;
+    } catch (err) {
+        wrap.innerHTML = `
+            <div class="blog-load-error">
+                <p>Không tải được bài viết. Vui lòng thử lại sau.</p>
+                <button type="button" class="btn btn-secondary" onclick="renderBlogDetail()">Thử lại</button>
+            </div>`;
+    }
+}

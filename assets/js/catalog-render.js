@@ -710,6 +710,18 @@ async function initProductReviews(productId) {
     const reviewForm = document.getElementById("reviewForm");
     if (!starPicker || !reviewForm) return stats;
 
+    // Form gửi đánh giá mặc định ẩn (đa số khách chỉ xem đánh giá, hiện sẵn form gây rối mắt) -
+    // chỉ hiện khi khách chủ động bấm nút, giữ trang gọn gàng hơn.
+    const showBtn = document.getElementById("showReviewFormBtn");
+    const formWrap = document.getElementById("reviewFormWrap");
+    if (showBtn && formWrap) {
+        showBtn.addEventListener("click", () => {
+            formWrap.hidden = false;
+            showBtn.hidden = true;
+            document.getElementById("rvName").focus();
+        });
+    }
+
     let selectedRating = 0;
     const starButtons = starPicker.querySelectorAll("button");
     starButtons.forEach(btn => {
@@ -765,6 +777,86 @@ async function initProductReviews(productId) {
 
 // Gọi API thật (Phase 7) thay vì đọc CATALOG.products tĩnh - cho phép admin sửa sản phẩm trong
 // trang quản trị và thấy ngay kết quả trên trang công khai.
+// ---------- Trang chủ: "Sản Phẩm Chiến Lược" + "Giải Mã Công Nghệ" (Phase - quản lý qua CMS) ----------
+function strategicProductCardHtml(item) {
+    const badgeHtml = item.badgeText ? `<span class="product-badge product-badge-hot"><i class="fa-solid fa-bolt"></i> ${item.badgeText}</span>` : "";
+    const priceTagHtml = item.priceTag ? `<span class="product-price-tag">${item.priceTag}</span>` : "";
+    return `
+        <div class="swiper-slide">
+            <div class="product-card">
+                <div class="product-img">
+                    ${badgeHtml}
+                    <img src="${item.image}" alt="${seoAlt(item.name)}" loading="lazy" onerror="this.src='assets/images/placeholder.svg'">
+                </div>
+                <div class="product-info">
+                    <span class="product-brand">${item.brand}</span>
+                    <h3 class="product-name">${item.name}</h3>
+                    <p class="product-desc">${item.description || ""}</p>
+                    <div class="product-price-row">
+                        <span class="product-price">${item.price || "Liên hệ"}</span>
+                        ${priceTagHtml}
+                    </div>
+                    <div class="product-action">
+                        <a href="san-pham-chi-tiet.html?id=${item.productId}" class="btn btn-primary btn-sm">Xem Chi Tiết</a>
+                    </div>
+                </div>
+            </div>
+        </div>`;
+}
+
+function techStoryCardHtml(item) {
+    const tagHtml = item.tagText ? `<span class="tech-story-tag">${item.tagText}</span>` : "";
+    return `
+        <div class="swiper-slide">
+        <a class="tech-story-card" href="san-pham-chi-tiet.html?id=${item.productId}">
+            <div class="tech-story-img">
+                <img src="${item.image}" alt="${seoAlt(item.name)}" loading="lazy" onerror="this.src='assets/images/placeholder.svg'">
+                ${tagHtml}
+            </div>
+            <div class="tech-story-body">
+                <h3>${item.storyTitle || item.name}</h3>
+                <p>${item.description || ""}</p>
+                <span class="tech-story-link">Tìm hiểu thêm <i class="fa-solid fa-arrow-right"></i></span>
+            </div>
+        </a>
+        </div>`;
+}
+
+// Trả về Promise để index.html gọi swiper.update() sau khi có dữ liệu thật (cùng cơ chế với
+// renderServiceGridPromise) - tránh Swiper khởi tạo với 0 slide vì dữ liệu API chưa kịp về.
+async function renderHomepageHighlights() {
+    const strategicGrid = document.querySelector(".strategic-products-grid");
+    const techGrid = document.querySelector(".tech-stories-grid");
+    try {
+        const res = await fetch(`${API_BASE_URL}/api/homepage`);
+        if (!res.ok) throw new Error();
+        const data = await res.json();
+
+        if (strategicGrid) {
+            const section = strategicGrid.closest("section");
+            if (data.strategic.length) {
+                strategicGrid.innerHTML = data.strategic.map(strategicProductCardHtml).join("");
+                if (section) section.hidden = false;
+            } else if (section) {
+                section.hidden = true;
+            }
+        }
+        if (techGrid) {
+            const section = techGrid.closest("section");
+            if (data.tech.length) {
+                techGrid.innerHTML = data.tech.map(techStoryCardHtml).join("");
+                if (section) section.hidden = false;
+            } else if (section) {
+                section.hidden = true;
+            }
+        }
+    } catch (err) {
+        // Lỗi tải không nên chặn cả trang chủ - ẩn 2 khu vực này đi, phần còn lại vẫn hoạt động.
+        if (strategicGrid) { const s = strategicGrid.closest("section"); if (s) s.hidden = true; }
+        if (techGrid) { const s = techGrid.closest("section"); if (s) s.hidden = true; }
+    }
+}
+
 async function renderProductDetail() {
     const id = getParam("id");
     const wrap = document.querySelector(".product-detail-wrap");

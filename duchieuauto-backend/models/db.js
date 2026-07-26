@@ -230,6 +230,24 @@ const ready = (async () => {
             answer TEXT NOT NULL,
             sort_order INTEGER NOT NULL DEFAULT 0
         );
+
+        -- 2 khu vực nổi bật ở trang chủ ("Sản Phẩm Chiến Lược", "Giải Mã Công Nghệ") - trước đây
+        -- viết cứng trong index.html (đổi phải sửa trực tiếp code), giờ admin chọn sản phẩm thật
+        -- + viết thêm vài dòng tiếp thị riêng cho từng khu vực. section: 'strategic' hoặc 'tech' -
+        -- badge_text/price_tag chỉ strategic dùng, tag_text/story_title chỉ tech dùng (để cùng 1
+        -- bảng thay vì tách 2 bảng gần như giống hệt nhau).
+        CREATE TABLE IF NOT EXISTS homepage_highlights (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            section TEXT NOT NULL,
+            product_id TEXT NOT NULL REFERENCES products(id),
+            badge_text TEXT,
+            price_tag TEXT,
+            tag_text TEXT,
+            story_title TEXT,
+            description TEXT,
+            sort_order INTEGER NOT NULL DEFAULT 0,
+            created_at TEXT NOT NULL DEFAULT (datetime('now'))
+        );
     `);
 
     // Migration nhẹ: bảng "products" đã có dữ liệu thật trên Turso (242 sản phẩm import từ

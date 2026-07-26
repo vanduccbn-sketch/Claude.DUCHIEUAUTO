@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Trang Chủ | Quản Trị Đức Hiếu Auto</title>
+    <link rel="stylesheet" href="assets/admin.css">
+    <style>
+        .highlight-row { display: grid; grid-template-columns: 60px 1fr 1fr 1fr auto; gap: 10px; margin-bottom: 12px; align-items: start; }
+        .highlight-row img { width: 52px; height: 52px; object-fit: cover; border-radius: 6px; background: #eee; }
+        .highlight-row input, .highlight-row textarea, .highlight-row select { padding: 8px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; font-family: inherit; width: 100%; }
+        .highlight-row textarea { resize: vertical; min-height: 44px; }
+        .highlight-row .btns { display: flex; flex-direction: column; gap: 6px; }
+        .highlight-add-form { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr auto; gap: 10px; align-items: end; margin-bottom: 24px; }
+        .highlight-add-form .form-group { margin: 0; }
+        .highlight-add-form label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 4px; }
+        .highlight-add-form select, .highlight-add-form input { width: 100%; padding: 9px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; }
+    </style>
+</head>
+<body>
+    <div class="admin-topbar" id="adminTopbar"></div>
+
+    <main class="admin-main">
+        <div class="admin-header">
+            <div>
+                <h1>Trang Chủ</h1>
+                <p class="desc">Chọn sản phẩm thật hiển thị ở 2 khu vực nổi bật trên trang chủ - "Sản Phẩm Chiến Lược" và "Giải Mã Công Nghệ". Ảnh/tên/giá lấy tự động theo sản phẩm đã chọn.</p>
+            </div>
+        </div>
+
+        <div class="settings-section">
+            <h2>Sản Phẩm Chiến Lược</h2>
+            <p class="form-hint" style="margin-bottom:14px;">Hiện ở trang chủ dạng thẻ sản phẩm kèm huy hiệu (VD "Giá Sốc") và nhãn giá (VD "Ưu đãi hôm nay").</p>
+            <div class="highlight-add-form">
+                <div class="form-group">
+                    <label>Chọn sản phẩm</label>
+                    <select id="strategicProductSelect"><option value="">-- Chọn sản phẩm --</option></select>
+                </div>
+                <div class="form-group">
+                    <label>Huy hiệu (tuỳ chọn)</label>
+                    <input type="text" id="strategicBadge" placeholder="VD: Giá Sốc">
+                </div>
+                <div class="form-group">
+                    <label>Nhãn giá (tuỳ chọn)</label>
+                    <input type="text" id="strategicPriceTag" placeholder="VD: Ưu đãi hôm nay">
+                </div>
+                <div class="form-group">
+                    <label>Mô tả ngắn (tuỳ chọn)</label>
+                    <input type="text" id="strategicDesc" placeholder="Mô tả tiếp thị ngắn">
+                </div>
+                <button type="button" class="btn btn-primary" id="addStrategicBtn">+ Thêm</button>
+            </div>
+            <div id="strategicList"></div>
+        </div>
+
+        <div class="settings-section">
+            <h2>Giải Mã Công Nghệ</h2>
+            <p class="form-hint" style="margin-bottom:14px;">Hiện dạng "câu chuyện công nghệ" - tag trên ảnh, tiêu đề câu chuyện, đoạn mô tả dài hơn.</p>
+            <div class="highlight-add-form">
+                <div class="form-group">
+                    <label>Chọn sản phẩm</label>
+                    <select id="techProductSelect"><option value="">-- Chọn sản phẩm --</option></select>
+                </div>
+                <div class="form-group">
+                    <label>Tag trên ảnh</label>
+                    <input type="text" id="techTag" placeholder="VD: PPF - Bảo Vệ Sơn Xe">
+                </div>
+                <div class="form-group">
+                    <label>Tiêu đề câu chuyện</label>
+                    <input type="text" id="techTitle" placeholder="VD: Vết Xước Tự Biến Mất">
+                </div>
+                <div class="form-group">
+                    <label>Nội dung câu chuyện</label>
+                    <input type="text" id="techDesc" placeholder="Đoạn mô tả ngắn">
+                </div>
+                <button type="button" class="btn btn-primary" id="addTechBtn">+ Thêm</button>
+            </div>
+            <div id="techList"></div>
+        </div>
+    </main>
+
+    <script src="assets/admin.js"></script>
+    <script>
+        const auth = requireAuth(["content", "super_admin"]);
+        if (auth) {
+            renderAdminNav(auth, "trang-chu");
+            init();
+        }
+
+        let allProducts = [];
+
+        async function init() {
+            const res = await apiFetch("/api/products/admin/list");
+            allProducts = await res.json();
+            const optionsHtml = `<option value="">-- Chọn sản phẩm --</option>` +
+                allProducts.map(p => `<option value="${p.id}">${p.name} (${p.brand_name})</option>`).join("");
+            document.getElementById("strategicProductSelect").innerHTML = optionsHtml;
+            document.getElementById("techProductSelect").innerHTML = optionsHtml;
+
+            loadHighlights("strategic");
+            loadHighlights("tech");
+        }
+
+        document.getElementById("addStrategicBtn").addEventListener("click", () => {
+            addHighlight("strategic", {
+                product_id: document.getElementById("strategicProductSelect").value,
+                badge_text: document.getElementById("strategicBadge").value.trim(),
+                price_tag: document.getElementById("strategicPriceTag").value.trim(),
+                description: document.getElementById("strategicDesc").value.trim()
+            }, ["strategicProductSelect", "strategicBadge", "strategicPriceTag", "strategicDesc"]);
+        });
+
+        document.getElementById("addTechBtn").addEventListener("click", () => {
+            addHighlight("tech", {
+                product_id: document.getElementById("techProductSelect").value,
+                tag_text: document.getElementById("techTag").value.trim(),
+                story_title: document.getElementById("techTitle").value.trim(),
+                description: document.getElementById("techDesc").value.trim()
+            }, ["techProductSelect", "techTag", "techTitle", "techDesc"]);
+        });
+
+        async function addHighlight(section, body, clearIds) {
+            if (!body.product_id) return showToast("Vui lòng chọn sản phẩm", true);
+            try {
+                const res = await apiFetch("/api/homepage", { method: "POST", body: { section, ...body } });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || "Thêm thất bại");
+                showToast("Đã thêm");
+                clearIds.forEach(id => { document.getElementById(id).value = ""; });
+                loadHighlights(section);
+            } catch (err) {
+                showToast(err.message, true);
+            }
+        }
+
+        function productImg(id) {
+            return `https://vanduccbn-sketch.github.io/Claude.DUCHIEUAUTO/assets/images/products/${id}/anh-1.jpg`;
+        }
+
+        async function loadHighlights(section) {
+            const listEl = document.getElementById(section === "strategic" ? "strategicList" : "techList");
+            try {
+                const res = await apiFetch(`/api/homepage/admin/all?section=${section}`);
+                const items = await res.json();
+                if (items.length === 0) {
+                    listEl.innerHTML = `<p class="form-hint">Chưa có sản phẩm nào trong khu vực này.</p>`;
+                    return;
+                }
+                listEl.innerHTML = items.map(it => highlightRowHtml(section, it)).join("");
+                items.forEach(it => {
+                    document.querySelector(`.btn-save-highlight[data-id="${it.id}"]`)
+                        .addEventListener("click", () => saveHighlight(section, it.id));
+                    document.querySelector(`.btn-delete-highlight[data-id="${it.id}"]`)
+                        .addEventListener("click", () => deleteHighlight(section, it.id));
+                });
+            } catch (err) {
+                showToast(err.message, true);
+            }
+        }
+
+        function highlightRowHtml(section, it) {
+            if (section === "strategic") {
+                return `
+                <div class="highlight-row" data-row-id="${it.id}">
+                    <img src="${productImg(it.product_id)}" alt="" onerror="this.style.visibility='hidden'">
+                    <div><strong>${it.product_name}</strong></div>
+                    <input type="text" class="f-badge" value="${it.badge_text || ""}" placeholder="Huy hiệu">
+                    <input type="text" class="f-price-tag" value="${it.price_tag || ""}" placeholder="Nhãn giá">
+                    <div class="btns">
+                        <button type="button" class="btn btn-primary btn-save-highlight" data-id="${it.id}">Lưu</button>
+                        <button type="button" class="btn btn-danger btn-delete-highlight" data-id="${it.id}">Xoá</button>
+                    </div>
+                </div>
+                <div class="highlight-row" style="margin-top:-8px;">
+                    <div></div>
+                    <textarea class="f-description" style="grid-column: span 3;" placeholder="Mô tả ngắn">${it.description || ""}</textarea>
+                    <div></div>
+                </div>`;
+            }
+            return `
+                <div class="highlight-row" data-row-id="${it.id}">
+                    <img src="${productImg(it.product_id)}" alt="" onerror="this.style.visibility='hidden'">
+                    <div><strong>${it.product_name}</strong></div>
+                    <input type="text" class="f-tag" value="${it.tag_text || ""}" placeholder="Tag trên ảnh">
+                    <input type="text" class="f-story-title" value="${it.story_title || ""}" placeholder="Tiêu đề câu chuyện">
+                    <div class="btns">
+                        <button type="button" class="btn btn-primary btn-save-highlight" data-id="${it.id}">Lưu</button>
+                        <button type="button" class="btn btn-danger btn-delete-highlight" data-id="${it.id}">Xoá</button>
+                    </div>
+                </div>
+                <div class="highlight-row" style="margin-top:-8px;">
+                    <div></div>
+                    <textarea class="f-description" style="grid-column: span 3;" placeholder="Nội dung câu chuyện">${it.description || ""}</textarea>
+                    <div></div>
+                </div>`;
+        }
+
+        async function saveHighlight(section, id) {
+            const row = document.querySelector(`[data-row-id="${id}"]`);
+            const body = {};
+            // Ô mô tả nằm ở khối ".highlight-row" ngay sau (xem highlightRowHtml()), không phải
+            // trong cùng khối với ảnh/tên/huy hiệu.
+            const descEl = row.nextElementSibling ? row.nextElementSibling.querySelector(".f-description") : null;
+            if (descEl) body.description = descEl.value.trim();
+
+            if (section === "strategic") {
+                body.badge_text = row.querySelector(".f-badge").value.trim();
+                body.price_tag = row.querySelector(".f-price-tag").value.trim();
+            } else {
+                body.tag_text = row.querySelector(".f-tag").value.trim();
+                body.story_title = row.querySelector(".f-story-title").value.trim();
+            }
+
+            try {
+                const res = await apiFetch(`/api/homepage/${id}`, { method: "PUT", body });
+                if (!res.ok) throw new Error((await res.json()).error || "Lưu thất bại");
+                showToast("Đã lưu");
+            } catch (err) {
+                showToast(err.message, true);
+            }
+        }
+
+        async function deleteHighlight(section, id) {
+            if (!confirm("Xoá sản phẩm này khỏi khu vực nổi bật?")) return;
+            try {
+                const res = await apiFetch(`/api/homepage/${id}`, { method: "DELETE" });
+                if (!res.ok) throw new Error((await res.json()).error || "Xoá thất bại");
+                showToast("Đã xoá");
+                loadHighlights(section);
+            } catch (err) {
+                showToast(err.message, true);
+            }
+        }
+    </script>
+</body>
+</html>

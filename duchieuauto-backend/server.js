@@ -16,6 +16,7 @@ const activityRoutes = require("./routes/activity");
 const productsRoutes = require("./routes/products");
 const adminsRoutes = require("./routes/admins");
 const reviewsRoutes = require("./routes/reviews");
+const homepageRoutes = require("./routes/homepage");
 
 const app = express();
 
@@ -110,6 +111,7 @@ app.use("/api/activity", activityRoutes);
 app.use("/api/products", productsRoutes);
 app.use("/api/admins", adminsRoutes);
 app.use("/api/reviews", reviewsRoutes);
+app.use("/api/homepage", homepageRoutes);
 
 // Ảnh upload (ảnh bìa bài viết, ảnh chèn nội dung) - phục vụ trực tiếp file tĩnh
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));

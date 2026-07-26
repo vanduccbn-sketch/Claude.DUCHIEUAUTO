@@ -93,6 +93,7 @@ function renderAdminNav(auth, activePage) {
     if (canEditPosts) links.push({ href: "bai-viet.html", label: "Bài Viết", key: "bai-viet" });
     if (canEditPosts) links.push({ href: "danh-muc.html", label: "Danh Mục / FAQ", key: "danh-muc" });
     if (canEditPosts) links.push({ href: "danh-gia.html", label: "Đánh Giá", key: "danh-gia" });
+    if (canEditPosts) links.push({ href: "trang-chu.html", label: "Trang Chủ", key: "trang-chu" });
     links.push({ href: "lien-he.html", label: "Liên Hệ / Đặt Lịch", key: "lien-he" });
     if (canManageAds) links.push({ href: "banner.html", label: "Banner", key: "banner" });
     if (canManageAds) links.push({ href: "cau-hinh.html", label: "Cấu Hình", key: "cau-hinh" });

@@ -53,7 +53,7 @@ Nội dung viết ra phải giúp khách hàng ở Buôn Ma Thuột (và các t�
 1. Vào **`https://claude-duchieuauto.onrender.com/admin/login.html`** — có thể mở từ bất kỳ máy tính/điện thoại nào, không cần cài đặt gì.
 2. Quản lý sẽ cấp cho bạn **tên đăng nhập + mật khẩu** riêng.
 3. Đăng nhập sai quá 5 lần sẽ bị khoá tạm 15 phút — nhập cẩn thận.
-4. **Quên mật khẩu?** Bấm link "Quên mật khẩu?" ngay dưới nút Đăng Nhập → nhập tên đăng nhập hoặc email → hệ thống gửi link đặt lại mật khẩu qua email (chỉ hoạt động nếu tài khoản đã có email — xem mục 9 để tự thêm email).
+4. **Quên mật khẩu?** Báo cho Super Admin — vào "Tài Khoản" → bấm "Đặt Lại MK" cho tài khoản của bạn (xem mục 10).
 5. Đăng nhập xong sẽ vào thẳng **Tổng Quan** — nơi xem nhanh số bài viết, sản phẩm, số liên hệ mới.
 
 ## 7. Viết bài Tin Tức
@@ -93,7 +93,7 @@ Nội dung viết ra phải giúp khách hàng ở Buôn Ma Thuột (và các t�
 
 Vào menu **"Tài Khoản"**:
 - **Đổi mật khẩu:** nhập mật khẩu hiện tại + mật khẩu mới (tối thiểu 8 ký tự) → bấm "Đổi Mật Khẩu". Nên đổi mật khẩu mặc định ngay lần đăng nhập đầu tiên.
-- **Cập nhật Email:** điền email cá nhân rồi bấm "Lưu Email" — **bắt buộc phải có email thì mới dùng được tính năng "Quên mật khẩu"** (mục 6.4). Nếu chưa có email, nhờ Super Admin cấp lại mật khẩu trực tiếp khi cần.
+- **Quên mật khẩu:** hệ thống không tự gửi email khôi phục — báo Super Admin để được cấp lại mật khẩu trực tiếp (xem mục 10).
 
 ## 10. Quản lý tài khoản admin khác (chỉ dành cho Super Admin)
 

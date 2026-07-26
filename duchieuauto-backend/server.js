@@ -80,15 +80,6 @@ app.use("/api/auth/login", rateLimit({
     legacyHeaders: false,
     message: { error: "Quá nhiều lần thử đăng nhập, vui lòng thử lại sau ít phút" }
 }));
-// Giới hạn chặt cho quên mật khẩu - mỗi request đều gửi email thật (tốn quota Gmail), tránh bị
-// lợi dụng spam email tới 1 địa chỉ hoặc dò quét username tồn tại.
-app.use("/api/auth/forgot-password", rateLimit({
-    windowMs: 15 * 60 * 1000,
-    max: 5,
-    standardHeaders: true,
-    legacyHeaders: false,
-    message: { error: "Quá nhiều yêu cầu đặt lại mật khẩu, vui lòng thử lại sau ít phút" }
-}));
 
 // Log truy cập bất thường (Phase 6) - ghi lại mọi request bị từ chối do thiếu/sai quyền (401/403)
 // kèm IP + đường dẫn, giúp phát hiện sớm nếu có ai dò quét /api hoặc /admin. Render tự thu log

@@ -42,21 +42,6 @@
             </form>
         </div>
 
-        <div class="inline-form-card">
-            <h2>Email Của Tôi (dùng để nhận link đặt lại mật khẩu nếu quên)</h2>
-            <form id="myEmailForm">
-                <div class="form-grid">
-                    <div class="form-group full">
-                        <label for="myEmail">Email</label>
-                        <input type="email" id="myEmail" placeholder="ten@gmail.com">
-                    </div>
-                </div>
-                <div class="editor-actions">
-                    <button type="submit" class="btn btn-secondary">Lưu Email</button>
-                </div>
-            </form>
-        </div>
-
         <div id="adminManagement" hidden>
             <div class="inline-form-card">
                 <h2>+ Thêm Tài Khoản Admin Mới</h2>
@@ -65,10 +50,6 @@
                         <div class="form-group">
                             <label for="newUsername">Tên đăng nhập</label>
                             <input type="text" id="newUsername" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="newAdminEmail">Email (để nhận link quên mật khẩu)</label>
-                            <input type="email" id="newAdminEmail">
                         </div>
                         <div class="form-group">
                             <label for="newAdminPassword">Mật khẩu tạm (tối thiểu 8 ký tự)</label>
@@ -95,14 +76,13 @@
                 <thead>
                     <tr>
                         <th>Tên đăng nhập</th>
-                        <th>Email</th>
                         <th>Vai trò</th>
                         <th>Ngày tạo</th>
                         <th>Thao tác</th>
                     </tr>
                 </thead>
                 <tbody id="adminsBody">
-                    <tr class="empty-row"><td colspan="5">Đang tải...</td></tr>
+                    <tr class="empty-row"><td colspan="4">Đang tải...</td></tr>
                 </tbody>
             </table>
         </div>
@@ -116,7 +96,6 @@
 
         if (auth) {
             renderAdminNav(auth, "tai-khoan");
-            loadMyEmail();
 
             if (auth.role === "super_admin") {
                 document.getElementById("adminManagement").hidden = false;
@@ -124,7 +103,6 @@
             }
 
             document.getElementById("changePasswordForm").addEventListener("submit", changePassword);
-            document.getElementById("myEmailForm").addEventListener("submit", saveMyEmail);
             document.getElementById("createAdminForm")?.addEventListener("submit", createAdmin);
         }
 
@@ -150,27 +128,6 @@
             }
         }
 
-        async function loadMyEmail() {
-            try {
-                const res = await apiFetch("/api/auth/me");
-                const me = await res.json();
-                document.getElementById("myEmail").value = me.email || "";
-            } catch (err) { /* im lặng - không chặn trang vì lỗi tải email hiện tại */ }
-        }
-
-        async function saveMyEmail(e) {
-            e.preventDefault();
-            const email = document.getElementById("myEmail").value.trim();
-            try {
-                const res = await apiFetch("/api/auth/my-email", { method: "PUT", body: { email } });
-                const data = await res.json();
-                if (!res.ok) throw new Error(data.error || "Lưu email thất bại");
-                showToast("Đã lưu email");
-            } catch (err) {
-                showToast(err.message, true);
-            }
-        }
-
         async function loadAdmins() {
             try {
                 const res = await apiFetch("/api/admins");
@@ -179,7 +136,6 @@
                 tbody.innerHTML = admins.map(a => `
                     <tr>
                         <td>${a.username}${a.id === auth.id ? " <span class=\"form-hint\">(bạn)</span>" : ""}</td>
-                        <td>${a.email || "-"}</td>
                         <td>
                             <select class="status-select" data-role-id="${a.id}" ${a.id === auth.id ? "disabled" : ""}>
                                 <option value="content" ${a.role === "content" ? "selected" : ""}>Content Admin</option>
@@ -253,7 +209,6 @@
             e.preventDefault();
             const payload = {
                 username: document.getElementById("newUsername").value.trim(),
-                email: document.getElementById("newAdminEmail").value.trim() || null,
                 password: document.getElementById("newAdminPassword").value,
                 role: document.getElementById("newAdminRole").value
             };

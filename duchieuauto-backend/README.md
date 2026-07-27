@@ -1,7 +1,7 @@
 # Đức Hiếu Auto — Backend CMS
 
 Node.js + Express + **Turso (libSQL)** - database SQLite chạy trên mạng (không phải file cục bộ).
-Xem quyết định kiến trúc đầy đủ tại `../ke-hoach-nhiem-vu-cms-bao-mat-2026-07-25.md` (Phase 0-5).
+Xem quyết định kiến trúc đầy đủ tại `../docs/ke-hoach-nhiem-vu-cms-bao-mat-2026-07-25.md` (Phase 0-5).
 
 **Vì sao Turso thay vì file SQLite cục bộ:** ban đầu dùng `node:sqlite` (module tích hợp sẵn
 Node.js, không cần biên dịch native) với file `.db` cục bộ. Khi chuẩn bị deploy lên Render.com mới

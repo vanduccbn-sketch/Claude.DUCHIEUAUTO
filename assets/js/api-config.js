@@ -4,7 +4,7 @@
    backend. Khi deploy backend thật lên Render.com, chỉ cần sửa đúng 1 dòng PRODUCTION_API_URL
    bên dưới, không cần sửa chỗ khác.
    ========================================================= */
-const PRODUCTION_API_URL = "https://claude-duchieuauto.onrender.com"; // Backend thật đã deploy trên Render (2026-07-26)
+const PRODUCTION_API_URL = "https://api.duchieuauto.vn"; // Domain thật qua Cloudflare (2026-07-27) - backend vẫn chạy trên Render, chỉ đổi tên miền trỏ vào (URL onrender.com cũ vẫn còn hoạt động song song, không dùng nữa trong code)
 
 const API_BASE_URL = (() => {
     const isLocal = ["localhost", "127.0.0.1"].includes(window.location.hostname);

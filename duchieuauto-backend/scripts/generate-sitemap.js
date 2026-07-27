@@ -16,7 +16,7 @@ const fs = require("fs");
 const path = require("path");
 const db = require("../models/db");
 
-const SITE_URL = "https://vanduccbn-sketch.github.io/Claude.DUCHIEUAUTO";
+const SITE_URL = "https://duchieuauto.vn";
 const OUTPUT_PATH = path.join(__dirname, "..", "..", "sitemap.xml");
 
 // Trang tĩnh cố định - không đổi thường xuyên, không lấy được từ database.

@@ -35,7 +35,7 @@ app.use(helmet({
             // productImageUrl() trong admin.js) và Cloudinary (ảnh upload mới qua CMS) - phát hiện
             // khi sửa lỗi ảnh vỡ trong trang quản trị sản phẩm: logic JS đúng nhưng CSP mặc định
             // chỉ cho "'self'" nên trình duyệt tự chặn tải ảnh từ 2 domain ngoài này.
-            imgSrc: ["'self'", "data:", "blob:", "https://vanduccbn-sketch.github.io", "https://res.cloudinary.com"],
+            imgSrc: ["'self'", "data:", "blob:", "https://duchieuauto.vn", "https://vanduccbn-sketch.github.io", "https://res.cloudinary.com"],
             connectSrc: ["'self'"],
             fontSrc: ["'self'", "data:"],
             objectSrc: ["'none'"],

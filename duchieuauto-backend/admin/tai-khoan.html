@@ -19,6 +19,23 @@
         </div>
 
         <div class="inline-form-card">
+            <h2>Email Của Tôi</h2>
+            <p class="desc">Dùng để nhận email đặt lại mật khẩu khi quên - nên điền để không phải nhờ Super Admin cấp lại thủ công.</p>
+            <form id="emailForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="myEmail">Email</label>
+                        <input type="email" id="myEmail" autocomplete="email">
+                    </div>
+                </div>
+                <div class="editor-actions">
+                    <button type="submit" class="btn btn-primary">Lưu Email</button>
+                    <span class="save-status" id="emailSaveStatus"></span>
+                </div>
+            </form>
+        </div>
+
+        <div class="inline-form-card">
             <h2>Đổi Mật Khẩu Của Tôi</h2>
             <form id="changePasswordForm">
                 <div class="form-grid">
@@ -102,8 +119,35 @@
                 loadAdmins();
             }
 
+            loadMyEmail();
+            document.getElementById("emailForm").addEventListener("submit", saveMyEmail);
             document.getElementById("changePasswordForm").addEventListener("submit", changePassword);
             document.getElementById("createAdminForm")?.addEventListener("submit", createAdmin);
+        }
+
+        async function loadMyEmail() {
+            try {
+                const res = await apiFetch("/api/auth/me");
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || "Không tải được thông tin tài khoản");
+                document.getElementById("myEmail").value = data.email || "";
+            } catch (err) {
+                showToast(err.message, true);
+            }
+        }
+
+        async function saveMyEmail(e) {
+            e.preventDefault();
+            const email = document.getElementById("myEmail").value.trim();
+            try {
+                const res = await apiFetch("/api/auth/my-email", { method: "PUT", body: { email } });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || "Lưu email thất bại");
+                showToast("Đã lưu email");
+                document.getElementById("emailSaveStatus").textContent = "Đã lưu lúc " + new Date().toLocaleTimeString("vi-VN");
+            } catch (err) {
+                showToast(err.message, true);
+            }
         }
 
         async function changePassword(e) {

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Quên Mật Khẩu | Đức Hiếu Auto</title>
+    <link rel="stylesheet" href="assets/admin.css">
+</head>
+<body>
+    <div class="login-page">
+        <div class="login-box">
+            <h1>Đức Hiếu Auto</h1>
+            <p class="sub">Đặt lại mật khẩu quản trị</p>
+
+            <form id="forgotForm">
+                <label for="email">Email đã đăng ký với tài khoản</label>
+                <input type="email" id="email" name="email" autocomplete="email" required>
+
+                <div class="login-error" id="formError"></div>
+                <div class="login-error" id="formSuccess" style="color:#1a7f37;background:#e6f4ea;"></div>
+
+                <button type="submit" id="submitBtn">Gửi Hướng Dẫn Đặt Lại</button>
+            </form>
+            <p style="text-align:center;margin-top:16px;font-size:13px;"><a href="login.html">Quay lại đăng nhập</a></p>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById("forgotForm");
+        const errorBox = document.getElementById("formError");
+        const successBox = document.getElementById("formSuccess");
+        const submitBtn = document.getElementById("submitBtn");
+
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            errorBox.classList.remove("show");
+            successBox.classList.remove("show");
+            submitBtn.disabled = true;
+            submitBtn.textContent = "Đang gửi...";
+
+            try {
+                const res = await fetch("/api/auth/forgot-password", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ email: document.getElementById("email").value.trim() })
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || "Có lỗi xảy ra, thử lại sau");
+
+                successBox.textContent = data.message;
+                successBox.classList.add("show");
+                form.reset();
+            } catch (err) {
+                errorBox.textContent = err.message;
+                errorBox.classList.add("show");
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = "Gửi Hướng Dẫn Đặt Lại";
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,6 +1,7 @@
 const express = require("express");
 const db = require("../models/db");
 const { requireRole } = require("../middleware/auth");
+const { verifyRecaptcha } = require("../utils/verify-recaptcha");
 
 const router = express.Router();
 
@@ -27,7 +28,7 @@ router.get("/", async (req, res) => {
 // POST /api/reviews - public, khách tự gửi đánh giá, luôn ở trạng thái "pending" chờ duyệt -
 // không hiện công khai ngay để chặn spam/nội dung không phù hợp trước khi khách khác nhìn thấy.
 router.post("/", async (req, res) => {
-    const { product_id, customer_name, rating, comment } = req.body;
+    const { product_id, customer_name, rating, comment, recaptcha_token } = req.body;
 
     if (!product_id || !customer_name || !comment) {
         return res.status(400).json({ error: "Thiếu thông tin bắt buộc" });
@@ -35,6 +36,9 @@ router.post("/", async (req, res) => {
     const ratingNum = parseInt(rating, 10);
     if (!Number.isInteger(ratingNum) || ratingNum < 1 || ratingNum > 5) {
         return res.status(400).json({ error: "Số sao phải từ 1 đến 5" });
+    }
+    if (!(await verifyRecaptcha(recaptcha_token))) {
+        return res.status(400).json({ error: "Xác thực reCAPTCHA thất bại, vui lòng thử lại" });
     }
 
     const product = await db.prepare("SELECT id FROM products WHERE id = ?").get(product_id);

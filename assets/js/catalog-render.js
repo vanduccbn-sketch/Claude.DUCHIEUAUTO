@@ -934,6 +934,13 @@ async function initProductReviews(productId) {
             return;
         }
 
+        const recaptchaToken = typeof grecaptcha !== "undefined" ? grecaptcha.getResponse() : "";
+        if (!recaptchaToken) {
+            errorEl.textContent = 'Vui lòng xác nhận reCAPTCHA "Tôi không phải người máy".';
+            errorEl.hidden = false;
+            return;
+        }
+
         const submitBtn = reviewForm.querySelector('button[type="submit"]');
         submitBtn.disabled = true;
         try {
@@ -944,7 +951,8 @@ async function initProductReviews(productId) {
                     product_id: productId,
                     customer_name: document.getElementById("rvName").value.trim(),
                     rating: selectedRating,
-                    comment: document.getElementById("rvComment").value.trim()
+                    comment: document.getElementById("rvComment").value.trim(),
+                    recaptcha_token: recaptchaToken
                 })
             });
             const data = await res.json();
@@ -957,6 +965,7 @@ async function initProductReviews(productId) {
         } catch (err) {
             errorEl.textContent = err.message;
             errorEl.hidden = false;
+            if (typeof grecaptcha !== "undefined") grecaptcha.reset();
         } finally {
             submitBtn.disabled = false;
         }

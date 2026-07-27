@@ -1,6 +1,7 @@
 const express = require("express");
 const db = require("../models/db");
 const { requireRole } = require("../middleware/auth");
+const { verifyRecaptcha } = require("../utils/verify-recaptcha");
 
 const router = express.Router();
 
@@ -52,10 +53,14 @@ router.get("/availability", async (req, res) => {
 
 // POST /api/contacts - nhận form liên hệ / đặt lịch hẹn từ frontend (public)
 router.post("/", async (req, res) => {
-    const { type, name, phone, email, service, preferred_date, preferred_time, message } = req.body;
+    const { type, name, phone, email, service, preferred_date, preferred_time, message, recaptcha_token } = req.body;
 
     if (!name || !phone) {
         return res.status(400).json({ error: "Thiếu họ tên hoặc số điện thoại" });
+    }
+
+    if (!(await verifyRecaptcha(recaptcha_token))) {
+        return res.status(400).json({ error: "Xác thực reCAPTCHA thất bại, vui lòng thử lại" });
     }
 
     const isBooking = type === "booking";

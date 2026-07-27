@@ -151,6 +151,37 @@ router.get("/admin/list", canEditCatalog, async (req, res) => {
     res.json(products);
 });
 
+// GET /api/products/admin/categories/overview - số liệu tổng quan từng danh mục (số sản phẩm đang
+// hiện/đã ẩn, số thương hiệu) cho trang Tổng Quan admin - trước đây chỉ có tổng số sản phẩm TOÀN
+// SITE, không tách được theo danh mục nên admin không hình dung được danh mục nào đang thiếu hàng.
+router.get("/admin/categories/overview", canEditCatalog, async (req, res) => {
+    const categories = await db.prepare("SELECT id, name, poster FROM categories ORDER BY sort_order").all();
+    const productCounts = await db.prepare(`
+        SELECT category_id, COUNT(*) as total, SUM(CASE WHEN hidden = 1 THEN 1 ELSE 0 END) as hidden_count
+        FROM products GROUP BY category_id
+    `).all();
+    const brandCounts = await db.prepare(`
+        SELECT category_id, COUNT(*) as total FROM brands WHERE hidden = 0 GROUP BY category_id
+    `).all();
+
+    const result = categories.map(cat => {
+        const pc = productCounts.find(x => x.category_id === cat.id);
+        const bc = brandCounts.find(x => x.category_id === cat.id);
+        const total = pc ? pc.total : 0;
+        const hiddenCount = pc ? pc.hidden_count : 0;
+        return {
+            id: cat.id,
+            name: cat.name,
+            poster: cat.poster,
+            totalProducts: total,
+            visibleProducts: total - hiddenCount,
+            hiddenProducts: hiddenCount,
+            brandCount: bc ? bc.total : 0
+        };
+    });
+    res.json(result);
+});
+
 // GET /api/products/admin/categories - danh sách danh mục + brand + type, dùng cho dropdown chọn
 // trong form thêm/sửa sản phẩm (kể cả brand/type ẩn, khác /catalog vốn chỉ trả phần công khai)
 router.get("/admin/categories", canEditCatalog, async (req, res) => {
@@ -169,6 +200,14 @@ router.get("/admin/categories", canEditCatalog, async (req, res) => {
         }))
     }));
     res.json(result);
+});
+
+// GET /api/products/admin/categories/:id - chi tiết đầy đủ 1 danh mục (kể cả các trường SEO) cho
+// form sửa - GET /admin/categories (list) chỉ trả id/name gọn cho dropdown, không đủ cho form này.
+router.get("/admin/categories/:id", canEditCatalog, async (req, res) => {
+    const cat = await db.prepare("SELECT * FROM categories WHERE id = ?").get(req.params.id);
+    if (!cat) return res.status(404).json({ error: "Không tìm thấy danh mục" });
+    res.json(cat);
 });
 
 // GET /api/products/admin/id/:id - chi tiết 1 sản phẩm cho form sửa (kể cả sản phẩm đang ẩn)
@@ -365,13 +404,16 @@ router.put("/admin/categories/:id", canEditCatalog, async (req, res) => {
         poster: req.body.poster !== undefined ? req.body.poster : existing.poster,
         seo_title: req.body.seo_title !== undefined ? req.body.seo_title : existing.seo_title,
         seo_meta_description: req.body.seo_meta_description !== undefined ? req.body.seo_meta_description : existing.seo_meta_description,
+        seo_image: req.body.seo_image !== undefined ? req.body.seo_image : existing.seo_image,
+        seo_image_caption: req.body.seo_image_caption !== undefined ? req.body.seo_image_caption : existing.seo_image_caption,
         seo_intro: req.body.seo_intro !== undefined ? req.body.seo_intro : existing.seo_intro,
         updated_at: new Date().toISOString(),
         id: existing.id
     };
     await db.prepare(`
         UPDATE categories SET name=@name, poster=@poster, seo_title=@seo_title,
-        seo_meta_description=@seo_meta_description, seo_intro=@seo_intro, updated_at=@updated_at
+        seo_meta_description=@seo_meta_description, seo_image=@seo_image, seo_image_caption=@seo_image_caption,
+        seo_intro=@seo_intro, updated_at=@updated_at
         WHERE id=@id
     `).run(merged);
 

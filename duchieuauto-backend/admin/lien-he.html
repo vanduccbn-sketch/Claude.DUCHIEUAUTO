@@ -16,6 +16,7 @@
                 <h1>Liên Hệ / Đặt Lịch</h1>
                 <p class="desc">Danh sách khách để lại thông tin qua form liên hệ và đặt lịch hẹn trên website.</p>
             </div>
+            <button type="button" class="btn btn-secondary" id="exportCsvBtn">Xuất CSV</button>
         </div>
 
         <table class="data-table">
@@ -42,13 +43,17 @@
         if (auth) {
             renderAdminNav(auth, "lien-he");
             loadContacts();
+            document.getElementById("exportCsvBtn").addEventListener("click", exportCsv);
         }
 
         const STATUS_LABEL = { new: "Mới", contacted: "Đã liên hệ", done: "Hoàn tất" };
+        const TYPE_LABEL = { booking: "Đặt lịch", maintenance: "Nhắc bảo dưỡng", contact: "Liên hệ" };
+        let lastContacts = [];
 
         async function loadContacts() {
             const res = await apiFetch("/api/contacts");
             const contacts = await res.json();
+            lastContacts = contacts;
             const tbody = document.getElementById("contactsBody");
 
             if (contacts.length === 0) {
@@ -58,7 +63,7 @@
 
             tbody.innerHTML = contacts.map(c => `
                 <tr>
-                    <td>${c.type === "booking" ? "Đặt lịch" : c.type === "maintenance" ? "Nhắc bảo dưỡng" : "Liên hệ"}</td>
+                    <td>${TYPE_LABEL[c.type] || "Liên hệ"}</td>
                     <td>${c.name}${c.message ? `<div class="form-hint">${c.message}</div>` : ""}</td>
                     <td><a href="tel:${c.phone}">${c.phone}</a></td>
                     <td>${c.service || "-"}${c.preferred_date ? `<div class="form-hint">${c.preferred_date} ${c.preferred_time || ""}</div>` : ""}</td>
@@ -104,6 +109,27 @@
             } catch (err) {
                 showToast(err.message, true);
             }
+        }
+
+        // Dùng ";" thay vì "," (Excel bản tiếng Việt mặc định coi ";" là dấu phân cách cột) + BOM
+        // UTF-8 đầu file để không lỗi font tiếng Việt khi mở bằng Excel - giống cách làm ở san-pham.html.
+        function exportCsv() {
+            if (lastContacts.length === 0) return showToast("Không có dữ liệu để xuất", true);
+            const rows = [["Loại", "Khách hàng", "SĐT", "Dịch vụ", "Ngày hẹn", "Giờ hẹn", "Ghi chú", "Thời gian gửi", "Trạng thái"]];
+            lastContacts.forEach(c => {
+                rows.push([
+                    TYPE_LABEL[c.type] || "Liên hệ", c.name, c.phone, c.service || "",
+                    c.preferred_date || "", c.preferred_time || "", c.message || "",
+                    formatDateTime(c.created_at), STATUS_LABEL[c.status] || c.status
+                ]);
+            });
+            const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(";")).join("\r\n");
+            const blob = new Blob(["﻿" + csv], { type: "text/csv;charset=utf-8;" });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = `lien-he-${new Date().toISOString().slice(0, 10)}.csv`;
+            link.click();
+            URL.revokeObjectURL(link.href);
         }
     </script>
 </body>

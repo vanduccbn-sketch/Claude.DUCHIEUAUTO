@@ -16,7 +16,10 @@
                 <h1>Sản Phẩm</h1>
                 <p class="desc">Quản lý toàn bộ sản phẩm, danh mục, thương hiệu - tìm kiếm hoặc lọc theo danh mục/thương hiệu bên dưới.</p>
             </div>
-            <a href="san-pham-form.html" class="btn btn-primary">+ Thêm Sản Phẩm</a>
+            <div style="display:flex;gap:10px;">
+                <button type="button" class="btn btn-secondary" id="exportCsvBtn">Xuất CSV</button>
+                <a href="san-pham-form.html" class="btn btn-primary">+ Thêm Sản Phẩm</a>
+            </div>
         </div>
 
         <div class="inline-form-card">
@@ -42,9 +45,17 @@
 
         <p class="form-hint" id="resultCount" style="margin-bottom:10px;"></p>
 
+        <div class="bulk-toolbar" id="bulkToolbar" hidden style="display:flex;align-items:center;gap:12px;background:var(--bg-alt);border-radius:var(--radius);box-shadow:var(--shadow);padding:12px 16px;margin-bottom:12px;">
+            <span id="bulkCount" style="font-size:13.5px;font-weight:600;"></span>
+            <button type="button" class="btn btn-secondary" id="bulkHideBtn">Ẩn Đã Chọn</button>
+            <button type="button" class="btn btn-secondary" id="bulkShowBtn">Hiện Đã Chọn</button>
+            <button type="button" class="btn btn-danger" id="bulkDeleteBtn">Xoá Đã Chọn</button>
+        </div>
+
         <table class="data-table">
             <thead>
                 <tr>
+                    <th style="width:32px;"><input type="checkbox" id="selectAllCheck"></th>
                     <th>Ảnh</th>
                     <th>Tên sản phẩm</th>
                     <th>Danh mục</th>
@@ -55,7 +66,7 @@
                 </tr>
             </thead>
             <tbody id="productsBody">
-                <tr class="empty-row"><td colspan="7">Đang tải...</td></tr>
+                <tr class="empty-row"><td colspan="8">Đang tải...</td></tr>
             </tbody>
         </table>
     </main>
@@ -68,7 +79,16 @@
 
         if (auth) {
             renderAdminNav(auth, "san-pham");
-            loadCategories().then(loadProducts);
+            // Cho phép trang Tổng Quan gửi thẳng sang đây kèm sẵn danh mục cần xem
+            // (?category=...), tránh phải bấm chọn lại trong dropdown.
+            const preselectCategory = new URLSearchParams(window.location.search).get("category");
+            loadCategories().then(() => {
+                if (preselectCategory) {
+                    document.getElementById("filterCategory").value = preselectCategory;
+                    populateBrandFilter();
+                }
+                loadProducts();
+            });
 
             document.getElementById("filterCategory").addEventListener("change", () => {
                 populateBrandFilter();
@@ -79,6 +99,15 @@
                 clearTimeout(debounceTimer);
                 debounceTimer = setTimeout(loadProducts, 350);
             });
+
+            document.getElementById("selectAllCheck").addEventListener("change", (e) => {
+                document.querySelectorAll(".row-check").forEach(c => { c.checked = e.target.checked; });
+                updateBulkToolbar();
+            });
+            document.getElementById("bulkHideBtn").addEventListener("click", () => bulkSetHidden(true));
+            document.getElementById("bulkShowBtn").addEventListener("click", () => bulkSetHidden(false));
+            document.getElementById("bulkDeleteBtn").addEventListener("click", bulkDelete);
+            document.getElementById("exportCsvBtn").addEventListener("click", exportCsv);
         }
 
         async function loadCategories() {
@@ -101,6 +130,8 @@
                 cat.brands.map(b => `<option value="${b.id}">${b.name}</option>`).join("");
         }
 
+        let lastProducts = [];
+
         async function loadProducts() {
             const category = document.getElementById("filterCategory").value;
             const brand = document.getElementById("filterBrand").value;
@@ -113,12 +144,15 @@
 
             const res = await apiFetch(`/api/products/admin/list?${params.toString()}`);
             const products = await res.json();
+            lastProducts = products;
             const tbody = document.getElementById("productsBody");
 
             document.getElementById("resultCount").textContent = `${products.length} sản phẩm`;
+            document.getElementById("selectAllCheck").checked = false;
+            updateBulkToolbar();
 
             if (products.length === 0) {
-                tbody.innerHTML = `<tr class="empty-row"><td colspan="7">Không tìm thấy sản phẩm nào.</td></tr>`;
+                tbody.innerHTML = `<tr class="empty-row"><td colspan="8">Không tìm thấy sản phẩm nào.</td></tr>`;
                 return;
             }
 
@@ -126,6 +160,7 @@
                 const img = productImageUrl(p);
                 return `
                 <tr>
+                    <td><input type="checkbox" class="row-check" data-id="${p.id}"></td>
                     <td><img class="thumb" src="${img}" alt="" onerror="this.style.visibility='hidden'"></td>
                     <td>${p.name}</td>
                     <td>${p.category_name}</td>
@@ -137,10 +172,13 @@
                         <button type="button" class="btn btn-danger" data-delete="${p.id}" data-name="${p.name.replace(/"/g, "&quot;")}">Xoá</button>
                     </td>
                 </tr>`;
-            }).join("") + (products.length > 100 ? `<tr class="empty-row"><td colspan="7">... còn ${products.length - 100} sản phẩm nữa, thu hẹp tìm kiếm để xem hết.</td></tr>` : "");
+            }).join("") + (products.length > 100 ? `<tr class="empty-row"><td colspan="8">... còn ${products.length - 100} sản phẩm nữa, thu hẹp tìm kiếm để xem hết.</td></tr>` : "");
 
             tbody.querySelectorAll("[data-delete]").forEach(btn => {
                 btn.addEventListener("click", () => deleteProduct(btn.dataset.delete, btn.dataset.name));
+            });
+            tbody.querySelectorAll(".row-check").forEach(c => {
+                c.addEventListener("change", updateBulkToolbar);
             });
         }
 
@@ -154,6 +192,64 @@
             } catch (err) {
                 showToast(err.message, true);
             }
+        }
+
+        function getSelectedIds() {
+            return Array.from(document.querySelectorAll(".row-check:checked")).map(c => c.dataset.id);
+        }
+
+        function updateBulkToolbar() {
+            const ids = getSelectedIds();
+            const toolbar = document.getElementById("bulkToolbar");
+            toolbar.hidden = ids.length === 0;
+            document.getElementById("bulkCount").textContent = `Đã chọn ${ids.length} sản phẩm`;
+        }
+
+        // Không có endpoint bulk riêng ở backend - gọi song song đúng endpoint PUT/DELETE từng sản
+        // phẩm đã có sẵn (giữ nguyên logic ghi activity log/kiểm tra quyền của endpoint đơn), tránh
+        // phải thêm route mới chỉ để làm việc y hệt hàng loạt.
+        async function bulkSetHidden(hidden) {
+            const ids = getSelectedIds();
+            if (ids.length === 0) return;
+            if (!confirm(`${hidden ? "Ẩn" : "Hiện"} ${ids.length} sản phẩm đã chọn?`)) return;
+            try {
+                await Promise.all(ids.map(id => apiFetch(`/api/products/${id}`, { method: "PUT", body: { hidden } })));
+                showToast(`Đã ${hidden ? "ẩn" : "hiện"} ${ids.length} sản phẩm`);
+                loadProducts();
+            } catch (err) {
+                showToast(err.message, true);
+            }
+        }
+
+        async function bulkDelete() {
+            const ids = getSelectedIds();
+            if (ids.length === 0) return;
+            if (!confirm(`Xoá ${ids.length} sản phẩm đã chọn? Không thể hoàn tác.`)) return;
+            try {
+                await Promise.all(ids.map(id => apiFetch(`/api/products/${id}`, { method: "DELETE" })));
+                showToast(`Đã xoá ${ids.length} sản phẩm`);
+                loadProducts();
+            } catch (err) {
+                showToast(err.message, true);
+            }
+        }
+
+        // Xuất đúng danh sách đang lọc/hiển thị (không riêng 100 dòng đầu trên bảng) - dùng dấu ";"
+        // thay vì "," vì Excel bản tiếng Việt mặc định coi ";" là dấu phân cách cột, dùng "," sẽ dồn
+        // hết vào 1 cột. Thêm BOM UTF-8 đầu file để Excel không hiển thị lỗi font tiếng Việt.
+        function exportCsv() {
+            if (lastProducts.length === 0) return showToast("Không có dữ liệu để xuất", true);
+            const rows = [["Tên sản phẩm", "Danh mục", "Thương hiệu", "Giá", "Trạng thái", "ID"]];
+            lastProducts.forEach(p => {
+                rows.push([p.name, p.category_name, p.brand_name, p.price || "", p.hidden ? "Đã ẩn" : "Đang hiện", p.id]);
+            });
+            const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(";")).join("\r\n");
+            const blob = new Blob(["﻿" + csv], { type: "text/csv;charset=utf-8;" });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = `san-pham-${new Date().toISOString().slice(0, 10)}.csv`;
+            link.click();
+            URL.revokeObjectURL(link.href);
         }
     </script>
 </body>

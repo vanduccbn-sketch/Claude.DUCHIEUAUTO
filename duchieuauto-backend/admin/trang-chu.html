@@ -7,11 +7,25 @@
     <title>Trang Chủ | Quản Trị Đức Hiếu Auto</title>
     <link rel="stylesheet" href="assets/admin.css">
     <style>
-        .highlight-row { display: grid; grid-template-columns: 60px 1fr 1fr 1fr auto; gap: 10px; margin-bottom: 12px; align-items: start; }
-        .highlight-row img { width: 52px; height: 52px; object-fit: cover; border-radius: 6px; background: #eee; }
-        .highlight-row input, .highlight-row textarea, .highlight-row select { padding: 8px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; font-family: inherit; width: 100%; }
-        .highlight-row textarea { resize: vertical; min-height: 44px; }
-        .highlight-row .btns { display: flex; flex-direction: column; gap: 6px; }
+        /* Mỗi mục nổi bật là 1 thẻ riêng (trước đây là hàng lưới dày đặc, khó phân biệt mục nọ với
+           mục kia) - ảnh lớn hơn để nhận diện nhanh, các trường nhóm rõ theo hàng, nút sắp xếp
+           lên/xuống điều chỉnh thứ tự hiển thị thật trên trang chủ (sort_order). */
+        .highlight-card {
+            display: grid; grid-template-columns: 72px 1fr auto; gap: 14px;
+            background: var(--bg-color); border: 1px solid var(--border); border-radius: 8px;
+            padding: 14px; margin-bottom: 14px; align-items: start;
+        }
+        .highlight-card img { width: 72px; height: 72px; object-fit: cover; border-radius: 6px; background: #eee; }
+        .highlight-card-fields { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+        .highlight-card-fields-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .highlight-card label { display: block; font-size: 11px; font-weight: 600; color: var(--text-muted); margin-bottom: 3px; }
+        .highlight-card input, .highlight-card textarea, .highlight-card select {
+            padding: 8px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; font-family: inherit; width: 100%;
+        }
+        .highlight-card textarea { resize: vertical; min-height: 44px; }
+        .highlight-card-side { display: flex; flex-direction: column; gap: 6px; align-items: stretch; }
+        .highlight-card-reorder { display: flex; gap: 4px; }
+        .highlight-card-reorder button { flex: 1; padding: 6px 8px; }
         .highlight-add-form { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr auto; gap: 10px; align-items: end; margin-bottom: 24px; }
         .highlight-add-form .form-group { margin: 0; }
         .highlight-add-form label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 4px; }
@@ -89,14 +103,17 @@
         }
 
         let allProducts = [];
+        let productOptionsHtml = "";
+        // Nhớ danh sách đã tải của mỗi khu vực để đổi chỗ (sort_order) khi bấm nút lên/xuống mà
+        // không phải gọi lại API chỉ để biết mục đứng trước/sau.
+        const loadedItems = { strategic: [], tech: [] };
 
         async function init() {
             const res = await apiFetch("/api/products/admin/list");
             allProducts = await res.json();
-            const optionsHtml = `<option value="">-- Chọn sản phẩm --</option>` +
-                allProducts.map(p => `<option value="${p.id}">${p.name} (${p.brand_name})</option>`).join("");
-            document.getElementById("strategicProductSelect").innerHTML = optionsHtml;
-            document.getElementById("techProductSelect").innerHTML = optionsHtml;
+            productOptionsHtml = allProducts.map(p => `<option value="${p.id}">${p.name} (${p.brand_name})</option>`).join("");
+            document.getElementById("strategicProductSelect").innerHTML = `<option value="">-- Chọn sản phẩm --</option>` + productOptionsHtml;
+            document.getElementById("techProductSelect").innerHTML = `<option value="">-- Chọn sản phẩm --</option>` + productOptionsHtml;
 
             loadHighlights("strategic");
             loadHighlights("tech");
@@ -143,66 +160,71 @@
             try {
                 const res = await apiFetch(`/api/homepage/admin/all?section=${section}`);
                 const items = await res.json();
+                loadedItems[section] = items;
                 if (items.length === 0) {
                     listEl.innerHTML = `<p class="form-hint">Chưa có sản phẩm nào trong khu vực này.</p>`;
                     return;
                 }
-                listEl.innerHTML = items.map(it => highlightRowHtml(section, it)).join("");
+                listEl.innerHTML = items.map((it, i) => highlightRowHtml(section, it, i, items.length)).join("");
                 items.forEach(it => {
                     document.querySelector(`.btn-save-highlight[data-id="${it.id}"]`)
                         .addEventListener("click", () => saveHighlight(section, it.id));
                     document.querySelector(`.btn-delete-highlight[data-id="${it.id}"]`)
                         .addEventListener("click", () => deleteHighlight(section, it.id));
+                    document.querySelectorAll(`.btn-move-up[data-id="${it.id}"]`)
+                        .forEach(b => b.addEventListener("click", () => moveHighlight(section, it.id, -1)));
+                    document.querySelectorAll(`.btn-move-down[data-id="${it.id}"]`)
+                        .forEach(b => b.addEventListener("click", () => moveHighlight(section, it.id, 1)));
                 });
             } catch (err) {
                 showToast(err.message, true);
             }
         }
 
-        function highlightRowHtml(section, it) {
-            if (section === "strategic") {
-                return `
-                <div class="highlight-row" data-row-id="${it.id}">
-                    <img src="${productImg(it.product_id)}" alt="" onerror="this.style.visibility='hidden'">
-                    <div><strong>${it.product_name}</strong></div>
-                    <input type="text" class="f-badge" value="${it.badge_text || ""}" placeholder="Huy hiệu">
-                    <input type="text" class="f-price-tag" value="${it.price_tag || ""}" placeholder="Nhãn giá">
-                    <div class="btns">
-                        <button type="button" class="btn btn-primary btn-save-highlight" data-id="${it.id}">Lưu</button>
-                        <button type="button" class="btn btn-danger btn-delete-highlight" data-id="${it.id}">Xoá</button>
-                    </div>
-                </div>
-                <div class="highlight-row" style="margin-top:-8px;">
-                    <div></div>
-                    <textarea class="f-description" style="grid-column: span 3;" placeholder="Mô tả ngắn">${it.description || ""}</textarea>
-                    <div></div>
-                </div>`;
-            }
+        function productSelectHtml(currentId) {
+            return `<option value="">-- Chọn sản phẩm --</option>` +
+                productOptionsHtml.replace(`value="${currentId}"`, `value="${currentId}" selected`);
+        }
+
+        function highlightRowHtml(section, it, index, total) {
+            const fieldsRow = section === "strategic"
+                ? `
+                    <div class="highlight-card-fields-row">
+                        <div><label>Huy hiệu</label><input type="text" class="f-badge" value="${it.badge_text || ""}" placeholder="VD: Giá Sốc"></div>
+                        <div><label>Nhãn giá</label><input type="text" class="f-price-tag" value="${it.price_tag || ""}" placeholder="VD: Ưu đãi hôm nay"></div>
+                    </div>`
+                : `
+                    <div class="highlight-card-fields-row">
+                        <div><label>Tag trên ảnh</label><input type="text" class="f-tag" value="${it.tag_text || ""}" placeholder="VD: PPF - Bảo Vệ Sơn Xe"></div>
+                        <div><label>Tiêu đề câu chuyện</label><input type="text" class="f-story-title" value="${it.story_title || ""}" placeholder="VD: Vết Xước Tự Biến Mất"></div>
+                    </div>`;
+
             return `
-                <div class="highlight-row" data-row-id="${it.id}">
+                <div class="highlight-card" data-row-id="${it.id}">
                     <img src="${productImg(it.product_id)}" alt="" onerror="this.style.visibility='hidden'">
-                    <div><strong>${it.product_name}</strong></div>
-                    <input type="text" class="f-tag" value="${it.tag_text || ""}" placeholder="Tag trên ảnh">
-                    <input type="text" class="f-story-title" value="${it.story_title || ""}" placeholder="Tiêu đề câu chuyện">
-                    <div class="btns">
+                    <div class="highlight-card-fields">
+                        <div><label>Sản phẩm</label><select class="f-product">${productSelectHtml(it.product_id)}</select></div>
+                        ${fieldsRow}
+                        <div><label>Mô tả</label><textarea class="f-description" placeholder="Mô tả ngắn">${it.description || ""}</textarea></div>
+                    </div>
+                    <div class="highlight-card-side">
+                        <div class="highlight-card-reorder">
+                            <button type="button" class="btn btn-secondary btn-move-up" data-id="${it.id}" ${index === 0 ? "disabled" : ""} title="Đưa lên trước">▲</button>
+                            <button type="button" class="btn btn-secondary btn-move-down" data-id="${it.id}" ${index === total - 1 ? "disabled" : ""} title="Đưa xuống sau">▼</button>
+                        </div>
                         <button type="button" class="btn btn-primary btn-save-highlight" data-id="${it.id}">Lưu</button>
                         <button type="button" class="btn btn-danger btn-delete-highlight" data-id="${it.id}">Xoá</button>
                     </div>
-                </div>
-                <div class="highlight-row" style="margin-top:-8px;">
-                    <div></div>
-                    <textarea class="f-description" style="grid-column: span 3;" placeholder="Nội dung câu chuyện">${it.description || ""}</textarea>
-                    <div></div>
                 </div>`;
         }
 
         async function saveHighlight(section, id) {
             const row = document.querySelector(`[data-row-id="${id}"]`);
-            const body = {};
-            // Ô mô tả nằm ở khối ".highlight-row" ngay sau (xem highlightRowHtml()), không phải
-            // trong cùng khối với ảnh/tên/huy hiệu.
-            const descEl = row.nextElementSibling ? row.nextElementSibling.querySelector(".f-description") : null;
-            if (descEl) body.description = descEl.value.trim();
+            const body = { description: row.querySelector(".f-description").value.trim() };
+
+            const productId = row.querySelector(".f-product").value;
+            if (!productId) return showToast("Vui lòng chọn sản phẩm", true);
+            body.product_id = productId;
 
             if (section === "strategic") {
                 body.badge_text = row.querySelector(".f-badge").value.trim();
@@ -216,6 +238,28 @@
                 const res = await apiFetch(`/api/homepage/${id}`, { method: "PUT", body });
                 if (!res.ok) throw new Error((await res.json()).error || "Lưu thất bại");
                 showToast("Đã lưu");
+                loadHighlights(section);
+            } catch (err) {
+                showToast(err.message, true);
+            }
+        }
+
+        // Đổi chỗ sort_order với mục liền kề (lên: mục phía trước, xuống: mục phía sau) - đơn giản
+        // hơn kéo-thả (không cần thêm thư viện, đúng tinh thần dự án hiện tại không phụ thuộc
+        // ngoài nếu tự viết vài chục dòng là đủ).
+        async function moveHighlight(section, id, direction) {
+            const items = loadedItems[section];
+            const idx = items.findIndex(it => it.id === id);
+            const swapIdx = idx + direction;
+            if (swapIdx < 0 || swapIdx >= items.length) return;
+
+            const a = items[idx], b = items[swapIdx];
+            try {
+                await Promise.all([
+                    apiFetch(`/api/homepage/${a.id}`, { method: "PUT", body: { sort_order: b.sort_order } }),
+                    apiFetch(`/api/homepage/${b.id}`, { method: "PUT", body: { sort_order: a.sort_order } })
+                ]);
+                loadHighlights(section);
             } catch (err) {
                 showToast(err.message, true);
             }

@@ -10,6 +10,9 @@
         .faq-row { display: grid; grid-template-columns: 1fr 1fr auto; gap: 10px; margin-bottom: 12px; align-items: start; }
         .faq-row textarea { padding: 9px 11px; border: 1px solid var(--border); border-radius: 6px; font-size: 13.5px; font-family: inherit; resize: vertical; min-height: 60px; }
         .faq-row .btn { align-self: start; }
+        .cat-img-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 16px; }
+        .cat-img-preview { width: 100%; height: 120px; border: 1px dashed var(--border); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 12.5px; overflow: hidden; margin-bottom: 8px; }
+        .cat-img-preview img { width: 100%; height: 100%; object-fit: cover; }
     </style>
 </head>
 <body>
@@ -32,9 +35,52 @@
             </div>
         </div>
 
+        <div id="categoryEditor" hidden>
+            <div class="settings-section">
+                <h2>Thông Tin & SEO Danh Mục</h2>
+                <div class="form-group">
+                    <label for="catName">Tên danh mục</label>
+                    <input type="text" id="catName">
+                </div>
+                <div class="cat-img-grid">
+                    <div class="form-group">
+                        <label>Ảnh đại diện danh mục (hiện ở lưới danh mục trang chủ)</label>
+                        <div class="cat-img-preview" id="catPosterPreview">Chưa có ảnh</div>
+                        <input type="file" id="catPosterInput" accept="image/jpeg,image/png,image/webp,image/gif" style="display:none;">
+                        <button type="button" class="btn btn-secondary" id="catPosterBtn" style="width:100%;">Chọn Ảnh</button>
+                        <input type="hidden" id="catPosterUrl">
+                    </div>
+                    <div class="form-group">
+                        <label>Ảnh minh hoạ SEO (hiện ở đầu trang danh mục)</label>
+                        <div class="cat-img-preview" id="catSeoImgPreview">Chưa có ảnh</div>
+                        <input type="file" id="catSeoImgInput" accept="image/jpeg,image/png,image/webp,image/gif" style="display:none;">
+                        <button type="button" class="btn btn-secondary" id="catSeoImgBtn" style="width:100%;">Chọn Ảnh</button>
+                        <input type="hidden" id="catSeoImgUrl">
+                        <input type="text" id="catSeoImgCaption" placeholder="Chú thích ảnh (tuỳ chọn)" style="margin-top:8px;">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="catSeoTitle">Meta Title (thẻ tiêu đề SEO)</label>
+                    <input type="text" id="catSeoTitle" placeholder="VD: Độ Âm Thanh Ô Tô Đắk Lắk - Loa JBL, Infinity Chính Hãng | Đức Hiếu Auto">
+                </div>
+                <div class="form-group">
+                    <label for="catSeoDesc">Meta Description (thẻ mô tả SEO, 120-160 ký tự)</label>
+                    <textarea id="catSeoDesc" rows="2"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="catSeoIntro">Đoạn giới thiệu (hiện đầu trang danh mục, giúp SEO/GEO)</label>
+                    <textarea id="catSeoIntro" rows="6"></textarea>
+                </div>
+                <button type="button" class="btn btn-primary" id="saveCategoryBtn">Lưu Thông Tin Danh Mục</button>
+            </div>
+        </div>
+
         <div id="faqEditor" hidden>
-            <div id="faqList"></div>
-            <button type="button" class="btn btn-secondary" id="addFaqBtn">+ Thêm Câu Hỏi</button>
+            <div class="settings-section">
+                <h2>Câu Hỏi Thường Gặp (FAQ)</h2>
+                <div id="faqList"></div>
+                <button type="button" class="btn btn-secondary" id="addFaqBtn">+ Thêm Câu Hỏi</button>
+            </div>
         </div>
     </main>
 
@@ -56,21 +102,113 @@
                 const categories = await res.json();
                 categorySelect.innerHTML = `<option value="">-- Chọn danh mục --</option>` +
                     categories.map(c => `<option value="${c.id}">${c.name}</option>`).join("");
+
+                // Cho phép trang Tổng Quan gửi thẳng sang đây kèm sẵn danh mục cần xem (?category=...).
+                const preselect = new URLSearchParams(window.location.search).get("category");
+                if (preselect && categories.some(c => c.id === preselect)) {
+                    categorySelect.value = preselect;
+                    categorySelect.dispatchEvent(new Event("change"));
+                }
             } catch (err) {
                 showToast(err.message, true);
             }
         }
 
+        const categoryEditor = document.getElementById("categoryEditor");
+
         categorySelect.addEventListener("change", () => {
             if (categorySelect.value) {
                 faqEditor.hidden = false;
+                categoryEditor.hidden = false;
                 loadFaqs(categorySelect.value);
+                loadCategoryDetail(categorySelect.value);
             } else {
                 faqEditor.hidden = true;
+                categoryEditor.hidden = true;
             }
         });
 
         document.getElementById("addFaqBtn").addEventListener("click", () => addFaqRow(null, "", ""));
+
+        async function loadCategoryDetail(id) {
+            try {
+                const res = await apiFetch(`/api/products/admin/categories/${id}`);
+                if (!res.ok) throw new Error("Không tải được thông tin danh mục");
+                const cat = await res.json();
+
+                document.getElementById("catName").value = cat.name || "";
+                document.getElementById("catSeoTitle").value = cat.seo_title || "";
+                document.getElementById("catSeoDesc").value = cat.seo_meta_description || "";
+                document.getElementById("catSeoIntro").value = cat.seo_intro || "";
+                document.getElementById("catSeoImgCaption").value = cat.seo_image_caption || "";
+
+                document.getElementById("catPosterUrl").value = cat.poster || "";
+                document.getElementById("catPosterPreview").innerHTML = cat.poster
+                    ? `<img src="${cat.poster}" alt="" onerror="this.parentElement.textContent='Chưa có ảnh'">` : "Chưa có ảnh";
+
+                document.getElementById("catSeoImgUrl").value = cat.seo_image || "";
+                document.getElementById("catSeoImgPreview").innerHTML = cat.seo_image
+                    ? `<img src="${cat.seo_image}" alt="" onerror="this.parentElement.textContent='Chưa có ảnh'">` : "Chưa có ảnh";
+            } catch (err) {
+                showToast(err.message, true);
+            }
+        }
+
+        async function uploadCategoryImage(fileInputId, urlInputId, previewId, btnId) {
+            const file = document.getElementById(fileInputId).files[0];
+            if (!file) return;
+            const btn = document.getElementById(btnId);
+            btn.disabled = true;
+            btn.textContent = "Đang tải lên...";
+            try {
+                const fd = new FormData();
+                fd.append("image", file);
+                fd.append("purpose", "content");
+                const res = await apiFetch("/api/uploads", { method: "POST", body: fd });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || "Tải ảnh thất bại");
+                document.getElementById(urlInputId).value = data.url;
+                document.getElementById(previewId).innerHTML = `<img src="${data.url}" alt="">`;
+            } catch (err) {
+                showToast(err.message, true);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = "Chọn Ảnh";
+            }
+        }
+
+        document.getElementById("catPosterBtn").addEventListener("click", () => document.getElementById("catPosterInput").click());
+        document.getElementById("catPosterInput").addEventListener("change", () => uploadCategoryImage("catPosterInput", "catPosterUrl", "catPosterPreview", "catPosterBtn"));
+        document.getElementById("catSeoImgBtn").addEventListener("click", () => document.getElementById("catSeoImgInput").click());
+        document.getElementById("catSeoImgInput").addEventListener("change", () => uploadCategoryImage("catSeoImgInput", "catSeoImgUrl", "catSeoImgPreview", "catSeoImgBtn"));
+
+        document.getElementById("saveCategoryBtn").addEventListener("click", async () => {
+            const id = categorySelect.value;
+            if (!id) return;
+            const body = {
+                name: document.getElementById("catName").value.trim(),
+                poster: document.getElementById("catPosterUrl").value || null,
+                seo_title: document.getElementById("catSeoTitle").value.trim() || null,
+                seo_meta_description: document.getElementById("catSeoDesc").value.trim() || null,
+                seo_image: document.getElementById("catSeoImgUrl").value || null,
+                seo_image_caption: document.getElementById("catSeoImgCaption").value.trim() || null,
+                seo_intro: document.getElementById("catSeoIntro").value.trim() || null
+            };
+            if (!body.name) return showToast("Tên danh mục không được để trống", true);
+
+            try {
+                const res = await apiFetch(`/api/products/admin/categories/${id}`, { method: "PUT", body });
+                if (!res.ok) throw new Error((await res.json()).error || "Lưu thất bại");
+                showToast("Đã lưu thông tin danh mục");
+                // Tải lại dropdown để cập nhật tên mới (nếu vừa đổi) nhưng vẫn giữ đúng danh mục
+                // đang chọn - loadCategories() dựng lại toàn bộ <option> nên sẽ mất lựa chọn hiện
+                // tại nếu không gán lại thủ công.
+                await loadCategories();
+                categorySelect.value = id;
+            } catch (err) {
+                showToast(err.message, true);
+            }
+        });
 
         async function loadFaqs(categoryId) {
             faqList.innerHTML = `<p class="form-hint">Đang tải...</p>`;

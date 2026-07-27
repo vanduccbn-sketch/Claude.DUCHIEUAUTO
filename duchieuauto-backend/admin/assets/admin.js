@@ -112,6 +112,21 @@ function renderAdminNav(auth, activePage) {
         </div>
     `;
     document.getElementById("logoutBtn").addEventListener("click", logout);
+    loadContactBadge();
+}
+
+// Số liên hệ/đặt lịch "Mới" chưa xử lý - hiện thẳng trên menu để không phải bấm vào mới biết có
+// khách mới, tránh bỏ sót (mọi vai trò admin đều xem được trang Liên Hệ nên gọi chung ở đây).
+async function loadContactBadge() {
+    try {
+        const res = await apiFetch("/api/contacts");
+        if (!res.ok) return;
+        const contacts = await res.json();
+        const newCount = contacts.filter(c => c.status === "new").length;
+        if (newCount === 0) return;
+        const link = document.querySelector('.admin-nav a[href="lien-he.html"]');
+        if (link) link.insertAdjacentHTML("beforeend", ` <span class="nav-badge">${newCount}</span>`);
+    } catch (err) { /* chỉ là gợi ý phụ - lỗi không chặn nav chính */ }
 }
 
 function showToast(message, isError) {

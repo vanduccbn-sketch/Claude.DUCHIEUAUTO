@@ -6,6 +6,21 @@
     <meta name="robots" content="noindex, nofollow">
     <title>Tổng Quan | Quản Trị Đức Hiếu Auto</title>
     <link rel="stylesheet" href="assets/admin.css">
+    <style>
+        .category-overview-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 14px; margin-bottom: 32px; }
+        .category-overview-card {
+            background: var(--bg-alt); border-radius: var(--radius); box-shadow: var(--shadow);
+            padding: 16px 18px; display: flex; flex-direction: column; gap: 10px;
+        }
+        .category-overview-card h3 { font-size: 14.5px; margin: 0; }
+        .category-overview-nums { display: flex; gap: 16px; }
+        .category-overview-nums div { text-align: left; }
+        .category-overview-nums .num { font-size: 20px; font-weight: 700; color: var(--primary); line-height: 1.1; }
+        .category-overview-nums .label { font-size: 11px; color: var(--text-muted); }
+        .category-overview-nums .num.warn { color: #b7791f; }
+        .category-overview-links { display: flex; gap: 12px; margin-top: auto; }
+        .category-overview-links a { font-size: 12.5px; }
+    </style>
 </head>
 <body>
     <div class="admin-topbar" id="adminTopbar"></div>
@@ -20,6 +35,11 @@
 
         <div class="stat-grid" id="statGrid">
             <div class="stat-card"><div class="num">…</div><div class="label">Đang tải</div></div>
+        </div>
+
+        <div id="categoryOverview" hidden>
+            <h2 style="font-size:16px;margin-bottom:14px;">Tổng Quan Theo Danh Mục</h2>
+            <div class="category-overview-grid" id="categoryOverviewGrid"></div>
         </div>
 
         <div id="postsOnly">
@@ -60,6 +80,8 @@
                     const products = await productsRes.json();
                     stats.push({ num: products.length, label: "Tổng sản phẩm" });
 
+                    loadCategoryOverview();
+
                     const res = await apiFetch("/api/posts/admin/all");
                     const posts = await res.json();
                     const publishedCount = posts.filter(p => p.published).length;
@@ -82,6 +104,32 @@
                     .map(s => `<div class="stat-card"><div class="num">${s.num}</div><div class="label">${s.label}</div></div>`)
                     .join("");
             })().catch(err => showToast(err.message, true));
+        }
+
+        // Trước đây chỉ có tổng số sản phẩm TOÀN SITE ở statGrid, không thấy được danh mục nào
+        // đang thiếu hàng/thiếu thương hiệu - thêm lưới tổng quan theo từng danh mục, kèm link
+        // nhanh sang trang Sản Phẩm/FAQ đã lọc sẵn đúng danh mục đó.
+        async function loadCategoryOverview() {
+            try {
+                const res = await apiFetch("/api/products/admin/categories/overview");
+                const categories = await res.json();
+                document.getElementById("categoryOverview").hidden = false;
+                document.getElementById("categoryOverviewGrid").innerHTML = categories.map(c => `
+                    <div class="category-overview-card">
+                        <h3>${c.name}</h3>
+                        <div class="category-overview-nums">
+                            <div><div class="num">${c.visibleProducts}</div><div class="label">Đang hiện</div></div>
+                            <div><div class="num ${c.hiddenProducts > 0 ? "warn" : ""}">${c.hiddenProducts}</div><div class="label">Đã ẩn</div></div>
+                            <div><div class="num">${c.brandCount}</div><div class="label">Thương hiệu</div></div>
+                        </div>
+                        <div class="category-overview-links">
+                            <a href="san-pham.html?category=${c.id}">Xem sản phẩm →</a>
+                            <a href="danh-muc.html?category=${c.id}">Sửa FAQ →</a>
+                        </div>
+                    </div>`).join("");
+            } catch (err) {
+                showToast(err.message, true);
+            }
         }
     </script>
 </body>

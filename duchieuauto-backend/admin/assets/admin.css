@@ -38,6 +38,7 @@ button { font-family: inherit; cursor: pointer; }
 .admin-nav { display: flex; align-items: center; gap: 4px; }
 .admin-nav a { color: #c9ccd1; padding: 8px 14px; border-radius: 6px; font-size: 14px; }
 .admin-nav a:hover, .admin-nav a.active { color: #fff; background: rgba(255,255,255,0.08); text-decoration: none; }
+.nav-badge { display: inline-flex; align-items: center; justify-content: center; min-width: 18px; height: 18px; padding: 0 5px; margin-left: 4px; background: var(--primary); color: #fff; border-radius: 20px; font-size: 10.5px; font-weight: 700; vertical-align: 2px; }
 .admin-user { display: flex; align-items: center; gap: 12px; font-size: 13px; color: #c9ccd1; }
 .role-badge { background: var(--m-blue); color: #fff; padding: 3px 9px; border-radius: 20px; font-size: 11px; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; }
 .role-badge.super_admin { background: var(--primary); }

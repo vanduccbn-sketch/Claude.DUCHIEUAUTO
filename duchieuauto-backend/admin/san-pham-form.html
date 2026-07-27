@@ -126,6 +126,7 @@
 
         <div class="editor-actions">
             <button type="button" class="btn btn-primary" id="saveBtn">Lưu Sản Phẩm</button>
+            <button type="button" class="btn btn-secondary" id="previewBtn">Xem Trước</button>
             <span class="save-status" id="saveStatus"></span>
         </div>
     </main>
@@ -162,6 +163,7 @@
             document.getElementById("imageBtn").addEventListener("click", () => document.getElementById("imageInput").click());
             document.getElementById("imageInput").addEventListener("change", uploadImage);
             document.getElementById("saveBtn").addEventListener("click", saveProduct);
+            document.getElementById("previewBtn").addEventListener("click", openPreview);
 
             if (!productId) addSpecRow("", "");
         }
@@ -391,6 +393,50 @@
                 saveBtn.disabled = false;
                 saveBtn.textContent = "Lưu Sản Phẩm";
             }
+        }
+
+        // Xem trước bằng dữ liệu ĐANG ĐIỀN trên form (chưa cần lưu) - cùng cơ chế với nút Xem
+        // Trước ở form bài viết (bai-viet-form.html), viết riêng cho sản phẩm vì bố cục khác hẳn
+        // (giá + bảng thông số + mô tả chi tiết, không phải bài viết dài).
+        function openPreview() {
+            const name = document.getElementById("name").value.trim() || "(Chưa có tên sản phẩm)";
+            const price = document.getElementById("price").value.trim();
+            const description = document.getElementById("description").value.trim();
+            const image = document.getElementById("imageUrl").value;
+            const detail = quill.getText().trim() ? quill.root.innerHTML : "";
+            const specs = collectSpecs();
+
+            const specsHtml = specs.length ? `
+                <table class="specs-table">
+                    ${specs.map(([k, v]) => `<tr><th>${k}</th><td>${v}</td></tr>`).join("")}
+                </table>` : "";
+
+            const win = window.open("", "_blank");
+            win.document.write(`
+                <!DOCTYPE html><html lang="vi"><head><meta charset="UTF-8">
+                <title>Xem trước: ${name}</title>
+                <style>
+                    body { font-family: Arial, sans-serif; max-width: 760px; margin: 40px auto; padding: 0 20px; color: #1a1a1f; line-height: 1.75; }
+                    h1 { font-size: 26px; margin-bottom: 8px; }
+                    .price { font-size: 20px; font-weight: 700; color: #e4002b; margin-bottom: 16px; }
+                    .desc { color: #444; margin-bottom: 20px; }
+                    img { max-width: 100%; border-radius: 8px; }
+                    .cover { width: 100%; max-height: 360px; object-fit: cover; border-radius: 10px; margin-bottom: 20px; }
+                    .specs-table { width: 100%; border-collapse: collapse; margin-bottom: 24px; }
+                    .specs-table th, .specs-table td { text-align: left; padding: 8px 12px; border-bottom: 1px solid #eee; font-size: 14px; }
+                    .specs-table th { color: #666; font-weight: 600; width: 40%; }
+                    .preview-note { background: #fff8e6; color: #b7791f; padding: 10px 16px; border-radius: 6px; font-size: 13px; margin-bottom: 24px; }
+                </style></head><body>
+                <div class="preview-note">Đây là bản xem trước - chưa lưu vào hệ thống.</div>
+                ${image ? `<img class="cover" src="${image}" alt="">` : ""}
+                <h1>${name}</h1>
+                ${price ? `<div class="price">${price}</div>` : ""}
+                ${description ? `<p class="desc">${description}</p>` : ""}
+                ${specsHtml}
+                ${detail}
+                </body></html>
+            `);
+            win.document.close();
         }
     </script>
 </body>

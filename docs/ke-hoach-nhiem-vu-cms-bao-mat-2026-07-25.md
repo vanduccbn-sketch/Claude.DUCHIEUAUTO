@@ -267,14 +267,22 @@ thật. Ưu tiên ảnh chính hãng từ nhà phân phối/nhà sản xuất (P
 
 ### Đợt 1 - làm ngay được, đã đủ dữ liệu thật trong DB (không cần chờ user)
 
-**11.1 — Viết lại SEO cho 8 trang danh mục sản phẩm**
-- Sửa `seo_title`/`seo_meta_description`/`seo_intro`/`category_sections`/`category_faqs` của từng
-  category qua `PUT /api/products/admin/categories/:id` (route đã có sẵn).
-- Viết dựa trên đúng thương hiệu/sản phẩm/giá thật đang có trong từng danh mục (đã có sẵn qua
-  `/api/products/catalog`), không viết chung chung/sáo rỗng, theo khung hỏi-đáp trực tiếp (chuẩn
-  GEO) đã thống nhất ở Phase 9.1.
-- Làm mẫu 1 danh mục trước, cho user duyệt tông giọng, rồi mới làm hàng loạt 7 danh mục còn lại -
-  tránh viết sai tông rồi phải sửa lại cả 8.
+**11.1 — [ĐIỀU CHỈNH sau khi kiểm tra thật] Bổ sung FAQ cho 8 trang danh mục, KHÔNG viết lại nội
+dung SEO hiện có**
+- Kiểm tra trực tiếp `seo_title`/`seo_meta_description`/`seo_intro`/`category_sections` của cả 8
+  danh mục qua `/api/products/catalog` (2026-07-27): nội dung đã tốt sẵn - cụ thể, có chuyên môn
+  thật, không sáo rỗng/AI (VD đoạn DSP/cách âm 2 lớp Butyl ở danh mục Âm Thanh) - **không cần viết
+  lại**, tránh phá nội dung tốt đã có.
+- Khoảng trống thật duy nhất giống nhau ở cả 8/8 danh mục: **`category_faqs` = 0 câu hỏi**. Đây là
+  định dạng hỏi-đáp trực tiếp giúp AI (ChatGPT, Google AI Overview) dễ trích dẫn nhất theo đúng
+  nguyên tắc GEO đã thống nhất ở Phase 9.1, hiện chưa danh mục nào có.
+- Việc cần làm: viết 3-5 câu hỏi FAQ thật cho mỗi danh mục (dựa trên nội dung/chuyên môn đã có sẵn
+  trong `seo_intro`/`category_sections`, không bịa thêm số liệu mới), lưu qua
+  `POST /api/products/admin/categories/:id/faqs` (route đã có sẵn).
+- Làm mẫu 1 danh mục trước cho user duyệt, rồi mới làm hàng loạt 7 danh mục còn lại.
+- **[x] HOÀN THÀNH 2026-07-27** - đã đăng đủ 4 FAQ/danh mục cho cả 8/8 danh mục (32 câu hỏi), xác
+  minh qua `/api/products/catalog` production. User duyệt mẫu danh mục Âm Thanh trước, góp ý sửa
+  2 câu hỏi (cách âm dán cửa có đủ chưa, so sánh 4 loa vs 8-10 loa) trước khi làm hàng loạt.
 
 **11.2 — CTA "Đặt Lịch Hẹn" / "Nhắc Bảo Dưỡng" nổi bật trên trang chủ**
 - Thêm 1 khối CTA 2 nút lớn vào `index.html` (giữa/sau section `#service` hoặc `#tech`), dẫn tới

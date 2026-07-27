@@ -121,6 +121,12 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 // (site chính nằm ở domain GitHub Pages riêng, hoàn toàn tách biệt).
 app.use("/admin", express.static(path.join(__dirname, "admin")));
 
+// Vào thẳng gốc domain (VD subdomain riêng admin.duchieuauto.vn trỏ cùng service Render này) thì
+// tự chuyển tới trang đăng nhập thay vì rơi vào 404 - tiện đặt subdomain riêng cho gọn URL mà
+// không cần sửa gì thêm ở code (Express không phân biệt xử lý theo hostname, mọi domain trỏ vào
+// cùng service này đều phục vụ y hệt nội dung, chỉ khác đường dẫn gốc "/" hiển thị đẹp hơn).
+app.get("/", (req, res) => res.redirect("/admin/login.html"));
+
 // Chặn index toàn bộ domain backend này (API + trang quản trị đều không cần lên Google) - domain
 // công khai cho khách truy cập vẫn là GitHub Pages, robots.txt của domain đó xử lý riêng.
 app.get("/robots.txt", (req, res) => {

@@ -79,7 +79,10 @@
         }
 
         const STATUS_LABEL = { new: "Mới", contacted: "Đã liên hệ", done: "Hoàn tất" };
-        const TYPE_LABEL = { booking: "Đặt lịch", maintenance: "Nhắc bảo dưỡng", contact: "Liên hệ" };
+        const TYPE_LABEL = {
+            booking: "Đặt lịch", maintenance: "Nhắc bảo dưỡng", contact: "Liên hệ",
+            facebook_lead: "Facebook Lead Ads", tiktok_lead: "TikTok Lead Ads"
+        };
         let lastContacts = [];
 
         async function loadContacts() {

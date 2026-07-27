@@ -63,7 +63,7 @@ router.post("/", async (req, res) => {
     // chất "khách để lại thông tin, admin theo dõi/liên hệ lại") thay vì tạo bảng riêng gần như
     // giống hệt. Hiện chưa có cơ chế TỰ ĐỘNG gửi nhắc (email/SMS) - admin xem danh sách và chủ động
     // gọi lại theo đúng thời điểm, xem huong-dan-viet-content-nhan-vien.md.
-    const VALID_TYPES = ["booking", "contact", "maintenance"];
+    const VALID_TYPES = ["booking", "contact", "maintenance", "facebook_lead", "tiktok_lead"];
     const resolvedType = VALID_TYPES.includes(type) ? type : "contact";
 
     // Chặn trùng lịch ngay ở server (không chỉ dựa vào UI đã disable) - phòng trường hợp 2 khách

@@ -17,6 +17,7 @@ const productsRoutes = require("./routes/products");
 const adminsRoutes = require("./routes/admins");
 const reviewsRoutes = require("./routes/reviews");
 const homepageRoutes = require("./routes/homepage");
+const leadsRoutes = require("./routes/leads");
 
 const app = express();
 
@@ -44,7 +45,14 @@ app.use(helmet({
     }
 }));
 
-app.use(express.json());
+// { verify } lưu lại byte gốc của body vào req.rawBody TRƯỚC khi parse thành JSON - cần cho
+// routes/leads.js xác minh chữ ký HMAC của webhook Facebook (X-Hub-Signature-256), vốn phải ký
+// trên đúng byte gốc chứ không phải object đã parse lại (parse rồi stringify lại có thể lệch
+// khoảng trắng/thứ tự field, làm sai lệch HMAC). Không ảnh hưởng các route khác, chỉ thêm 1
+// thuộc tính phụ vào req.
+app.use(express.json({
+    verify: (req, res, buf) => { req.rawBody = buf; }
+}));
 
 // Luôn cho phép domain frontend thật (FRONTEND_ORIGIN) + luôn cho phép localhost/127.0.0.1 bất kể
 // môi trường - phục vụ test frontend tĩnh trên máy dev mà không phải nới lỏng CORS cho domain lạ.
@@ -107,6 +115,7 @@ app.use("/api/contacts", contactsRoutes);
 app.use("/api/uploads", uploadsRoutes);
 app.use("/api/settings", settingsRoutes);
 app.use("/api/banners", bannersRoutes);
+app.use("/api/leads", leadsRoutes);
 app.use("/api/activity", activityRoutes);
 app.use("/api/products", productsRoutes);
 app.use("/api/admins", adminsRoutes);

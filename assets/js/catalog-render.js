@@ -15,6 +15,20 @@ function seoAlt(name) {
     return `${name} - Đức Hiếu Auto Buôn Ma Thuột`;
 }
 
+// BẮT BUỘC dùng cho nội dung do khách công khai tự nhập (tên/nhận xét đánh giá sản phẩm) trước
+// khi chèn vào innerHTML - phát hiện lúc rà soát bảo mật (2026-07-27): ai cũng gửi được đánh giá
+// chứa HTML/script độc qua form công khai, trước đó bị chèn thẳng không escape (stored XSS ảnh
+// hưởng mọi khách xem trang sản phẩm đó, không chỉ riêng admin).
+function escapeHtml(str) {
+    if (str === null || str === undefined) return "";
+    return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+}
+
 // Ảnh responsive - trả về thuộc tính srcset/sizes để trình duyệt tải đúng kích thước ảnh theo
 // màn hình, thay vì luôn tải nguyên bản ảnh gốc (800-1200px) dù chỉ hiển thị ~300px trong lưới sản
 // phẩm trên di động. 2 nguồn ảnh khác nhau nên xử lý khác nhau:
@@ -850,10 +864,10 @@ function reviewItemHtml(r) {
     return `
         <div class="review-item">
             <div class="review-item-header">
-                <strong>${r.customer_name}</strong>
+                <strong>${escapeHtml(r.customer_name)}</strong>
                 <span class="review-stars">${starsHtml(r.rating)}</span>
             </div>
-            <p class="review-comment">${r.comment}</p>
+            <p class="review-comment">${escapeHtml(r.comment)}</p>
             <span class="review-date">${date}</span>
         </div>`;
 }

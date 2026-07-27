@@ -5,6 +5,22 @@
    ========================================================= */
 const STORAGE_KEY = "dha_admin";
 
+// BẮT BUỘC dùng cho MỌI nội dung do khách công khai tự nhập (tên/SĐT/ghi chú liên hệ, tên/nhận
+// xét đánh giá sản phẩm...) trước khi chèn vào innerHTML - nếu không, ai cũng gửi được 1 form công
+// khai (liên hệ/đặt lịch/đánh giá) chứa HTML/script độc, và admin mở đúng trang quản lý tương ứng
+// (Liên Hệ/Đánh Giá) sẽ VÔ TÌNH TỰ CHẠY SCRIPT đó trong phiên đăng nhập của mình - đủ để đánh cắp
+// token admin lưu trong localStorage. Phát hiện thật lúc rà soát bảo mật (2026-07-27) - trước đó
+// mọi field khách nhập đều bị chèn thẳng không escape.
+function escapeHtml(str) {
+    if (str === null || str === undefined) return "";
+    return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+}
+
 // Domain frontend thật (GitHub Pages) - dùng để dựng URL ảnh cho 242 sản phẩm gốc chưa từng
 // upload lại qua Cloudinary (cột "image" trong DB đang NULL, quy ước cũ là đường dẫn tương đối
 // "assets/images/products/<id>/anh-1.jpg" CHỈ đúng khi mở từ chính domain frontend - trang admin

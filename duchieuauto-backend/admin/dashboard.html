@@ -20,6 +20,11 @@
         .category-overview-nums .num.warn { color: #b7791f; }
         .category-overview-links { display: flex; gap: 12px; margin-top: auto; }
         .category-overview-links a { font-size: 12.5px; }
+        .content-warnings { background: #fff8e6; border: 1px solid #f0d896; border-radius: var(--radius); padding: 16px 20px; margin-bottom: 24px; }
+        .content-warnings h2 { font-size: 14.5px; margin-bottom: 10px; color: #8a6416; }
+        .content-warnings ul { margin: 0; padding-left: 20px; }
+        .content-warnings li { font-size: 13px; color: #6b4e14; margin-bottom: 6px; }
+        .content-warnings a { color: var(--m-blue); }
     </style>
 </head>
 <body>
@@ -35,6 +40,11 @@
 
         <div class="stat-grid" id="statGrid">
             <div class="stat-card"><div class="num">…</div><div class="label">Đang tải</div></div>
+        </div>
+
+        <div class="content-warnings" id="contentWarnings" hidden>
+            <h2>⚠ Nội Dung Cần Bổ Sung</h2>
+            <ul id="contentWarningsList"></ul>
         </div>
 
         <div id="categoryOverview" hidden>
@@ -127,9 +137,31 @@
                             <a href="danh-muc.html?category=${c.id}">Sửa FAQ →</a>
                         </div>
                     </div>`).join("");
+
+                renderContentWarnings(categories);
             } catch (err) {
                 showToast(err.message, true);
             }
+        }
+
+        // Gom các dấu hiệu nội dung chưa hoàn chỉnh (thiếu mô tả sản phẩm, danh mục chưa có FAQ)
+        // thành 1 danh sách cảnh báo ngay đầu Tổng Quan - trước đây phải tự nhớ hoặc rà tay từng
+        // sản phẩm/danh mục mới biết chỗ nào còn thiếu.
+        function renderContentWarnings(categories) {
+            const items = [];
+            categories.forEach(c => {
+                if (c.missingDescCount > 0) {
+                    items.push(`<strong>${c.missingDescCount}</strong> sản phẩm chưa có mô tả ngắn trong danh mục <a href="san-pham.html?category=${c.id}">${c.name}</a>`);
+                }
+                if (c.faqCount === 0) {
+                    items.push(`Danh mục <a href="danh-muc.html?category=${c.id}">${c.name}</a> chưa có câu hỏi FAQ nào`);
+                }
+            });
+
+            const wrap = document.getElementById("contentWarnings");
+            if (items.length === 0) { wrap.hidden = true; return; }
+            wrap.hidden = false;
+            document.getElementById("contentWarningsList").innerHTML = items.map(t => `<li>${t}</li>`).join("");
         }
     </script>
 </body>

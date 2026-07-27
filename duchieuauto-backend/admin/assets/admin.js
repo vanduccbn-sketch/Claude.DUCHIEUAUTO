@@ -105,6 +105,10 @@ function renderAdminNav(auth, activePage) {
         <nav class="admin-nav">
             ${links.map(l => `<a href="${l.href}" class="${l.key === activePage ? "active" : ""}">${l.label}</a>`).join("")}
         </nav>
+        <div class="global-search" id="globalSearch">
+            <input type="text" id="globalSearchInput" placeholder="Tìm sản phẩm, bài viết, liên hệ...">
+            <div class="global-search-results" id="globalSearchResults" hidden></div>
+        </div>
         <div class="admin-user">
             <span>${auth.username}</span>
             <span class="role-badge ${auth.role}">${ROLE_LABEL[auth.role] || auth.role}</span>
@@ -113,6 +117,79 @@ function renderAdminNav(auth, activePage) {
     `;
     document.getElementById("logoutBtn").addEventListener("click", logout);
     loadContactBadge();
+    initGlobalSearch(canEditPosts);
+}
+
+// Tìm nhanh xuyên suốt admin (sản phẩm/bài viết/liên hệ) ngay từ ô tìm kiếm trên thanh menu -
+// trước đây phải vào đúng trang rồi mới lọc/tìm được, không tra cứu nhanh 1 khách hàng hay 1 sản
+// phẩm cụ thể từ bất kỳ đâu. Chỉ tìm sản phẩm/bài viết nếu role đang xem được (canEditPosts) -
+// liên hệ thì mọi role admin đều xem được nên luôn tìm.
+function initGlobalSearch(canEditPosts) {
+    const input = document.getElementById("globalSearchInput");
+    const resultsBox = document.getElementById("globalSearchResults");
+    let debounceTimer;
+
+    input.addEventListener("input", () => {
+        clearTimeout(debounceTimer);
+        const q = input.value.trim();
+        if (q.length < 2) { resultsBox.hidden = true; return; }
+        debounceTimer = setTimeout(() => runGlobalSearch(q, canEditPosts, resultsBox), 300);
+    });
+
+    document.addEventListener("click", (e) => {
+        if (!document.getElementById("globalSearch").contains(e.target)) resultsBox.hidden = true;
+    });
+}
+
+async function runGlobalSearch(q, canEditPosts, resultsBox) {
+    resultsBox.hidden = false;
+    resultsBox.innerHTML = `<div class="gsr-loading">Đang tìm...</div>`;
+
+    const sections = [];
+    try {
+        if (canEditPosts) {
+            const [productsRes, postsRes] = await Promise.all([
+                apiFetch(`/api/products/admin/list?q=${encodeURIComponent(q)}`),
+                apiFetch("/api/posts/admin/all")
+            ]);
+            const products = await productsRes.json();
+            const posts = (await postsRes.json()).filter(p => p.title.toLowerCase().includes(q.toLowerCase()));
+
+            if (products.length) sections.push({
+                label: "Sản phẩm", items: products.slice(0, 6).map(p => ({
+                    text: `${p.name} <span class="gsr-sub">${p.brand_name}</span>`,
+                    href: `san-pham-form.html?id=${p.id}`
+                }))
+            });
+            if (posts.length) sections.push({
+                label: "Bài viết", items: posts.slice(0, 6).map(p => ({
+                    text: p.title, href: `bai-viet-form.html?id=${p.id}`
+                }))
+            });
+        }
+
+        const contactsRes = await apiFetch("/api/contacts");
+        const contacts = (await contactsRes.json()).filter(c =>
+            c.name.toLowerCase().includes(q.toLowerCase()) || c.phone.includes(q)
+        );
+        if (contacts.length) sections.push({
+            label: "Liên hệ / Đặt lịch", items: contacts.slice(0, 6).map(c => ({
+                text: `${c.name} <span class="gsr-sub">${c.phone}</span>`, href: "lien-he.html"
+            }))
+        });
+
+        if (sections.length === 0) {
+            resultsBox.innerHTML = `<div class="gsr-empty">Không tìm thấy kết quả cho "${q}"</div>`;
+            return;
+        }
+        resultsBox.innerHTML = sections.map(s => `
+            <div class="gsr-section">
+                <div class="gsr-label">${s.label}</div>
+                ${s.items.map(i => `<a href="${i.href}" class="gsr-item">${i.text}</a>`).join("")}
+            </div>`).join("");
+    } catch (err) {
+        resultsBox.innerHTML = `<div class="gsr-empty">Lỗi tìm kiếm, vui lòng thử lại.</div>`;
+    }
 }
 
 // Số liên hệ/đặt lịch "Mới" chưa xử lý - hiện thẳng trên menu để không phải bấm vào mới biết có

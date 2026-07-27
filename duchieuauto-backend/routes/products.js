@@ -157,16 +157,21 @@ router.get("/admin/list", canEditCatalog, async (req, res) => {
 router.get("/admin/categories/overview", canEditCatalog, async (req, res) => {
     const categories = await db.prepare("SELECT id, name, poster FROM categories ORDER BY sort_order").all();
     const productCounts = await db.prepare(`
-        SELECT category_id, COUNT(*) as total, SUM(CASE WHEN hidden = 1 THEN 1 ELSE 0 END) as hidden_count
+        SELECT category_id, COUNT(*) as total, SUM(CASE WHEN hidden = 1 THEN 1 ELSE 0 END) as hidden_count,
+               SUM(CASE WHEN description IS NULL OR TRIM(description) = '' THEN 1 ELSE 0 END) as missing_desc_count
         FROM products GROUP BY category_id
     `).all();
     const brandCounts = await db.prepare(`
         SELECT category_id, COUNT(*) as total FROM brands WHERE hidden = 0 GROUP BY category_id
     `).all();
+    const faqCounts = await db.prepare(`
+        SELECT category_id, COUNT(*) as total FROM category_faqs GROUP BY category_id
+    `).all();
 
     const result = categories.map(cat => {
         const pc = productCounts.find(x => x.category_id === cat.id);
         const bc = brandCounts.find(x => x.category_id === cat.id);
+        const fc = faqCounts.find(x => x.category_id === cat.id);
         const total = pc ? pc.total : 0;
         const hiddenCount = pc ? pc.hidden_count : 0;
         return {
@@ -176,7 +181,9 @@ router.get("/admin/categories/overview", canEditCatalog, async (req, res) => {
             totalProducts: total,
             visibleProducts: total - hiddenCount,
             hiddenProducts: hiddenCount,
-            brandCount: bc ? bc.total : 0
+            missingDescCount: pc ? pc.missing_desc_count : 0,
+            brandCount: bc ? bc.total : 0,
+            faqCount: fc ? fc.total : 0
         };
     });
     res.json(result);

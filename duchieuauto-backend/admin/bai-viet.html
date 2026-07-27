@@ -19,9 +19,17 @@
             <a href="bai-viet-form.html" class="btn btn-primary">+ Viết Bài Mới</a>
         </div>
 
+        <div class="bulk-toolbar" id="bulkToolbar" hidden style="display:flex;align-items:center;gap:12px;background:var(--bg-alt);border-radius:var(--radius);box-shadow:var(--shadow);padding:12px 16px;margin-bottom:12px;">
+            <span id="bulkCount" style="font-size:13.5px;font-weight:600;"></span>
+            <button type="button" class="btn btn-secondary" id="bulkPublishBtn">Đăng Đã Chọn</button>
+            <button type="button" class="btn btn-secondary" id="bulkUnpublishBtn">Chuyển Nháp</button>
+            <button type="button" class="btn btn-danger" id="bulkDeleteBtn">Xoá Đã Chọn</button>
+        </div>
+
         <table class="data-table">
             <thead>
                 <tr>
+                    <th style="width:32px;"><input type="checkbox" id="selectAllCheck"></th>
                     <th>Tiêu đề</th>
                     <th>Danh mục</th>
                     <th>Trạng thái</th>
@@ -30,7 +38,7 @@
                 </tr>
             </thead>
             <tbody id="postsBody">
-                <tr class="empty-row"><td colspan="5">Đang tải...</td></tr>
+                <tr class="empty-row"><td colspan="6">Đang tải...</td></tr>
             </tbody>
         </table>
     </main>
@@ -41,6 +49,14 @@
         if (auth) {
             renderAdminNav(auth, "bai-viet");
             loadPosts();
+
+            document.getElementById("selectAllCheck").addEventListener("change", (e) => {
+                document.querySelectorAll(".row-check").forEach(c => { c.checked = e.target.checked; });
+                updateBulkToolbar();
+            });
+            document.getElementById("bulkPublishBtn").addEventListener("click", () => bulkSetPublished(true));
+            document.getElementById("bulkUnpublishBtn").addEventListener("click", () => bulkSetPublished(false));
+            document.getElementById("bulkDeleteBtn").addEventListener("click", bulkDelete);
         }
 
         async function loadPosts() {
@@ -48,13 +64,17 @@
             const posts = await res.json();
             const tbody = document.getElementById("postsBody");
 
+            document.getElementById("selectAllCheck").checked = false;
+            updateBulkToolbar();
+
             if (posts.length === 0) {
-                tbody.innerHTML = `<tr class="empty-row"><td colspan="5">Chưa có bài viết nào. Bấm "+ Viết Bài Mới" để bắt đầu.</td></tr>`;
+                tbody.innerHTML = `<tr class="empty-row"><td colspan="6">Chưa có bài viết nào. Bấm "+ Viết Bài Mới" để bắt đầu.</td></tr>`;
                 return;
             }
 
             tbody.innerHTML = posts.map(p => `
                 <tr>
+                    <td><input type="checkbox" class="row-check" data-id="${p.id}"></td>
                     <td>${p.title}</td>
                     <td>${p.category || "-"}</td>
                     <td><span class="badge ${p.published ? "badge-published" : "badge-draft"}">${p.published ? "Đã đăng" : "Bản nháp"}</span></td>
@@ -69,6 +89,9 @@
             tbody.querySelectorAll("[data-delete]").forEach(btn => {
                 btn.addEventListener("click", () => deletePost(btn.dataset.delete, btn.dataset.title));
             });
+            tbody.querySelectorAll(".row-check").forEach(c => {
+                c.addEventListener("change", updateBulkToolbar);
+            });
         }
 
         async function deletePost(id, title) {
@@ -77,6 +100,43 @@
                 const res = await apiFetch(`/api/posts/${id}`, { method: "DELETE" });
                 if (!res.ok) throw new Error((await res.json()).error || "Xoá thất bại");
                 showToast("Đã xoá bài viết");
+                loadPosts();
+            } catch (err) {
+                showToast(err.message, true);
+            }
+        }
+
+        function getSelectedIds() {
+            return Array.from(document.querySelectorAll(".row-check:checked")).map(c => c.dataset.id);
+        }
+
+        function updateBulkToolbar() {
+            const ids = getSelectedIds();
+            const toolbar = document.getElementById("bulkToolbar");
+            toolbar.hidden = ids.length === 0;
+            document.getElementById("bulkCount").textContent = `Đã chọn ${ids.length} bài viết`;
+        }
+
+        async function bulkSetPublished(published) {
+            const ids = getSelectedIds();
+            if (ids.length === 0) return;
+            if (!confirm(`${published ? "Đăng" : "Chuyển về nháp"} ${ids.length} bài viết đã chọn?`)) return;
+            try {
+                await Promise.all(ids.map(id => apiFetch(`/api/posts/${id}`, { method: "PUT", body: { published } })));
+                showToast(`Đã ${published ? "đăng" : "chuyển nháp"} ${ids.length} bài viết`);
+                loadPosts();
+            } catch (err) {
+                showToast(err.message, true);
+            }
+        }
+
+        async function bulkDelete() {
+            const ids = getSelectedIds();
+            if (ids.length === 0) return;
+            if (!confirm(`Xoá ${ids.length} bài viết đã chọn? Không thể hoàn tác.`)) return;
+            try {
+                await Promise.all(ids.map(id => apiFetch(`/api/posts/${id}`, { method: "DELETE" })));
+                showToast(`Đã xoá ${ids.length} bài viết`);
                 loadPosts();
             } catch (err) {
                 showToast(err.message, true);

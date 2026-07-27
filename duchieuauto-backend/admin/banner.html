@@ -52,6 +52,7 @@
                 </div>
                 <div class="editor-actions">
                     <button type="submit" class="btn btn-primary" id="submitBtn">Lưu Banner</button>
+                    <button type="button" class="btn btn-secondary" id="previewBtn">Xem Trước</button>
                     <button type="button" class="btn btn-secondary" id="cancelEditBtn" style="display:none;">Huỷ Sửa</button>
                     <span class="save-status" id="saveStatus"></span>
                 </div>
@@ -159,6 +160,40 @@
         }
 
         document.getElementById("cancelEditBtn").addEventListener("click", resetForm);
+        document.getElementById("previewBtn").addEventListener("click", openPreview);
+
+        // Xem trước bằng dữ liệu ĐANG ĐIỀN trên form (chưa cần lưu) - cùng cơ chế Xem Trước đã có
+        // ở form bài viết/sản phẩm. Banner hiện hiển thị dạng ảnh full-width kèm link khi bấm vào
+        // (đúng quy ước hero banner phổ biến) - CHÚ Ý: hệ thống banner hiện chưa được gắn vào trang
+        // công khai nào (không có slider nào đọc GET /api/banners), nên đây là hình dung hợp lý
+        // theo đúng dữ liệu đang có (ảnh + link + tiêu đề nội bộ), không phải bản xem trước khớp
+        // 100% với 1 giao diện thật đã tồn tại.
+        function openPreview() {
+            const title = document.getElementById("title").value.trim() || "(Chưa có tiêu đề)";
+            const image = document.getElementById("image").value;
+            const link = document.getElementById("link").value.trim();
+            if (!image) return showToast("Chọn ảnh banner trước khi xem trước", true);
+
+            const win = window.open("", "_blank");
+            win.document.write(`
+                <!DOCTYPE html><html lang="vi"><head><meta charset="UTF-8">
+                <title>Xem trước banner: ${title}</title>
+                <style>
+                    body { font-family: Arial, sans-serif; margin: 0; background: #f4f4f6; }
+                    .preview-note { background: #fff8e6; color: #b7791f; padding: 10px 16px; font-size: 13px; }
+                    .banner-wrap { display: block; max-width: 1400px; margin: 24px auto; }
+                    .banner-wrap img { width: 100%; border-radius: 10px; display: block; }
+                    .info { max-width: 1400px; margin: 0 auto 24px; padding: 0 16px; color: #666; font-size: 13px; }
+                </style></head><body>
+                <div class="preview-note">Đây là bản xem trước - chưa lưu vào hệ thống.</div>
+                ${link ? `<a class="banner-wrap" href="${link}" target="_blank">` : `<div class="banner-wrap">`}
+                    <img src="${image}" alt="${title}">
+                ${link ? `</a>` : `</div>`}
+                <div class="info">${link ? `Bấm vào banner sẽ mở: ${link}` : "Banner này không có link khi bấm vào."}</div>
+                </body></html>
+            `);
+            win.document.close();
+        }
 
         document.getElementById("bannerForm").addEventListener("submit", async (e) => {
             e.preventDefault();

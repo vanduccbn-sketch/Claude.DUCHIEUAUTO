@@ -18,6 +18,33 @@
             </div>
         </div>
 
+        <div class="inline-form-card">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="filterAdmin">Tài khoản</label>
+                    <select id="filterAdmin">
+                        <option value="">-- Tất cả --</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="filterAction">Loại hành động</label>
+                    <select id="filterAction">
+                        <option value="">-- Tất cả --</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="filterFrom">Từ ngày</label>
+                    <input type="date" id="filterFrom">
+                </div>
+                <div class="form-group">
+                    <label for="filterTo">Đến ngày</label>
+                    <input type="date" id="filterTo">
+                </div>
+            </div>
+        </div>
+
+        <p class="form-hint" id="resultCount" style="margin-bottom:10px;"></p>
+
         <table class="data-table">
             <thead>
                 <tr>
@@ -39,37 +66,82 @@
         if (auth) {
             renderAdminNav(auth, "lich-su");
             loadLogs();
+
+            ["filterAdmin", "filterAction"].forEach(id => {
+                document.getElementById(id).addEventListener("change", renderFilteredLogs);
+            });
+            ["filterFrom", "filterTo"].forEach(id => {
+                document.getElementById(id).addEventListener("change", renderFilteredLogs);
+            });
         }
 
         const ACTION_LABEL = {
             create_post: "Tạo bài viết", update_post: "Sửa bài viết", delete_post: "Xoá bài viết",
-            update_contact_status: "Đổi trạng thái liên hệ",
+            create_product: "Tạo sản phẩm", update_product: "Sửa sản phẩm", delete_product: "Xoá sản phẩm",
+            create_brand: "Tạo thương hiệu", create_brand_type: "Tạo loại/thương hiệu con",
+            update_category: "Sửa thông tin danh mục",
+            create_category_faq: "Tạo câu hỏi FAQ", update_category_faq: "Sửa câu hỏi FAQ", delete_category_faq: "Xoá câu hỏi FAQ",
+            create_homepage_highlight: "Thêm sản phẩm nổi bật trang chủ", update_homepage_highlight: "Sửa sản phẩm nổi bật trang chủ", delete_homepage_highlight: "Xoá sản phẩm nổi bật trang chủ",
+            update_review_status: "Duyệt/ẩn đánh giá", delete_review: "Xoá đánh giá",
+            update_contact_status: "Đổi trạng thái liên hệ", delete_contact: "Xoá liên hệ/đặt lịch",
             create_banner: "Tạo banner", update_banner: "Sửa banner", delete_banner: "Xoá banner",
-            update_settings: "Sửa cấu hình chung"
+            update_settings: "Sửa cấu hình chung",
+            create_admin: "Tạo tài khoản admin", update_admin: "Sửa tài khoản admin", delete_admin: "Xoá tài khoản admin",
+            reset_admin_password: "Đặt lại mật khẩu admin khác", change_own_password: "Đổi mật khẩu bản thân"
         };
+
+        let allLogs = [];
 
         async function loadLogs() {
             try {
-                const res = await apiFetch("/api/activity");
-                const logs = await res.json();
-                const tbody = document.getElementById("logBody");
+                const res = await apiFetch("/api/activity?limit=500");
+                allLogs = await res.json();
 
-                if (logs.length === 0) {
-                    tbody.innerHTML = `<tr class="empty-row"><td colspan="4">Chưa có hoạt động nào.</td></tr>`;
-                    return;
-                }
+                const admins = [...new Set(allLogs.map(l => l.admin_username))].sort();
+                document.getElementById("filterAdmin").innerHTML = `<option value="">-- Tất cả --</option>` +
+                    admins.map(a => `<option value="${a}">${a}</option>`).join("");
 
-                tbody.innerHTML = logs.map(l => `
-                    <tr>
-                        <td>${formatDateTime(l.created_at)}</td>
-                        <td>${l.admin_username}</td>
-                        <td>${ACTION_LABEL[l.action] || l.action}</td>
-                        <td>${l.target || "-"}</td>
-                    </tr>
-                `).join("");
+                const actions = [...new Set(allLogs.map(l => l.action))].sort();
+                document.getElementById("filterAction").innerHTML = `<option value="">-- Tất cả --</option>` +
+                    actions.map(a => `<option value="${a}">${ACTION_LABEL[a] || a}</option>`).join("");
+
+                renderFilteredLogs();
             } catch (err) {
                 showToast(err.message, true);
             }
+        }
+
+        function renderFilteredLogs() {
+            const adminFilter = document.getElementById("filterAdmin").value;
+            const actionFilter = document.getElementById("filterAction").value;
+            const fromDate = document.getElementById("filterFrom").value;
+            const toDate = document.getElementById("filterTo").value;
+
+            const logs = allLogs.filter(l => {
+                if (adminFilter && l.admin_username !== adminFilter) return false;
+                if (actionFilter && l.action !== actionFilter) return false;
+                const logDate = l.created_at.slice(0, 10);
+                if (fromDate && logDate < fromDate) return false;
+                if (toDate && logDate > toDate) return false;
+                return true;
+            });
+
+            const tbody = document.getElementById("logBody");
+            document.getElementById("resultCount").textContent = `${logs.length} / ${allLogs.length} hoạt động (tối đa 500 gần nhất)`;
+
+            if (logs.length === 0) {
+                tbody.innerHTML = `<tr class="empty-row"><td colspan="4">Không có hoạt động nào khớp bộ lọc.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = logs.map(l => `
+                <tr>
+                    <td>${formatDateTime(l.created_at)}</td>
+                    <td>${l.admin_username}</td>
+                    <td>${ACTION_LABEL[l.action] || l.action}</td>
+                    <td>${l.target || "-"}</td>
+                </tr>
+            `).join("");
         }
     </script>
 </body>

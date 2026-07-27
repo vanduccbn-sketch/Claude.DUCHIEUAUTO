@@ -252,6 +252,74 @@ lúc triển khai thật.
 
 ---
 
+## PHASE 11 — Phát triển danh mục/nội dung dựa trên nghiên cứu đối thủ (tiếp nối Phase 9)
+
+**[MỚI 2026-07-27]** Sau khi khảo sát 4 đối thủ (Auto365, MAST, AKauto, Thế Giới Đồ Chơi Ô Tô) và
+kiểm tra lại dữ liệu thật (242 sản phẩm/8 danh mục - **không có danh mục nào trống**, nhầm lẫn ban
+đầu do đếm thiếu cấp `brand.types[].products`), chốt 7 hạng mục phát triển. Áp dụng đúng nguyên
+tắc SEO+GEO và pipeline ảnh đã định nghĩa ở Phase 9 (9.1/9.4/9.6), không định nghĩa lại từ đầu.
+
+**Nguồn ảnh:** KHÔNG tải/chỉnh sửa ảnh từ website đối thủ (kể cả xoá watermark) - rủi ro bản quyền
+thật. Ưu tiên ảnh chính hãng từ nhà phân phối/nhà sản xuất (Pioneer, JBL, VIETMAP, 3M...) - vốn
+được cung cấp sẵn cho đại lý dùng quảng cáo, hoặc ảnh thật do user chụp tại cửa hàng.
+
+**Thứ tự triển khai - chia theo mức độ cần input từ user:**
+
+### Đợt 1 - làm ngay được, đã đủ dữ liệu thật trong DB (không cần chờ user)
+
+**11.1 — Viết lại SEO cho 8 trang danh mục sản phẩm**
+- Sửa `seo_title`/`seo_meta_description`/`seo_intro`/`category_sections`/`category_faqs` của từng
+  category qua `PUT /api/products/admin/categories/:id` (route đã có sẵn).
+- Viết dựa trên đúng thương hiệu/sản phẩm/giá thật đang có trong từng danh mục (đã có sẵn qua
+  `/api/products/catalog`), không viết chung chung/sáo rỗng, theo khung hỏi-đáp trực tiếp (chuẩn
+  GEO) đã thống nhất ở Phase 9.1.
+- Làm mẫu 1 danh mục trước, cho user duyệt tông giọng, rồi mới làm hàng loạt 7 danh mục còn lại -
+  tránh viết sai tông rồi phải sửa lại cả 8.
+
+**11.2 — CTA "Đặt Lịch Hẹn" / "Nhắc Bảo Dưỡng" nổi bật trên trang chủ**
+- Thêm 1 khối CTA 2 nút lớn vào `index.html` (giữa/sau section `#service` hoặc `#tech`), dẫn tới
+  `dat-lich-hen.html`/`nhac-bao-duong.html` - đây là 2 tính năng đối thủ không có nhưng hiện đang
+  chìm trong menu, cần thuần HTML/CSS tái dùng class nút sẵn có, không cần JS mới.
+
+### Đợt 2 - cần input nhỏ từ user trước khi làm
+
+**11.3 — Bổ sung 4-5 bài blog mới**
+- Dùng hạ tầng `posts` + `routes/posts.js` sẵn có, ưu tiên chủ đề trùng câu hỏi khách thật hay hỏi.
+- **Cần từ user:** vài câu hỏi khách thật hay hỏi khi đến cửa hàng (theo từng danh mục ưu tiên) -
+  không tự bịa câu hỏi/nội dung theo đúng nguyên tắc đã có.
+
+**11.4 — Thay ảnh hero + ảnh minh hoạ trang chủ**
+- Hiện ảnh hero đang là ảnh stock Unsplash (không phải ảnh thật của Đức Hiếu Auto).
+- **Cần từ user:** ảnh thật (xe khách, cửa hàng, kỹ thuật viên đang thi công) nếu có; nếu chưa có,
+  xác nhận cho dùng tạm ảnh sản phẩm chính hãng đại diện dịch vụ chủ lực thay cho ảnh stock.
+
+### Đợt 3 - cần input lớn (dữ liệu kinh doanh thật), chưa thể tự code
+
+**11.5 — Công cụ "Tìm phụ kiện theo xe" (hãng → dòng xe)**
+- Kỹ thuật: thêm cột `compatible_vehicles` vào bảng `products` (migration nhỏ), thêm ô nhập trong
+  `admin/san-pham-form.html`, thêm bộ lọc 2 cấp trên `san-pham.html` (lọc client-side trong dữ
+  liệu catalog đã tải, không cần API riêng).
+- **Cần từ user quyết định trước:** mức độ chi tiết mong muốn (lọc theo hãng xe thôi, hay tới từng
+  dòng xe cụ thể) - ảnh hưởng trực tiếp khối lượng nhập liệu cho 73+ sản phẩm hiện có, nên chốt
+  trước khi làm để không phải nhập lại.
+
+**11.6 — Danh mục mới "Chăm Sóc Xe - Detailing"** (rửa xe, phủ ceramic, bọc ghế da, ốp trần)
+- Kỹ thuật: tạo category mới qua `admin/danh-muc.html` (dùng đúng khung 8 category hiện có, không
+  cần code mới).
+- **Cần từ user:** danh sách dịch vụ thật + giá - đây là dịch vụ mới, không có sẵn trong DB, không
+  tự bịa giá/dịch vụ.
+
+**11.7 — Danh mục mới "Phụ Kiện Tiện Ích"** (móc khóa, nước hoa xe, giá đỡ điện thoại, thảm sàn...)
+- Kỹ thuật: tương tự 11.6, category mới giá rẻ để bán kèm lúc khách đến lắp đặt.
+- **Cần từ user:** danh sách sản phẩm thật + giá + ảnh, hoặc xác nhận nguồn nhập hàng (nhóm sản
+  phẩm hoàn toàn mới, cần Đức Hiếu Auto thật sự có bán mới đưa lên web).
+
+**Hạng mục tạm gác (không đưa vào Phase này):** dịch vụ lắp đặt tại nhà - là quyết định vận hành/
+kinh doanh (nhân sự, tính phí di chuyển...), không phải việc code, chỉ làm phần hiển thị web sau
+khi user xác nhận có triển khai thật.
+
+---
+
 ## Ghi chú khi làm (cập nhật liên tục)
 
 <!-- Thêm note mới bên dưới, theo format: Ngày — Task — Kết quả — Bước tiếp theo -->

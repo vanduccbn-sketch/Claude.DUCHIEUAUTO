@@ -76,4 +76,30 @@ router.post("/", requireRole("content", "ads", "super_admin"), (req, res) => {
     });
 });
 
+// GET /api/uploads/library - liệt kê ảnh đã upload lên Cloudinary (thư mục "duchieuauto") để admin
+// xem lại/tái dùng URL thay vì phải tải lên lại từ máy mỗi lần cần đúng 1 ảnh đã dùng ở chỗ khác.
+// Dùng thẳng Cloudinary Admin API (cùng API key/secret đã cấu hình ở trên) - không cần bảng DB
+// riêng để tự lưu danh sách ảnh, Cloudinary đã lưu sẵn.
+router.get("/library", requireRole("content", "ads", "super_admin"), async (req, res) => {
+    try {
+        const result = await cloudinary.api.resources({
+            type: "upload",
+            prefix: "duchieuauto/",
+            max_results: 200,
+            direction: "desc"
+        });
+        res.json(result.resources.map(r => ({
+            url: r.secure_url,
+            createdAt: r.created_at,
+            format: r.format,
+            bytes: r.bytes,
+            width: r.width,
+            height: r.height
+        })));
+    } catch (error) {
+        console.error("Lỗi tải thư viện ảnh Cloudinary:", error.message);
+        res.status(502).json({ error: "Không tải được thư viện ảnh, vui lòng thử lại" });
+    }
+});
+
 module.exports = router;

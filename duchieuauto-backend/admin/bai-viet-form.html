@@ -93,6 +93,12 @@
                 </div>
 
                 <div class="form-group">
+                    <label for="publishAtInput">Hoặc lên lịch đăng tự động vào lúc</label>
+                    <input type="datetime-local" id="publishAtInput">
+                    <p class="form-hint">Đặt giờ ở đây sẽ tự lưu nháp và tự động đăng đúng lúc hẹn (không cần đăng nhập bấm tay). Để trống nếu không cần lên lịch.</p>
+                </div>
+
+                <div class="form-group">
                     <label for="ctaText">Kêu gọi hành động (CTA cuối bài)</label>
                     <input type="text" id="ctaText" placeholder="VD: Xem chi tiết dịch vụ Film Cách Nhiệt">
                 </div>
@@ -193,6 +199,24 @@
             });
         }
 
+        // input[type=datetime-local] cần dạng "YYYY-MM-DDTHH:mm" theo giờ ĐỊA PHƯƠNG trình duyệt -
+        // toISOString() trả về giờ UTC nên phải tự trừ lệch múi giờ trước khi cắt chuỗi.
+        function toLocalDatetimeInputValue(date) {
+            const offsetMs = date.getTimezoneOffset() * 60000;
+            return new Date(date.getTime() - offsetMs).toISOString().slice(0, 16);
+        }
+
+        // Chuyển giá trị datetime-local (giờ địa phương, không có timezone) sang chuỗi UTC
+        // "YYYY-MM-DD HH:MM:SS" - khớp đúng định dạng SQLite datetime('now') để so sánh được ở
+        // publishScheduledPosts() phía backend (xem ghi chú ở routes/posts.js).
+        function toUtcSqlDatetime(localValue) {
+            return new Date(localValue).toISOString().slice(0, 19).replace("T", " ");
+        }
+
+        document.getElementById("publishAtInput").addEventListener("change", (e) => {
+            if (e.target.value) document.getElementById("publishedToggle").checked = false;
+        });
+
         async function uploadImage(file, purpose) {
             const formData = new FormData();
             formData.append("image", file);
@@ -218,6 +242,12 @@
                 document.getElementById("ctaText").value = post.cta_text || "";
                 document.getElementById("ctaLink").value = post.cta_link || "";
                 document.getElementById("publishedToggle").checked = !!post.published;
+                // "publish_at" lưu dạng UTC "YYYY-MM-DD HH:MM:SS" - input datetime-local cần dạng
+                // giờ ĐỊA PHƯƠNG "YYYY-MM-DDTHH:mm", phải tự quy đổi lại chứ không gán thẳng chuỗi.
+                if (post.publish_at) {
+                    const localDate = new Date(post.publish_at.replace(" ", "T") + "Z");
+                    document.getElementById("publishAtInput").value = toLocalDatetimeInputValue(localDate);
+                }
                 quill.root.innerHTML = post.content || "";
 
                 if (post.cover_image) {
@@ -235,6 +265,11 @@
             if (!title) return showToast("Vui lòng nhập tiêu đề", true);
             if (quill.getText().trim().length === 0) return showToast("Vui lòng nhập nội dung bài viết", true);
 
+            const publishAtValue = document.getElementById("publishAtInput").value;
+            if (publishAtValue && new Date(publishAtValue) <= new Date()) {
+                return showToast("Giờ lên lịch đăng phải ở tương lai", true);
+            }
+
             const payload = {
                 title,
                 excerpt: document.getElementById("excerpt").value.trim() || null,
@@ -245,7 +280,8 @@
                 meta_description: document.getElementById("metaDescription").value.trim() || null,
                 cta_text: document.getElementById("ctaText").value.trim() || null,
                 cta_link: document.getElementById("ctaLink").value.trim() || null,
-                published: document.getElementById("publishedToggle").checked
+                published: document.getElementById("publishedToggle").checked,
+                publish_at: publishAtValue ? toUtcSqlDatetime(publishAtValue) : ""
             };
 
             const saveBtn = document.getElementById("saveBtn");

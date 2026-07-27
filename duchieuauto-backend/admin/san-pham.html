@@ -16,11 +16,16 @@
                 <h1>Sản Phẩm</h1>
                 <p class="desc">Quản lý toàn bộ sản phẩm, danh mục, thương hiệu - tìm kiếm hoặc lọc theo danh mục/thương hiệu bên dưới.</p>
             </div>
-            <div style="display:flex;gap:10px;">
+            <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                <button type="button" class="btn btn-secondary" id="downloadTemplateBtn">Tải Mẫu CSV</button>
+                <button type="button" class="btn btn-secondary" id="importCsvBtn">Nhập CSV</button>
+                <input type="file" id="importCsvInput" accept=".csv" style="display:none;">
                 <button type="button" class="btn btn-secondary" id="exportCsvBtn">Xuất CSV</button>
                 <a href="san-pham-form.html" class="btn btn-primary">+ Thêm Sản Phẩm</a>
             </div>
         </div>
+
+        <div id="importPreview" hidden style="background:var(--bg-alt);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px 20px;margin-bottom:20px;"></div>
 
         <div class="inline-form-card">
             <div class="form-grid">
@@ -108,6 +113,9 @@
             document.getElementById("bulkShowBtn").addEventListener("click", () => bulkSetHidden(false));
             document.getElementById("bulkDeleteBtn").addEventListener("click", bulkDelete);
             document.getElementById("exportCsvBtn").addEventListener("click", exportCsv);
+            document.getElementById("downloadTemplateBtn").addEventListener("click", downloadCsvTemplate);
+            document.getElementById("importCsvBtn").addEventListener("click", () => document.getElementById("importCsvInput").click());
+            document.getElementById("importCsvInput").addEventListener("change", handleImportFile);
         }
 
         async function loadCategories() {
@@ -234,22 +242,164 @@
             }
         }
 
-        // Xuất đúng danh sách đang lọc/hiển thị (không riêng 100 dòng đầu trên bảng) - dùng dấu ";"
-        // thay vì "," vì Excel bản tiếng Việt mặc định coi ";" là dấu phân cách cột, dùng "," sẽ dồn
-        // hết vào 1 cột. Thêm BOM UTF-8 đầu file để Excel không hiển thị lỗi font tiếng Việt.
+        // Dùng dấu ";" thay vì "," vì Excel bản tiếng Việt mặc định coi ";" là dấu phân cách cột,
+        // dùng "," sẽ dồn hết vào 1 cột. Thêm BOM UTF-8 đầu file để Excel không lỗi font tiếng Việt.
+        // Dùng chung cho cả Xuất CSV lẫn tải file mẫu Nhập CSV.
+        function downloadCsvRows(rows, filename) {
+            const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(";")).join("\r\n");
+            const blob = new Blob(["﻿" + csv], { type: "text/csv;charset=utf-8;" });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = filename;
+            link.click();
+            URL.revokeObjectURL(link.href);
+        }
+
+        // Xuất đúng danh sách đang lọc/hiển thị (không riêng 100 dòng đầu trên bảng).
         function exportCsv() {
             if (lastProducts.length === 0) return showToast("Không có dữ liệu để xuất", true);
             const rows = [["Tên sản phẩm", "Danh mục", "Thương hiệu", "Giá", "Trạng thái", "ID"]];
             lastProducts.forEach(p => {
                 rows.push([p.name, p.category_name, p.brand_name, p.price || "", p.hidden ? "Đã ẩn" : "Đang hiện", p.id]);
             });
-            const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(";")).join("\r\n");
-            const blob = new Blob(["﻿" + csv], { type: "text/csv;charset=utf-8;" });
-            const link = document.createElement("a");
-            link.href = URL.createObjectURL(blob);
-            link.download = `san-pham-${new Date().toISOString().slice(0, 10)}.csv`;
-            link.click();
-            URL.revokeObjectURL(link.href);
+            downloadCsvRows(rows, `san-pham-${new Date().toISOString().slice(0, 10)}.csv`);
+        }
+
+        // File mẫu dùng đúng Category ID/Brand ID thật (không phải tên hiển thị) - đây là 2 field
+        // bắt buộc để tạo sản phẩm, tên hiển thị không đủ để xác định chính xác (VD "Loa Sub" xuất
+        // hiện ở nhiều thương hiệu khác nhau). Lấy 1 danh mục/thương hiệu thật làm ví dụ minh hoạ.
+        function downloadCsvTemplate() {
+            const sampleCat = categoriesData[0];
+            const sampleBrand = sampleCat && sampleCat.brands[0];
+            const rows = [
+                ["Tên sản phẩm", "Category ID", "Brand ID", "Brand Type ID (tuỳ chọn)", "Giá", "Mô tả ngắn"],
+                ["VD: Tên sản phẩm mẫu", sampleCat ? sampleCat.id : "", sampleBrand ? sampleBrand.id : "", "", "1.500.000₫", "Mô tả ngắn gọn"]
+            ];
+            downloadCsvRows(rows, "mau-nhap-san-pham.csv");
+        }
+
+        // Parser CSV tối thiểu (dấu ";", có xử lý field trong dấu ngoặc kép kể cả dấu " lặp đôi để
+        // escape) - đủ dùng cho file admin tự xuất/nhập qua Excel, không cần thư viện ngoài.
+        function parseCsv(text) {
+            if (text.charCodeAt(0) === 0xFEFF) text = text.slice(1);
+            return text.split(/\r\n|\n/).filter(l => l.trim().length > 0).map(line => {
+                const cells = [];
+                let cur = "", inQuotes = false;
+                for (let i = 0; i < line.length; i++) {
+                    const ch = line[i];
+                    if (inQuotes) {
+                        if (ch === '"' && line[i + 1] === '"') { cur += '"'; i++; }
+                        else if (ch === '"') { inQuotes = false; }
+                        else cur += ch;
+                    } else if (ch === '"') { inQuotes = true; }
+                    else if (ch === ";") { cells.push(cur); cur = ""; }
+                    else cur += ch;
+                }
+                cells.push(cur);
+                return cells;
+            });
+        }
+
+        let pendingImportRows = [];
+
+        async function handleImportFile(e) {
+            const file = e.target.files[0];
+            e.target.value = ""; // cho phép chọn lại đúng file này lần nữa nếu cần
+            if (!file) return;
+
+            const text = await file.text();
+            const rows = parseCsv(text);
+            if (rows.length < 2) return showToast("File CSV không có dòng dữ liệu nào", true);
+
+            pendingImportRows = rows.slice(1).map((cells, i) => {
+                const [name, categoryId, brandId, brandTypeId, price, description] = cells;
+                const cat = categoriesData.find(c => c.id === (categoryId || "").trim());
+                const brand = cat ? cat.brands.find(b => b.id === (brandId || "").trim()) : null;
+
+                const errors = [];
+                if (!name || !name.trim()) errors.push("Thiếu tên sản phẩm");
+                if (!cat) errors.push(`Category ID "${categoryId}" không tồn tại`);
+                else if (!brand) errors.push(`Brand ID "${brandId}" không tồn tại trong danh mục "${cat.name}"`);
+
+                return {
+                    row: i + 2,
+                    name: (name || "").trim(),
+                    categoryId: (categoryId || "").trim(),
+                    brandId: (brandId || "").trim(),
+                    brandTypeId: (brandTypeId || "").trim() || null,
+                    price: (price || "").trim() || null,
+                    description: (description || "").trim() || null,
+                    categoryName: cat ? cat.name : null,
+                    brandName: brand ? brand.name : null,
+                    errors
+                };
+            });
+
+            renderImportPreview();
+        }
+
+        function renderImportPreview() {
+            const validCount = pendingImportRows.filter(r => r.errors.length === 0).length;
+            const box = document.getElementById("importPreview");
+            box.hidden = false;
+            box.innerHTML = `
+                <h3 style="font-size:15px;margin-bottom:12px;">Xem trước nhập CSV - ${validCount}/${pendingImportRows.length} dòng hợp lệ</h3>
+                <table class="data-table" style="margin-bottom:14px;">
+                    <thead><tr><th>Dòng</th><th>Tên</th><th>Danh mục</th><th>Thương hiệu</th><th>Giá</th><th>Trạng thái</th></tr></thead>
+                    <tbody>${pendingImportRows.map(r => `
+                        <tr style="${r.errors.length ? "background:#fdecea;" : ""}">
+                            <td>${r.row}</td>
+                            <td>${r.name || "-"}</td>
+                            <td>${r.categoryName || `<em>${r.categoryId}</em>`}</td>
+                            <td>${r.brandName || `<em>${r.brandId}</em>`}</td>
+                            <td>${r.price || "-"}</td>
+                            <td>${r.errors.length ? r.errors.join("; ") : "Hợp lệ"}</td>
+                        </tr>`).join("")}
+                    </tbody>
+                </table>
+                <button type="button" class="btn btn-primary" id="confirmImportBtn" ${validCount === 0 ? "disabled" : ""}>Nhập ${validCount} Dòng Hợp Lệ</button>
+                <button type="button" class="btn btn-secondary" id="cancelImportBtn">Huỷ</button>
+            `;
+            document.getElementById("confirmImportBtn").addEventListener("click", confirmImport);
+            document.getElementById("cancelImportBtn").addEventListener("click", () => {
+                box.hidden = true;
+                box.innerHTML = "";
+                pendingImportRows = [];
+            });
+        }
+
+        // Tạo lần lượt (không Promise.all) - nhập CSV có thể tạo hàng chục/hàng trăm sản phẩm cùng
+        // lúc, tạo song song dễ dồn dập request lên rate limit chung của API hoặc Turso hơn mức cần
+        // thiết cho 1 thao tác không gấp.
+        async function confirmImport() {
+            const validRows = pendingImportRows.filter(r => r.errors.length === 0);
+            if (validRows.length === 0) return;
+            if (!confirm(`Tạo mới ${validRows.length} sản phẩm từ CSV?`)) return;
+
+            const confirmBtn = document.getElementById("confirmImportBtn");
+            confirmBtn.disabled = true;
+            let success = 0, fail = 0;
+            for (const r of validRows) {
+                confirmBtn.textContent = `Đang nhập... (${success + fail}/${validRows.length})`;
+                try {
+                    const res = await apiFetch("/api/products", {
+                        method: "POST",
+                        body: {
+                            name: r.name, category_id: r.categoryId, brand_id: r.brandId,
+                            brand_type_id: r.brandTypeId, price: r.price, description: r.description
+                        }
+                    });
+                    if (res.ok) success++; else fail++;
+                } catch (err) {
+                    fail++;
+                }
+            }
+
+            showToast(`Đã nhập ${success} sản phẩm${fail ? `, ${fail} dòng lỗi` : ""}`);
+            document.getElementById("importPreview").hidden = true;
+            document.getElementById("importPreview").innerHTML = "";
+            pendingImportRows = [];
+            loadProducts();
         }
     </script>
 </body>

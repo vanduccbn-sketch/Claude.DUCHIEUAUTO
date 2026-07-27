@@ -77,7 +77,10 @@
                     <td><input type="checkbox" class="row-check" data-id="${p.id}"></td>
                     <td>${p.title}</td>
                     <td>${p.category || "-"}</td>
-                    <td><span class="badge ${p.published ? "badge-published" : "badge-draft"}">${p.published ? "Đã đăng" : "Bản nháp"}</span></td>
+                    <td>
+                        <span class="badge ${p.published ? "badge-published" : "badge-draft"}">${p.published ? "Đã đăng" : "Bản nháp"}</span>
+                        ${!p.published && p.publish_at ? `<div class="form-hint">Lên lịch: ${formatDateTime(p.publish_at)}</div>` : ""}
+                    </td>
                     <td>${formatDateTime(p.updated_at)}</td>
                     <td class="actions">
                         <a href="bai-viet-form.html?id=${p.id}" class="btn btn-secondary">Sửa</a>

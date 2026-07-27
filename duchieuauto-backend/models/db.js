@@ -270,6 +270,13 @@ const ready = (async () => {
     if (!adminColumnsCheck.includes("reset_token_expires")) {
         await exec("ALTER TABLE admins ADD COLUMN reset_token_expires TEXT");
     }
+
+    // Migration tương tự cho "posts" - thêm lịch đăng bài (chọn thời điểm tương lai, hệ thống tự
+    // chuyển draft -> published đúng lúc thay vì phải đăng nhập đúng giờ để bấm tay).
+    const postColumnsCheck = (await prepare("PRAGMA table_info(posts)").all()).map(c => c.name);
+    if (!postColumnsCheck.includes("publish_at")) {
+        await exec("ALTER TABLE posts ADD COLUMN publish_at TEXT");
+    }
 })();
 
 module.exports = { prepare, exec, logActivity, ready };

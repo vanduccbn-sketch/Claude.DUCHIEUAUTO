@@ -44,18 +44,18 @@ File nhiệm vụ này **đang chạy**, nên lần cập nhật này giữ nguy
 - [x] `sitemap.xml` + `robots.txt`
 
 ## PHASE 2 — Bảo mật & ẩn thông tin cho phần tĩnh hiện có (làm ngay, không cần chờ backend)
-**[HOÃN 2026-07-26]** User quyết định để dành các mục còn thiếu dưới đây tới khi thuê domain/hosting
-riêng (thoát giới hạn GitHub Pages + Render free tier). Danh sách TODO khi quay lại:
-- [ ] Minify `assets/js/*.js`, `assets/css/*.css` trước khi deploy bản production — cần chọn công cụ build (chưa làm, xem ghi chú bên dưới)
+**[CẬP NHẬT 2026-07-27]** Đã có domain thật `duchieuauto.vn` + Cloudflare (xem "Ghi chú khi làm"
+ngày 2026-07-27) - phần lớn lý do "chờ domain" ở dưới không còn nữa, đã đánh dấu lại trạng thái:
+- [ ] Minify `assets/js/*.js`, `assets/css/*.css` trước khi deploy bản production — cần chọn công cụ build (chưa làm, không liên quan domain, có thể làm bất kỳ lúc nào)
 - [x] Rà soát xoá `console.log`, comment nội bộ nhạy cảm trong JS/HTML hiện có — **kết quả: sạch, không có `console.log` nào trong toàn bộ `assets/js/*.js` và các trang HTML**
-- [ ] Chống hotlink ảnh sản phẩm (nếu hosting cho phép chỉnh — ghi chú: GitHub Pages hạn chế header tuỳ chỉnh, có thể cần Cloudflare đứng trước)
-- [ ] **[MỚI]** Watermark logo nhỏ lên ảnh sản phẩm (chống đối thủ lấy ảnh) — làm hàng loạt bằng script, áp dụng cho ảnh mới upload qua CMS ở Phase 4
-- [ ] reCAPTCHA cho form liên hệ/đặt lịch (chống spam bot) — cần user tự tạo site key tại Google reCAPTCHA trước
+- [ ] **[SẴN SÀNG LÀM]** Chống hotlink ảnh sản phẩm — giờ có Cloudflare đứng trước rồi, dùng Cloudflare Rules (Scrape Shield / WAF custom rule chặn theo header `Referer`) thay vì phải tự viết header ở GitHub Pages
+- [ ] **[MỚI]** Watermark logo nhỏ lên ảnh sản phẩm (chống đối thủ lấy ảnh) — làm hàng loạt bằng script, áp dụng cho ảnh mới upload qua CMS ở Phase 4 (không liên quan domain)
+- [ ] reCAPTCHA cho form liên hệ/đặt lịch (chống spam bot) — vẫn cần user tự tạo site key tại Google reCAPTCHA trước (không liên quan domain, chỉ cần tài khoản Google)
 - [x] Kiểm tra không có API key/secret nào lộ trong code client-side hiện tại — **kết quả: sạch**, grep toàn bộ `*.html/*.js/*.css` tìm `api-key/secret/password/token` chỉ khớp các biến/field name phía backend (server-side, không lộ ra client), Formspree endpoint ID không phải secret (thiết kế công khai theo đúng cơ chế Formspree)
-- [ ] Đánh giá đưa site qua **Cloudflare** (miễn phí) để có HTTPS chuẩn, security headers, chống DDoS cơ bản — bước này gỡ luôn hạn chế của GitHub Pages ở trên
-- [ ] **[HOÃN]** Làm lại tính năng gửi email quên mật khẩu thật (xem "lần 8" bên dưới) - Render free tier chặn SMTP, cần domain/hosting riêng rồi mới dùng lại được Gmail App Password hoặc đổi sang Resend/Brevo/Gmail API
-- [ ] **[HOÃN]** Đổi đúng đuôi `.webp` cho 5 ảnh sản phẩm nhóm `zestech-box-dx*` hiện đang bị đặt nhầm đuôi `.jpg` (không khẩn, không ảnh hưởng hiển thị)
-- [ ] **[HOÃN]** Đánh giá ảnh hưởng SEO khi nội dung sản phẩm/blog chuyển từ tĩnh sang gọi API (không khẩn, Google hiện vẫn chạy JS khi index)
+- [x] **Đưa site qua Cloudflare** — HOÀN THÀNH 2026-07-27: domain `duchieuauto.vn` mua tại Mắt Bão, đổi nameserver sang Cloudflare, proxy (CDN + chống DDoS) đã bật cho toàn bộ bản ghi
+- [ ] **[SẴN SÀNG LÀM]** Làm lại tính năng gửi email quên mật khẩu thật — domain thật đã có, nhưng gốc vấn đề là **Render free tier chặn SMTP** (không phải do thiếu domain) nên vẫn phải đổi sang gửi qua HTTP API (Resend hoặc Brevo, có gói miễn phí) thay vì Gmail SMTP - giờ có domain thật thì xác minh domain gửi (VD `noreply@duchieuauto.vn`) với Resend/Brevo sẽ dễ và uy tín hơn hẳn so với dùng Gmail cá nhân
+- [x] Đổi đúng đuôi `.webp` cho 5 ảnh sản phẩm nhóm `zestech-box-dx*` hiện đang bị đặt nhầm đuôi `.jpg` — đã làm 2026-07-26
+- [x] Đánh giá ảnh hưởng SEO khi nội dung sản phẩm/blog chuyển từ tĩnh sang gọi API — đã làm 2026-07-26, xem báo cáo `danh-gia-seo-chuyen-doi-api-2026-07-26.md`, phát hiện thêm và đã sửa luôn: sitemap.xml cũ thiếu 293 URL sản phẩm
 
 ## PHASE 3 — Xây Backend CMS (Node.js + Express + SQLite)
 - [x] Model dữ liệu: `posts` (bài viết), `admins` (tài khoản quản trị), `contacts` (form liên hệ/đặt lịch gửi về) — `duchieuauto-backend/models/db.js`
@@ -140,10 +140,15 @@ lại chủ đề này ở đầu buổi làm việc tiếp theo sau khi Phase 4
 **PHASE 7: HOÀN THÀNH — schema, import, API, admin CRUD sản phẩm, mô tả chi tiết, VÀ toàn bộ 5 trang frontend công khai đã nối vào API thật. Admin sửa sản phẩm giờ hiện đúng ngay trên toàn site, không còn 2 nguồn dữ liệu song song.**
 
 ## PHASE 8 — Khi mua hosting thật (tương lai)
-- [ ] Deploy lại đúng backend Node.js lên hosting mới (không viết lại)
-- [ ] Gộp frontend + backend cùng 1 domain nếu muốn (bỏ phụ thuộc GitHub Pages)
-- [ ] Trỏ domain riêng, cấu hình SSL
-- [ ] (Optional, nếu cần) bổ sung giỏ hàng/thanh toán VNPay/Momo — chưa nằm trong phạm vi hiện tại
+**[CẬP NHẬT 2026-07-27]** Domain thật đã trỏ xong (`duchieuauto.vn` qua Cloudflare) - nhưng
+QUYẾT ĐỊNH GIỮ NGUYÊN GitHub Pages (frontend) + Render (backend) làm nơi lưu trữ/chạy code, Cloudflare
+chỉ đứng vai trò DNS/CDN phía trước, KHÔNG chuyển hẳn sang 1 hosting/VPS mới. 2 mục dưới coi như
+không cần làm nữa trừ khi sau này thật sự muốn rời khỏi GitHub Pages/Render (VD cần chạy tiến trình
+nền dài hạn mà 2 nền tảng free tier không hỗ trợ tốt):
+- [x] Trỏ domain riêng, cấu hình SSL — HOÀN THÀNH 2026-07-27 (xem Phase 2 + ghi chú "lần 27-07")
+- [ ] ~~Deploy lại đúng backend Node.js lên hosting mới~~ — không cần, Render vẫn đang phục vụ tốt qua domain thật
+- [ ] ~~Gộp frontend + backend cùng 1 domain~~ — không cần, đã tách domain con rõ ràng (`duchieuauto.vn` / `api.duchieuauto.vn` / `admin.duchieuauto.vn`) qua Cloudflare, đủ gọn mà không phải gộp code
+- [ ] (Optional, nếu cần) bổ sung giỏ hàng/thanh toán VNPay/Momo — chưa nằm trong phạm vi hiện tại (mô hình dịch vụ lắp đặt tại chỗ, không phải bán lẻ ship COD)
 
 ## PHASE 9 — Nâng cấp trải nghiệm & độ tin cậy thương hiệu (nhóm "nội dung tay nghề thật" + "trải nghiệm mượt")
 
@@ -209,6 +214,41 @@ tên/kinh nghiệm kỹ thuật viên) phải do user cung cấp thật, Claude 
 **Thứ tự đề xuất khi bắt đầu:** 9.1 (nghiên cứu) → 9.4 (pipeline ảnh, làm 1 lần dùng mãi) → 9.6
 (SEO/GEO, không cần chờ nội dung mới) có thể làm ngay bằng dữ liệu hiện có. Riêng 9.2 và 9.3 phải
 **chờ user cung cấp thông tin/ảnh thật** mới làm được (không thể tự bịa số liệu/ảnh).
+
+## PHASE 10 — Tích hợp dữ liệu quảng cáo Facebook/TikTok (tương lai, chưa bắt đầu)
+
+**[MỚI 2026-07-27]** User muốn sau này liên kết Facebook và TikTok vào để "xử lý data" - mục
+đích cụ thể (nhận lead từ form quảng cáo, hay gửi sự kiện conversion về nền tảng để tối ưu quảng
+cáo, hay cả hai) cần làm rõ với user trước khi thiết kế chi tiết, nhưng đã phác trước 2 hướng phổ
+biến nhất để không phải nghiên cứu lại từ đầu khi bắt tay vào:
+
+- **Hướng A - Facebook/TikTok Conversion API (gửi dữ liệu ĐI):** mỗi khi khách gửi form liên hệ/
+  đặt lịch/mua hàng trên site, gửi kèm 1 sự kiện (VD "Lead", "Booking") về Facebook Conversion API
+  và TikTok Events API - giúp thuật toán quảng cáo nhắm đúng đối tượng hơn, đo hiệu quả quảng cáo
+  chính xác hơn (khắc phục việc trình duyệt chặn cookie/pixel phía client). Cần: Facebook
+  Pixel ID + Access Token, TikTok Pixel Code + Access Token (Ads admin tự lấy từ Meta/TikTok
+  Ads Manager), thêm 1-2 hàm gọi API trong `routes/contacts.js` sau khi lưu contact thành công.
+- **Hướng B - Nhận Lead Ads (dữ liệu VỀ):** nếu chạy quảng cáo dạng "Lead Ads" (form điền ngay
+  trên Facebook/TikTok, không dẫn về site), cần đăng ký webhook để 2 nền tảng đó chủ động gửi
+  data lead mới về hệ thống - phức tạp hơn Hướng A (cần xác minh webhook, xử lý theo đúng chuẩn
+  từng nền tảng).
+
+**Về đề xuất dùng Supabase cho phần này:** có thể dùng, nhưng cân nhắc kỹ trước khi chọn so với
+cách đơn giản hơn là thêm route mới ngay trong backend Express hiện tại:
+- Nếu chỉ làm Hướng A (gửi sự kiện đi) - **không cần Supabase**, chỉ cần thêm vài dòng gọi API
+  trong route `contacts.js`/`reviews.js` đã có sẵn, dùng chung Turso/activity log hiện tại. Thêm
+  cả 1 nền tảng (Supabase) chỉ để làm việc này là dư thừa, tăng chi phí vận hành/bảo trì không cần
+  thiết cho 1 việc nhỏ.
+- Nếu làm Hướng B (nhận webhook) và có nhu cầu **thật sự cần chạy tách biệt khỏi backend chính**
+  (VD lo webhook dồn dập ảnh hưởng tới site chính, hoặc muốn 1 nơi lưu riêng dữ liệu quảng cáo
+  không lẫn với dữ liệu vận hành cửa hàng) - lúc đó Supabase (cụ thể là Edge Functions nhận
+  webhook + Postgres lưu riêng) là lựa chọn hợp lý, tách bạch rõ ràng.
+- **Khuyến nghị:** bắt đầu bằng Hướng A trong chính backend hiện tại (rẻ, nhanh, ít rủi ro) trước,
+  chỉ cân nhắc thêm Supabase nếu nhu cầu thực tế phát sinh (VD sau này thật sự chạy Lead Ads).
+
+**Việc cần làm trước khi bắt đầu Phase này (từ user):** xác nhận mục đích cụ thể (Hướng A/B/cả
+hai), có đang/sẽ chạy quảng cáo Facebook/TikTok chưa, và cung cấp Pixel ID/Access Token khi tới
+lúc triển khai thật.
 
 ---
 
@@ -349,3 +389,29 @@ tên/kinh nghiệm kỹ thuật viên) phải do user cung cấp thật, Claude 
 - **Cập nhật tài liệu:** `huong-dan-viet-content-nhan-vien.md` (mục 6, 9 - bỏ hướng dẫn quên mật khẩu qua email, thay bằng báo Super Admin), `tai-khoan-va-lien-ket-du-an.md` (mục 3, 4, 7 - đánh dấu Gmail SMTP đã ngưng dùng, lý do cụ thể).
 - **Bài học kỹ thuật đáng nhớ:** (1) CORS middleware ném lỗi không bắt = tự biến mọi lỗi thành trang HTML, phải luôn có error handler chung trả JSON cho API; (2) test bằng `curl` không đại diện đúng hành vi trình duyệt thật nếu thiếu header trình duyệt tự gắn (ở đây là `Origin`) - phải chủ động thêm header đó khi tái hiện lỗi; (3) dual-stack DNS (IPv4+IPv6) là nguồn lỗi `ENETUNREACH`/treo kết nối phổ biến trên các host cloud chỉ hỗ trợ IPv4 outbound - `family`/`dns.setDefaultResultOrder` không phải lúc nào cũng đủ, option `lookup` tuỳ chỉnh mới chắc chắn; (4) một số PaaS free tier (Render) chặn hẳn outbound SMTP bất kể cổng - cần dùng email qua HTTP API nếu không có domain/hosting riêng.
 - **Bước tiếp theo:** không có việc khẩn - còn lại các mục Phase 2 (minify, watermark, hotlink, reCAPTCHA, Cloudflare) cần quyết định/tài khoản từ user, và việc nhỏ không khẩn (đổi đuôi 5 ảnh webp, đánh giá SEO). Quay lại tính năng gửi email thật khi có domain/hosting riêng.
+
+**2026-07-26/27 (lần 9)** — 2 đợt nâng cấp lớn cho trang quản trị (Tổng Quan theo danh mục, sửa được sản phẩm nổi bật, SEO danh mục, thao tác hàng loạt, xuất/nhập CSV, lịch đăng bài, lịch đặt hẹn theo ngày, thư viện ảnh, tìm kiếm nhanh, cảnh báo nội dung thiếu).
+- **Đợt 1 (theo yêu cầu cụ thể của user):** trang-chu.html thêm sửa được sản phẩm (trước chỉ lưu/xoá được, đổi sản phẩm phải xoá-thêm-lại mất vị trí) + nút sắp xếp lên/xuống + bố cục lại thành thẻ; Tổng Quan thêm lưới thống kê theo 8 danh mục kèm link nhanh sang Sản Phẩm/FAQ đã lọc sẵn (`san-pham.html`/`danh-muc.html` hỗ trợ `?category=`); thêm endpoint `GET /admin/categories/overview`.
+- **Đợt 2 (5 gợi ý tự đề xuất, user duyệt "Ok, triển khai"):** UI sửa SEO danh mục ở `danh-muc.html` (API đã có từ trước nhưng chưa có giao diện dùng); bulk ẩn/hiện/xoá + Xuất CSV ở Sản Phẩm; nút Xem Trước cho form sản phẩm (theo đúng cơ chế đã có ở form bài viết); Xuất CSV cho Liên Hệ; badge số đỏ liên hệ "Mới" trên menu admin.
+- **Đợt 3 (Nhóm A/B theo đề xuất, user duyệt lần lượt):** tìm kiếm nhanh toàn admin (topbar), cảnh báo nội dung thiếu ở Tổng Quan (phát hiện thật: **cả 8 danh mục đều chưa có FAQ nào** dù tính năng đã có sẵn), lọc lịch sử hoạt động theo admin/hành động/ngày, bulk actions cho Bài Viết, Xem Trước cho Banner; rồi lịch đăng bài viết (cột `posts.publish_at`, tự chuyển draft→published bằng cách kiểm tra lười (lazy check) ngay trong các endpoint GET công khai thay vì cron - Render free tier "ngủ" nên cron trong tiến trình không đáng tin cậy), nhập CSV hàng loạt cho sản phẩm (xem trước + validate trước khi tạo), lịch đặt hẹn dạng lưới 6 khung giờ theo ngày ở Liên Hệ (tái dùng endpoint `availability` có sẵn), thư viện ảnh liệt kê toàn bộ ảnh Cloudinary qua `cloudinary.api.resources()` (không cần bảng DB riêng).
+- **Lỗi thật tự phát hiện lúc test (không phải chỉ đoán):** thiếu khởi động lại backend local sau khi sửa route (`EADDRINUSE` do tiến trình cũ còn giữ cổng, phải tìm và kill đúng PID); dùng `git mv`/API PUT round-trip kiểm tra dữ liệu SEO danh mục an toàn trước khi ghép vào form.
+- **Test:** toàn bộ qua Chrome headless (đăng nhập giả bằng token thật ghi vào localStorage rồi redirect, xoá file test ngay sau khi xong) + curl round-trip trên dữ liệu thật (luôn dọn dữ liệu test khỏi Turso production ngay sau khi xác nhận).
+
+**2026-07-27 (lần 10)** — Rà soát bảo mật toàn dự án + phát hiện và vá lỗ hổng XSS nghiêm trọng + sắp xếp lại file dự án.
+- **Task:** User yêu cầu kiểm tra lỗi tiếng Việt hiển thị sai trên trang Âm Thanh (kèm ảnh), rà soát toàn bộ dự án, gom file `.md` vào 1 thư mục, kiểm tra code/vận hành/an toàn.
+- **Lỗi thật 1 - dữ liệu SEO danh mục Âm Thanh bị hỏng encoding trên production:** truy ngược lại đúng nguyên nhân - 1 lệnh `curl -d '{...}'` test round-trip trước đó (lần 9) gõ tiếng Việt trực tiếp trong tham số dòng lệnh bị Git Bash làm hỏng byte UTF-8 trước khi gửi lên server (không phải lỗi hiển thị, dữ liệu THẬT trong Turso đã bị ghi sai). Khôi phục đúng nguyên văn gốc (đã có sẵn từ lần đọc trước đó trong cùng phiên làm việc), xác nhận 7 danh mục còn lại không bị ảnh hưởng. **Đã lưu quy tắc vào bộ nhớ cá nhân:** không bao giờ gõ tiếng Việt trực tiếp trong `curl -d`, luôn ghi JSON ra file rồi gửi bằng `--data-binary @file`.
+- **Lỗi thật 2 - lỗ hổng XSS nghiêm trọng (Stored XSS → đánh cắp token admin):** nội dung do khách công khai tự nhập (tên/nhận xét đánh giá sản phẩm, tên/SĐT/ghi chú liên hệ-đặt lịch) bị chèn thẳng vào `innerHTML` không escape ở CẢ trang quản trị (`danh-gia.html`, `lien-he.html`) lẫn trang công khai (`catalog-render.js`). Nghiêm trọng nhất: bất kỳ ai cũng gửi được 1 đánh giá/liên hệ chứa `<script>` đọc `localStorage` (nơi lưu JWT token đăng nhập) - script tự chạy ngay khi BẤT KỲ admin nào mở đúng trang quản lý tương ứng (việc họ làm hàng ngày), đủ để chiếm token và có toàn quyền truy cập (kể cả super_admin). **Vá bằng hàm `escapeHtml()` dùng chung** (thêm vào `admin.js` cho trang quản trị, `catalog-render.js` cho trang công khai), áp dụng cho mọi field có nguồn gốc input công khai. Test thật bằng 2 payload (`<script>`, `<img onerror>`) xác nhận hiện thành text vô hại; test tiếng Việt có dấu xác nhận không ảnh hưởng hiển thị bình thường.
+- **Rà soát thêm (không phát hiện lỗi mới):** không có ghép chuỗi trực tiếp vào SQL ở bất kỳ route nào (toàn bộ dùng tham số hoá `?`); JWT qua header (không cookie) nên không cần CSRF; bcrypt cost 12 + khoá 5-lần-sai-15-phút cho đăng nhập; rate limit 300/15p toàn API + 20/15p riêng login; helmet CSP đầy đủ; file upload giới hạn đúng mimetype + 5MB.
+- **Sắp xếp dự án:** gom 5 file `.md` (kế hoạch CMS, nhật ký, hướng dẫn nhân viên, báo cáo SEO, tài khoản/liên kết) vào thư mục `docs/` bằng `git mv` (giữ lịch sử), sửa lại đúng 1 link thật bị ảnh hưởng (`duchieuauto-backend/README.md`), cập nhật `.gitignore`. Dọn rác cục bộ không ảnh hưởng git (file SQLite cũ từ trước khi có Turso, 2 ảnh mồ côi trong `uploads/` từ trước khi có Cloudinary, 2 file log rỗng) - đã xác nhận không code nào còn tham chiếu trước khi xoá.
+- **Phát hiện phụ (chưa xử lý, chỉ ghi nhận):** hệ thống Banner có đầy đủ CRUD + API public nhưng **chưa từng được gắn vào trang công khai nào** (không có slider nào trên site thật đọc `GET /api/banners`) - tính năng nửa vời, để dành làm sau nếu muốn dùng banner thật.
+- **Bước tiếp theo lúc đó:** không có việc khẩn, chờ user quyết định hướng tiếp theo.
+
+**2026-07-27 (lần 11)** — Mua domain thật `duchieuauto.vn`, chuyển DNS sang Cloudflare, cập nhật toàn bộ code sang domain mới, dựng lại kế hoạch phát triển.
+- **Task:** User đã mua `duchieuauto.vn` tại Mắt Bão, muốn chuyển DNS sang Cloudflare (miễn phí, có CDN/chống DDoS) nhưng vẫn giữ nguyên hosting (GitHub Pages + Render) - không mua thêm hosting mới.
+- **Thực hiện (chủ yếu thao tác trên dashboard, Claude hướng dẫn từng bước qua ảnh chụp màn hình user gửi):** tạo site trên Cloudflare → lấy 2 nameserver → đổi nameserver tại Mắt Bão → khai báo DNS record cho GitHub Pages (4 A record IP cố định của GitHub cho domain gốc, CNAME `www`) và Render (CNAME `api`) → khai báo Custom Domain ở GitHub Pages Settings (tự tạo file `CNAME` trong repo) và Render (`api.duchieuauto.vn`) → xác nhận domain chạy đúng bằng curl trước khi sửa code → cập nhật `FRONTEND_ORIGIN` trên Render (thêm domain mới, giữ domain cũ song song) để tránh CORS chặn domain mới → mới push code.
+- **Sửa code (chỉ sau khi domain + CORS đã xác nhận chạy):** `api-config.js` (`PRODUCTION_API_URL`), `admin.js` (`FRONTEND_BASE_URL` - lưu ý domain apex thật KHÔNG còn phần path `/Claude.DUCHIEUAUTO` như URL project-page GitHub Pages cũ), `trang-chu.html`, `index.html` (OG tags + JSON-LD), `robots.txt`, `server.js` (thêm domain mới vào CSP `imgSrc`, thêm route `GET /` tự chuyển hướng `/admin/login.html`), `generate-sitemap.js` (chạy lại sinh 311 URL đúng domain thật). Giữ song song domain cũ (github.io/onrender.com) ở những chỗ hợp lý, không xoá vội.
+- **Thêm subdomain `admin.duchieuauto.vn`** trỏ cùng service Render (không cần sửa code gì thêm - Express phục vụ như nhau bất kể hostname nào trỏ vào, chỉ khác cách bấm vào cho gọn).
+- **Sự cố nhỏ lúc kiểm tra (không phải lỗi cấu hình thật):** sau khi user bật Cloudflare Proxy (mây cam) cho toàn bộ record, `curl` từ máy Claude vẫn thấy domain gốc đi thẳng tới GitHub (`Server: GitHub.com`, không có header `cf-ray`) trong khi `api.` đã đúng qua Cloudflare - tưởng nhầm là cấu hình sai, nhưng truy vấn thẳng DNS Cloudflare (`1.1.1.1`) và test bằng `curl --resolve` vào đúng IP Cloudflare xác nhận **mọi thứ đã đúng**, vấn đề chỉ là cache DNS cũ trên máy Claude (A và AAAA cache riêng, mức độ lệch khác nhau) - bài học: khi nghi ngờ DNS, luôn kiểm tra thẳng qua resolver độc lập (`1.1.1.1`/`8.8.8.8`) hoặc `--resolve` thay vì tin ngay kết quả từ máy đang test.
+- **Quyết định:** KHÔNG bật "Bảo mật DNS" (DNSSEC) ở Mắt Bão - cần đồng bộ chính xác giá trị DS record với Cloudflare, bật sai có thể làm domain mất phân giải hoàn toàn; để dành, không phải việc bắt buộc.
+- **Dựng lại kế hoạch (yêu cầu của user):** rà lại toàn bộ mục "chờ domain riêng" trong Phase 2/8, đánh dấu lại đúng trạng thái (phần lớn đã làm được hoặc không còn phụ thuộc domain nữa - riêng email quên mật khẩu vẫn cần đổi sang Resend/Brevo vì gốc vấn đề là Render chặn SMTP chứ không phải thiếu domain). Thêm **Phase 10 mới** theo yêu cầu user: tích hợp dữ liệu Facebook/TikTok - đã phác 2 hướng (gửi sự kiện conversion đi / nhận lead ads về) kèm khuyến nghị kỹ thuật riêng, và ý kiến khách quan về đề xuất dùng Supabase của user (chỉ thật sự cần nếu làm hướng nhận webhook tách biệt, còn hướng gửi sự kiện thì làm ngay trong backend hiện tại là đủ, không cần thêm nền tảng mới).
+- **Bước tiếp theo:** còn 4 mục Phase 2 sẵn sàng làm ngay (chống hotlink ảnh qua Cloudflare Rules, watermark logo, reCAPTCHA - cần user tạo site key, email quên mật khẩu qua Resend/Brevo - cần user tạo tài khoản); Phase 10 (Facebook/TikTok) cần user xác nhận mục đích cụ thể trước khi thiết kế chi tiết.

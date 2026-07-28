@@ -85,7 +85,15 @@
     0%, 100% { transform: translateX(0); }
     50% { transform: translateX(5px); }
 }
-.swiper-pagination { bottom: 37px; }
+/* Chỉ ".swiper-pagination { bottom: 37px }" (1 class) KHÔNG đủ độ ưu tiên để thắng CSS mặc định
+   của thư viện Swiper (".swiper-pagination-bullets.swiper-pagination-horizontal", 2 class) - dots
+   vẫn nằm ở bottom:8px mặc định, đè lên chữ "Vuốt để xem thêm" (.swipe-hint, bottom:0). Phải viết
+   đủ 3 class đúng bằng những gì Swiper gắn vào phần tử lúc chạy để chắc chắn thắng, không phụ
+   thuộc thứ tự nạp CSS. Giá trị 37px (cũ, chưa từng thật sự hiển thị vì bug độ ưu tiên trên) hoá ra
+   quá cao, chạm vào thẻ sản phẩm/dịch vụ phía trên khi áp dụng đúng - đo lại bằng toạ độ thật
+   (getBoundingClientRect) và chỉnh còn 23px để có khoảng cách an toàn với cả thẻ phía trên (~8px)
+   lẫn chữ "Vuốt để xem thêm" phía dưới (~12px). */
+.swiper-pagination.swiper-pagination-bullets.swiper-pagination-horizontal { bottom: 23px; }
 
 @media (max-width: 768px) {
     #product { padding: 50px 0; }

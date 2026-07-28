@@ -152,7 +152,7 @@ async function renderCategoryGrid(containerSelector) {
             .join("");
 
         injectBreadcrumbSchema([
-            { name: "Trang chủ", href: "index.html" },
+            { name: "Trang chủ", href: "/" },
             { name: "Sản Phẩm", href: "san-pham.html" }
         ]);
         injectJsonLd("categoryListSchema", {
@@ -331,7 +331,7 @@ async function renderCategoryDetail() {
     document.querySelector(".breadcrumb-current").textContent = cat.name;
 
     injectBreadcrumbSchema([
-        { name: "Trang chủ", href: "index.html" },
+        { name: "Trang chủ", href: "/" },
         { name: "Sản Phẩm", href: "san-pham.html" },
         { name: cat.name, href: `category-chi-tiet.html?id=${cat.id}` }
     ]);
@@ -442,12 +442,12 @@ async function renderServiceGroupDetail(groupId) {
     document.querySelector(".category-title").textContent = group.name;
 
     document.querySelector(".breadcrumb-parent").textContent = "Dịch Vụ";
-    document.querySelector(".breadcrumb-parent").href = "index.html#service";
+    document.querySelector(".breadcrumb-parent").href = "/#service";
     document.querySelector(".breadcrumb-current").textContent = group.name;
 
     injectBreadcrumbSchema([
-        { name: "Trang chủ", href: "index.html" },
-        { name: "Dịch Vụ", href: "index.html#service" },
+        { name: "Trang chủ", href: "/" },
+        { name: "Dịch Vụ", href: "/#service" },
         { name: group.name, href: `category-chi-tiet.html?group=${group.id}` }
     ]);
     injectServiceSchema(group.name);
@@ -592,7 +592,7 @@ async function renderBrandProducts() {
         document.querySelector(".breadcrumb-current").textContent = brand.name;
 
         injectBreadcrumbSchema([
-            { name: "Trang chủ", href: "index.html" },
+            { name: "Trang chủ", href: "/" },
             { name: "Sản Phẩm", href: "san-pham.html" },
             { name: cat.name, href: `category-chi-tiet.html?id=${cat.id}` },
             { name: brand.name, href: `brand-san-pham.html?id=${cat.id}&brand=${brand.id}` }
@@ -639,7 +639,7 @@ async function renderBrandProducts() {
     }
 
     injectBreadcrumbSchema([
-        { name: "Trang chủ", href: "index.html" },
+        { name: "Trang chủ", href: "/" },
         { name: "Sản Phẩm", href: "san-pham.html" },
         { name: cat.name, href: `category-chi-tiet.html?id=${cat.id}` },
         ...(brand.types ? [{ name: brand.name, href: `brand-san-pham.html?id=${cat.id}&brand=${brand.id}` }] : []),
@@ -1199,7 +1199,7 @@ async function renderProductDetail() {
 
         injectProductSchema(p, img, absoluteImgUrl, reviewStats);
         injectBreadcrumbSchema([
-            { name: "Trang chủ", href: "index.html" },
+            { name: "Trang chủ", href: "/" },
             { name: "Sản Phẩm", href: "san-pham.html" },
             ...(p.category_name ? [{ name: p.category_name, href: `category-chi-tiet.html?id=${p.category_id}` }] : []),
             { name: p.name, href: `san-pham-chi-tiet.html?id=${p.id}` }

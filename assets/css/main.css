@@ -48,7 +48,11 @@ button { font-family: inherit; cursor: pointer; }
 @media (max-width: 768px) {
     .home-cta-grid { grid-template-columns: 1fr; }
 }
-.back-to-top { position: fixed; bottom: 24px; right: 20px; width: 44px; height: 44px; background-color: var(--primary); color: var(--white); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; opacity: 0; visibility: hidden; transform: translateY(20px); transition: var(--transition); z-index: 999; box-shadow: var(--shadow-md); }
+/* right:22px (không phải 20px) để tâm nút thẳng hàng với widget liên hệ nhanh bên dưới: cột đó
+   rộng 48px (theo .qc-item, phần tử con rộng nhất) neo ở right:20px, nên tâm cột nằm ở
+   20 + 48/2 = 44px từ mép phải; nút này rộng 44px nên phải neo right = 44 - 44/2 = 22px mới cùng
+   tâm - để right:20px như cũ sẽ lệch tâm 2px, đúng như đã thấy trên demo thật. */
+.back-to-top { position: fixed; bottom: 24px; right: 22px; width: 44px; height: 44px; background-color: var(--primary); color: var(--white); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; opacity: 0; visibility: hidden; transform: translateY(20px); transition: var(--transition); z-index: 999; box-shadow: var(--shadow-md); }
 .back-to-top.show { opacity: 1; visibility: visible; transform: translateY(0); }
 .back-to-top:hover { background-color: var(--m-blue); color: var(--white); }
 

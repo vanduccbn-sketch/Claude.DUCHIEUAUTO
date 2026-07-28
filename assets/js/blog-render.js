@@ -186,7 +186,7 @@ async function renderBlogDetail() {
             "@context": "https://schema.org",
             "@type": "BreadcrumbList",
             "itemListElement": [
-                { "@type": "ListItem", "position": 1, "name": "Trang chủ", "item": new URL("index.html", window.location.href).href },
+                { "@type": "ListItem", "position": 1, "name": "Trang chủ", "item": new URL("/", window.location.href).href },
                 { "@type": "ListItem", "position": 2, "name": "Tin Tức", "item": new URL("tin-tuc.html", window.location.href).href },
                 { "@type": "ListItem", "position": 3, "name": post.title, "item": window.location.href }
             ]

@@ -347,6 +347,28 @@ dung SEO hiện có**
 kinh doanh (nhân sự, tính phí di chuyển...), không phải việc code, chỉ làm phần hiển thị web sau
 khi user xác nhận có triển khai thật.
 
+### Checklist tổng hợp - đang chờ user (2026-07-28), Claude không tự làm tiếp được nếu thiếu
+
+Đã làm hết phần tự làm được (11.1, 11.2, 11.3). 4 mục dưới đây **đều thật sự cần input từ user**,
+không phải Claude ngại làm - tự bịa số liệu/dịch vụ/ảnh cho 1 cửa hàng thật là sai nguyên tắc cốt
+lõi của dự án (xem `huong-dan-viet-content-nhan-vien.md` mục 5), có thể khiến khách hiểu sai giá/
+dịch vụ/hình ảnh thật của cửa hàng:
+
+- [ ] **11.4 - Ảnh thật:** ảnh xe khách/cửa hàng/kỹ thuật viên đang thi công (thay ảnh stock ở mục
+  "Về Đức Hiếu Auto"). Không có ảnh thật thì để nguyên hiện trạng, không thay bằng ảnh stock khác.
+- [ ] **11.5 - Quyết định mức độ lọc xe:** lọc "tìm phụ kiện theo xe" theo hãng xe (Ford, Toyota...)
+  hay tới từng dòng xe cụ thể (Ford Ranger, Toyota Vios...)? Ảnh hưởng khối lượng nhập liệu cho
+  73+ sản phẩm. Riêng danh mục Đồ Bán Tải đã có sẵn tên xe trong tên sản phẩm (VD "Ford Ranger
+  WildTrak 2023") - có thể tận dụng ngay, các danh mục khác (âm thanh, màn hình...) chưa có dữ liệu
+  xe cụ thể vì bản chất đa số sản phẩm dùng chung cho nhiều dòng xe.
+- [ ] **11.6 - Danh sách dịch vụ Chăm Sóc Xe + giá thật:** rửa xe, phủ ceramic, bọc ghế da, ốp trần...
+  (dịch vụ hoàn toàn mới, chưa có trong DB).
+- [ ] **11.7 - Danh sách sản phẩm Phụ Kiện Tiện Ích + giá + ảnh thật:** móc khóa, nước hoa xe, giá đỡ
+  điện thoại, thảm sàn... (nhóm sản phẩm hoàn toàn mới, cần Đức Hiếu Auto thật sự có bán).
+
+**Cách làm tiếp:** không cần cung cấp đủ cả 4 mục cùng lúc - mục nào có thông tin trước, báo trước,
+Claude làm ngay mục đó, không cần chờ đủ hết.
+
 ---
 
 ## Ghi chú khi làm (cập nhật liên tục)

@@ -48,12 +48,19 @@ File nhiệm vụ này **đang chạy**, nên lần cập nhật này giữ nguy
 ngày 2026-07-27) - phần lớn lý do "chờ domain" ở dưới không còn nữa, đã đánh dấu lại trạng thái:
 - [ ] Minify `assets/js/*.js`, `assets/css/*.css` trước khi deploy bản production — cần chọn công cụ build (chưa làm, không liên quan domain, có thể làm bất kỳ lúc nào)
 - [x] Rà soát xoá `console.log`, comment nội bộ nhạy cảm trong JS/HTML hiện có — **kết quả: sạch, không có `console.log` nào trong toàn bộ `assets/js/*.js` và các trang HTML**
-- [ ] **[SẴN SÀNG LÀM]** Chống hotlink ảnh sản phẩm — giờ có Cloudflare đứng trước rồi, dùng Cloudflare Rules (Scrape Shield / WAF custom rule chặn theo header `Referer`) thay vì phải tự viết header ở GitHub Pages
-- [ ] **[MỚI]** Watermark logo nhỏ lên ảnh sản phẩm (chống đối thủ lấy ảnh) — làm hàng loạt bằng script, áp dụng cho ảnh mới upload qua CMS ở Phase 4 (không liên quan domain)
-- [ ] reCAPTCHA cho form liên hệ/đặt lịch (chống spam bot) — vẫn cần user tự tạo site key tại Google reCAPTCHA trước (không liên quan domain, chỉ cần tài khoản Google)
+- [x] Chống hotlink ảnh sản phẩm — HOÀN THÀNH 2026-07-27: Cloudflare WAF Custom Rule (Rulesets API,
+  chặn theo `http.referer` không chứa `duchieuauto.vn` khi có referer), verify đủ 4 kịch bản (chặn
+  hotlink, cho phép truy cập trực tiếp không referer, cho phép cùng domain, site vẫn chạy bình thường)
+- [ ] **[MỚI]** Watermark logo nhỏ lên ảnh sản phẩm (chống đối thủ lấy ảnh) — làm hàng loạt bằng script, áp dụng cho ảnh mới upload qua CMS ở Phase 4 (không liên quan domain) — **vẫn CHƯA làm**, đang chờ logo thật (logo hiện tại chỉ là placeholder tạm)
+- [x] reCAPTCHA cho form liên hệ/đặt lịch (chống spam bot) — HOÀN THÀNH 2026-07-27: reCAPTCHA v2
+  checkbox, áp dụng cho `dat-lich-hen.html`, `nhac-bao-duong.html`, form đánh giá ở
+  `san-pham-chi-tiet.html` (form liên hệ ở `index.html` dùng Formspree riêng, có chống spam sẵn nên
+  không áp dụng); backend verify fail-open nếu thiếu `RECAPTCHA_SECRET_KEY`
 - [x] Kiểm tra không có API key/secret nào lộ trong code client-side hiện tại — **kết quả: sạch**, grep toàn bộ `*.html/*.js/*.css` tìm `api-key/secret/password/token` chỉ khớp các biến/field name phía backend (server-side, không lộ ra client), Formspree endpoint ID không phải secret (thiết kế công khai theo đúng cơ chế Formspree)
 - [x] **Đưa site qua Cloudflare** — HOÀN THÀNH 2026-07-27: domain `duchieuauto.vn` mua tại Mắt Bão, đổi nameserver sang Cloudflare, proxy (CDN + chống DDoS) đã bật cho toàn bộ bản ghi
-- [ ] **[SẴN SÀNG LÀM]** Làm lại tính năng gửi email quên mật khẩu thật — domain thật đã có, nhưng gốc vấn đề là **Render free tier chặn SMTP** (không phải do thiếu domain) nên vẫn phải đổi sang gửi qua HTTP API (Resend hoặc Brevo, có gói miễn phí) thay vì Gmail SMTP - giờ có domain thật thì xác minh domain gửi (VD `noreply@duchieuauto.vn`) với Resend/Brevo sẽ dễ và uy tín hơn hẳn so với dùng Gmail cá nhân
+- [x] Làm lại tính năng gửi email quên mật khẩu thật — HOÀN THÀNH 2026-07-27: đổi sang Resend
+  (`utils/mailer.js`), domain `duchieuauto.vn` đã verify DKIM/SPF qua Cloudflare, test gửi/nhận
+  email thật + reset mật khẩu thành công trên production (`admin.duchieuauto.vn`)
 - [x] Đổi đúng đuôi `.webp` cho 5 ảnh sản phẩm nhóm `zestech-box-dx*` hiện đang bị đặt nhầm đuôi `.jpg` — đã làm 2026-07-26
 - [x] Đánh giá ảnh hưởng SEO khi nội dung sản phẩm/blog chuyển từ tĩnh sang gọi API — đã làm 2026-07-26, xem báo cáo `danh-gia-seo-chuyen-doi-api-2026-07-26.md`, phát hiện thêm và đã sửa luôn: sitemap.xml cũ thiếu 293 URL sản phẩm
 
@@ -215,12 +222,33 @@ tên/kinh nghiệm kỹ thuật viên) phải do user cung cấp thật, Claude 
 (SEO/GEO, không cần chờ nội dung mới) có thể làm ngay bằng dữ liệu hiện có. Riêng 9.2 và 9.3 phải
 **chờ user cung cấp thông tin/ảnh thật** mới làm được (không thể tự bịa số liệu/ảnh).
 
-## PHASE 10 — Tích hợp dữ liệu quảng cáo Facebook/TikTok (tương lai, chưa bắt đầu)
+## PHASE 10 — Tích hợp dữ liệu quảng cáo Facebook/TikTok (ĐANG LÀM DỞ - code xong, chờ thiết lập Facebook App Dashboard)
 
-**[MỚI 2026-07-27]** User muốn sau này liên kết Facebook và TikTok vào để "xử lý data" - mục
-đích cụ thể (nhận lead từ form quảng cáo, hay gửi sự kiện conversion về nền tảng để tối ưu quảng
-cáo, hay cả hai) cần làm rõ với user trước khi thiết kế chi tiết, nhưng đã phác trước 2 hướng phổ
-biến nhất để không phải nghiên cứu lại từ đầu khi bắt tay vào:
+**[CẬP NHẬT 2026-07-27]** User chọn **Hướng B** (nhận Lead Ads). Đã code xong hoàn toàn phần backend:
+
+- [x] `routes/leads.js` - webhook Facebook (`GET/POST /api/leads/facebook`: verify challenge-response,
+  verify chữ ký `X-Hub-Signature-256` bằng HMAC-SHA256, gọi Graph API lấy chi tiết lead từ
+  `leadgen_id`, lưu vào `contacts` với `type='facebook_lead'`) + khung webhook TikTok tương tự
+  (`GET/POST /api/leads/tiktok`, đánh dấu rõ cần đối chiếu lại tài liệu TikTok thật khi có app thật).
+- [x] `server.js` - mount `/api/leads`, thêm `express.json({verify: ...})` lưu `rawBody` để tính HMAC.
+- [x] `.env.example` - thêm chỗ cho `FB_VERIFY_TOKEN`, `FB_APP_SECRET`, `FB_PAGE_ACCESS_TOKEN`,
+  `TIKTOK_VERIFY_TOKEN`. **Chưa set giá trị thật trên Render** - chờ xong phần dưới mới có giá trị.
+- [x] `admin/lien-he.html` - thêm nhãn hiển thị `facebook_lead`/`tiktok_lead` trong danh sách liên hệ.
+
+**Đang dở (phía user, trên Facebook App Dashboard):**
+- [x] B1 - Tạo app "Duc Hieu Auto CRM" trên Meta for Developers - đã tạo xong.
+- [ ] **B2 - Thiết lập Webhooks** - ĐANG BỊ KẸT: sidebar app hiện chỉ có sẵn product "Đăng nhập bằng
+  Facebook", chưa thấy Webhooks. Đã hướng dẫn thử vào mục "Trường hợp sử dụng" (giao diện Meta bản
+  mới gộp việc thêm sản phẩm vào đây thay vì nút "+ Add Product" cũ) nhưng **chưa có phản hồi tiếp
+  theo từ user** - cần chụp màn hình trang "Trường hợp sử dụng" ở lần làm tiếp theo vì giao diện Meta
+  đổi khá thường xuyên, cần thấy đúng bản user đang có mới chỉ được chính xác nút bấm.
+- [ ] B3 - Lấy App Secret (Cài đặt ứng dụng → Cơ bản → App Secret) - chưa làm, phải xong B2 trước.
+- [ ] B4 - Lấy Page Access Token qua System User (cần quyền `leads_retrieval`) - chưa làm.
+- [ ] B5 - Kết nối đúng Fanpage/form Lead Ads thật đang chạy quảng cáo - chưa làm.
+- [ ] Set `FB_VERIFY_TOKEN`/`FB_APP_SECRET`/`FB_PAGE_ACCESS_TOKEN` thật trên Render sau khi có đủ B2-B4.
+
+**Bối cảnh giữ nguyên (không đổi):** user muốn sau này liên kết Facebook và TikTok vào để "xử lý
+data" - đã phác trước 2 hướng phổ biến nhất để không phải nghiên cứu lại từ đầu khi bắt tay vào:
 
 - **Hướng A - Facebook/TikTok Conversion API (gửi dữ liệu ĐI):** mỗi khi khách gửi form liên hệ/
   đặt lịch/mua hàng trên site, gửi kèm 1 sự kiện (VD "Lead", "Booking") về Facebook Conversion API
@@ -246,9 +274,8 @@ cách đơn giản hơn là thêm route mới ngay trong backend Express hiện 
 - **Khuyến nghị:** bắt đầu bằng Hướng A trong chính backend hiện tại (rẻ, nhanh, ít rủi ro) trước,
   chỉ cân nhắc thêm Supabase nếu nhu cầu thực tế phát sinh (VD sau này thật sự chạy Lead Ads).
 
-**Việc cần làm trước khi bắt đầu Phase này (từ user):** xác nhận mục đích cụ thể (Hướng A/B/cả
-hai), có đang/sẽ chạy quảng cáo Facebook/TikTok chưa, và cung cấp Pixel ID/Access Token khi tới
-lúc triển khai thật.
+**[ĐÃ CHỐT]** User chọn Hướng B, không dùng Supabase (đúng khuyến nghị - tái dùng bảng `contacts`
+sẵn có). Việc còn lại chỉ là hoàn tất B2-B5 ở trên trên Facebook App Dashboard thật.
 
 ---
 

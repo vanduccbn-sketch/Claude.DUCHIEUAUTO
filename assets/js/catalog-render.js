@@ -104,6 +104,27 @@ function productImgFallback(id) {
     return `assets/images/products/${id}/anh-1.jpg`;
 }
 
+// Thẻ 1 sản phẩm trong lưới catalog - dùng chung cho brand-san-pham.html (renderBrandProducts) và
+// category-chi-tiet.html khi danh mục chỉ có đúng 1 thương hiệu (renderCategoryDetail bỏ qua bước
+// chọn thương hiệu vì chỉ có 1 lựa chọn duy nhất, không cần bắt khách bấm thêm 1 lần vô nghĩa).
+function productCardCatalogHtml(p) {
+    return `
+        <a class="product-card-catalog" href="san-pham-chi-tiet.html?id=${p.id}">
+            <div class="product-img-catalog">
+                <label class="compare-checkbox">
+                    <input type="checkbox" class="compare-check" data-id="${p.id}" data-name="${p.name}">
+                    <span>So sánh</span>
+                </label>
+                <img src="${p.image}" ${productSrcsetAttrs(p.image)} alt="${seoAlt(p.name)}" loading="lazy" onerror="this.src='assets/images/placeholder.svg'">
+            </div>
+            <div class="product-info-catalog">
+                <span class="product-brand-catalog">${p.brand}</span>
+                <h3>${p.name}</h3>
+                ${p.price ? `<span class="product-price-catalog">${p.price}</span>` : ""}
+            </div>
+        </a>`;
+}
+
 function serviceCardHtml(item) {
     return `
         <a class="service-card" href="${item.href}">
@@ -158,7 +179,10 @@ const CATEGORY_NAV_ICON = {
     "camera-hanh-trinh": "fa-video",
     "ppf-wrap-doi-mau": "fa-shield-halved",
     "do-den": "fa-lightbulb",
-    "do-ban-tai": "fa-truck-pickup"
+    "do-ban-tai": "fa-truck-pickup",
+    "cham-soc-xe": "fa-spray-can-sparkles",
+    "doi-mau-noi-that": "fa-couch",
+    "phu-kien-tien-ich": "fa-mobile-screen-button"
 };
 
 async function renderNavProductsDropdown(containerSelector) {
@@ -171,9 +195,14 @@ async function renderNavProductsDropdown(containerSelector) {
         container.innerHTML = categories.map(cat => {
             const brands = cat.brands;
             const icon = CATEGORY_NAV_ICON[cat.id] || "fa-circle";
-            const flyoutHtml = brands.length
-                ? brands.map(b => `<a href="brand-san-pham.html?id=${cat.id}&brand=${b.id}">${b.name}</a>`).join("")
-                : `<span class="nav-brand-empty">Đang cập nhật</span>`;
+            // Chỉ 1 thương hiệu duy nhất (VD "Chăm Sóc Xe" chỉ có "Dịch Vụ Detailing") -> liệt kê
+            // thẳng từng dịch vụ/sản phẩm trong flyout, không bắt rê chuột thêm 1 lần vào tên
+            // thương hiệu vô nghĩa khi chẳng có lựa chọn nào khác.
+            const flyoutHtml = brands.length === 1 && !brands[0].types
+                ? brands[0].products.map(p => `<a href="san-pham-chi-tiet.html?id=${p.id}">${p.name}</a>`).join("")
+                : brands.length
+                    ? brands.map(b => `<a href="brand-san-pham.html?id=${cat.id}&brand=${b.id}">${b.name}</a>`).join("")
+                    : `<span class="nav-brand-empty">Đang cập nhật</span>`;
 
             return `
             <div class="nav-product-row">
@@ -197,7 +226,9 @@ async function renderServiceGrid(containerSelector) {
     try {
         const categories = await loadApiCatalog();
         const doBanTai = findCategoryIn(categories, "do-ban-tai");
+        const chamSocXe = findCategoryIn(categories, "cham-soc-xe");
         const items = [
+            ...(chamSocXe ? [{ ...chamSocXe, href: `category-chi-tiet.html?id=${chamSocXe.id}` }] : []),
             ...CATALOG.serviceGroups.map(g => ({ ...g, href: `category-chi-tiet.html?group=${g.id}` })),
             ...(doBanTai ? [{ ...doBanTai, href: `category-chi-tiet.html?id=${doBanTai.id}` }] : [])
         ];
@@ -321,20 +352,31 @@ async function renderCategoryDetail() {
     }
 
     const brandGrid = document.querySelector(".brand-grid");
-    brandGrid.innerHTML = cat.brands.filter(brand => !brand.hidden).map(brand => {
-        const count = brand.types
-            ? brand.types.reduce((sum, t) => sum + t.products.length, 0)
-            : brand.products.length;
-        const logoHtml = brand.logo ? `<div class="brand-logo"><img src="${brand.logo}" alt="${brand.name}" loading="lazy"></div>` : "";
-        return `
-        <a class="brand-card" href="brand-san-pham.html?id=${cat.id}&brand=${brand.id}">
-            <div class="brand-card-info">
-                <h3>${brand.name}</h3>
-                <span>${count} sản phẩm <i class="fa-solid fa-arrow-right"></i></span>
-            </div>
-            ${logoHtml}
-        </a>`;
-    }).join("");
+    const visibleBrands = cat.brands.filter(brand => !brand.hidden);
+
+    // Danh mục chỉ có đúng 1 thương hiệu (VD "Chăm Sóc Xe" chỉ có "Dịch Vụ Detailing") -> bắt khách
+    // bấm chọn thương hiệu duy nhất đó là 1 bước thừa - hiện thẳng danh sách dịch vụ/sản phẩm luôn.
+    if (visibleBrands.length === 1 && !visibleBrands[0].types) {
+        brandGrid.classList.remove("brand-grid");
+        brandGrid.classList.add("product-grid-catalog");
+        brandGrid.innerHTML = visibleBrands[0].products.map(productCardCatalogHtml).join("");
+        initCompareCheckboxes(brandGrid);
+    } else {
+        brandGrid.innerHTML = visibleBrands.map(brand => {
+            const count = brand.types
+                ? brand.types.reduce((sum, t) => sum + t.products.length, 0)
+                : brand.products.length;
+            const logoHtml = brand.logo ? `<div class="brand-logo"><img src="${brand.logo}" alt="${brand.name}" loading="lazy"></div>` : "";
+            return `
+            <a class="brand-card" href="brand-san-pham.html?id=${cat.id}&brand=${brand.id}">
+                <div class="brand-card-info">
+                    <h3>${brand.name}</h3>
+                    <span>${count} sản phẩm <i class="fa-solid fa-arrow-right"></i></span>
+                </div>
+                ${logoHtml}
+            </a>`;
+        }).join("");
+    }
 
     renderCategoryFaqs(cat.faqs);
 }
@@ -643,22 +685,7 @@ async function renderBrandProducts() {
     // Sản phẩm trong cây API đã có sẵn đủ field (name/price/image/brand) - không cần lookup thêm
     // như trước đây (findProduct(pid) trên dữ liệu tĩnh).
     function renderGrid(list) {
-        grid.innerHTML = list.map(p => `
-            <a class="product-card-catalog" href="san-pham-chi-tiet.html?id=${p.id}">
-                <div class="product-img-catalog">
-                    <label class="compare-checkbox">
-                        <input type="checkbox" class="compare-check" data-id="${p.id}" data-name="${p.name}">
-                        <span>So sánh</span>
-                    </label>
-                    <img src="${p.image}" ${productSrcsetAttrs(p.image)} alt="${seoAlt(p.name)}" loading="lazy" onerror="this.src='assets/images/placeholder.svg'">
-                </div>
-                <div class="product-info-catalog">
-                    <span class="product-brand-catalog">${p.brand}</span>
-                    <h3>${p.name}</h3>
-                    ${p.price ? `<span class="product-price-catalog">${p.price}</span>` : ""}
-                </div>
-            </a>`).join("");
-
+        grid.innerHTML = list.map(productCardCatalogHtml).join("");
         initCompareCheckboxes(grid);
     }
 

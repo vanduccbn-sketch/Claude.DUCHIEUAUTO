@@ -38,6 +38,30 @@ button { font-family: inherit; cursor: pointer; }
 .admin-nav { display: flex; align-items: center; gap: 4px; }
 .admin-nav a { color: #c9ccd1; padding: 8px 14px; border-radius: 6px; font-size: 14px; }
 .admin-nav a:hover, .admin-nav a.active { color: #fff; background: rgba(255,255,255,0.08); text-decoration: none; }
+
+/* Nhóm menu dạng dropdown (Nội Dung/Marketing/Hệ Thống) - cùng cơ chế hover-để-mở như
+   ".has-dropdown"/".nav-dropdown" ở assets/css/header.css ngoài web công khai, chỉ đổi màu cho
+   khớp nền tối --dark của topbar admin. Gom lại để thanh admin không còn liệt kê phẳng quá nhiều
+   mục trong 1 hàng. */
+.admin-nav-dropdown { position: relative; }
+.admin-nav-dropdown-label {
+    display: flex; align-items: center; gap: 4px; cursor: default;
+    color: #c9ccd1; padding: 8px 14px; border-radius: 6px; font-size: 14px;
+}
+.admin-nav-dropdown:hover .admin-nav-dropdown-label,
+.admin-nav-dropdown.active .admin-nav-dropdown-label { color: #fff; background: rgba(255,255,255,0.08); }
+.admin-nav-caret { font-size: 10px; }
+.admin-nav-dropdown-menu {
+    position: absolute; top: 100%; left: 0; min-width: 190px; padding: 6px;
+    background: var(--dark); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.35);
+    display: flex; flex-direction: column; gap: 2px;
+    opacity: 0; visibility: hidden; transform: translateY(6px);
+    transition: opacity 0.15s, transform 0.15s, visibility 0.15s;
+    z-index: 100;
+}
+.admin-nav-dropdown:hover .admin-nav-dropdown-menu { opacity: 1; visibility: visible; transform: translateY(0); }
+.admin-nav-dropdown-menu a { padding: 8px 12px; }
 .nav-badge { display: inline-flex; align-items: center; justify-content: center; min-width: 18px; height: 18px; padding: 0 5px; margin-left: 4px; background: var(--primary); color: #fff; border-radius: 20px; font-size: 10.5px; font-weight: 700; vertical-align: 2px; }
 .global-search { position: relative; }
 .global-search input { width: 220px; padding: 7px 12px; border-radius: 20px; border: 1px solid #3a3d44; background: rgba(255,255,255,0.06); color: #fff; font-size: 13px; }

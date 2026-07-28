@@ -116,6 +116,15 @@ const ready = (async () => {
             updated_at TEXT NOT NULL DEFAULT (datetime('now'))
         );
 
+        -- Nội dung chữ trên trang chủ (Hero, Giới Thiệu...) - tách bảng riêng khỏi "settings" vì
+        -- Content admin cần sửa được (viết nội dung), khác phạm vi "settings" hiện chỉ Ads admin
+        -- sửa (mã tracking, SEO mặc định). Cùng kiểu key-value đơn giản như settings.
+        CREATE TABLE IF NOT EXISTS homepage_content (
+            key TEXT PRIMARY KEY,
+            value TEXT,
+            updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+        );
+
         CREATE TABLE IF NOT EXISTS banners (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             title TEXT NOT NULL,

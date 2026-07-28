@@ -39,13 +39,176 @@
         <div class="admin-header">
             <div>
                 <h1>Trang Chủ</h1>
-                <p class="desc">Chọn sản phẩm thật hiển thị ở 2 khu vực nổi bật trên trang chủ - "Sản Phẩm Chiến Lược" và "Giải Mã Công Nghệ". Ảnh/tên/giá lấy tự động theo sản phẩm đã chọn.</p>
+                <p class="desc">Sửa chữ và ảnh ở mọi khối trên trang chủ (Banner, Giới Thiệu, Dịch Vụ, Đặt Lịch/Nhắc Bảo Dưỡng, Sản Phẩm Chiến Lược, Giải Mã Công Nghệ, Liên Hệ, Footer), và chọn sản phẩm thật hiển thị ở 2 khu vực nổi bật "Sản Phẩm Chiến Lược"/"Giải Mã Công Nghệ".</p>
+            </div>
+        </div>
+
+        <div class="settings-section">
+            <h2>Banner Đầu Trang (Hero)</h2>
+            <p class="form-hint" style="margin-bottom:14px;">Khối chữ lớn ngay đầu trang chủ, trên nền video. Để trống ô nào thì trang chủ tự giữ nguyên chữ đang có, không bị mất chữ.</p>
+            <div class="form-group">
+                <label for="heroSubtitleInput">Dòng nhỏ phía trên (VD: Premium Automotive Upgrade)</label>
+                <input type="text" id="heroSubtitleInput" placeholder="Premium Automotive Upgrade">
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="heroTitleLine1Input">Tiêu đề - dòng 1</label>
+                    <input type="text" id="heroTitleLine1Input" placeholder="ĐỊNH HÌNH PHONG CÁCH">
+                </div>
+                <div class="form-group">
+                    <label for="heroTitleLine2Input">Tiêu đề - dòng 2 (chữ màu đỏ nhấn)</label>
+                    <input type="text" id="heroTitleLine2Input" placeholder="ĐẲNG CẤP XẾ YÊU">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="heroDescriptionInput">Mô tả ngắn dưới tiêu đề</label>
+                <textarea id="heroDescriptionInput" rows="2" placeholder="Trung tâm chăm sóc và nâng cấp ô tô chuyên nghiệp hàng đầu."></textarea>
+            </div>
+            <div class="form-group">
+                <label>Ảnh nền (hiện trước khi video tải xong)</label>
+                <input type="file" id="heroPosterImageFile" accept="image/*">
+                <div class="cover-preview" id="heroPosterImagePreview" style="margin-top:10px;">Chưa chọn ảnh</div>
+                <input type="hidden" id="heroPosterImageInput">
+                <p class="form-hint">Không đổi được video nền ở đây, chỉ đổi được ảnh tĩnh hiện ra trước khi video kịp tải.</p>
+            </div>
+            <div class="editor-actions">
+                <button type="button" class="btn btn-primary" id="saveHeroBtn">Lưu Banner Đầu Trang</button>
+                <span class="save-status" id="heroSaveStatus"></span>
+            </div>
+        </div>
+
+        <div class="settings-section">
+            <h2>Giới Thiệu (Về Đức Hiếu Auto)</h2>
+            <p class="form-hint" style="margin-bottom:14px;">Khối "Về Đức Hiếu Auto" kèm số liệu thống kê trên trang chủ. Để trống ô nào thì giữ nguyên chữ/số đang có.</p>
+            <div class="form-group">
+                <label for="aboutBadgeInput">Nhãn nhỏ phía trên tiêu đề</label>
+                <input type="text" id="aboutBadgeInput" placeholder="Về Đức Hiếu Auto">
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="aboutSlogan1Input">Slogan - dòng 1</label>
+                    <input type="text" id="aboutSlogan1Input" placeholder="Nâng Tầm">
+                </div>
+                <div class="form-group">
+                    <label for="aboutSlogan2Input">Slogan - dòng 2 (chữ màu đỏ nhấn)</label>
+                    <input type="text" id="aboutSlogan2Input" placeholder="Trải Nghiệm">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="aboutDescriptionInput">Đoạn giới thiệu</label>
+                <textarea id="aboutDescriptionInput" rows="4" placeholder="Đoạn giới thiệu về Đức Hiếu Auto"></textarea>
+            </div>
+            <label style="display:block;font-size:13px;font-weight:600;margin:18px 0 8px;">Số liệu thống kê (3 ô)</label>
+            <div class="form-grid" style="grid-template-columns:repeat(3,1fr);">
+                <div class="form-group">
+                    <label for="aboutStat1NumInput">Số 1</label>
+                    <input type="text" inputmode="numeric" pattern="[0-9]*" id="aboutStat1NumInput" placeholder="240">
+                    <input type="text" id="aboutStat1LabelInput" placeholder="Nhãn: Sản phẩm chính hãng" style="margin-top:6px;">
+                </div>
+                <div class="form-group">
+                    <label for="aboutStat2NumInput">Số 2</label>
+                    <input type="text" inputmode="numeric" pattern="[0-9]*" id="aboutStat2NumInput" placeholder="30">
+                    <input type="text" id="aboutStat2LabelInput" placeholder="Nhãn: Thương hiệu quốc tế" style="margin-top:6px;">
+                </div>
+                <div class="form-group">
+                    <label for="aboutStat3NumInput">Số 3</label>
+                    <input type="text" inputmode="numeric" pattern="[0-9]*" id="aboutStat3NumInput" placeholder="8">
+                    <input type="text" id="aboutStat3LabelInput" placeholder="Nhãn: Danh mục dịch vụ" style="margin-top:6px;">
+                </div>
+            </div>
+            <label style="display:block;font-size:13px;font-weight:600;margin:18px 0 8px;">3 ảnh trong khối Giới Thiệu</label>
+            <div class="form-grid" style="grid-template-columns:repeat(3,1fr);">
+                <div class="form-group">
+                    <label>Ảnh chính (to)</label>
+                    <input type="file" id="aboutImageMainFile" accept="image/*">
+                    <div class="cover-preview" id="aboutImageMainPreview" style="margin-top:10px;">Chưa chọn ảnh</div>
+                    <input type="hidden" id="aboutImageMainInput">
+                </div>
+                <div class="form-group">
+                    <label>Ảnh nhỏ 1</label>
+                    <input type="file" id="aboutImageDetail1File" accept="image/*">
+                    <div class="cover-preview" id="aboutImageDetail1Preview" style="margin-top:10px;">Chưa chọn ảnh</div>
+                    <input type="hidden" id="aboutImageDetail1Input">
+                </div>
+                <div class="form-group">
+                    <label>Ảnh nhỏ 2</label>
+                    <input type="file" id="aboutImageDetail2File" accept="image/*">
+                    <div class="cover-preview" id="aboutImageDetail2Preview" style="margin-top:10px;">Chưa chọn ảnh</div>
+                    <input type="hidden" id="aboutImageDetail2Input">
+                </div>
+            </div>
+            <div class="editor-actions">
+                <button type="button" class="btn btn-primary" id="saveAboutBtn">Lưu Giới Thiệu</button>
+                <span class="save-status" id="aboutSaveStatus"></span>
+            </div>
+        </div>
+
+        <div class="settings-section">
+            <h2>Dịch Vụ</h2>
+            <p class="form-hint" style="margin-bottom:14px;">Thẻ dịch vụ tự lấy theo danh mục, chỉ tiêu đề mục là sửa được ở đây.</p>
+            <div class="form-group">
+                <label for="serviceSectionTitleInput">Tiêu đề mục</label>
+                <input type="text" id="serviceSectionTitleInput" placeholder="DỊCH VỤ CHUYÊN NGHIỆP">
+            </div>
+            <div class="editor-actions">
+                <button type="button" class="btn btn-primary" id="saveServiceBtn">Lưu Dịch Vụ</button>
+                <span class="save-status" id="serviceSaveStatus"></span>
+            </div>
+        </div>
+
+        <div class="settings-section">
+            <h2>Đặt Lịch Hẹn / Nhắc Bảo Dưỡng</h2>
+            <p class="form-hint" style="margin-bottom:14px;">Khối 2 thẻ CTA giữa trang chủ.</p>
+            <div class="form-group">
+                <label for="quickActionsTitleInput">Tiêu đề mục</label>
+                <input type="text" id="quickActionsTitleInput" placeholder="SẴN SÀNG PHỤC VỤ NGAY">
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Thẻ 1 - Đặt Lịch Hẹn</label>
+                    <input type="text" id="qaCta1LabelInput" placeholder="Nhãn nhỏ: Đặt Lịch Hẹn" style="margin-bottom:6px;">
+                    <input type="text" id="qaCta1TitleInput" placeholder="Tiêu đề: Giữ Chỗ Trước, Không Phải Chờ Đợi" style="margin-bottom:6px;">
+                    <input type="text" id="qaCta1DescInput" placeholder="Mô tả ngắn">
+                </div>
+                <div class="form-group">
+                    <label>Thẻ 2 - Nhắc Bảo Dưỡng</label>
+                    <input type="text" id="qaCta2LabelInput" placeholder="Nhãn nhỏ: Nhắc Bảo Dưỡng" style="margin-bottom:6px;">
+                    <input type="text" id="qaCta2TitleInput" placeholder="Tiêu đề: Không Bao Giờ Quên Lịch Bảo Dưỡng Xe" style="margin-bottom:6px;">
+                    <input type="text" id="qaCta2DescInput" placeholder="Mô tả ngắn">
+                </div>
+            </div>
+            <div class="editor-actions">
+                <button type="button" class="btn btn-primary" id="saveQuickActionsBtn">Lưu Đặt Lịch / Nhắc Bảo Dưỡng</button>
+                <span class="save-status" id="quickActionsSaveStatus"></span>
             </div>
         </div>
 
         <div class="settings-section">
             <h2>Sản Phẩm Chiến Lược</h2>
-            <p class="form-hint" style="margin-bottom:14px;">Hiện ở trang chủ dạng thẻ sản phẩm kèm huy hiệu (VD "Giá Sốc") và nhãn giá (VD "Ưu đãi hôm nay").</p>
+            <p class="form-hint" style="margin-bottom:14px;">Tiêu đề mục + CTA "Xem tất cả". Hiện ở trang chủ dạng thẻ sản phẩm kèm huy hiệu (VD "Giá Sốc") và nhãn giá (VD "Ưu đãi hôm nay").</p>
+            <div class="form-group">
+                <label for="productSectionTitleInput">Tiêu đề mục</label>
+                <input type="text" id="productSectionTitleInput" placeholder="SẢN PHẨM CHIẾN LƯỢC">
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="productCtaLabelInput">Nhãn nhỏ CTA cuối mục</label>
+                    <input type="text" id="productCtaLabelInput" placeholder="Khám Phá Thêm">
+                </div>
+                <div class="form-group">
+                    <label for="productCtaTitleInput">Tiêu đề CTA</label>
+                    <input type="text" id="productCtaTitleInput" placeholder="Xem Tất Cả Danh Mục Sản Phẩm">
+                </div>
+                <div class="form-group full">
+                    <label for="productCtaDescInput">Mô tả CTA</label>
+                    <input type="text" id="productCtaDescInput" placeholder="Hàng trăm sản phẩm chính hãng đang chờ bạn khám phá">
+                </div>
+            </div>
+            <div class="editor-actions">
+                <button type="button" class="btn btn-primary" id="saveProductTextBtn">Lưu Tiêu Đề / CTA</button>
+                <span class="save-status" id="productTextSaveStatus"></span>
+            </div>
+            <hr style="border:none;border-top:1px solid var(--border);margin:20px 0;">
             <div class="highlight-add-form">
                 <div class="form-group">
                     <label>Chọn sản phẩm</label>
@@ -70,7 +233,24 @@
 
         <div class="settings-section">
             <h2>Giải Mã Công Nghệ</h2>
-            <p class="form-hint" style="margin-bottom:14px;">Hiện dạng "câu chuyện công nghệ" - tag trên ảnh, tiêu đề câu chuyện, đoạn mô tả dài hơn.</p>
+            <p class="form-hint" style="margin-bottom:14px;">Eyebrow + tiêu đề + đoạn dẫn của mục. Bên dưới là "câu chuyện công nghệ" - tag trên ảnh, tiêu đề câu chuyện, đoạn mô tả dài hơn.</p>
+            <div class="form-group">
+                <label for="techEyebrowInput">Eyebrow (dòng chữ nhỏ phía trên)</label>
+                <input type="text" id="techEyebrowInput" placeholder="Công Nghệ Thật - Sản Phẩm Thật">
+            </div>
+            <div class="form-group">
+                <label for="techSectionTitleInput">Tiêu đề mục</label>
+                <input type="text" id="techSectionTitleInput" placeholder="GIẢI MÃ CÔNG NGHỆ">
+            </div>
+            <div class="form-group">
+                <label for="techIntroInput">Đoạn dẫn</label>
+                <textarea id="techIntroInput" rows="2" placeholder="Đoạn giới thiệu ngắn"></textarea>
+            </div>
+            <div class="editor-actions">
+                <button type="button" class="btn btn-primary" id="saveTechTextBtn">Lưu Tiêu Đề / Đoạn Dẫn</button>
+                <span class="save-status" id="techTextSaveStatus"></span>
+            </div>
+            <hr style="border:none;border-top:1px solid var(--border);margin:20px 0;">
             <div class="highlight-add-form">
                 <div class="form-group">
                     <label>Chọn sản phẩm</label>
@@ -91,6 +271,97 @@
                 <button type="button" class="btn btn-primary" id="addTechBtn">+ Thêm</button>
             </div>
             <div id="techList"></div>
+        </div>
+
+        <div class="settings-section">
+            <h2>Liên Hệ</h2>
+            <p class="form-hint" style="margin-bottom:14px;">Số điện thoại/địa chỉ/link mạng xã hội thật KHÔNG sửa ở đây (để tránh nút "Gọi ngay" trỏ sai) - chỉ sửa được phần chữ mô tả.</p>
+            <div class="form-group">
+                <label for="contactEyebrowInput">Eyebrow</label>
+                <input type="text" id="contactEyebrowInput" placeholder="Luôn Sẵn Sàng Hỗ Trợ Bạn">
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="contactTitleMainInput">Tiêu đề - phần 1</label>
+                    <input type="text" id="contactTitleMainInput" placeholder="KẾT NỐI VỚI">
+                </div>
+                <div class="form-group">
+                    <label for="contactTitleAccentInput">Tiêu đề - phần 2 (chữ màu đỏ nhấn)</label>
+                    <input type="text" id="contactTitleAccentInput" placeholder="ĐỨC HIẾU AUTO">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="contactIntroInput">Đoạn dẫn</label>
+                <textarea id="contactIntroInput" rows="2" placeholder="Đoạn giới thiệu ngắn"></textarea>
+            </div>
+            <label style="display:block;font-size:13px;font-weight:600;margin:18px 0 8px;">4 thẻ kênh liên hệ (tiêu đề + mô tả - không phải số điện thoại/link thật)</label>
+            <div class="form-grid" style="grid-template-columns:repeat(2,1fr);">
+                <div class="form-group">
+                    <label>Thẻ 1 - Gọi Ngay</label>
+                    <input type="text" id="contactCh1TitleInput" placeholder="Gọi Ngay" style="margin-bottom:6px;">
+                    <input type="text" id="contactCh1DescInput" placeholder="Tư vấn trực tiếp, nhanh chóng">
+                </div>
+                <div class="form-group">
+                    <label>Thẻ 2 - Chat Zalo</label>
+                    <input type="text" id="contactCh2TitleInput" placeholder="Chat Zalo" style="margin-bottom:6px;">
+                    <input type="text" id="contactCh2DescInput" placeholder="Gửi ảnh xe, nhận báo giá tức thì">
+                </div>
+                <div class="form-group">
+                    <label>Thẻ 3 - Messenger</label>
+                    <input type="text" id="contactCh3TitleInput" placeholder="Messenger" style="margin-bottom:6px;">
+                    <input type="text" id="contactCh3DescInput" placeholder="Kết nối qua Facebook">
+                </div>
+                <div class="form-group">
+                    <label>Thẻ 4 - Ghé Cửa Hàng</label>
+                    <input type="text" id="contactCh4TitleInput" placeholder="Ghé Cửa Hàng" style="margin-bottom:6px;">
+                    <input type="text" id="contactCh4DescInput" placeholder="123 Lý Thái Tổ, Buôn Ma Thuột">
+                </div>
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="contactFormTitleInput">Tiêu đề form liên hệ</label>
+                    <input type="text" id="contactFormTitleInput" placeholder="Để Lại Lời Nhắn">
+                </div>
+                <div class="form-group">
+                    <label for="contactFormDescInput">Mô tả form liên hệ</label>
+                    <input type="text" id="contactFormDescInput" placeholder="Điền thông tin bên dưới...">
+                </div>
+            </div>
+            <div class="editor-actions">
+                <button type="button" class="btn btn-primary" id="saveContactBtn">Lưu Liên Hệ</button>
+                <span class="save-status" id="contactSaveStatus"></span>
+            </div>
+        </div>
+
+        <div class="settings-section">
+            <h2>Footer</h2>
+            <p class="form-hint" style="margin-bottom:14px;">Danh sách link điều hướng ở footer KHÔNG sửa ở đây - chỉ sửa được mô tả thương hiệu, tiêu đề 3 cột, dòng bản quyền.</p>
+            <div class="form-group">
+                <label for="footerBrandDescInput">Mô tả thương hiệu</label>
+                <textarea id="footerBrandDescInput" rows="2" placeholder="Trung tâm nâng cấp và chăm sóc ô tô chuyên nghiệp..."></textarea>
+            </div>
+            <div class="form-grid" style="grid-template-columns:repeat(3,1fr);">
+                <div class="form-group">
+                    <label for="footerCol1TitleInput">Tiêu đề cột 1</label>
+                    <input type="text" id="footerCol1TitleInput" placeholder="Nội Thất Ô Tô">
+                </div>
+                <div class="form-group">
+                    <label for="footerCol2TitleInput">Tiêu đề cột 2</label>
+                    <input type="text" id="footerCol2TitleInput" placeholder="Ngoại Thất & Khác">
+                </div>
+                <div class="form-group">
+                    <label for="footerCol3TitleInput">Tiêu đề cột 3</label>
+                    <input type="text" id="footerCol3TitleInput" placeholder="Liên Kết Nhanh">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="footerCopyrightInput">Dòng bản quyền</label>
+                <input type="text" id="footerCopyrightInput" placeholder="© 2026 Đức Hiếu Auto. All rights reserved.">
+            </div>
+            <div class="editor-actions">
+                <button type="button" class="btn btn-primary" id="saveFooterBtn">Lưu Footer</button>
+                <span class="save-status" id="footerSaveStatus"></span>
+            </div>
         </div>
     </main>
 
@@ -117,7 +388,190 @@
 
             loadHighlights("strategic");
             loadHighlights("tech");
+            loadHomepageContent();
         }
+
+        // Ánh xạ key trong DB (routes/homepage-content.js) <-> id ô input trên form. Dùng chung cho
+        // cả load và save để không lặp danh sách 2 lần dễ lệch nhau khi sửa sau này. Khoá ảnh cũng
+        // nằm chung ở đây, trỏ tới ô input ẩn giữ URL - saveHomepageContentFields() đọc value như
+        // mọi ô khác, không cần code riêng cho ảnh.
+        const HOMEPAGE_CONTENT_FIELDS = {
+            hero_subtitle: "heroSubtitleInput",
+            hero_title_line1: "heroTitleLine1Input",
+            hero_title_line2: "heroTitleLine2Input",
+            hero_description: "heroDescriptionInput",
+            hero_poster_image: "heroPosterImageInput",
+            about_badge: "aboutBadgeInput",
+            about_slogan_line1: "aboutSlogan1Input",
+            about_slogan_line2: "aboutSlogan2Input",
+            about_description: "aboutDescriptionInput",
+            about_stat1_number: "aboutStat1NumInput",
+            about_stat1_label: "aboutStat1LabelInput",
+            about_stat2_number: "aboutStat2NumInput",
+            about_stat2_label: "aboutStat2LabelInput",
+            about_stat3_number: "aboutStat3NumInput",
+            about_stat3_label: "aboutStat3LabelInput",
+            about_image_main: "aboutImageMainInput",
+            about_image_detail1: "aboutImageDetail1Input",
+            about_image_detail2: "aboutImageDetail2Input",
+            service_section_title: "serviceSectionTitleInput",
+            quick_actions_section_title: "quickActionsTitleInput",
+            quick_actions_cta1_label: "qaCta1LabelInput",
+            quick_actions_cta1_title: "qaCta1TitleInput",
+            quick_actions_cta1_desc: "qaCta1DescInput",
+            quick_actions_cta2_label: "qaCta2LabelInput",
+            quick_actions_cta2_title: "qaCta2TitleInput",
+            quick_actions_cta2_desc: "qaCta2DescInput",
+            product_section_title: "productSectionTitleInput",
+            product_cta_label: "productCtaLabelInput",
+            product_cta_title: "productCtaTitleInput",
+            product_cta_desc: "productCtaDescInput",
+            tech_eyebrow: "techEyebrowInput",
+            tech_section_title: "techSectionTitleInput",
+            tech_intro: "techIntroInput",
+            contact_eyebrow: "contactEyebrowInput",
+            contact_title_main: "contactTitleMainInput",
+            contact_title_accent: "contactTitleAccentInput",
+            contact_intro: "contactIntroInput",
+            contact_channel1_title: "contactCh1TitleInput",
+            contact_channel1_desc: "contactCh1DescInput",
+            contact_channel2_title: "contactCh2TitleInput",
+            contact_channel2_desc: "contactCh2DescInput",
+            contact_channel3_title: "contactCh3TitleInput",
+            contact_channel3_desc: "contactCh3DescInput",
+            contact_channel4_title: "contactCh4TitleInput",
+            contact_channel4_desc: "contactCh4DescInput",
+            contact_form_title: "contactFormTitleInput",
+            contact_form_desc: "contactFormDescInput",
+            footer_brand_desc: "footerBrandDescInput",
+            footer_col1_title: "footerCol1TitleInput",
+            footer_col2_title: "footerCol2TitleInput",
+            footer_col3_title: "footerCol3TitleInput",
+            footer_copyright: "footerCopyrightInput"
+        };
+
+        // Khoá ảnh -> id preview box, để loadHomepageContent() hiện lại ảnh đang lưu (không chỉ
+        // điền URL vào ô ẩn mà còn hiện thumbnail cho admin thấy đang là ảnh nào).
+        const IMAGE_PREVIEW_IDS = {
+            hero_poster_image: "heroPosterImagePreview",
+            about_image_main: "aboutImageMainPreview",
+            about_image_detail1: "aboutImageDetail1Preview",
+            about_image_detail2: "aboutImageDetail2Preview"
+        };
+
+        async function loadHomepageContent() {
+            try {
+                const res = await apiFetch("/api/homepage-content");
+                const content = await res.json();
+                Object.entries(HOMEPAGE_CONTENT_FIELDS).forEach(([key, elId]) => {
+                    document.getElementById(elId).value = content[key] || "";
+                });
+                Object.entries(IMAGE_PREVIEW_IDS).forEach(([key, previewId]) => {
+                    const url = content[key];
+                    document.getElementById(previewId).innerHTML = url
+                        ? `<img src="${url}" alt="" style="max-width:160px;border-radius:6px;">`
+                        : "Chưa chọn ảnh";
+                });
+            } catch (err) {
+                showToast(err.message, true);
+            }
+        }
+
+        // Dùng lại đúng cơ chế upload ảnh đã có ở admin/banner.html: chọn file -> upload thẳng lên
+        // Cloudinary qua /api/uploads -> lưu URL trả về vào ô input ẩn (khoá tương ứng trong
+        // HOMEPAGE_CONTENT_FIELDS) -> hiện thumbnail xem trước. Bấm nút "Lưu" của khối mới ghi vào DB.
+        function wireImageField(fileInputId, hiddenInputId, previewId, purpose) {
+            document.getElementById(fileInputId).addEventListener("change", async (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                const preview = document.getElementById(previewId);
+                preview.textContent = "Đang tải ảnh lên...";
+                try {
+                    const fd = new FormData();
+                    fd.append("image", file);
+                    fd.append("purpose", purpose);
+                    const res = await apiFetch("/api/uploads", { method: "POST", body: fd });
+                    if (!res.ok) throw new Error((await res.json()).error || "Tải ảnh thất bại");
+                    const data = await res.json();
+                    document.getElementById(hiddenInputId).value = data.url;
+                    preview.innerHTML = `<img src="${data.url}" alt="" style="max-width:160px;border-radius:6px;">`;
+                } catch (err) {
+                    preview.textContent = "Chưa chọn ảnh";
+                    showToast(err.message, true);
+                }
+            });
+        }
+        wireImageField("heroPosterImageFile", "heroPosterImageInput", "heroPosterImagePreview", "cover");
+        wireImageField("aboutImageMainFile", "aboutImageMainInput", "aboutImageMainPreview", "content");
+        wireImageField("aboutImageDetail1File", "aboutImageDetail1Input", "aboutImageDetail1Preview", "content");
+        wireImageField("aboutImageDetail2File", "aboutImageDetail2Input", "aboutImageDetail2Preview", "content");
+
+        async function saveHomepageContentFields(keys, statusElId) {
+            const statusEl = document.getElementById(statusElId);
+            const body = {};
+            keys.forEach(key => { body[key] = document.getElementById(HOMEPAGE_CONTENT_FIELDS[key]).value.trim(); });
+            try {
+                const res = await apiFetch("/api/homepage-content", { method: "PUT", body });
+                if (!res.ok) throw new Error((await res.json()).error || "Lưu thất bại");
+                showToast("Đã lưu");
+                if (statusEl) {
+                    statusEl.textContent = "Đã lưu lúc " + new Date().toLocaleTimeString("vi-VN");
+                }
+            } catch (err) {
+                showToast(err.message, true);
+            }
+        }
+
+        document.getElementById("saveHeroBtn").addEventListener("click", () => {
+            saveHomepageContentFields(["hero_subtitle", "hero_title_line1", "hero_title_line2", "hero_description", "hero_poster_image"], "heroSaveStatus");
+        });
+
+        document.getElementById("saveAboutBtn").addEventListener("click", () => {
+            saveHomepageContentFields([
+                "about_badge", "about_slogan_line1", "about_slogan_line2", "about_description",
+                "about_stat1_number", "about_stat1_label",
+                "about_stat2_number", "about_stat2_label",
+                "about_stat3_number", "about_stat3_label",
+                "about_image_main", "about_image_detail1", "about_image_detail2"
+            ], "aboutSaveStatus");
+        });
+
+        document.getElementById("saveServiceBtn").addEventListener("click", () => {
+            saveHomepageContentFields(["service_section_title"], "serviceSaveStatus");
+        });
+
+        document.getElementById("saveQuickActionsBtn").addEventListener("click", () => {
+            saveHomepageContentFields([
+                "quick_actions_section_title",
+                "quick_actions_cta1_label", "quick_actions_cta1_title", "quick_actions_cta1_desc",
+                "quick_actions_cta2_label", "quick_actions_cta2_title", "quick_actions_cta2_desc"
+            ], "quickActionsSaveStatus");
+        });
+
+        document.getElementById("saveProductTextBtn").addEventListener("click", () => {
+            saveHomepageContentFields(["product_section_title", "product_cta_label", "product_cta_title", "product_cta_desc"], "productTextSaveStatus");
+        });
+
+        document.getElementById("saveTechTextBtn").addEventListener("click", () => {
+            saveHomepageContentFields(["tech_eyebrow", "tech_section_title", "tech_intro"], "techTextSaveStatus");
+        });
+
+        document.getElementById("saveContactBtn").addEventListener("click", () => {
+            saveHomepageContentFields([
+                "contact_eyebrow", "contact_title_main", "contact_title_accent", "contact_intro",
+                "contact_channel1_title", "contact_channel1_desc",
+                "contact_channel2_title", "contact_channel2_desc",
+                "contact_channel3_title", "contact_channel3_desc",
+                "contact_channel4_title", "contact_channel4_desc",
+                "contact_form_title", "contact_form_desc"
+            ], "contactSaveStatus");
+        });
+
+        document.getElementById("saveFooterBtn").addEventListener("click", () => {
+            saveHomepageContentFields([
+                "footer_brand_desc", "footer_col1_title", "footer_col2_title", "footer_col3_title", "footer_copyright"
+            ], "footerSaveStatus");
+        });
 
         document.getElementById("addStrategicBtn").addEventListener("click", () => {
             addHighlight("strategic", {

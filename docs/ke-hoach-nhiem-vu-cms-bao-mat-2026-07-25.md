@@ -487,6 +487,59 @@ không đụng profile Chrome thật của user) + chụp ảnh màn hình thậ
   ảnh tĩnh quan trọng, phải tăng số bản `CACHE_NAME` trong `sw.js`** - nếu không, user có thể vẫn
   thấy bản cũ dù server đã đúng, gây nhầm lẫn tưởng fix chưa có tác dụng.
 
+**[MỚI 2026-07-28] Công cụ CMS sửa toàn bộ nội dung chữ/ảnh trang chủ + gom nhóm menu admin.**
+User yêu cầu: (1) sửa được Hero/Giới Thiệu trước (đã làm, xem mục trước), (2) mở rộng ra sửa được
+"bất cứ chỗ nào" trên trang chủ kể cả ảnh, dưới dạng công cụ dùng lại được chứ không vá cứng từng
+chỗ, mỗi mục tách riêng ra để dễ hiểu/dễ sửa, chữ có sẵn phải hiện sẵn trong ô (không phải gõ lại từ
+đầu); (3) gom nhóm thanh điều hướng trên cùng của trang admin (đang liệt kê phẳng 12 mục quá tải).
+- **Cơ chế generic (không hardcode JS map nữa):** `assets/js/homepage-content.js` viết lại thành quét
+  `document.querySelectorAll("[data-content-key]")`/`[data-content-image-key]`/`[data-content-count-key]`
+  thay vì object map cứng id↔key như bản đầu. Từ nay thêm 1 chỗ sửa được mới chỉ cần gắn thuộc tính
+  `data-content-*` vào HTML + thêm khoá vào `ALLOWED_KEYS` (`routes/homepage-content.js`) + thêm ô
+  input ở admin - không phải sửa lại file JS này nữa. Bảng `homepage_content` giữ nguyên (không cần
+  bảng/route mới), khoá ảnh chỉ là chuỗi URL lưu chung như khoá chữ.
+- **Mở rộng phạm vi:** từ 14 khoá (Hero/Giới Thiệu) lên 52 khoá, phủ toàn bộ tiêu đề mục/câu dẫn/mô
+  tả/nhãn CTA còn lại (Dịch Vụ, Đặt Lịch Hẹn/Nhắc Bảo Dưỡng, Sản Phẩm Chiến Lược, Giải Mã Công Nghệ,
+  Liên Hệ, Footer) + 4 ảnh tĩnh (poster nền Hero, 3 ảnh khối Giới Thiệu). Cố ý KHÔNG đưa vào: số điện
+  thoại/địa chỉ/email dạng có href thật (tel/mailto/Maps/Zalo) - sửa chữ hiển thị mà không đồng bộ
+  href sẽ gây lỗi âm thầm (nút "Gọi ngay" trỏ sai số), để dành làm riêng kỹ hơn sau; danh sách link
+  điều hướng footer/menu (là điều hướng thật, không phải nội dung tiếp thị); thẻ dịch vụ/sản phẩm/
+  công nghệ (đã render động từ danh mục/API `/api/homepage` sẵn có, chỉ tiêu đề mục cha là chữ tĩnh
+  mới thêm); video nền Hero (chỉ ảnh poster đổi được, đổi hẳn video là việc khác, file nặng hơn).
+- **"Chữ có sẵn phải hiện sẵn":** viết `scripts/seed-homepage-content.js` (mẫu như `seed-admin.js`)
+  chèn đúng chữ/ảnh THẬT đang hiển thị vào bảng, dùng `ON CONFLICT DO UPDATE ... CASE WHEN value =
+  '' THEN excluded.value ELSE value END` (không phải `DO NOTHING` đơn thuần) - chỉ điền lại khoá
+  đang rỗng, giữ nguyên khoá admin đã nhập, kể cả khoá đó đang rỗng do lỡ dọn dữ liệu test trước đó.
+  Chạy thử lúc test phát hiện tài khoản `admin` thật đã tự lưu thử Hero lúc 14:13 hôm nay - script
+  giữ nguyên đúng như mong đợi, không ghi đè mất.
+- **Ảnh dùng lại nguyên cơ chế upload đã có** ở `admin/banner.html` (input file → `POST /api/uploads`
+  purpose `cover`/`content` → lưu URL Cloudinary trả về vào ô input ẩn) - không phát minh cơ chế mới.
+- **Admin `trang-chu.html`** mở rộng thêm 6 khối `.settings-section` mới (Dịch Vụ, Đặt Lịch/Nhắc Bảo
+  Dưỡng, chữ đầu khối Sản Phẩm Chiến Lược/Giải Mã Công Nghệ, Liên Hệ, Footer), mỗi trường 1 ô riêng.
+  KHÔNG tách thành nhiều trang (hiểu lầm ban đầu khi lập kế hoạch - đã hỏi lại user để sửa đúng ý:
+  "gom nhóm" chỉ nói đến thanh điều hướng admin, không phải bố cục trong trang này).
+- **Gom nhóm `renderAdminNav()`** (`admin/assets/admin.js`) từ liệt kê phẳng 12 mục sang: "Tổng Quan"
+  + "Liên Hệ/Đặt Lịch" (có badge số mới, luôn hiện riêng) đứng ngoài, còn lại gom 3 dropdown "Nội
+  Dung"/"Marketing"/"Hệ Thống" theo tính chất công việc - cùng cơ chế hover-mở như `.has-dropdown` ở
+  header.css ngoài web công khai, chỉ đổi màu cho khớp nền tối topbar. Nhãn nhóm cha tự tô sáng khi
+  trang đang mở thuộc nhóm đó.
+- **Lỗi thật xảy ra lúc test (không phải chỉ đoán) - lặp lại đúng bài học đã ghi ở lần 10:** lúc dọn
+  dữ liệu test, gõ trực tiếp `curl -d '{"footer_copyright":"© 2026 Đức Hiếu Auto..."}'` (có ký tự
+  tiếng Việt/©) thay vì ghi ra file trước - Git Bash làm hỏng byte UTF-8 y hệt sự cố lần 10, phát
+  hiện ngay qua đọc lại file JSON (không tin output terminal, terminal tự hiển thị sai font). Sửa
+  lại đúng bằng file + `--data-binary @file`, xác nhận khôi phục đúng nguyên văn. **Nhắc lại quy tắc
+  đã có trong bộ nhớ: không bao giờ gõ tiếng Việt trực tiếp trong `curl -d`, kể cả lệnh "chỉ để dọn
+  dữ liệu test" tưởng như vô hại.**
+- **Test:** curl round-trip (ghi file JSON, không gõ trực tiếp) + Chrome headless (`--dump-dom`,
+  profile cô lập) cho cả trang công khai lẫn trang admin (đăng nhập giả bằng token thật ghi vào
+  localStorage qua 1 trang tiêm tạm, xoá ngay sau khi dump xong) - `--dump-dom` KHÔNG phản ánh được
+  `.value` runtime của `<input>` text thường (chỉ phản ánh cho `type="hidden"`, do khác biệt thuộc
+  tính/property theo chuẩn HTML) nên phải tạm ghi giá trị ra `document.title` để xác minh, xoá đoạn
+  debug ngay sau khi xác nhận đúng. Toàn bộ tài khoản/dữ liệu test đều xoá sạch khỏi Turso production
+  sau khi xác nhận, không để sót.
+- **Chưa test:** upload ảnh thật qua `/api/uploads` (cố ý bỏ qua để không tạo rác trong thư viện
+  Cloudinary thật của user) - tin tưởng vì dùng lại y nguyên đoạn code đã chạy thật ở `banner.html`.
+
 **Quy trình mới từ đây:** với thay đổi động (HTML nhiều trang, CSS layout, JS) - dựng server tĩnh
 cục bộ (`http://localhost:5500` + backend `http://localhost:4000`), tự kiểm tra bằng Chrome
 headless (JS console error + `--screenshot` xem trực quan) trước, mở demo cho user xem bằng

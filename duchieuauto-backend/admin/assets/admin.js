@@ -100,29 +100,64 @@ const ROLE_LABEL = { content: "Content Admin", ads: "Ads Admin", super_admin: "S
 
 // Dựng thanh điều hướng trên cùng, tự ẩn/hiện mục theo vai trò đăng nhập. Gọi ở mỗi trang sau
 // khi requireAuth() thành công, truyền vào tên trang hiện tại để tô sáng mục đang chọn.
+//
+// Trước đây liệt kê phẳng ~12 mục trong 1 hàng, cùng ô tìm kiếm + thông tin tài khoản -> quá tải.
+// Gom theo nhóm (dropdown, giống ".has-dropdown"/".nav-dropdown" ở header.css ngoài web công khai,
+// chỉ đổi màu cho khớp nền tối của topbar): "Tổng Quan" và "Liên Hệ / Đặt Lịch" (có badge số liên
+// hệ mới, cần thấy ngay) luôn hiện riêng; phần còn lại gom vào 3 nhóm theo tính chất công việc.
 function renderAdminNav(auth, activePage) {
     const nav = document.getElementById("adminTopbar");
     if (!nav) return;
 
     const canEditPosts = auth.role === "content" || auth.role === "super_admin";
     const canManageAds = auth.role === "ads" || auth.role === "super_admin";
-    const links = [{ href: "dashboard.html", label: "Tổng Quan", key: "dashboard" }];
-    if (canEditPosts) links.push({ href: "san-pham.html", label: "Sản Phẩm", key: "san-pham" });
-    if (canEditPosts) links.push({ href: "bai-viet.html", label: "Bài Viết", key: "bai-viet" });
-    if (canEditPosts) links.push({ href: "danh-muc.html", label: "Danh Mục / FAQ", key: "danh-muc" });
-    if (canEditPosts) links.push({ href: "danh-gia.html", label: "Đánh Giá", key: "danh-gia" });
-    if (canEditPosts) links.push({ href: "trang-chu.html", label: "Trang Chủ", key: "trang-chu" });
-    links.push({ href: "lien-he.html", label: "Liên Hệ / Đặt Lịch", key: "lien-he" });
-    if (canEditPosts || canManageAds) links.push({ href: "thu-vien-anh.html", label: "Thư Viện Ảnh", key: "thu-vien-anh" });
-    if (canManageAds) links.push({ href: "banner.html", label: "Banner", key: "banner" });
-    if (canManageAds) links.push({ href: "cau-hinh.html", label: "Cấu Hình", key: "cau-hinh" });
-    if (auth.role === "super_admin") links.push({ href: "lich-su.html", label: "Lịch Sử", key: "lich-su" });
-    links.push({ href: "tai-khoan.html", label: "Tài Khoản", key: "tai-khoan" });
+
+    const standaloneLinks = [
+        { href: "dashboard.html", label: "Tổng Quan", key: "dashboard" }
+    ];
+
+    const groups = [
+        {
+            label: "Nội Dung",
+            links: [
+                canEditPosts && { href: "trang-chu.html", label: "Trang Chủ", key: "trang-chu" },
+                canEditPosts && { href: "san-pham.html", label: "Sản Phẩm", key: "san-pham" },
+                canEditPosts && { href: "danh-muc.html", label: "Danh Mục / FAQ", key: "danh-muc" },
+                canEditPosts && { href: "bai-viet.html", label: "Bài Viết", key: "bai-viet" },
+                canEditPosts && { href: "danh-gia.html", label: "Đánh Giá", key: "danh-gia" },
+                (canEditPosts || canManageAds) && { href: "thu-vien-anh.html", label: "Thư Viện Ảnh", key: "thu-vien-anh" }
+            ].filter(Boolean)
+        },
+        {
+            label: "Marketing",
+            links: [
+                canManageAds && { href: "banner.html", label: "Banner", key: "banner" },
+                canManageAds && { href: "cau-hinh.html", label: "Cấu Hình", key: "cau-hinh" }
+            ].filter(Boolean)
+        },
+        {
+            label: "Hệ Thống",
+            links: [
+                auth.role === "super_admin" && { href: "lich-su.html", label: "Lịch Sử", key: "lich-su" },
+                { href: "tai-khoan.html", label: "Tài Khoản", key: "tai-khoan" }
+            ].filter(Boolean)
+        }
+    ].filter(g => g.links.length > 0);
+
+    standaloneLinks.push({ href: "lien-he.html", label: "Liên Hệ / Đặt Lịch", key: "lien-he" });
+
+    const linkHtml = l => `<a href="${l.href}" class="${l.key === activePage ? "active" : ""}">${l.label}</a>`;
+    const groupHtml = g => `
+        <div class="admin-nav-dropdown${g.links.some(l => l.key === activePage) ? " active" : ""}">
+            <span class="admin-nav-dropdown-label">${g.label} <span class="admin-nav-caret">▾</span></span>
+            <div class="admin-nav-dropdown-menu">${g.links.map(linkHtml).join("")}</div>
+        </div>`;
 
     nav.innerHTML = `
         <div class="brand">ĐỨC HIẾU <span>ADMIN</span></div>
         <nav class="admin-nav">
-            ${links.map(l => `<a href="${l.href}" class="${l.key === activePage ? "active" : ""}">${l.label}</a>`).join("")}
+            ${standaloneLinks.map(linkHtml).join("")}
+            ${groups.map(groupHtml).join("")}
         </nav>
         <div class="global-search" id="globalSearch">
             <input type="text" id="globalSearchInput" placeholder="Tìm sản phẩm, bài viết, liên hệ...">

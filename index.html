@@ -141,15 +141,15 @@
     <main>
         <section id="hero">
             <div class="hero-bg">
-                <video class="hero-video" autoplay muted loop playsinline poster="assets/images/nen1.webp">
+                <video class="hero-video" autoplay muted loop playsinline poster="assets/images/nen1.webp" data-content-image-key="hero_poster_image">
                     <source src="assets/videos/hero-bg.mp4" type="video/mp4">
                 </video>
                 <div class="overlay"></div>
             </div>
             <div class="container hero-content">
-                <span class="subtitle" data-aos="fade-up">Premium Automotive Upgrade</span>
-                <h1 class="title" data-aos="fade-up" data-aos-delay="100">ĐỊNH HÌNH PHONG CÁCH <br><span class="text-primary">ĐẲNG CẤP XẾ YÊU</span></h1>
-                <p class="desc" data-aos="fade-up" data-aos-delay="200">Trung tâm chăm sóc và nâng cấp ô tô chuyên nghiệp hàng đầu.</p>
+                <span class="subtitle" id="heroSubtitle" data-content-key="hero_subtitle" data-aos="fade-up">Premium Automotive Upgrade</span>
+                <h1 class="title" data-aos="fade-up" data-aos-delay="100"><span id="heroTitleLine1" data-content-key="hero_title_line1">ĐỊNH HÌNH PHONG CÁCH</span> <br><span class="text-primary" id="heroTitleLine2" data-content-key="hero_title_line2">ĐẲNG CẤP XẾ YÊU</span></h1>
+                <p class="desc" id="heroDescription" data-content-key="hero_description" data-aos="fade-up" data-aos-delay="200">Trung tâm chăm sóc và nâng cấp ô tô chuyên nghiệp hàng đầu.</p>
                 <div class="hero-buttons" data-aos="fade-up" data-aos-delay="300">
                     <a href="#service" class="btn btn-primary">Khám Phá Dịch Vụ</a>
                 </div>
@@ -163,38 +163,38 @@
                     <div class="about-image" data-aos="fade-right">
                         <div class="about-gallery">
                             <div class="img-wrapper main">
-                                <img src="https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?q=80&w=1000&auto=format&fit=crop" alt="Xe thể thao được chăm sóc chuyên nghiệp tại Đức Hiếu Auto" loading="lazy">
+                                <img src="https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?q=80&w=1000&auto=format&fit=crop" alt="Xe thể thao được chăm sóc chuyên nghiệp tại Đức Hiếu Auto" loading="lazy" data-content-image-key="about_image_main">
                             </div>
                             <div class="img-wrapper small">
-                                <img src="assets/images/about/detail-1.jpg" alt="Kỹ thuật viên đánh bóng và phủ ceramic cho xe" loading="lazy">
+                                <img src="assets/images/about/detail-1.jpg" alt="Kỹ thuật viên đánh bóng và phủ ceramic cho xe" loading="lazy" data-content-image-key="about_image_detail1">
                             </div>
                             <div class="img-wrapper small">
-                                <img src="assets/images/about/detail-2.jpg" alt="Nội thất xe sang trọng sau khi chăm sóc" loading="lazy">
+                                <img src="assets/images/about/detail-2.jpg" alt="Nội thất xe sang trọng sau khi chăm sóc" loading="lazy" data-content-image-key="about_image_detail2">
                             </div>
                         </div>
                     </div>
                     <div class="about-content" data-aos="fade-left">
-                        <span class="pill-badge">Về Đức Hiếu Auto</span>
+                        <span class="pill-badge" id="aboutBadge" data-content-key="about_badge">Về Đức Hiếu Auto</span>
                         <h2 class="about-slogan">
-                            <span class="about-slogan-line">Nâng Tầm</span>
-                            <span class="about-slogan-line about-slogan-accent">Trải Nghiệm</span>
+                            <span class="about-slogan-line" id="aboutSloganLine1" data-content-key="about_slogan_line1">Nâng Tầm</span>
+                            <span class="about-slogan-line about-slogan-accent" id="aboutSloganLine2" data-content-key="about_slogan_line2">Trải Nghiệm</span>
                         </h2>
-                        <p class="about-desc">Mỗi chi tiết chúng tôi nâng cấp — một dàn âm thanh sống động hơn, một hệ thống đèn rực rỡ hơn, một lớp phim bảo vệ hoàn hảo hơn — đều không chỉ để chiếc xe đẹp hơn, mà để mỗi hành trình của bạn trở nên đáng nhớ hơn. Đội ngũ kỹ thuật viên giàu kinh nghiệm cùng trang thiết bị hiện đại tại Đức Hiếu Auto luôn đặt trải nghiệm khách hàng lên hàng đầu, trong từng sản phẩm chính hãng và từng công đoạn thi công.</p>
+                        <p class="about-desc" id="aboutDescription" data-content-key="about_description">Mỗi chi tiết chúng tôi nâng cấp — một dàn âm thanh sống động hơn, một hệ thống đèn rực rỡ hơn, một lớp phim bảo vệ hoàn hảo hơn — đều không chỉ để chiếc xe đẹp hơn, mà để mỗi hành trình của bạn trở nên đáng nhớ hơn. Đội ngũ kỹ thuật viên giàu kinh nghiệm cùng trang thiết bị hiện đại tại Đức Hiếu Auto luôn đặt trải nghiệm khách hàng lên hàng đầu, trong từng sản phẩm chính hãng và từng công đoạn thi công.</p>
                     </div>
                 </div>
 
                 <div class="about-stats" data-aos="fade-up">
                     <div class="stat-item">
-                        <span class="stat-num" data-count="240">0</span><span class="stat-suffix">+</span>
-                        <span class="stat-label">Sản phẩm chính hãng</span>
+                        <span class="stat-num" id="aboutStat1Num" data-count="240" data-content-count-key="about_stat1_number">0</span><span class="stat-suffix">+</span>
+                        <span class="stat-label" id="aboutStat1Label" data-content-key="about_stat1_label">Sản phẩm chính hãng</span>
                     </div>
                     <div class="stat-item">
-                        <span class="stat-num" data-count="30">0</span><span class="stat-suffix">+</span>
-                        <span class="stat-label">Thương hiệu quốc tế</span>
+                        <span class="stat-num" id="aboutStat2Num" data-count="30" data-content-count-key="about_stat2_number">0</span><span class="stat-suffix">+</span>
+                        <span class="stat-label" id="aboutStat2Label" data-content-key="about_stat2_label">Thương hiệu quốc tế</span>
                     </div>
                     <div class="stat-item">
-                        <span class="stat-num" data-count="8">0</span>
-                        <span class="stat-label">Danh mục dịch vụ</span>
+                        <span class="stat-num" id="aboutStat3Num" data-count="8" data-content-count-key="about_stat3_number">0</span>
+                        <span class="stat-label" id="aboutStat3Label" data-content-key="about_stat3_label">Danh mục dịch vụ</span>
                     </div>
                 </div>
 
@@ -214,7 +214,7 @@
              -> bấm sản phẩm -> san-pham-chi-tiet.html (chi tiết) -->
         <section id="service">
             <div class="container">
-                <h2 class="section-title">DỊCH VỤ CHUYÊN NGHIỆP</h2>
+                <h2 class="section-title" data-content-key="service_section_title">DỊCH VỤ CHUYÊN NGHIỆP</h2>
                 <div class="swiper service-slider">
                     <div class="swiper-wrapper service-catalog-grid"></div>
                     <div class="swiper-pagination"></div>
@@ -229,21 +229,21 @@
              trước đây chỉ nằm trong menu nên dễ bị bỏ lỡ - đưa hẳn thành 1 khối riêng ngay trang chủ. -->
         <section id="quick-actions">
             <div class="container">
-                <div class="section-header"><h2 class="section-title">SẴN SÀNG PHỤC VỤ NGAY</h2></div>
+                <div class="section-header"><h2 class="section-title" data-content-key="quick_actions_section_title">SẴN SÀNG PHỤC VỤ NGAY</h2></div>
                 <div class="home-cta-grid">
                     <a href="dat-lich-hen.html" class="view-all-cta">
                         <div class="view-all-cta-text">
-                            <span class="view-all-cta-label">Đặt Lịch Hẹn</span>
-                            <h3>Giữ Chỗ Trước, Không Phải Chờ Đợi</h3>
-                            <p>Chọn ngày giờ phù hợp, đến đúng hẹn là được phục vụ ngay</p>
+                            <span class="view-all-cta-label" data-content-key="quick_actions_cta1_label">Đặt Lịch Hẹn</span>
+                            <h3 data-content-key="quick_actions_cta1_title">Giữ Chỗ Trước, Không Phải Chờ Đợi</h3>
+                            <p data-content-key="quick_actions_cta1_desc">Chọn ngày giờ phù hợp, đến đúng hẹn là được phục vụ ngay</p>
                         </div>
                         <div class="view-all-cta-arrow"><i class="fa-solid fa-calendar-check"></i></div>
                     </a>
                     <a href="nhac-bao-duong.html" class="view-all-cta">
                         <div class="view-all-cta-text">
-                            <span class="view-all-cta-label">Nhắc Bảo Dưỡng</span>
-                            <h3>Không Bao Giờ Quên Lịch Bảo Dưỡng Xe</h3>
-                            <p>Để lại thông tin, chúng tôi tự nhắc đúng thời điểm cần bảo dưỡng</p>
+                            <span class="view-all-cta-label" data-content-key="quick_actions_cta2_label">Nhắc Bảo Dưỡng</span>
+                            <h3 data-content-key="quick_actions_cta2_title">Không Bao Giờ Quên Lịch Bảo Dưỡng Xe</h3>
+                            <p data-content-key="quick_actions_cta2_desc">Để lại thông tin, chúng tôi tự nhắc đúng thời điểm cần bảo dưỡng</p>
                         </div>
                         <div class="view-all-cta-arrow"><i class="fa-solid fa-bell"></i></div>
                     </a>
@@ -253,7 +253,7 @@
 
         <section id="product">
             <div class="container">
-                <div class="section-header"><h2 class="section-title">SẢN PHẨM CHIẾN LƯỢC</h2></div>
+                <div class="section-header"><h2 class="section-title" data-content-key="product_section_title">SẢN PHẨM CHIẾN LƯỢC</h2></div>
 
                 <div class="swiper product-slider">
                     <div class="swiper-wrapper strategic-products-grid"></div>
@@ -265,9 +265,9 @@
 
                 <a href="san-pham.html" class="view-all-cta">
                     <div class="view-all-cta-text">
-                        <span class="view-all-cta-label">Khám Phá Thêm</span>
-                        <h3>Xem Tất Cả Danh Mục Sản Phẩm</h3>
-                        <p>Hàng trăm sản phẩm chính hãng đang chờ bạn khám phá</p>
+                        <span class="view-all-cta-label" data-content-key="product_cta_label">Khám Phá Thêm</span>
+                        <h3 data-content-key="product_cta_title">Xem Tất Cả Danh Mục Sản Phẩm</h3>
+                        <p data-content-key="product_cta_desc">Hàng trăm sản phẩm chính hãng đang chờ bạn khám phá</p>
                     </div>
                     <div class="view-all-cta-arrow"><i class="fa-solid fa-arrow-right"></i></div>
                 </a>
@@ -277,9 +277,9 @@
         <section id="tech">
             <div class="container">
                 <div class="section-header">
-                    <span class="tech-eyebrow">Công Nghệ Thật - Sản Phẩm Thật</span>
-                    <h2 class="section-title">GIẢI MÃ CÔNG NGHỆ</h2>
-                    <p class="tech-intro">Không phải món "đồ chơi ô tô" nào cũng như nhau. Đây là 4 công nghệ thật sự đang được Đức Hiếu Auto tin dùng — mỗi sản phẩm một câu chuyện, một lý do khiến chúng tôi lựa chọn cho khách hàng.</p>
+                    <span class="tech-eyebrow" data-content-key="tech_eyebrow">Công Nghệ Thật - Sản Phẩm Thật</span>
+                    <h2 class="section-title" data-content-key="tech_section_title">GIẢI MÃ CÔNG NGHỆ</h2>
+                    <p class="tech-intro" data-content-key="tech_intro">Không phải món "đồ chơi ô tô" nào cũng như nhau. Đây là 4 công nghệ thật sự đang được Đức Hiếu Auto tin dùng — mỗi sản phẩm một câu chuyện, một lý do khiến chúng tôi lựa chọn cho khách hàng.</p>
                 </div>
 
                 <div class="swiper tech-slider">
@@ -295,42 +295,42 @@
         <section id="contact">
             <div class="container">
                 <div class="section-header">
-                    <span class="tech-eyebrow">Luôn Sẵn Sàng Hỗ Trợ Bạn</span>
-                    <h2 class="section-title">KẾT NỐI VỚI <span class="text-primary">ĐỨC HIẾU AUTO</span></h2>
-                    <p class="tech-intro">Dù bạn muốn gọi ngay, nhắn tin nhanh hay ghé trực tiếp cửa hàng — chọn cách thuận tiện nhất với bạn. Đội ngũ kỹ thuật viên luôn sẵn sàng tư vấn cho xế cưng của bạn.</p>
+                    <span class="tech-eyebrow" data-content-key="contact_eyebrow">Luôn Sẵn Sàng Hỗ Trợ Bạn</span>
+                    <h2 class="section-title"><span data-content-key="contact_title_main">KẾT NỐI VỚI</span> <span class="text-primary" data-content-key="contact_title_accent">ĐỨC HIẾU AUTO</span></h2>
+                    <p class="tech-intro" data-content-key="contact_intro">Dù bạn muốn gọi ngay, nhắn tin nhanh hay ghé trực tiếp cửa hàng — chọn cách thuận tiện nhất với bạn. Đội ngũ kỹ thuật viên luôn sẵn sàng tư vấn cho xế cưng của bạn.</p>
                 </div>
 
                 <div class="contact-channels">
                     <a href="tel:0869110237" class="contact-channel-card">
                         <div class="contact-channel-icon"><i class="fa-solid fa-phone-volume"></i></div>
-                        <h3>Gọi Ngay</h3>
-                        <p>Tư vấn trực tiếp, nhanh chóng</p>
+                        <h3 data-content-key="contact_channel1_title">Gọi Ngay</h3>
+                        <p data-content-key="contact_channel1_desc">Tư vấn trực tiếp, nhanh chóng</p>
                         <span class="contact-channel-value">0869 110 237</span>
                     </a>
                     <a href="https://zalo.me/0869110237" target="_blank" rel="noopener" class="contact-channel-card">
                         <div class="contact-channel-icon contact-channel-zalo"><i class="fa-solid fa-comment-dots"></i></div>
-                        <h3>Chat Zalo</h3>
-                        <p>Gửi ảnh xe, nhận báo giá tức thì</p>
+                        <h3 data-content-key="contact_channel2_title">Chat Zalo</h3>
+                        <p data-content-key="contact_channel2_desc">Gửi ảnh xe, nhận báo giá tức thì</p>
                         <span class="contact-channel-value">Nhắn tin ngay</span>
                     </a>
                     <a href="https://www.facebook.com/thanhphatautocar" target="_blank" rel="noopener" class="contact-channel-card">
                         <div class="contact-channel-icon contact-channel-messenger"><i class="fa-brands fa-facebook-messenger"></i></div>
-                        <h3>Messenger</h3>
-                        <p>Kết nối qua Facebook</p>
+                        <h3 data-content-key="contact_channel3_title">Messenger</h3>
+                        <p data-content-key="contact_channel3_desc">Kết nối qua Facebook</p>
                         <span class="contact-channel-value">Nhắn tin ngay</span>
                     </a>
                     <a href="https://www.google.com/maps/search/?api=1&query=123+L%C3%BD+Th%C3%A1i+T%E1%BB%95+Bu%C3%B4n+Ma+Thu%E1%BA%ADt+%C4%90%C4%83k+L%C4%83k" target="_blank" rel="noopener" class="contact-channel-card">
                         <div class="contact-channel-icon contact-channel-map"><i class="fa-solid fa-location-dot"></i></div>
-                        <h3>Ghé Cửa Hàng</h3>
-                        <p>123 Lý Thái Tổ, Buôn Ma Thuột</p>
+                        <h3 data-content-key="contact_channel4_title">Ghé Cửa Hàng</h3>
+                        <p data-content-key="contact_channel4_desc">123 Lý Thái Tổ, Buôn Ma Thuột</p>
                         <span class="contact-channel-value">Xem chỉ đường</span>
                     </a>
                 </div>
 
                 <div class="contact-main">
                     <div class="contact-form-wrap">
-                        <h3>Để Lại Lời Nhắn</h3>
-                        <p>Điền thông tin bên dưới, chúng tôi sẽ liên hệ tư vấn trong thời gian sớm nhất.</p>
+                        <h3 data-content-key="contact_form_title">Để Lại Lời Nhắn</h3>
+                        <p data-content-key="contact_form_desc">Điền thông tin bên dưới, chúng tôi sẽ liên hệ tư vấn trong thời gian sớm nhất.</p>
                         <form class="contact-form" action="https://formspree.io/f/xdarpjzq" method="POST">
                             <div class="form-row">
                                 <div class="form-group"><input type="text" name="name" placeholder="Họ và tên" required></div>
@@ -353,7 +353,7 @@
         <div class="container footer-inner">
             <div class="footer-col brand-col">
                 <h3>ĐỨC HIẾU <span>AUTO</span></h3>
-                <p class="footer-desc">Trung tâm nâng cấp và chăm sóc ô tô chuyên nghiệp tại Buôn Ma Thuột — màn hình, âm thanh, ánh sáng, PPF và phụ kiện bán tải chính hãng.</p>
+                <p class="footer-desc" data-content-key="footer_brand_desc">Trung tâm nâng cấp và chăm sóc ô tô chuyên nghiệp tại Buôn Ma Thuột — màn hình, âm thanh, ánh sáng, PPF và phụ kiện bán tải chính hãng.</p>
                 <ul class="contact-info">
                     <li><i class="fa-solid fa-location-dot"></i> 123 Lý Thái Tổ, Buôn Ma Thuột, Đắk Lắk</li>
                     <li><i class="fa-solid fa-phone"></i> <a href="tel:0869110237">0869 110 237</a></li>
@@ -365,7 +365,7 @@
                 </div>
             </div>
             <div class="footer-col">
-                <h3>Nội Thất Ô Tô</h3>
+                <h3 data-content-key="footer_col1_title">Nội Thất Ô Tô</h3>
                 <ul>
                     <li><a href="category-chi-tiet.html?id=man-hinh-o-to">Màn Hình Ô Tô</a></li>
                     <li><a href="category-chi-tiet.html?id=am-thanh-cach-am-oto">Âm Thanh - Cách Âm</a></li>
@@ -374,7 +374,7 @@
                 </ul>
             </div>
             <div class="footer-col">
-                <h3>Ngoại Thất & Khác</h3>
+                <h3 data-content-key="footer_col2_title">Ngoại Thất & Khác</h3>
                 <ul>
                     <li><a href="category-chi-tiet.html?id=dan-phim-cach-nhiet">Film Cách Nhiệt</a></li>
                     <li><a href="category-chi-tiet.html?id=ppf-wrap-doi-mau">PPF - Wrap Đổi Màu</a></li>
@@ -383,7 +383,7 @@
                 </ul>
             </div>
             <div class="footer-col">
-                <h3>Liên Kết Nhanh</h3>
+                <h3 data-content-key="footer_col3_title">Liên Kết Nhanh</h3>
                 <ul>
                     <li><a href="index.html">Trang Chủ</a></li>
                     <li><a href="#about">Giới Thiệu</a></li>
@@ -398,7 +398,7 @@
         </div>
         <div class="footer-bottom">
             <div class="container footer-bottom-inner">
-                <p>© 2026 Đức Hiếu Auto. All rights reserved.</p>
+                <p data-content-key="footer_copyright">© 2026 Đức Hiếu Auto. All rights reserved.</p>
                 <p class="footer-credit">Buôn Ma Thuột, Đắk Lắk</p>
             </div>
         </div>
@@ -431,6 +431,7 @@
     <script src="assets/js/api-config.js"></script>
     <script src="assets/js/pwa-init.js"></script>
     <script src="assets/js/site-settings.js"></script>
+    <script src="assets/js/homepage-content.js"></script>
     <script src="assets/js/header-scroll.js"></script>
     <script src="assets/js/catalog-data.js"></script>
     <script src="assets/js/catalog-render.js"></script>

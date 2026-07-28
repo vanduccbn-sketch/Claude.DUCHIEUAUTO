@@ -380,7 +380,7 @@ const CATALOG = {
       id: "noi-that-o-to",
       name: "Nội Thất Ô Tô",
       poster: "assets/images/products-category/man-hinh-o-to/poster.jpg",
-      categories: ["man-hinh-o-to", "am-thanh-cach-am-oto", "android-box-o-to", "camera-hanh-trinh"]
+      categories: ["man-hinh-o-to", "am-thanh-cach-am-oto", "android-box-o-to", "camera-hanh-trinh", "doi-mau-noi-that"]
     },
     {
       id: "ngoai-that-o-to",

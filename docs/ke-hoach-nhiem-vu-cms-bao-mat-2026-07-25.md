@@ -291,15 +291,36 @@ dung SEO hiện có**
 
 ### Đợt 2 - cần input nhỏ từ user trước khi làm
 
-**11.3 — Bổ sung 4-5 bài blog mới**
-- Dùng hạ tầng `posts` + `routes/posts.js` sẵn có, ưu tiên chủ đề trùng câu hỏi khách thật hay hỏi.
-- **Cần từ user:** vài câu hỏi khách thật hay hỏi khi đến cửa hàng (theo từng danh mục ưu tiên) -
-  không tự bịa câu hỏi/nội dung theo đúng nguyên tắc đã có.
+**11.3 — [ĐIỀU CHỈNH + HOÀN THÀNH 2026-07-28] Bổ sung 4 bài blog mới**
+- User không cung cấp câu hỏi khách thật hay hỏi (2 lần nhắc "Tiếp tục" không kèm thông tin) -
+  chuyển hướng an toàn: viết bài dạng giáo dục/kỹ thuật mở rộng trực tiếp từ đúng nội dung
+  `seo_intro`/`category_sections` đã kiểm chứng ở mục 11.1 (không đóng khung "khách từng hỏi",
+  không bịa tình huống/số liệu mới) - vẫn đúng nguyên tắc không tự bịa nội dung.
+- Ưu tiên 4 danh mục CHƯA có bài blog nào (Màn Hình, Android Box, Camera Hành Trình, Đồ Bán Tải) -
+  4 bài cũ trước đó đã phủ Âm Thanh/Đèn/Film Cách Nhiệt/PPF.
+- Ảnh bìa dùng ảnh sản phẩm thật đã có sẵn trong từng danh mục (VD Zestech ZX10, VIETMAP SC620) -
+  không dùng ảnh stock, tránh đúng vấn đề phát hiện ở mục 11.4 bên dưới.
+- Đã đăng cả 4 bài qua `POST /api/posts`, xác minh hiển thị đúng tiếng Việt trên
+  `https://duchieuauto.vn/tin-tuc.html`.
 
-**11.4 — Thay ảnh hero + ảnh minh hoạ trang chủ**
-- Hiện ảnh hero đang là ảnh stock Unsplash (không phải ảnh thật của Đức Hiếu Auto).
-- **Cần từ user:** ảnh thật (xe khách, cửa hàng, kỹ thuật viên đang thi công) nếu có; nếu chưa có,
-  xác nhận cho dùng tạm ảnh sản phẩm chính hãng đại diện dịch vụ chủ lực thay cho ảnh stock.
+**11.4 — [TẠM DỪNG, phát hiện vấn đề mới] Thay ảnh hero + ảnh minh hoạ trang chủ**
+- Ảnh chính trong gallery "Về Đức Hiếu Auto" (`about-image .main`) là ảnh stock Unsplash - đúng
+  như nhận định ban đầu.
+- **Phát hiện thêm khi tìm ảnh thay thế (2026-07-28):** toàn bộ ảnh trong `assets/images/about/`
+  (`detail-1.jpg`, `detail-2.jpg`) và các thư mục placeholder `assets/images/service/*` (từ Phase 1,
+  chưa nối vào category thật) **cũng đều là ảnh stock nước ngoài** - nghiêm trọng nhất là
+  `service/phu-ceramic/poster.jpg` có in rõ logo thương hiệu thật "Ceramic Pro" trên áo kỹ thuật
+  viên, dùng sẽ ngầm khẳng định sai sự thật. May là ảnh này chưa từng được nối vào category thật
+  nào (chỉ nằm trong thư mục placeholder, không hiển thị công khai) - không phải lỗi đang sống,
+  nhưng TUYỆT ĐỐI không dùng để thay ảnh mới.
+- **Quyết định:** không tự thay ảnh stock này bằng ảnh stock khác (không giải quyết được vấn đề
+  gốc). Giữ nguyên hiện trạng, chờ user cung cấp ảnh thật (xe khách/cửa hàng/kỹ thuật viên đang thi
+  công) - không có cách nào khác để tôi tự làm phần này mà không vi phạm nguyên tắc không bịa nội
+  dung/hình ảnh sai sự thật.
+- **Lưu ý cho việc dọn dẹp sau này (không khẩn):** rà lại toàn bộ ảnh stock trong
+  `assets/images/about/` và `assets/images/service/*` trước khi Phase 11.6 (danh mục Chăm Sóc Xe)
+  bắt đầu - vài thư mục ở đây (`phu-ceramic`, `phu-gam-oto`) trùng đúng ý tưởng danh mục mới, nhưng
+  ảnh trong đó không dùng được, cần ảnh thật khác.
 
 ### Đợt 3 - cần input lớn (dữ liệu kinh doanh thật), chưa thể tự code
 

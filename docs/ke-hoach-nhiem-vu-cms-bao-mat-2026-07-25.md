@@ -478,6 +478,14 @@ không đụng profile Chrome thật của user) + chụp ảnh màn hình thậ
   chắc chắn đã tải xong - đo lúc font hệ thống tạm thời hiển thị có thể ra kết quả khác với sau khi
   font thật load xong, khiến trạng thái nút/nội dung không khớp. Sửa dùng `document.fonts.ready`
   trước khi đo - ảnh hưởng tốt tới TOÀN BỘ trang chi tiết sản phẩm, không riêng phase này.
+- **[QUAN TRỌNG] Đã push đủ 3 fix trên nhưng user báo web thật vẫn y nguyên lỗi cũ** - hoá ra do
+  `sw.js` (Service Worker, cache PWA) dùng `CACHE_NAME` cố định `"dha-static-v1"` không bao giờ đổi
+  qua các lần deploy trước đó. Service Worker cache nằm NGOÀI phạm vi cache HTTP thường - **Ctrl+
+  Shift+R không xoá được**, khiến trình duyệt tiếp tục phục vụ CSS/JS/ảnh cũ đã lưu dù server đã có
+  bản mới. Đã đổi `CACHE_NAME` sang `"dha-static-v2"` để buộc xoá sạch cache cũ (logic `activate`
+  đã có sẵn tự xoá cache tên cũ khi thấy đổi tên). **Bài học ghi nhớ: mỗi lần deploy có sửa CSS/JS/
+  ảnh tĩnh quan trọng, phải tăng số bản `CACHE_NAME` trong `sw.js`** - nếu không, user có thể vẫn
+  thấy bản cũ dù server đã đúng, gây nhầm lẫn tưởng fix chưa có tác dụng.
 
 **Quy trình mới từ đây:** với thay đổi động (HTML nhiều trang, CSS layout, JS) - dựng server tĩnh
 cục bộ (`http://localhost:5500` + backend `http://localhost:4000`), tự kiểm tra bằng Chrome

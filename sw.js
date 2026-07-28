@@ -4,7 +4,11 @@
    lên điện thoại. KHÔNG cache API backend (giá/sản phẩm/bài viết cần luôn mới nhất) - loại trừ rõ
    theo domain Render + đường dẫn /api/ để tránh hiện dữ liệu cũ mà không hay biết.
    ========================================================= */
-const CACHE_NAME = "dha-static-v1";
+// Đổi số bản (v1 -> v2 -> ...) MỖI KHI deploy thay đổi quan trọng ở CSS/JS/ảnh tĩnh - "activate"
+// bên dưới tự xoá sạch cache tên cũ khi thấy CACHE_NAME đổi, ép trình duyệt lấy bản mới hoàn toàn
+// thay vì có thể "kẹt" ở bản cache cũ dù đã sửa xong trên server (F5 thường/Ctrl+Shift+R không xoá
+// được cache của Service Worker - đây là cơ chế riêng, khác cache HTTP thường của trình duyệt).
+const CACHE_NAME = "dha-static-v2";
 
 self.addEventListener("install", (event) => {
     self.skipWaiting();

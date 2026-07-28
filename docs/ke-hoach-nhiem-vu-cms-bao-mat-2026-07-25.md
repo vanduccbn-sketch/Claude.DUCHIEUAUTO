@@ -204,19 +204,24 @@ tên/kinh nghiệm kỹ thuật viên) phải do user cung cấp thật, Claude 
 - [ ] Watermark logo nhỏ góc ảnh (mục đã hoãn ở Phase 2) - làm gộp luôn ở bước này vì cùng pipeline
   Cloudinary transformation, không tốn thêm công sức riêng.
 
-### 9.5 — Trải nghiệm cuộn trang (nhóm 4, thuần JS, không thêm thư viện nặng)
-- [ ] Counter animation cho số liệu thật (số năm, số xe đã phục vụ...) khi cuộn tới - dùng
-  `IntersectionObserver` + `requestAnimationFrame`, không dùng thư viện ngoài để giữ hiệu năng đã
-  tối ưu từ Phase 5.
-- [ ] Fade-in nhẹ cho từng section khi cuộn tới (cùng cơ chế `IntersectionObserver`).
+### 9.5 — [PHÁT HIỆN ĐÃ LÀM XONG TỪ TRƯỚC, xác minh 2026-07-28] Trải nghiệm cuộn trang
+- [x] Counter animation - đã có sẵn trong `index.html` (dùng đúng `IntersectionObserver` +
+  `requestAnimationFrame`, easing, `unobserve` sau khi chạy 1 lần - đúng kỹ thuật đã đề ra).
+- [x] Fade-in từng section khi cuộn tới - đã có sẵn qua thư viện AOS (`data-aos` trên hero/about/
+  brand-marquee...), khác thuần `IntersectionObserver` như dự tính ban đầu nhưng đạt cùng mục đích,
+  đã dùng nhất quán toàn site nên không viết lại bằng cách khác (tránh 2 cơ chế fade-in song song).
 
-### 9.6 — Mở rộng SEO + GEO ra toàn site (không chỉ trang chủ)
-- [ ] Thêm `Service` schema riêng cho từng trang dịch vụ (`category-chi-tiet.html`) - hiện tại
-  Phase 5 mới có `Product`/`AutoRepair` schema, chưa có `Service` schema riêng từng dịch vụ.
-- [ ] Thêm `BreadcrumbList` schema cho các trang con (sản phẩm/dịch vụ/bài viết) - giúp cả Google
-  hiển thị breadcrumb trong kết quả tìm kiếm lẫn AI hiểu cấu trúc site khi trích dẫn.
-- [ ] Rà soát lại meta description toàn site đảm bảo nhắc đúng khu vực địa lý phục vụ (Buôn Ma
-  Thuột, Đắk Lắk, vùng lân cận) ở mọi trang, không chỉ trang chủ.
+### 9.6 — [PHÁT HIỆN PHẦN LỚN ĐÃ LÀM XONG TỪ TRƯỚC + HOÀN THÀNH PHẦN CÒN LẠI 2026-07-28]
+- [x] `Service` schema riêng từng trang danh mục - đã có sẵn (`injectServiceSchema()` trong
+  `catalog-render.js`, kèm `areaServed: ["Buôn Ma Thuột", "Đắk Lắk"]`).
+- [x] `BreadcrumbList` schema cho trang con (sản phẩm/danh mục/thương hiệu/bài viết) - đã có sẵn
+  (`injectBreadcrumbSchema()` trong `catalog-render.js` + `blog-render.js`), gắn ở 7 vị trí.
+- [x] Rà soát meta description toàn site - THẬT SỰ CÒN THIẾU, đã làm 2026-07-28: `san-pham.html` và
+  `brand-san-pham.html` thiếu hẳn thẻ meta description (đã thêm); `faq.html`, `nhac-bao-duong.html`
+  có description nhưng thiếu từ khoá khu vực (đã bổ sung "Buôn Ma Thuột"); 2 danh mục động
+  (`android-box-o-to`, `camera-hanh-trinh`) cũng thiếu từ khoá khu vực, đã sửa qua API. `so-sanh.html`
+  và `404.html` đã `noindex` sẵn nên không cần. Blog post không theo quy ước nhắc khu vực trong
+  `meta_description` (đúng theo mẫu 4 bài cũ đã có từ trước) - giữ nguyên, không tạo lệ khác biệt.
 
 **Thứ tự đề xuất khi bắt đầu:** 9.1 (nghiên cứu) → 9.4 (pipeline ảnh, làm 1 lần dùng mãi) → 9.6
 (SEO/GEO, không cần chờ nội dung mới) có thể làm ngay bằng dữ liệu hiện có. Riêng 9.2 và 9.3 phải

@@ -377,6 +377,18 @@ thất, vệ sinh khoang máy, đánh bóng xe, phủ ceramic, vệ sinh dàn l�
   cho sản phẩm giá biến động) vì chưa có giá thật - **cần user cập nhật giá thật qua admin sau**.
 - Ảnh: 6 ảnh Pexels/Unsplash (giấy phép miễn phí thương mại) đã rà từng ảnh loại bỏ các ảnh dính
   logo thương hiệu khác (VD "Ceramic Pro", "TORQUE Detail", "VPROTEC/COATINGBAY") trước khi chọn.
+- **[MỚI] Mô tả chi tiết (detail_content) cho cả 9 dịch vụ** (6 Chăm Sóc Xe + 3 Đổi Màu Nội Thất) -
+  tham khảo nội dung thật từ các trang dịch vụ AKauto (rửa xe, vệ sinh nội thất/khoang máy, đánh
+  bóng, phủ ceramic, vệ sinh dàn lạnh, bọc ghế/trần/táp-lô da) để nắm quy trình/kỹ thuật chuẩn
+  ngành, sau đó viết lại hoàn toàn bằng lời riêng - KHÔNG dùng tên thương hiệu sản phẩm cụ thể của
+  AKauto (Chemical Guys, Kubebond...) vì đó là lựa chọn nhà cung cấp riêng của họ, không phải của
+  Đức Hiếu Auto, và KHÔNG copy giá/thời hạn bảo hành của họ vì đó là chính sách kinh doanh riêng.
+- **[MỚI] Cải tổ điều hướng cho danh mục 1 thương hiệu:** phát hiện category-chi-tiet.html và
+  dropdown "Sản Phẩm" bắt khách bấm qua bước chọn thương hiệu ("Dịch Vụ Detailing") dù chỉ có 1
+  lựa chọn duy nhất - đã sửa `catalog-render.js` để tự động bỏ qua bước này, hiện thẳng danh sách
+  sản phẩm khi `brands.length === 1` (áp dụng chung, không riêng "Chăm Sóc Xe", nên "Đổi Màu Nội
+  Thất" cũng được hưởng lợi luôn). Đồng thời thêm "Chăm Sóc Xe - Detailing" vào carousel "Dịch Vụ"
+  trên trang chủ, đứng ngay trước nhóm "Nội Thất Ô Tô" (cùng cách "Đồ Bán Tải" đã được thêm riêng).
 
 **11.7 — [ĐỔI HƯỚNG, HOÀN THÀNH 2026-07-28] "Đổi Màu Nội Thất"** (bọc ghế da, bọc trần da, bọc da
 táp-lô) thay vì "Phụ Kiện Tiện Ích" ban đầu đề xuất
@@ -424,11 +436,19 @@ dịch vụ/hình ảnh thật của cửa hàng:
   xe cụ thể vì bản chất đa số sản phẩm dùng chung cho nhiều dòng xe.
 - [x] **11.6/11.7 - HOÀN THÀNH** (xem chi tiết ở mục 11.6/11.7 phía trên) - 2 danh mục mới "Chăm
   Sóc Xe" (6 dịch vụ) và "Đổi Màu Nội Thất" (3 dịch vụ) đã lên production đầy đủ nội dung/ảnh/FAQ.
-- [ ] **Giá thật cho 9 dịch vụ mới** (Chăm Sóc Xe + Đổi Màu Nội Thất) - đang để tạm "Liên hệ", cần
-  user cập nhật giá thật qua trang admin `san-pham.html` khi có.
-- [ ] **"Phụ Kiện Tiện Ích"** (móc khóa, nước hoa xe, giá đỡ điện thoại, thảm sàn...) - CHƯA làm,
-  tách riêng khỏi 11.7 ban đầu vì user đổi hướng dùng slot đó cho "Đổi Màu Nội Thất". Vẫn cần xác
-  nhận có thật sự kinh doanh nhóm phụ kiện này không, kèm danh sách sản phẩm + giá + ảnh thật.
+- [x] **11.8 - HOÀN THÀNH 2026-07-28 - Danh mục "Phụ Kiện Tiện Ích"** (tách riêng khỏi 11.7 ban đầu
+  vì user đổi hướng dùng slot đó cho "Đổi Màu Nội Thất"). User chốt danh sách sau khi xem khảo sát
+  22 nhóm sản phẩm từ Thế Giới Đồ Chơi Ô Tô (link tham khảo, không copy nội dung): chỉ chọn 6/22 -
+  giá đỡ điện thoại, tẩu sạc/bộ chia tẩu sạc, bảng số điện thoại, nước hoa ô tô (CHỈ Areon), bơm lốp
+  cứu hộ đa năng, bọc vô lăng. Đã tạo 4/6 (giá đỡ điện thoại, tẩu sạc, nước hoa Areon - dùng ảnh
+  chính hãng từ areon-fresh.us vì user yêu cầu chỉ bán Areon, bọc vô lăng) với brand "Areon" tách
+  riêng brand "Phụ Kiện Tiện Ích" cho 3 món còn lại. **2 món chưa đăng: Bảng Số Điện Thoại, Bơm Lốp
+  Cứu Hộ Đa Năng** - không tìm được ảnh minh hoạ đáng tin cậy (free stock), nên chờ ảnh thật từ nhà
+  cung cấp cụ thể khi user nhập hàng (chính xác hơn ảnh chung chung).
+- [ ] **Giá thật cho 13 sản phẩm/dịch vụ mới** (6 Chăm Sóc Xe + 3 Đổi Màu Nội Thất + 4 Phụ Kiện
+  Tiện Ích) - đang để tạm "Liên hệ", cần user cập nhật giá thật qua trang admin `san-pham.html`.
+- [ ] **2 sản phẩm Phụ Kiện Tiện Ích còn thiếu ảnh:** Bảng Số Điện Thoại, Bơm Lốp Cứu Hộ Đa Năng -
+  cần ảnh thật từ nhà cung cấp/sản phẩm thật khi nhập hàng.
 
 **Cách làm tiếp:** không cần cung cấp đủ cả 4 mục cùng lúc - mục nào có thông tin trước, báo trước,
 Claude làm ngay mục đó, không cần chờ đủ hết.

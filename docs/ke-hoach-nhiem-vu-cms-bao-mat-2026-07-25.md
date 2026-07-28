@@ -364,16 +364,45 @@ dung SEO hiện có**
   dòng xe cụ thể) - ảnh hưởng trực tiếp khối lượng nhập liệu cho 73+ sản phẩm hiện có, nên chốt
   trước khi làm để không phải nhập lại.
 
-**11.6 — Danh mục mới "Chăm Sóc Xe - Detailing"** (rửa xe, phủ ceramic, bọc ghế da, ốp trần)
-- Kỹ thuật: tạo category mới qua `admin/danh-muc.html` (dùng đúng khung 8 category hiện có, không
-  cần code mới).
-- **Cần từ user:** danh sách dịch vụ thật + giá - đây là dịch vụ mới, không có sẵn trong DB, không
-  tự bịa giá/dịch vụ.
+**11.6 — [HOÀN THÀNH 2026-07-28] Danh mục mới "Chăm Sóc Xe - Detailing"** (rửa xe, vệ sinh nội
+thất, vệ sinh khoang máy, đánh bóng xe, phủ ceramic, vệ sinh dàn lạnh)
+- User xác nhận quy trình detailing giống ~95% giữa các tiệm trong ngành nên cho phép viết nội
+  dung theo kiến thức chung ngành (không copy nguyên văn đối thủ), tối ưu SEO/GEO cho từ khoá địa
+  phương ("rửa xe tại Đắk Lắk/Buôn Ma Thuột"...), và cho dùng ảnh minh hoạ nước ngoài (không phải
+  ảnh thật cửa hàng) miễn không lộ logo thương hiệu khác.
+- Kỹ thuật: thêm route `POST /api/products/admin/categories` (chưa có trước đây, chỉ có PUT sửa -
+  8 danh mục cũ coi là cố định) để tạo category qua đúng CMS thay vì chèn thẳng DB.
+- Đã tạo: category `cham-soc-xe` + brand "Dịch Vụ Detailing" + 6 sản phẩm/dịch vụ + 4 FAQ + SEO
+  title/meta/intro đầy đủ. Giá tạm để **"Liên hệ"** (giá trị đã dùng sẵn ở nơi khác trong hệ thống
+  cho sản phẩm giá biến động) vì chưa có giá thật - **cần user cập nhật giá thật qua admin sau**.
+- Ảnh: 6 ảnh Pexels/Unsplash (giấy phép miễn phí thương mại) đã rà từng ảnh loại bỏ các ảnh dính
+  logo thương hiệu khác (VD "Ceramic Pro", "TORQUE Detail", "VPROTEC/COATINGBAY") trước khi chọn.
 
-**11.7 — Danh mục mới "Phụ Kiện Tiện Ích"** (móc khóa, nước hoa xe, giá đỡ điện thoại, thảm sàn...)
-- Kỹ thuật: tương tự 11.6, category mới giá rẻ để bán kèm lúc khách đến lắp đặt.
-- **Cần từ user:** danh sách sản phẩm thật + giá + ảnh, hoặc xác nhận nguồn nhập hàng (nhóm sản
-  phẩm hoàn toàn mới, cần Đức Hiếu Auto thật sự có bán mới đưa lên web).
+**11.7 — [ĐỔI HƯỚNG, HOÀN THÀNH 2026-07-28] "Đổi Màu Nội Thất"** (bọc ghế da, bọc trần da, bọc da
+táp-lô) thay vì "Phụ Kiện Tiện Ích" ban đầu đề xuất
+- User tách lại nhóm dịch vụ theo đúng thực tế kinh doanh: 3 mục bọc da tách thành danh mục riêng
+  "Đổi Màu Nội Thất" thay vì gộp chung "Chăm Sóc Xe" như đề xuất ban đầu của Claude. Nhóm "Phụ Kiện
+  Tiện Ích" (móc khóa, nước hoa xe...) CHƯA làm - vẫn giữ nguyên trạng thái chờ user xác nhận có
+  thật sự kinh doanh nhóm này không.
+- Đã tạo: category `doi-mau-noi-that` + brand "Dịch Vụ Bọc Da" + 3 sản phẩm + 4 FAQ + SEO đầy đủ,
+  giá tạm "Liên hệ" (cần cập nhật giá thật).
+
+**[MỚI 2026-07-28] Rà soát lại ảnh poster 8 danh mục cũ (phát sinh ngoài kế hoạch ban đầu)** - user
+yêu cầu mỗi ảnh phải "nhìn phát biết ngay danh mục nào", tốt nhất là cận cảnh sản phẩm/dịch vụ
+nhưng vẫn thấy được xe (mẫu chuẩn: ảnh PPF-Wrap hiện có). Rà cả 8 ảnh, phát hiện 5 vấn đề:
+- **Màn Hình Ô Tô:** lộ tên đài phát thanh thật "Narodni Radio" trên màn hình - đánh giá rủi ro
+  thấp (chỉ là nội dung ngẫu nhiên, không phải thương hiệu cạnh tranh) - **giữ nguyên** sau nhiều
+  lần tìm ảnh thay thế đều dính vấn đề khác (đồng hồ sau vô-lăng thay vì màn hình trung tâm, hoặc
+  giao diện độc quyền Tesla).
+- **Âm Thanh:** ảnh loa JBL cô lập nền đen, không thấy xe - **đã thay** bằng ảnh loa lắp trong cửa
+  xe (Pexels).
+- **Android Box:** lộ nhầm thương hiệu "BTV" (không phải hãng đang bán) - **đã thay** bằng ảnh sản
+  phẩm thật VIETMAP BS10 đã có sẵn trong catalog.
+- **Camera Hành Trình:** chỉ thấy nguyên xe Tesla, không thấy camera - **đã thay** bằng ảnh sản
+  phẩm thật VIETMAP SC620 (có bối cảnh đường xá trên màn hình sản phẩm).
+- **Đồ Bán Tải:** xe bán tải chung chung, không thấy phụ kiện cụ thể - **đã thay** bằng ảnh nắp
+  thùng Aeroklas lắp trên Ford Ranger WildTrak thật (khớp chính xác ví dụ user đưa ra).
+- Giữ nguyên (đã đạt chuẩn từ trước): Film Cách Nhiệt, PPF - Wrap Đổi Màu, Nâng Cấp Ánh Sáng.
 
 **Hạng mục tạm gác (không đưa vào Phase này):** dịch vụ lắp đặt tại nhà - là quyết định vận hành/
 kinh doanh (nhân sự, tính phí di chuyển...), không phải việc code, chỉ làm phần hiển thị web sau
@@ -393,10 +422,13 @@ dịch vụ/hình ảnh thật của cửa hàng:
   73+ sản phẩm. Riêng danh mục Đồ Bán Tải đã có sẵn tên xe trong tên sản phẩm (VD "Ford Ranger
   WildTrak 2023") - có thể tận dụng ngay, các danh mục khác (âm thanh, màn hình...) chưa có dữ liệu
   xe cụ thể vì bản chất đa số sản phẩm dùng chung cho nhiều dòng xe.
-- [ ] **11.6 - Danh sách dịch vụ Chăm Sóc Xe + giá thật:** rửa xe, phủ ceramic, bọc ghế da, ốp trần...
-  (dịch vụ hoàn toàn mới, chưa có trong DB).
-- [ ] **11.7 - Danh sách sản phẩm Phụ Kiện Tiện Ích + giá + ảnh thật:** móc khóa, nước hoa xe, giá đỡ
-  điện thoại, thảm sàn... (nhóm sản phẩm hoàn toàn mới, cần Đức Hiếu Auto thật sự có bán).
+- [x] **11.6/11.7 - HOÀN THÀNH** (xem chi tiết ở mục 11.6/11.7 phía trên) - 2 danh mục mới "Chăm
+  Sóc Xe" (6 dịch vụ) và "Đổi Màu Nội Thất" (3 dịch vụ) đã lên production đầy đủ nội dung/ảnh/FAQ.
+- [ ] **Giá thật cho 9 dịch vụ mới** (Chăm Sóc Xe + Đổi Màu Nội Thất) - đang để tạm "Liên hệ", cần
+  user cập nhật giá thật qua trang admin `san-pham.html` khi có.
+- [ ] **"Phụ Kiện Tiện Ích"** (móc khóa, nước hoa xe, giá đỡ điện thoại, thảm sàn...) - CHƯA làm,
+  tách riêng khỏi 11.7 ban đầu vì user đổi hướng dùng slot đó cho "Đổi Màu Nội Thất". Vẫn cần xác
+  nhận có thật sự kinh doanh nhóm phụ kiện này không, kèm danh sách sản phẩm + giá + ảnh thật.
 
 **Cách làm tiếp:** không cần cung cấp đủ cả 4 mục cùng lúc - mục nào có thông tin trước, báo trước,
 Claude làm ngay mục đó, không cần chờ đủ hết.

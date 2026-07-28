@@ -790,7 +790,7 @@ function renderProductDetailContent(html) {
     section.hidden = false;
     contentEl.innerHTML = html;
 
-    requestAnimationFrame(() => {
+    const measureAndToggle = () => requestAnimationFrame(() => {
         if (contentEl.scrollHeight > contentEl.clientHeight + 10) {
             wrap.classList.add("has-fade");
             toggleBtn.hidden = false;
@@ -804,6 +804,15 @@ function renderProductDetailContent(html) {
             toggleBtn.hidden = true;
         }
     });
+
+    // Đo chiều cao SAU KHI font web (Bebas Neue/Poppins) tải xong - đo quá sớm lúc font hệ thống
+    // còn đang hiển thị tạm sẽ ra chiều cao sai (thường thấp hơn thật), khiến nút "Xem Thêm" hiện
+    // sai trạng thái hoặc bấm vào không thấy đổi gì rõ rệt vì chênh lệch còn lại quá nhỏ.
+    if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(measureAndToggle);
+    } else {
+        measureAndToggle();
+    }
 }
 
 function miniProductCardHtml(p) {

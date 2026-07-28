@@ -453,6 +453,38 @@ dịch vụ/hình ảnh thật của cửa hàng:
 **Cách làm tiếp:** không cần cung cấp đủ cả 4 mục cùng lúc - mục nào có thông tin trước, báo trước,
 Claude làm ngay mục đó, không cần chờ đủ hết.
 
+**[MỚI 2026-07-28] Bài học quan trọng - đổi quy trình: demo local trước khi push, không đẩy thẳng
+lên production nữa cho các thay đổi giao diện/JS.** User báo "lỗi tùm lum" sau loạt thay đổi
+11.1-11.8 - rà lại bằng Chrome headless (`--headless=new --user-data-dir=<thư mục tạm riêng>` để
+không đụng profile Chrome thật của user) + chụp ảnh màn hình thật, phát hiện và sửa:
+- **Mega-menu "Dịch Vụ" ở header (HTML tĩnh lặp lại 12 trang) bị bỏ sót** khi thêm "Chăm Sóc Xe" -
+  trước đó chỉ sửa carousel trang chủ (JS/API), quên mất menu header là markup tĩnh RIÊNG, không
+  chung nguồn dữ liệu.
+- **Mega-menu tràn/lệch màn hình** qua 3 vòng chỉnh CSS: (1) cột bị ép rộng bằng nhau gây tràn khi
+  thêm cột mới → cho `flex-wrap: wrap` + `max-width` theo viewport; (2) canh trái theo đúng vị trí
+  chữ "Dịch Vụ" thay vì canh giữa trang → đổi mốc định vị sang `.header-inner` (đúng vùng nội dung
+  trang, max-width 1200px) thay vì thẻ `<li>`; (3) cột bị ép bằng nhau (flex:1) khiến cột chữ dài
+  tràn sang cột bên - đổi `flex: 0 1 auto` để mỗi cột tự rộng theo đúng nội dung, rồi tăng
+  `max-width` mega-menu lên 1020px để đủ chỗ 4 cột cùng hàng.
+- **30 ảnh sản phẩm bị vỡ** (hiện chữ alt text thay vì ảnh) - lỗi hệ thống có thật, không phải chỉ
+  do phase này: code luôn yêu cầu file `-400w` (bản ảnh nhỏ cho `srcset`) nhưng KHÔNG kiểm tra file
+  đó có tồn tại hay không. 13 ảnh mới (Phase 11.6-11.8) thiếu bản này vì chưa chạy
+  `scripts/generate-responsive-images.js`; phát hiện thêm **17 ảnh sản phẩm THẬT đã có từ trước**
+  (JBL, VIETMAP) cũng bị lỗi y hệt - có thể đã vỡ trên production một thời gian mà chưa ai để ý,
+  đặc biệt 2 ảnh vừa được chọn làm poster thay thế (VIETMAP SC620, BS10). Đã chạy script fix hàng
+  loạt + copy tay 1 ảnh quá nhỏ (Areon, 445px, dưới ngưỡng script tự tạo bản nhỏ).
+- **Nút "Xem Thêm" ở mô tả chi tiết sản phẩm phản hồi không rõ ràng** - code đo chiều cao nội dung
+  bằng `requestAnimationFrame` ngay sau khi set `innerHTML`, TRƯỚC KHI web font (Bebas Neue/Poppins)
+  chắc chắn đã tải xong - đo lúc font hệ thống tạm thời hiển thị có thể ra kết quả khác với sau khi
+  font thật load xong, khiến trạng thái nút/nội dung không khớp. Sửa dùng `document.fonts.ready`
+  trước khi đo - ảnh hưởng tốt tới TOÀN BỘ trang chi tiết sản phẩm, không riêng phase này.
+
+**Quy trình mới từ đây:** với thay đổi động (HTML nhiều trang, CSS layout, JS) - dựng server tĩnh
+cục bộ (`http://localhost:5500` + backend `http://localhost:4000`), tự kiểm tra bằng Chrome
+headless (JS console error + `--screenshot` xem trực quan) trước, mở demo cho user xem bằng
+`Start-Process` (mở đúng trình duyệt/máy user, không phải mở hộ), chỉ `git push` sau khi user xác
+nhận qua demo - không tự đẩy thẳng lên production như trước.
+
 ---
 
 ## Ghi chú khi làm (cập nhật liên tục)

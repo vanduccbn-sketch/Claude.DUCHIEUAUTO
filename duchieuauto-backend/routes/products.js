@@ -189,6 +189,24 @@ router.get("/admin/categories/overview", canEditCatalog, async (req, res) => {
     res.json(result);
 });
 
+// POST /api/products/admin/categories - tạo danh mục dịch vụ/sản phẩm mới (VD mở rộng sang dịch
+// vụ chăm sóc xe) - trước đây chỉ có PUT sửa vì 8 danh mục ban đầu coi là cố định, nay cần thêm
+// route tạo mới để mở rộng danh mục qua đúng CMS thay vì chèn thẳng vào DB.
+router.post("/admin/categories", canEditCatalog, async (req, res) => {
+    const { id, name } = req.body;
+    if (!id || !name) return res.status(400).json({ error: "Thiếu id hoặc name" });
+    if (!/^[a-z0-9-]+$/.test(id)) return res.status(400).json({ error: "id chỉ được chứa chữ thường, số và dấu gạch ngang" });
+
+    const exists = await db.prepare("SELECT id FROM categories WHERE id = ?").get(id);
+    if (exists) return res.status(400).json({ error: "id danh mục đã tồn tại" });
+
+    const maxSort = (await db.prepare("SELECT COALESCE(MAX(sort_order), -1) as m FROM categories").get()).m;
+    await db.prepare("INSERT INTO categories (id, name, sort_order) VALUES (?, ?, ?)").run(id, name, maxSort + 1);
+
+    await db.logActivity(req.admin, "create_category", `category:${id}`);
+    res.status(201).json({ id });
+});
+
 // GET /api/products/admin/categories - danh sách danh mục + brand + type, dùng cho dropdown chọn
 // trong form thêm/sửa sản phẩm (kể cả brand/type ẩn, khác /catalog vốn chỉ trả phần công khai)
 router.get("/admin/categories", canEditCatalog, async (req, res) => {

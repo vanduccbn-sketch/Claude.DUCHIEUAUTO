@@ -75,6 +75,14 @@
             </div>
         </div>
 
+        <div id="typeImagesEditor" hidden>
+            <div class="settings-section">
+                <h2>🖼️ Ảnh Minh Hoạ Nhóm Sản Phẩm</h2>
+                <p class="form-hint" style="margin-bottom:14px;">Thêm ảnh minh hoạ cho từng nhóm sản phẩm con của thương hiệu (VD: "Loa Sub" của JBL) - hiện ở trang chọn nhóm khi khách bấm vào thương hiệu. Chọn ảnh là lưu ngay, không cần bấm Lưu riêng.</p>
+                <div id="typeImagesList"></div>
+            </div>
+        </div>
+
         <div id="faqEditor" hidden>
             <div class="settings-section">
                 <h2>Câu Hỏi Thường Gặp (FAQ)</h2>
@@ -96,16 +104,20 @@
         const faqEditor = document.getElementById("faqEditor");
         const faqList = document.getElementById("faqList");
 
+        // Lưu lại kết quả đầy đủ (kèm brands/types) của lần tải dropdown - dùng lại cho khối "Ảnh
+        // Minh Hoạ Nhóm Sản Phẩm" bên dưới thay vì gọi lại API lần nữa cho cùng 1 dữ liệu.
+        let allCategoriesFull = [];
+
         async function loadCategories() {
             try {
                 const res = await apiFetch("/api/products/admin/categories");
-                const categories = await res.json();
+                allCategoriesFull = await res.json();
                 categorySelect.innerHTML = `<option value="">-- Chọn danh mục --</option>` +
-                    categories.map(c => `<option value="${c.id}">${c.name}</option>`).join("");
+                    allCategoriesFull.map(c => `<option value="${c.id}">${c.name}</option>`).join("");
 
                 // Cho phép trang Tổng Quan gửi thẳng sang đây kèm sẵn danh mục cần xem (?category=...).
                 const preselect = new URLSearchParams(window.location.search).get("category");
-                if (preselect && categories.some(c => c.id === preselect)) {
+                if (preselect && allCategoriesFull.some(c => c.id === preselect)) {
                     categorySelect.value = preselect;
                     categorySelect.dispatchEvent(new Event("change"));
                 }
@@ -122,11 +134,77 @@
                 categoryEditor.hidden = false;
                 loadFaqs(categorySelect.value);
                 loadCategoryDetail(categorySelect.value);
+                loadTypeImages(categorySelect.value);
             } else {
                 faqEditor.hidden = true;
                 categoryEditor.hidden = true;
+                document.getElementById("typeImagesEditor").hidden = true;
             }
         });
+
+        // Chỉ thương hiệu CÓ nhóm con (brand_types) mới cần ảnh minh hoạ - thương hiệu không phân
+        // loại thì không có khái niệm "nhóm" để minh hoạ.
+        function loadTypeImages(categoryId) {
+            const cat = allCategoriesFull.find(c => c.id === categoryId);
+            const wrap = document.getElementById("typeImagesEditor");
+            const list = document.getElementById("typeImagesList");
+            const brandsWithTypes = (cat?.brands || []).filter(b => b.types.length > 0);
+
+            wrap.hidden = false;
+            if (brandsWithTypes.length === 0) {
+                list.innerHTML = emptyHintHtml("Danh mục này không có nhóm sản phẩm con theo thương hiệu.");
+                return;
+            }
+
+            list.innerHTML = brandsWithTypes.map(b => `
+                <div style="margin-bottom:20px;">
+                    <label style="display:block;font-size:13px;font-weight:700;margin-bottom:10px;">${escapeHtml(b.name)}</label>
+                    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px;">
+                        ${b.types.map(t => `
+                            <div>
+                                <div style="font-size:13px;font-weight:600;margin-bottom:8px;">${escapeHtml(t.name)}</div>
+                                <div class="cat-img-preview" id="typeImgPreview-${b.id}-${t.id}" style="height:90px;">${t.logo ? `<img src="${t.logo}" alt="">` : "Chưa có ảnh"}</div>
+                                <input type="file" id="typeImgFile-${b.id}-${t.id}" accept="image/jpeg,image/png,image/webp,image/gif" style="display:none;">
+                                <button type="button" class="btn btn-secondary" style="width:100%;margin-top:6px;" data-pick-brand="${b.id}" data-pick-type="${t.id}">Chọn Ảnh</button>
+                            </div>
+                        `).join("")}
+                    </div>
+                </div>
+            `).join("");
+
+            list.querySelectorAll("[data-pick-brand]").forEach(btn => {
+                const brandId = btn.dataset.pickBrand;
+                const typeId = btn.dataset.pickType;
+                const fileInput = document.getElementById(`typeImgFile-${brandId}-${typeId}`);
+                btn.addEventListener("click", () => fileInput.click());
+                fileInput.addEventListener("change", () => uploadTypeImage(categoryId, brandId, typeId));
+            });
+        }
+
+        async function uploadTypeImage(categoryId, brandId, typeId) {
+            const fileInput = document.getElementById(`typeImgFile-${brandId}-${typeId}`);
+            const file = fileInput.files[0];
+            if (!file) return;
+            const preview = document.getElementById(`typeImgPreview-${brandId}-${typeId}`);
+            preview.textContent = "Đang tải lên...";
+            try {
+                const fd = new FormData();
+                fd.append("image", file);
+                fd.append("purpose", "square");
+                const uploadRes = await apiFetch("/api/uploads", { method: "POST", body: fd });
+                const uploadData = await uploadRes.json();
+                if (!uploadRes.ok) throw new Error(uploadData.error || "Tải ảnh thất bại");
+
+                const saveRes = await apiFetch(`/api/products/admin/brand-types/${categoryId}/${brandId}/${typeId}`, { method: "PUT", body: { logo: uploadData.url } });
+                if (!saveRes.ok) throw new Error((await saveRes.json()).error || "Lưu thất bại");
+
+                preview.innerHTML = `<img src="${uploadData.url}" alt="">`;
+                showToast("Đã lưu ảnh minh hoạ");
+            } catch (err) {
+                preview.textContent = "Chưa có ảnh";
+                showToast(err.message, true);
+            }
+        }
 
         document.getElementById("addFaqBtn").addEventListener("click", () => addFaqRow(null, "", ""));
 

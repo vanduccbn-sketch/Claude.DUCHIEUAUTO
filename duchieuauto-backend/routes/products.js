@@ -242,7 +242,7 @@ router.post("/admin/categories", canEditCatalog, async (req, res) => {
 router.get("/admin/categories", canEditCatalog, async (req, res) => {
     const categories = await db.prepare("SELECT id, name FROM categories ORDER BY sort_order").all();
     const brands = await db.prepare("SELECT category_id, id, name, hidden FROM brands ORDER BY sort_order").all();
-    const types = await db.prepare("SELECT category_id, brand_id, id, name FROM brand_types ORDER BY sort_order").all();
+    const types = await db.prepare("SELECT category_id, brand_id, id, name, logo FROM brand_types ORDER BY sort_order").all();
 
     const result = categories.map(cat => ({
         id: cat.id,
@@ -251,10 +251,34 @@ router.get("/admin/categories", canEditCatalog, async (req, res) => {
             id: b.id,
             name: b.name,
             hidden: !!b.hidden,
-            types: types.filter(t => t.category_id === cat.id && t.brand_id === b.id).map(t => ({ id: t.id, name: t.name }))
+            types: types.filter(t => t.category_id === cat.id && t.brand_id === b.id).map(t => ({ id: t.id, name: t.name, logo: t.logo }))
         }))
     }));
     res.json(result);
+});
+
+// PUT /api/products/admin/brand-types/:category_id/:brand_id/:id - sửa tên/ảnh minh hoạ 1 nhóm sản
+// phẩm con của thương hiệu (VD "Loa Sub" của JBL) - trước đây chỉ tạo được (POST bên dưới), không
+// có cách nào sửa lại sau khi tạo, kể cả gắn ảnh minh hoạ (cột "logo" có sẵn trong DB và trang công
+// khai đã đọc sẵn - brand-san-pham.html?...&brand=jbl - chỉ thiếu đúng chỗ để admin tải ảnh lên).
+router.put("/admin/brand-types/:category_id/:brand_id/:id", canEditCatalog, async (req, res) => {
+    const { category_id, brand_id, id } = req.params;
+    const existing = await db.prepare(
+        "SELECT * FROM brand_types WHERE category_id = ? AND brand_id = ? AND id = ?"
+    ).get(category_id, brand_id, id);
+    if (!existing) return res.status(404).json({ error: "Không tìm thấy nhóm sản phẩm này" });
+
+    const { name, logo } = req.body;
+    await db.prepare(
+        "UPDATE brand_types SET name = @name, logo = @logo WHERE category_id = @category_id AND brand_id = @brand_id AND id = @id"
+    ).run({
+        name: name !== undefined && name.trim() ? name.trim() : existing.name,
+        logo: logo !== undefined ? (logo || null) : existing.logo,
+        category_id, brand_id, id
+    });
+
+    await db.logActivity(req.admin, "update_brand_type", `${category_id}/${brand_id}/${id}`);
+    res.json({ ok: true });
 });
 
 // GET /api/products/admin/categories/:id - chi tiết đầy đủ 1 danh mục (kể cả các trường SEO) cho

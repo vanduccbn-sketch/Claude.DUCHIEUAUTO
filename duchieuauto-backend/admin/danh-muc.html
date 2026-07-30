@@ -211,13 +211,13 @@
         });
 
         async function loadFaqs(categoryId) {
-            faqList.innerHTML = `<p class="form-hint">Đang tải...</p>`;
+            faqList.innerHTML = loadingHintHtml();
             try {
                 const res = await apiFetch(`/api/products/admin/categories/${categoryId}/faqs`);
                 const faqs = await res.json();
                 faqList.innerHTML = "";
                 faqs.forEach(f => addFaqRow(f.id, f.question, f.answer));
-                if (faqs.length === 0) faqList.innerHTML = `<p class="form-hint">Chưa có câu hỏi nào cho danh mục này.</p>`;
+                if (faqs.length === 0) faqList.innerHTML = emptyHintHtml("Chưa có câu hỏi nào cho danh mục này.");
             } catch (err) {
                 showToast(err.message, true);
             }

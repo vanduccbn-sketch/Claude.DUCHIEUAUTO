@@ -70,7 +70,7 @@
                 </tr>
             </thead>
             <tbody id="bannersBody">
-                <tr class="empty-row"><td colspan="5">Đang tải...</td></tr>
+                <tr class="empty-row"><td colspan="5"><span class="admin-spinner"></span>Đang tải...</td></tr>
             </tbody>
         </table>
     </main>
@@ -109,7 +109,7 @@
             const tbody = document.getElementById("bannersBody");
 
             if (banners.length === 0) {
-                tbody.innerHTML = `<tr class="empty-row"><td colspan="5">Chưa có banner nào.</td></tr>`;
+                tbody.innerHTML = emptyRowHtml(5, "Chưa có banner nào.");
                 return;
             }
 

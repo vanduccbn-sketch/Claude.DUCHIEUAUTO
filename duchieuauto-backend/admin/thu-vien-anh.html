@@ -47,7 +47,7 @@
 
         async function loadLibrary() {
             const grid = document.getElementById("mediaGrid");
-            grid.innerHTML = `<p class="form-hint">Đang tải...</p>`;
+            grid.innerHTML = loadingHintHtml();
             try {
                 const res = await apiFetch("/api/uploads/library");
                 if (!res.ok) throw new Error((await res.json()).error || "Không tải được thư viện ảnh");
@@ -55,7 +55,7 @@
 
                 document.getElementById("resultCount").textContent = `${images.length} ảnh (tối đa 200 ảnh gần nhất)`;
                 if (images.length === 0) {
-                    grid.innerHTML = `<p class="form-hint">Chưa có ảnh nào được tải lên.</p>`;
+                    grid.innerHTML = emptyHintHtml("Chưa có ảnh nào được tải lên.");
                     return;
                 }
 
@@ -66,6 +66,7 @@
                             <div class="media-card-meta">${img.width}×${img.height} · ${formatBytes(img.bytes)}</div>
                             <div class="media-card-actions">
                                 <button type="button" class="btn btn-secondary" data-copy="${i}">Sao Chép URL</button>
+                                <button type="button" class="btn btn-danger" data-delete="${i}">Xoá</button>
                             </div>
                         </div>
                     </div>`).join("");
@@ -74,8 +75,27 @@
                     const img = images[Number(btn.dataset.copy)];
                     btn.addEventListener("click", () => copyUrl(img.url, btn));
                 });
+                grid.querySelectorAll("[data-delete]").forEach(btn => {
+                    const img = images[Number(btn.dataset.delete)];
+                    btn.addEventListener("click", () => deleteImage(img));
+                });
             } catch (err) {
                 grid.innerHTML = `<p class="form-hint">${err.message}</p>`;
+            }
+        }
+
+        // Không kiểm tra ảnh có đang dùng ở sản phẩm/bài viết/banner nào không - cảnh báo rõ trong
+        // hộp thoại xác nhận để admin tự cân nhắc trước khi xoá, giống cách các trang xoá khác trong
+        // admin (VD san-pham.html) luôn có dòng "Không thể hoàn tác" trong confirm().
+        async function deleteImage(img) {
+            if (!confirm("Xoá ảnh này khỏi thư viện? Nếu ảnh đang được dùng ở sản phẩm/bài viết/banner nào đó, chỗ đó sẽ bị vỡ ảnh. Không thể hoàn tác.")) return;
+            try {
+                const res = await apiFetch("/api/uploads", { method: "DELETE", body: { publicId: img.publicId } });
+                if (!res.ok) throw new Error((await res.json()).error || "Xoá ảnh thất bại");
+                showToast("Đã xoá ảnh");
+                loadLibrary();
+            } catch (err) {
+                showToast(err.message, true);
             }
         }
 

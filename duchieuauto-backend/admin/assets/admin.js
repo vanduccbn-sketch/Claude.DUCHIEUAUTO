@@ -21,6 +21,22 @@ function escapeHtml(str) {
         .replace(/'/g, "&#39;");
 }
 
+// Trạng thái "đang tải"/"chưa có gì" dùng chung cho mọi danh sách trong admin - trước đây mỗi
+// trang tự viết chữ trơn "Đang tải..."/"Chưa có..." riêng lẻ, giờ gom lại 1 chỗ (kèm spinner CSS -
+// xem .admin-spinner trong admin.css) để đồng bộ hình thức, sửa 1 lần áp dụng khắp nơi.
+function loadingRowHtml(colspan) {
+    return `<tr class="empty-row"><td colspan="${colspan}"><span class="admin-spinner"></span>Đang tải...</td></tr>`;
+}
+function loadingHintHtml() {
+    return `<p class="form-hint"><span class="admin-spinner"></span>Đang tải...</p>`;
+}
+function emptyRowHtml(colspan, message) {
+    return `<tr class="empty-row"><td colspan="${colspan}">📭 ${escapeHtml(message)}</td></tr>`;
+}
+function emptyHintHtml(message) {
+    return `<p class="form-hint">📭 ${escapeHtml(message)}</p>`;
+}
+
 // Domain frontend thật - dùng để dựng URL ảnh cho 242 sản phẩm gốc chưa từng upload lại qua
 // Cloudinary (cột "image" trong DB đang NULL, quy ước cũ là đường dẫn tương đối
 // "assets/images/products/<id>/anh-1.jpg" CHỈ đúng khi mở từ chính domain frontend - trang admin

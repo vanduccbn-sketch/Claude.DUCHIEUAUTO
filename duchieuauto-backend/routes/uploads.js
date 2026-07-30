@@ -2,6 +2,7 @@ const express = require("express");
 const multer = require("multer");
 const { v2: cloudinary } = require("cloudinary");
 const { requireRole } = require("../middleware/auth");
+const db = require("../models/db");
 
 const router = express.Router();
 
@@ -90,6 +91,7 @@ router.get("/library", requireRole("content", "ads", "super_admin"), async (req,
         });
         res.json(result.resources.map(r => ({
             url: r.secure_url,
+            publicId: r.public_id,
             createdAt: r.created_at,
             format: r.format,
             bytes: r.bytes,
@@ -99,6 +101,27 @@ router.get("/library", requireRole("content", "ads", "super_admin"), async (req,
     } catch (error) {
         console.error("Lỗi tải thư viện ảnh Cloudinary:", error.message);
         res.status(502).json({ error: "Không tải được thư viện ảnh, vui lòng thử lại" });
+    }
+});
+
+// DELETE /api/uploads - xoá hẳn 1 ảnh khỏi Cloudinary theo public_id (lấy từ GET /library). Cùng
+// quyền với upload (content/ads/super_admin) - ai tải lên được thì cũng dọn được ảnh rác/ảnh sai.
+// LƯU Ý: không kiểm tra ảnh có đang được dùng ở đâu (sản phẩm/bài viết/banner) hay không - admin
+// tự biết ảnh nào an toàn để xoá, xoá nhầm ảnh đang dùng sẽ làm vỡ ảnh ở chỗ đó (như 404 ảnh thường).
+router.delete("/", requireRole("content", "ads", "super_admin"), async (req, res) => {
+    const { publicId } = req.body;
+    if (!publicId) return res.status(400).json({ error: "Thiếu publicId" });
+
+    try {
+        const result = await cloudinary.uploader.destroy(publicId);
+        if (result.result !== "ok" && result.result !== "not found") {
+            return res.status(502).json({ error: "Xoá ảnh thất bại" });
+        }
+        await db.logActivity(req.admin, "delete_image", publicId);
+        res.json({ ok: true });
+    } catch (error) {
+        console.error("Lỗi xoá ảnh Cloudinary:", error.message);
+        res.status(502).json({ error: "Xoá ảnh thất bại, vui lòng thử lại" });
     }
 });
 

@@ -125,6 +125,28 @@ const ready = (async () => {
             updated_at TEXT NOT NULL DEFAULT (datetime('now'))
         );
 
+        -- Lưu giá trị CŨ mỗi lần homepage_content bị ghi đè - cho phép "Khôi phục" nếu admin lỡ sửa
+        -- sai/xoá nhầm, thay vì mất trắng (trước đây chỉ có giá trị mới nhất, sửa sai là mất luôn
+        -- bản cũ). Không lưu giá trị mới (đã có sẵn trong homepage_content.value hiện tại).
+        CREATE TABLE IF NOT EXISTS homepage_content_history (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            key TEXT NOT NULL,
+            old_value TEXT,
+            changed_by TEXT NOT NULL,
+            changed_at TEXT NOT NULL DEFAULT (datetime('now'))
+        );
+
+        -- Phân quyền chi tiết theo từng KHỐI nội dung trang chủ (Hero/Giới Thiệu/.../Footer) cho
+        -- admin role "content" - mặc định KHÔNG có dòng nào cho 1 admin nghĩa là được sửa TOÀN BỘ
+        -- (tương thích ngược, admin cũ không bị ảnh hưởng). Chỉ khi super_admin chủ động gán cụ thể
+        -- (ghi 1 hoặc nhiều dòng) thì admin đó mới bị GIỚI HẠN đúng các khối đã gán - xem GET
+        -- /api/homepage-content/my-permissions và PUT /api/admins/:id/content-permissions.
+        CREATE TABLE IF NOT EXISTS content_permissions (
+            admin_id INTEGER NOT NULL REFERENCES admins(id),
+            section TEXT NOT NULL,
+            PRIMARY KEY (admin_id, section)
+        );
+
         CREATE TABLE IF NOT EXISTS banners (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             title TEXT NOT NULL,

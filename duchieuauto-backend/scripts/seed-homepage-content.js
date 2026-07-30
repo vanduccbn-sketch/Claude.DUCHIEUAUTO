@@ -66,7 +66,13 @@ const SEED_VALUES = {
     footer_col1_title: "Nội Thất Ô Tô",
     footer_col2_title: "Ngoại Thất & Khác",
     footer_col3_title: "Liên Kết Nhanh",
-    footer_copyright: "© 2026 Đức Hiếu Auto. All rights reserved."
+    footer_copyright: "© 2026 Đức Hiếu Auto. All rights reserved.",
+
+    faq_page_title: "CÂU HỎI THƯỜNG GẶP",
+    faq_page_intro: "Tổng hợp những thắc mắc khách hàng hỏi nhiều nhất về dịch vụ nâng cấp và chăm sóc ô tô tại Đức Hiếu Auto. Không tìm thấy câu trả lời bạn cần? Liên hệ trực tiếp qua Zalo/hotline để được tư vấn nhanh nhất.",
+    policy_page_title: "CHÍNH SÁCH BẢO HÀNH - ĐỔI TRẢ - BẢO MẬT",
+    booking_page_title: "ĐẶT LỊCH HẸN THI CÔNG",
+    booking_page_intro: "Điền thông tin bên dưới, đội ngũ tư vấn Đức Hiếu Auto sẽ gọi điện xác nhận lịch hẹn trong thời gian sớm nhất — thường trong vòng 30-60 phút giờ hành chính."
 };
 
 (async () => {

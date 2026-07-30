@@ -25,6 +25,19 @@
         .content-warnings ul { margin: 0; padding-left: 20px; }
         .content-warnings li { font-size: 13px; color: #6b4e14; margin-bottom: 6px; }
         .content-warnings a { color: var(--m-blue); }
+
+        /* Thay danh sách link chữ trơn "→ Quản lý sản phẩm" cũ bằng lưới thẻ có icon, mỗi thẻ 1
+           việc hay dùng - dễ quét mắt hơn, đồng bộ hình thức với .category-overview-card ở trên. */
+        .quick-link-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; }
+        .quick-link-card {
+            display: flex; align-items: flex-start; gap: 12px; background: var(--bg-alt);
+            border-radius: var(--radius); box-shadow: var(--shadow); padding: 16px 18px;
+            color: inherit; text-decoration: none; transition: transform 0.15s, box-shadow 0.15s;
+        }
+        .quick-link-card:hover { transform: translateY(-2px); text-decoration: none; }
+        .quick-link-icon { font-size: 22px; line-height: 1; flex-shrink: 0; }
+        .quick-link-card h3 { font-size: 14.5px; margin: 0 0 4px; }
+        .quick-link-card p { font-size: 12px; color: var(--text-muted); margin: 0; }
     </style>
 </head>
 <body>
@@ -52,22 +65,19 @@
             <div class="category-overview-grid" id="categoryOverviewGrid"></div>
         </div>
 
-        <div id="postsOnly">
-            <p style="margin-bottom:12px;"><a href="san-pham.html">→ Quản lý sản phẩm</a></p>
-            <p style="margin-bottom:12px;"><a href="bai-viet.html">→ Quản lý bài viết</a></p>
-            <p style="margin-bottom:12px;"><a href="danh-muc.html">→ Quản lý FAQ theo danh mục</a></p>
-            <p style="margin-bottom:12px;"><a href="danh-gia.html">→ Duyệt đánh giá sản phẩm</a></p>
-            <p style="margin-bottom:12px;"><a href="trang-chu.html">→ Chọn sản phẩm nổi bật trang chủ</a></p>
+        <h2 style="font-size:16px;margin-bottom:14px;">Truy Cập Nhanh</h2>
+        <div class="quick-link-grid">
+            <a href="san-pham.html" class="quick-link-card postsOnly"><span class="quick-link-icon">📦</span><div><h3>Sản Phẩm</h3><p>Thêm, sửa, ẩn/hiện sản phẩm</p></div></a>
+            <a href="bai-viet.html" class="quick-link-card postsOnly"><span class="quick-link-icon">📝</span><div><h3>Bài Viết</h3><p>Viết và đăng bài blog</p></div></a>
+            <a href="danh-muc.html" class="quick-link-card postsOnly"><span class="quick-link-icon">❓</span><div><h3>Danh Mục / FAQ</h3><p>Câu hỏi thường gặp theo danh mục</p></div></a>
+            <a href="danh-gia.html" class="quick-link-card postsOnly"><span class="quick-link-icon">⭐</span><div><h3>Đánh Giá</h3><p>Duyệt đánh giá sản phẩm từ khách</p></div></a>
+            <a href="trang-chu.html" class="quick-link-card postsOnly"><span class="quick-link-icon">🏠</span><div><h3>Nội Dung Trang Chủ</h3><p>Sửa chữ/ảnh + sản phẩm nổi bật</p></div></a>
+            <a href="lien-he.html" class="quick-link-card"><span class="quick-link-icon">📞</span><div><h3>Liên Hệ / Đặt Lịch</h3><p>Xem yêu cầu mới nhất từ khách</p></div></a>
+            <a href="banner.html" class="quick-link-card adsOnly"><span class="quick-link-icon">🖼️</span><div><h3>Banner / Slider</h3><p>Quản lý banner quảng cáo</p></div></a>
+            <a href="cau-hinh.html" class="quick-link-card adsOnly"><span class="quick-link-icon">⚙️</span><div><h3>Cấu Hình Chung</h3><p>Analytics, Pixel, mạng xã hội</p></div></a>
+            <a href="lich-su.html" class="quick-link-card superAdminOnly"><span class="quick-link-icon">🕓</span><div><h3>Lịch Sử Chỉnh Sửa</h3><p>Nhật ký thao tác toàn admin</p></div></a>
+            <a href="tai-khoan.html" class="quick-link-card"><span class="quick-link-icon">👤</span><div><h3>Tài Khoản</h3><p>Đổi mật khẩu, quản lý admin</p></div></a>
         </div>
-        <p style="margin-bottom:12px;"><a href="lien-he.html">→ Xem liên hệ / đặt lịch mới nhất</a></p>
-        <div id="adsOnly">
-            <p style="margin-bottom:12px;"><a href="banner.html">→ Quản lý banner / slider</a></p>
-            <p style="margin-bottom:12px;"><a href="cau-hinh.html">→ Cấu hình chung (Analytics, Pixel, social)</a></p>
-        </div>
-        <div id="superAdminOnly">
-            <p style="margin-bottom:12px;"><a href="lich-su.html">→ Xem lịch sử chỉnh sửa</a></p>
-        </div>
-        <p><a href="tai-khoan.html">→ Tài khoản của tôi / quản lý admin</a></p>
     </main>
 
     <script src="assets/admin.js"></script>
@@ -79,9 +89,9 @@
 
             const canEditPosts = auth.role === "content" || auth.role === "super_admin";
             const canManageAds = auth.role === "ads" || auth.role === "super_admin";
-            if (!canEditPosts) document.getElementById("postsOnly").style.display = "none";
-            if (!canManageAds) document.getElementById("adsOnly").style.display = "none";
-            if (auth.role !== "super_admin") document.getElementById("superAdminOnly").style.display = "none";
+            if (!canEditPosts) document.querySelectorAll(".postsOnly").forEach(el => el.style.display = "none");
+            if (!canManageAds) document.querySelectorAll(".adsOnly").forEach(el => el.style.display = "none");
+            if (auth.role !== "super_admin") document.querySelectorAll(".superAdminOnly").forEach(el => el.style.display = "none");
 
             (async () => {
                 const stats = [];
@@ -155,6 +165,9 @@
                 }
                 if (c.faqCount === 0) {
                     items.push(`Danh mục <a href="danh-muc.html?category=${c.id}">${c.name}</a> chưa có câu hỏi FAQ nào`);
+                }
+                if (c.missingResponsiveCount > 0) {
+                    items.push(`<strong>${c.missingResponsiveCount}</strong> sản phẩm trong danh mục <a href="san-pham.html?category=${c.id}">${c.name}</a> có nguy cơ vỡ ảnh - thiếu ảnh gốc HOẶC thiếu bản "-400w" (kiểm tra thư mục ảnh sản phẩm; nếu chỉ thiếu "-400w" thì chạy <code>generate-responsive-images.js</code>, nếu thiếu cả ảnh gốc thì cần ảnh thật)`);
                 }
             });
 

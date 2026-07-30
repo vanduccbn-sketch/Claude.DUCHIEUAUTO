@@ -38,7 +38,7 @@
                 </tr>
             </thead>
             <tbody id="postsBody">
-                <tr class="empty-row"><td colspan="6">Đang tải...</td></tr>
+                <tr class="empty-row"><td colspan="6"><span class="admin-spinner"></span>Đang tải...</td></tr>
             </tbody>
         </table>
     </main>
@@ -68,7 +68,7 @@
             updateBulkToolbar();
 
             if (posts.length === 0) {
-                tbody.innerHTML = `<tr class="empty-row"><td colspan="6">Chưa có bài viết nào. Bấm "+ Viết Bài Mới" để bắt đầu.</td></tr>`;
+                tbody.innerHTML = emptyRowHtml(6, 'Chưa có bài viết nào. Bấm "+ Viết Bài Mới" để bắt đầu.');
                 return;
             }
 

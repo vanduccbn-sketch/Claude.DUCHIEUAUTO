@@ -56,7 +56,7 @@
                 </tr>
             </thead>
             <tbody id="contactsBody">
-                <tr class="empty-row"><td colspan="7">Đang tải...</td></tr>
+                <tr class="empty-row"><td colspan="7"><span class="admin-spinner"></span>Đang tải...</td></tr>
             </tbody>
         </table>
     </main>
@@ -93,7 +93,7 @@
             const tbody = document.getElementById("contactsBody");
 
             if (contacts.length === 0) {
-                tbody.innerHTML = `<tr class="empty-row"><td colspan="7">Chưa có liên hệ nào.</td></tr>`;
+                tbody.innerHTML = emptyRowHtml(7, "Chưa có liên hệ nào.");
                 return;
             }
 
@@ -134,7 +134,7 @@
             const grid = document.getElementById("slotGrid");
             if (!date) { grid.innerHTML = ""; return; }
 
-            grid.innerHTML = `<p class="form-hint">Đang tải...</p>`;
+            grid.innerHTML = loadingHintHtml();
             try {
                 const res = await apiFetch(`/api/contacts/availability?date=${encodeURIComponent(date)}`);
                 const data = await res.json();

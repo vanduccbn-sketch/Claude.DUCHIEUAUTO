@@ -99,7 +99,7 @@
                     </tr>
                 </thead>
                 <tbody id="adminsBody">
-                    <tr class="empty-row"><td colspan="4">Đang tải...</td></tr>
+                    <tr class="empty-row"><td colspan="4"><span class="admin-spinner"></span>Đang tải...</td></tr>
                 </tbody>
             </table>
         </div>
@@ -190,9 +190,19 @@
                         <td>${formatDateTime(a.created_at)}</td>
                         <td class="actions">
                             <button type="button" class="btn btn-secondary" data-reset-id="${a.id}" data-username="${a.username}">Đặt Lại MK</button>
+                            ${a.role === "content" ? `<button type="button" class="btn btn-secondary" data-perm-toggle="${a.id}">Phân Quyền Nội Dung</button>` : ""}
                             ${a.id === auth.id ? "" : `<button type="button" class="btn btn-danger" data-delete-id="${a.id}" data-username="${a.username}">Xoá</button>`}
                         </td>
                     </tr>
+                    ${a.role === "content" ? `
+                    <tr class="perm-row" id="permRow${a.id}" hidden>
+                        <td colspan="4">
+                            <div class="form-hint" style="margin-bottom:8px;">Bỏ trống hết = sửa được TOÀN BỘ trang chủ (mặc định). Tick riêng vài khối = chỉ sửa được đúng các khối đó, khối còn lại bị khoá ở trang Trang Chủ.</div>
+                            <div id="permChecks${a.id}" style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:10px;"></div>
+                            <button type="button" class="btn btn-primary" data-perm-save="${a.id}">Lưu Phân Quyền</button>
+                            <span class="save-status" id="permStatus${a.id}"></span>
+                        </td>
+                    </tr>` : ""}
                 `).join("");
 
                 tbody.querySelectorAll("[data-role-id]").forEach(sel => {
@@ -204,6 +214,58 @@
                 tbody.querySelectorAll("[data-delete-id]").forEach(btn => {
                     btn.addEventListener("click", () => deleteAdmin(btn.dataset.deleteId, btn.dataset.username));
                 });
+                tbody.querySelectorAll("[data-perm-toggle]").forEach(btn => {
+                    btn.addEventListener("click", () => togglePermRow(btn.dataset.permToggle));
+                });
+                tbody.querySelectorAll("[data-perm-save]").forEach(btn => {
+                    btn.addEventListener("click", () => saveContentPermissions(btn.dataset.permSave));
+                });
+            } catch (err) {
+                showToast(err.message, true);
+            }
+        }
+
+        // Nhãn tiếng Việt cho từng khối - PHẢI khớp đúng key trong CONTENT_SECTIONS
+        // (routes/homepage-content.js) và routes/admins.js, sai tên sẽ bị API từ chối 400.
+        const CONTENT_SECTION_LABELS = {
+            hero: "Banner Đầu Trang", about: "Giới Thiệu", service: "Dịch Vụ",
+            quick_actions: "Đặt Lịch/Nhắc Bảo Dưỡng", product: "Sản Phẩm Chiến Lược",
+            tech: "Giải Mã Công Nghệ", contact: "Liên Hệ", footer: "Footer", other_pages: "Trang Khác"
+        };
+        const permsLoadedFor = new Set();
+
+        async function togglePermRow(id) {
+            const row = document.getElementById(`permRow${id}`);
+            row.hidden = !row.hidden;
+            if (!row.hidden && !permsLoadedFor.has(id)) {
+                permsLoadedFor.add(id);
+                await loadContentPermissions(id);
+            }
+        }
+
+        async function loadContentPermissions(id) {
+            const checksEl = document.getElementById(`permChecks${id}`);
+            checksEl.innerHTML = loadingHintHtml();
+            try {
+                const res = await apiFetch(`/api/admins/${id}/content-permissions`);
+                if (!res.ok) throw new Error((await res.json()).error || "Không tải được phân quyền");
+                const { sections } = await res.json();
+                checksEl.innerHTML = Object.entries(CONTENT_SECTION_LABELS).map(([key, label]) => `
+                    <label style="display:flex;align-items:center;gap:5px;font-size:13px;font-weight:400;">
+                        <input type="checkbox" class="perm-check" value="${key}" ${sections.includes(key) ? "checked" : ""}> ${label}
+                    </label>`).join("");
+            } catch (err) {
+                showToast(err.message, true);
+            }
+        }
+
+        async function saveContentPermissions(id) {
+            const checked = Array.from(document.querySelectorAll(`#permChecks${id} .perm-check:checked`)).map(c => c.value);
+            try {
+                const res = await apiFetch(`/api/admins/${id}/content-permissions`, { method: "PUT", body: { sections: checked } });
+                if (!res.ok) throw new Error((await res.json()).error || "Lưu phân quyền thất bại");
+                showToast("Đã lưu phân quyền");
+                document.getElementById(`permStatus${id}`).textContent = "Đã lưu lúc " + new Date().toLocaleTimeString("vi-VN");
             } catch (err) {
                 showToast(err.message, true);
             }

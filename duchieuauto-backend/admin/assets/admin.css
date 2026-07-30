@@ -113,6 +113,15 @@ button { font-family: inherit; cursor: pointer; }
 .data-table td.actions { display: flex; gap: 8px; }
 .data-table .empty-row td { text-align: center; color: var(--text-muted); padding: 40px 16px; }
 
+/* Spinner CSS thuần (không cần icon font) cho mọi chỗ "Đang tải..." trong admin - xem
+   loadingRowHtml()/loadingHintHtml() trong assets/admin.js. */
+.admin-spinner {
+    display: inline-block; width: 14px; height: 14px; margin-right: 8px; vertical-align: -2px;
+    border: 2px solid var(--border); border-top-color: var(--primary); border-radius: 50%;
+    animation: admin-spin 0.7s linear infinite;
+}
+@keyframes admin-spin { to { transform: rotate(360deg); } }
+
 .badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; text-transform: uppercase; }
 .badge-published { background: #eafaf1; color: #27ae60; }
 .badge-draft { background: #fff8e6; color: #b7791f; }

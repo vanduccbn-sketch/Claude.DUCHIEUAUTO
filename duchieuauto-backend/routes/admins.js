@@ -96,6 +96,36 @@ router.put("/:id/reset-password", async (req, res) => {
     res.json({ ok: true });
 });
 
+const CONTENT_SECTIONS = ["hero", "about", "service", "quick_actions", "product", "tech", "contact", "footer", "other_pages"];
+
+// GET /api/admins/:id/content-permissions - danh sách khối trang chủ 1 admin (role content) được
+// gán riêng. Mảng rỗng nghĩa là KHÔNG giới hạn (sửa được toàn bộ) - xem giải thích đầy đủ ở
+// content_permissions trong models/db.js và getAllowedSections() trong routes/homepage-content.js.
+router.get("/:id/content-permissions", async (req, res) => {
+    const rows = await db.prepare("SELECT section FROM content_permissions WHERE admin_id = ?").all(req.params.id);
+    res.json({ sections: rows.map(r => r.section) });
+});
+
+// PUT /api/admins/:id/content-permissions - ghi đè toàn bộ danh sách khối được gán cho 1 admin.
+// body: { sections: ["hero","about"] } - gửi mảng rỗng để BỎ giới hạn (cho sửa lại toàn bộ).
+router.put("/:id/content-permissions", async (req, res) => {
+    const existing = await db.prepare("SELECT * FROM admins WHERE id = ?").get(req.params.id);
+    if (!existing) return res.status(404).json({ error: "Không tìm thấy tài khoản" });
+
+    const sections = Array.isArray(req.body.sections) ? req.body.sections : [];
+    const invalid = sections.filter(s => !CONTENT_SECTIONS.includes(s));
+    if (invalid.length > 0) return res.status(400).json({ error: `Khối không hợp lệ: ${invalid.join(", ")}` });
+
+    await db.prepare("DELETE FROM content_permissions WHERE admin_id = ?").run(existing.id);
+    const insert = db.prepare("INSERT INTO content_permissions (admin_id, section) VALUES (?, ?)");
+    for (const section of sections) {
+        await insert.run(existing.id, section);
+    }
+
+    await db.logActivity(req.admin, "update_content_permissions", `admin:${existing.username}`);
+    res.json({ ok: true });
+});
+
 // DELETE /api/admins/:id - xoá tài khoản admin
 router.delete("/:id", async (req, res) => {
     const existing = await db.prepare("SELECT * FROM admins WHERE id = ?").get(req.params.id);

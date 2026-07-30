@@ -41,10 +41,17 @@
                 <h1>Trang Chủ</h1>
                 <p class="desc">Sửa chữ và ảnh ở mọi khối trên trang chủ (Banner, Giới Thiệu, Dịch Vụ, Đặt Lịch/Nhắc Bảo Dưỡng, Sản Phẩm Chiến Lược, Giải Mã Công Nghệ, Liên Hệ, Footer), và chọn sản phẩm thật hiển thị ở 2 khu vực nổi bật "Sản Phẩm Chiến Lược"/"Giải Mã Công Nghệ".</p>
             </div>
+            <button type="button" class="btn btn-secondary" id="previewBtn">Xem Trước Trang Chủ</button>
         </div>
 
-        <div class="settings-section">
-            <h2>Banner Đầu Trang (Hero)</h2>
+        <details class="settings-section" id="historySection">
+            <summary style="cursor:pointer;font-size:16px;font-weight:700;">🕓 Lịch Sử Thay Đổi (50 gần nhất)</summary>
+            <p class="form-hint" style="margin:10px 0 14px;">Xem lại nội dung CŨ trước khi sửa gần nhất - bấm "Khôi phục" để đưa 1 khoá về đúng giá trị này (thao tác này cũng được ghi lại, khôi phục nhầm vẫn khôi phục ngược lại được).</p>
+            <div id="historyList"></div>
+        </details>
+
+        <div class="settings-section" data-section="hero">
+            <h2>🎬 Banner Đầu Trang (Hero)</h2>
             <p class="form-hint" style="margin-bottom:14px;">Khối chữ lớn ngay đầu trang chủ, trên nền video. Để trống ô nào thì trang chủ tự giữ nguyên chữ đang có, không bị mất chữ.</p>
             <div class="form-group">
                 <label for="heroSubtitleInput">Dòng nhỏ phía trên (VD: Premium Automotive Upgrade)</label>
@@ -77,8 +84,8 @@
             </div>
         </div>
 
-        <div class="settings-section">
-            <h2>Giới Thiệu (Về Đức Hiếu Auto)</h2>
+        <div class="settings-section" data-section="about">
+            <h2>🏢 Giới Thiệu (Về Đức Hiếu Auto)</h2>
             <p class="form-hint" style="margin-bottom:14px;">Khối "Về Đức Hiếu Auto" kèm số liệu thống kê trên trang chủ. Để trống ô nào thì giữ nguyên chữ/số đang có.</p>
             <div class="form-group">
                 <label for="aboutBadgeInput">Nhãn nhỏ phía trên tiêu đề</label>
@@ -143,8 +150,8 @@
             </div>
         </div>
 
-        <div class="settings-section">
-            <h2>Dịch Vụ</h2>
+        <div class="settings-section" data-section="service">
+            <h2>🛠️ Dịch Vụ</h2>
             <p class="form-hint" style="margin-bottom:14px;">Thẻ dịch vụ tự lấy theo danh mục, chỉ tiêu đề mục là sửa được ở đây.</p>
             <div class="form-group">
                 <label for="serviceSectionTitleInput">Tiêu đề mục</label>
@@ -156,8 +163,8 @@
             </div>
         </div>
 
-        <div class="settings-section">
-            <h2>Đặt Lịch Hẹn / Nhắc Bảo Dưỡng</h2>
+        <div class="settings-section" data-section="quick_actions">
+            <h2>📅 Đặt Lịch Hẹn / Nhắc Bảo Dưỡng</h2>
             <p class="form-hint" style="margin-bottom:14px;">Khối 2 thẻ CTA giữa trang chủ.</p>
             <div class="form-group">
                 <label for="quickActionsTitleInput">Tiêu đề mục</label>
@@ -183,8 +190,8 @@
             </div>
         </div>
 
-        <div class="settings-section">
-            <h2>Sản Phẩm Chiến Lược</h2>
+        <div class="settings-section" data-section="product">
+            <h2>⭐ Sản Phẩm Chiến Lược</h2>
             <p class="form-hint" style="margin-bottom:14px;">Tiêu đề mục + CTA "Xem tất cả". Hiện ở trang chủ dạng thẻ sản phẩm kèm huy hiệu (VD "Giá Sốc") và nhãn giá (VD "Ưu đãi hôm nay").</p>
             <div class="form-group">
                 <label for="productSectionTitleInput">Tiêu đề mục</label>
@@ -231,8 +238,8 @@
             <div id="strategicList"></div>
         </div>
 
-        <div class="settings-section">
-            <h2>Giải Mã Công Nghệ</h2>
+        <div class="settings-section" data-section="tech">
+            <h2>⚙️ Giải Mã Công Nghệ</h2>
             <p class="form-hint" style="margin-bottom:14px;">Eyebrow + tiêu đề + đoạn dẫn của mục. Bên dưới là "câu chuyện công nghệ" - tag trên ảnh, tiêu đề câu chuyện, đoạn mô tả dài hơn.</p>
             <div class="form-group">
                 <label for="techEyebrowInput">Eyebrow (dòng chữ nhỏ phía trên)</label>
@@ -273,8 +280,8 @@
             <div id="techList"></div>
         </div>
 
-        <div class="settings-section">
-            <h2>Liên Hệ</h2>
+        <div class="settings-section" data-section="contact">
+            <h2>📞 Liên Hệ</h2>
             <p class="form-hint" style="margin-bottom:14px;">Số điện thoại/địa chỉ/link mạng xã hội thật KHÔNG sửa ở đây (để tránh nút "Gọi ngay" trỏ sai) - chỉ sửa được phần chữ mô tả.</p>
             <div class="form-group">
                 <label for="contactEyebrowInput">Eyebrow</label>
@@ -333,8 +340,8 @@
             </div>
         </div>
 
-        <div class="settings-section">
-            <h2>Footer</h2>
+        <div class="settings-section" data-section="footer">
+            <h2>🔗 Footer</h2>
             <p class="form-hint" style="margin-bottom:14px;">Danh sách link điều hướng ở footer KHÔNG sửa ở đây - chỉ sửa được mô tả thương hiệu, tiêu đề 3 cột, dòng bản quyền.</p>
             <div class="form-group">
                 <label for="footerBrandDescInput">Mô tả thương hiệu</label>
@@ -363,6 +370,39 @@
                 <span class="save-status" id="footerSaveStatus"></span>
             </div>
         </div>
+
+        <div class="settings-section" data-section="other_pages">
+            <h2>📄 Trang Khác (FAQ / Chính Sách / Đặt Lịch Hẹn)</h2>
+            <p class="form-hint" style="margin-bottom:14px;">Chỉ tiêu đề/đoạn dẫn đầu mỗi trang. Nội dung chi tiết (câu hỏi FAQ, điều khoản chính sách) vẫn quản lý riêng, không sửa ở đây.</p>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="faqPageTitleInput">Tiêu đề trang FAQ</label>
+                    <input type="text" id="faqPageTitleInput" placeholder="CÂU HỎI THƯỜNG GẶP">
+                </div>
+                <div class="form-group">
+                    <label for="policyPageTitleInput">Tiêu đề trang Chính Sách</label>
+                    <input type="text" id="policyPageTitleInput" placeholder="CHÍNH SÁCH BẢO HÀNH - ĐỔI TRẢ - BẢO MẬT">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="faqPageIntroInput">Đoạn dẫn trang FAQ</label>
+                <textarea id="faqPageIntroInput" rows="2" placeholder="Đoạn giới thiệu ngắn"></textarea>
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="bookingPageTitleInput">Tiêu đề trang Đặt Lịch Hẹn</label>
+                    <input type="text" id="bookingPageTitleInput" placeholder="ĐẶT LỊCH HẸN THI CÔNG">
+                </div>
+                <div class="form-group">
+                    <label for="bookingPageIntroInput">Đoạn dẫn trang Đặt Lịch Hẹn</label>
+                    <input type="text" id="bookingPageIntroInput" placeholder="Đoạn giới thiệu ngắn">
+                </div>
+            </div>
+            <div class="editor-actions">
+                <button type="button" class="btn btn-primary" id="saveOtherPagesBtn">Lưu Trang Khác</button>
+                <span class="save-status" id="otherPagesSaveStatus"></span>
+            </div>
+        </div>
     </main>
 
     <script src="assets/admin.js"></script>
@@ -389,6 +429,84 @@
             loadHighlights("strategic");
             loadHighlights("tech");
             loadHomepageContent();
+            loadHistory();
+            applyContentPermissions();
+        }
+
+        // Khoá phần UI các khối admin (role content) không được super_admin gán quyền - chỉ ẩn/khoá
+        // GIAO DIỆN cho gọn, chặn THẬT SỰ vẫn nằm ở backend (PUT/revert kiểm tra lại, xem
+        // getAllowedSections() trong routes/homepage-content.js) - phòng trường hợp gọi API trực tiếp.
+        async function applyContentPermissions() {
+            try {
+                const res = await apiFetch("/api/homepage-content/my-permissions");
+                if (!res.ok) return;
+                const perm = await res.json();
+                if (perm.full) return;
+
+                document.querySelectorAll(".settings-section[data-section]").forEach(section => {
+                    if (perm.sections.includes(section.dataset.section)) return;
+                    section.querySelectorAll("input, textarea, button").forEach(el => el.disabled = true);
+                    section.style.opacity = "0.55";
+                    const notice = document.createElement("p");
+                    notice.className = "form-hint";
+                    notice.style.cssText = "color:#b7791f;font-weight:600;margin-top:10px;";
+                    notice.textContent = "🔒 Bạn không có quyền sửa khối này - liên hệ Super Admin nếu cần.";
+                    section.appendChild(notice);
+                });
+            } catch (err) {
+                // Im lặng bỏ qua - không để lỗi tra quyền chặn cả trang load bình thường.
+            }
+        }
+
+        // ---- Lịch sử thay đổi / khôi phục ----
+        function formatHistoryTime(isoLike) {
+            // changed_at lưu dạng "datetime('now')" của SQLite (UTC, "YYYY-MM-DD HH:MM:SS") - Date()
+            // hiểu đúng nếu thêm "Z", nếu không sẽ bị hiểu nhầm thành giờ local, lệch múi giờ hiển thị.
+            const iso = isoLike.includes("T") ? isoLike : isoLike.replace(" ", "T") + "Z";
+            return new Date(iso).toLocaleString("vi-VN");
+        }
+
+        async function loadHistory() {
+            const list = document.getElementById("historyList");
+            list.innerHTML = loadingHintHtml();
+            try {
+                const res = await apiFetch("/api/homepage-content/history");
+                if (!res.ok) throw new Error((await res.json()).error || "Không tải được lịch sử");
+                const rows = await res.json();
+                if (rows.length === 0) {
+                    list.innerHTML = emptyHintHtml("Chưa có thay đổi nào được ghi lại.");
+                    return;
+                }
+                list.innerHTML = rows.map(r => {
+                    const preview = r.old_value ? escapeHtml(r.old_value).slice(0, 80) : "(rỗng)";
+                    return `
+                    <div class="highlight-card" style="grid-template-columns:1fr auto;">
+                        <div>
+                            <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px;">${escapeHtml(r.key)} · ${r.changed_by} · ${formatHistoryTime(r.changed_at)}</div>
+                            <div style="font-size:13px;">Giá trị cũ: "${preview}${r.old_value && r.old_value.length > 80 ? "..." : ""}"</div>
+                        </div>
+                        <button type="button" class="btn btn-secondary btn-revert" data-id="${r.id}">Khôi phục</button>
+                    </div>`;
+                }).join("");
+                list.querySelectorAll(".btn-revert").forEach(btn => {
+                    btn.addEventListener("click", () => revertHistory(Number(btn.dataset.id)));
+                });
+            } catch (err) {
+                showToast(err.message, true);
+            }
+        }
+
+        async function revertHistory(historyId) {
+            if (!confirm("Khôi phục khoá này về đúng giá trị cũ? Giá trị hiện tại sẽ được ghi vào lịch sử để có thể khôi phục ngược lại nếu cần.")) return;
+            try {
+                const res = await apiFetch("/api/homepage-content/revert", { method: "POST", body: { historyId } });
+                if (!res.ok) throw new Error((await res.json()).error || "Khôi phục thất bại");
+                showToast("Đã khôi phục");
+                loadHomepageContent();
+                loadHistory();
+            } catch (err) {
+                showToast(err.message, true);
+            }
         }
 
         // Ánh xạ key trong DB (routes/homepage-content.js) <-> id ô input trên form. Dùng chung cho
@@ -447,7 +565,12 @@
             footer_col1_title: "footerCol1TitleInput",
             footer_col2_title: "footerCol2TitleInput",
             footer_col3_title: "footerCol3TitleInput",
-            footer_copyright: "footerCopyrightInput"
+            footer_copyright: "footerCopyrightInput",
+            faq_page_title: "faqPageTitleInput",
+            faq_page_intro: "faqPageIntroInput",
+            policy_page_title: "policyPageTitleInput",
+            booking_page_title: "bookingPageTitleInput",
+            booking_page_intro: "bookingPageIntroInput"
         };
 
         // Khoá ảnh -> id preview box, để loadHomepageContent() hiện lại ảnh đang lưu (không chỉ
@@ -477,10 +600,43 @@
             }
         }
 
+        // ---- Cảnh báo rời trang khi còn thay đổi chưa lưu ----
+        // Theo dõi riêng từng khoá (không phải 1 cờ dirty chung) - bấm Lưu ở 1 khối chỉ xoá đúng
+        // khoá của khối đó khỏi danh sách, khối khác còn sửa dở vẫn tiếp tục cảnh báo đúng.
+        const dirtyKeys = new Set();
+        function markDirty(key) { dirtyKeys.add(key); }
+        function clearDirty(keys) { keys.forEach(k => dirtyKeys.delete(k)); }
+
+        Object.entries(HOMEPAGE_CONTENT_FIELDS).forEach(([key, elId]) => {
+            document.getElementById(elId).addEventListener("input", () => markDirty(key));
+        });
+
+        window.addEventListener("beforeunload", (e) => {
+            if (dirtyKeys.size === 0) return;
+            e.preventDefault();
+            e.returnValue = "";
+        });
+
+        // ---- Xem trước trang chủ với nội dung ĐANG GÕ, kể cả chưa bấm Lưu ----
+        // Trang chủ công khai (assets/js/homepage-content.js) hiểu tham số ?preview=<json mã hoá>:
+        // nếu có, dùng thẳng dữ liệu này thay vì gọi API - không cần lưu tạm vào DB thật rồi phải
+        // dọn lại. Dùng query string (không phải sessionStorage) vì trang xem trước mở ở origin
+        // khác (domain công khai), 2 origin không chia sẻ được sessionStorage với nhau.
+        document.getElementById("previewBtn").addEventListener("click", () => {
+            const content = {};
+            Object.entries(HOMEPAGE_CONTENT_FIELDS).forEach(([key, elId]) => {
+                content[key] = document.getElementById(elId).value;
+            });
+            const isLocal = ["localhost", "127.0.0.1"].includes(window.location.hostname);
+            const publicBase = isLocal ? "http://localhost:5500" : "https://duchieuauto.vn";
+            const url = `${publicBase}/?preview=${encodeURIComponent(JSON.stringify(content))}`;
+            window.open(url, "_blank");
+        });
+
         // Dùng lại đúng cơ chế upload ảnh đã có ở admin/banner.html: chọn file -> upload thẳng lên
         // Cloudinary qua /api/uploads -> lưu URL trả về vào ô input ẩn (khoá tương ứng trong
         // HOMEPAGE_CONTENT_FIELDS) -> hiện thumbnail xem trước. Bấm nút "Lưu" của khối mới ghi vào DB.
-        function wireImageField(fileInputId, hiddenInputId, previewId, purpose) {
+        function wireImageField(key, fileInputId, hiddenInputId, previewId, purpose) {
             document.getElementById(fileInputId).addEventListener("change", async (e) => {
                 const file = e.target.files[0];
                 if (!file) return;
@@ -495,16 +651,17 @@
                     const data = await res.json();
                     document.getElementById(hiddenInputId).value = data.url;
                     preview.innerHTML = `<img src="${data.url}" alt="" style="max-width:160px;border-radius:6px;">`;
+                    markDirty(key); // set .value bằng JS không tự bắn sự kiện "input" như gõ tay
                 } catch (err) {
                     preview.textContent = "Chưa chọn ảnh";
                     showToast(err.message, true);
                 }
             });
         }
-        wireImageField("heroPosterImageFile", "heroPosterImageInput", "heroPosterImagePreview", "cover");
-        wireImageField("aboutImageMainFile", "aboutImageMainInput", "aboutImageMainPreview", "content");
-        wireImageField("aboutImageDetail1File", "aboutImageDetail1Input", "aboutImageDetail1Preview", "content");
-        wireImageField("aboutImageDetail2File", "aboutImageDetail2Input", "aboutImageDetail2Preview", "content");
+        wireImageField("hero_poster_image", "heroPosterImageFile", "heroPosterImageInput", "heroPosterImagePreview", "cover");
+        wireImageField("about_image_main", "aboutImageMainFile", "aboutImageMainInput", "aboutImageMainPreview", "content");
+        wireImageField("about_image_detail1", "aboutImageDetail1File", "aboutImageDetail1Input", "aboutImageDetail1Preview", "content");
+        wireImageField("about_image_detail2", "aboutImageDetail2File", "aboutImageDetail2Input", "aboutImageDetail2Preview", "content");
 
         async function saveHomepageContentFields(keys, statusElId) {
             const statusEl = document.getElementById(statusElId);
@@ -514,6 +671,7 @@
                 const res = await apiFetch("/api/homepage-content", { method: "PUT", body });
                 if (!res.ok) throw new Error((await res.json()).error || "Lưu thất bại");
                 showToast("Đã lưu");
+                clearDirty(keys);
                 if (statusEl) {
                     statusEl.textContent = "Đã lưu lúc " + new Date().toLocaleTimeString("vi-VN");
                 }
@@ -573,6 +731,12 @@
             ], "footerSaveStatus");
         });
 
+        document.getElementById("saveOtherPagesBtn").addEventListener("click", () => {
+            saveHomepageContentFields([
+                "faq_page_title", "faq_page_intro", "policy_page_title", "booking_page_title", "booking_page_intro"
+            ], "otherPagesSaveStatus");
+        });
+
         document.getElementById("addStrategicBtn").addEventListener("click", () => {
             addHighlight("strategic", {
                 product_id: document.getElementById("strategicProductSelect").value,
@@ -616,7 +780,7 @@
                 const items = await res.json();
                 loadedItems[section] = items;
                 if (items.length === 0) {
-                    listEl.innerHTML = `<p class="form-hint">Chưa có sản phẩm nào trong khu vực này.</p>`;
+                    listEl.innerHTML = emptyHintHtml("Chưa có sản phẩm nào trong khu vực này.");
                     return;
                 }
                 listEl.innerHTML = items.map((it, i) => highlightRowHtml(section, it, i, items.length)).join("");

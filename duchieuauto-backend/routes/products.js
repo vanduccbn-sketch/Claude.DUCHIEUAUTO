@@ -1,9 +1,28 @@
 const express = require("express");
+const fs = require("fs");
+const path = require("path");
 const db = require("../models/db");
 const { requireRole } = require("../middleware/auth");
 const { sanitizeContent } = require("../utils/sanitize-content");
 
 const router = express.Router();
+
+// Cùng gốc repo với site tĩnh (routes/ nằm trong duchieuauto-backend/, ảnh nằm ở ../../assets) -
+// dùng để kiểm tra file "-400w" có tồn tại thật không, phát hiện đúng lớp lỗi đã gây ra vụ "30 ảnh
+// vỡ" (Phase 11): catalog-render.js LUÔN yêu cầu file này cho ảnh local mà không kiểm tra trước.
+const FRONTEND_ROOT = path.join(__dirname, "..", "..");
+
+function isMissingResponsiveVariant(imagePath) {
+    if (/^https?:\/\//i.test(imagePath)) return false; // Cloudinary tự tạo bản nhỏ theo URL, không cần file riêng
+    const dot = imagePath.lastIndexOf(".");
+    if (dot === -1) return false;
+    const small = `${imagePath.slice(0, dot)}-400w${imagePath.slice(dot)}`;
+    try {
+        return !fs.existsSync(path.join(FRONTEND_ROOT, small));
+    } catch (err) {
+        return false; // Không truy cập được filesystem ở môi trường nào đó -> im lặng bỏ qua, không chặn Tổng Quan
+    }
+}
 
 // Quản lý sản phẩm/danh mục/thương hiệu gộp chung vào việc "viết nội dung web" - giao cho Content
 // admin (giống bài viết), Ads admin không có quyền này (đúng phạm vi công việc: Ads quản
@@ -168,6 +187,16 @@ router.get("/admin/categories/overview", canEditCatalog, async (req, res) => {
         SELECT category_id, COUNT(*) as total FROM category_faqs GROUP BY category_id
     `).all();
 
+    // Đếm số sản phẩm dùng ảnh local (không phải Cloudinary) mà thiếu file "-400w" - dấu hiệu sẽ
+    // vỡ ảnh y hệt sự cố Phase 11, nhưng phát hiện SỚM ở đây thay vì phải đợi user báo web lỗi.
+    const allProducts = await db.prepare("SELECT id, category_id, image FROM products").all();
+    const missingResponsiveByCategory = {};
+    allProducts.forEach(p => {
+        if (isMissingResponsiveVariant(productImagePath(p.id, p.image))) {
+            missingResponsiveByCategory[p.category_id] = (missingResponsiveByCategory[p.category_id] || 0) + 1;
+        }
+    });
+
     const result = categories.map(cat => {
         const pc = productCounts.find(x => x.category_id === cat.id);
         const bc = brandCounts.find(x => x.category_id === cat.id);
@@ -182,6 +211,7 @@ router.get("/admin/categories/overview", canEditCatalog, async (req, res) => {
             visibleProducts: total - hiddenCount,
             hiddenProducts: hiddenCount,
             missingDescCount: pc ? pc.missing_desc_count : 0,
+            missingResponsiveCount: missingResponsiveByCategory[cat.id] || 0,
             brandCount: bc ? bc.total : 0,
             faqCount: fc ? fc.total : 0
         };

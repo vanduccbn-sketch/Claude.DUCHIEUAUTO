@@ -3,12 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đăng Ký Nhắc Bảo Dưỡng Định Kỳ | Đức Hiếu Auto</title>
-    <meta name="description" content="Đăng ký để Đức Hiếu Auto - Buôn Ma Thuột, Đắk Lắk chủ động gọi nhắc lịch bảo dưỡng xe của bạn theo đúng chu kỳ - không lo quên, không lo hỏng hóc phát sinh do bảo dưỡng trễ.">
+    <title>Danh Mục Sản Phẩm | Đức Hiếu Auto</title>
+    <meta name="description" content="Toàn bộ danh mục sản phẩm và dịch vụ nâng cấp ô tô chính hãng tại Đức Hiếu Auto - Buôn Ma Thuột, Đắk Lắk: màn hình Android, âm thanh, phim cách nhiệt, PPF, đèn LED, phụ kiện bán tải.">
     <link rel="icon" type="image/png" href="assets/images/favicon.png">
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#15171C">
-    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -21,7 +20,6 @@
     <link rel="stylesheet" href="assets/css/services.css">
     <link rel="stylesheet" href="assets/css/footer.css">
     <link rel="stylesheet" href="assets/css/catalog-pages.css">
-    <link rel="stylesheet" href="assets/css/pages.css">
 </head>
 <body>
 
@@ -81,12 +79,12 @@
                     </li>
                     <li class="has-dropdown">
                         <div class="nav-item-row">
-                            <a href="product">Sản Phẩm <i class="fa-solid fa-chevron-down nav-caret"></i></a>
+                            <a href="product" class="active">Sản Phẩm <i class="fa-solid fa-chevron-down nav-caret"></i></a>
                             <button type="button" class="nav-dropdown-toggle" aria-label="Xem danh mục Sản Phẩm"><i class="fa-solid fa-chevron-down"></i></button>
                         </div>
                         <div class="nav-dropdown" id="navProductsDropdown"></div>
                     </li>
-                    <li><a href="tin-tuc.html">Tin Tức</a></li>
+                    <li><a href="/#tech">Công Nghệ</a></li>
                     <li><a href="/#contact">Liên Hệ</a></li>
                 </ul>
             </nav>
@@ -103,74 +101,10 @@
                 <div class="breadcrumb">
                     <a href="/">Trang Chủ</a>
                     <span class="sep">/</span>
-                    <span class="breadcrumb-current">Nhắc Bảo Dưỡng</span>
+                    <span class="breadcrumb-current">Sản Phẩm</span>
                 </div>
-                <h1 class="section-title">ĐĂNG KÝ NHẮC BẢO DƯỠNG ĐỊNH KỲ</h1>
-                <p class="page-intro">Để lại thông tin xe của bạn, Đức Hiếu Auto sẽ chủ động gọi nhắc đúng thời điểm cần bảo dưỡng tiếp theo - không lo quên lịch, không lo hỏng hóc phát sinh do bảo dưỡng trễ.</p>
-
-                <div class="booking-trust-strip">
-                    <div class="booking-trust-item"><i class="fa-solid fa-phone-volume"></i> Nhân viên gọi nhắc trực tiếp, không spam tin nhắn</div>
-                    <div class="booking-trust-item"><i class="fa-solid fa-shield-halved"></i> Thông tin chỉ dùng để nhắc lịch, không chia sẻ bên thứ 3</div>
-                </div>
-
-                <div class="booking-wrap">
-                    <form class="booking-form" id="maintenanceForm">
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="mtName">Họ và tên *</label>
-                                <input type="text" id="mtName" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="mtPhone">Số điện thoại *</label>
-                                <input type="tel" id="mtPhone" required>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="mtCar">Dòng xe *</label>
-                            <input type="text" id="mtCar" required placeholder="VD: Ford Ranger Wildtrak 2023">
-                        </div>
-
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="mtLastService">Lần bảo dưỡng/thi công gần nhất (nếu nhớ)</label>
-                                <input type="date" id="mtLastService">
-                            </div>
-                            <div class="form-group">
-                                <label for="mtInterval">Chu kỳ nhắc *</label>
-                                <select id="mtInterval" required>
-                                    <option value="3 tháng/lần">3 tháng/lần</option>
-                                    <option value="6 tháng/lần" selected>6 tháng/lần</option>
-                                    <option value="12 tháng/lần">12 tháng/lần</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="mtNote">Ghi chú thêm</label>
-                            <textarea id="mtNote" rows="3" placeholder="Hạng mục muốn được nhắc kiểm tra (nếu có)"></textarea>
-                        </div>
-
-                        <div class="form-group">
-                            <div class="g-recaptcha" data-sitekey="6LfmGmgtAAAAAAnu3WN7Oploh0ElwHSPR4X8cdQx"></div>
-                        </div>
-
-                        <div class="form-error" id="maintenanceError" hidden></div>
-
-                        <button type="submit"><i class="fa-solid fa-bell"></i> Đăng Ký Nhắc Lịch</button>
-                    </form>
-
-                    <div class="booking-success" id="maintenanceSuccess">
-                        <i class="fa-solid fa-circle-check"></i>
-                        <h3>Đã đăng ký thành công!</h3>
-                        <p>Cảm ơn bạn. Đức Hiếu Auto đã lưu thông tin và sẽ gọi nhắc đúng chu kỳ đã chọn. Nếu cần hỗ trợ ngay, vui lòng gọi hotline <a href="tel:0869110237">0869 110 237</a>.</p>
-                    </div>
-
-                    <div class="booking-note">
-                        <i class="fa-solid fa-circle-info"></i>
-                        <span>Đây là dịch vụ nhắc lịch qua điện thoại (không phải tin nhắn/email tự động) - nhân viên Đức Hiếu Auto sẽ chủ động liên hệ đúng thời điểm bạn đã đăng ký.</span>
-                    </div>
-                </div>
+                <h1 class="section-title">DANH MỤC SẢN PHẨM</h1>
+                <div class="services-grid product-category-grid"></div>
             </div>
         </section>
     </main>
@@ -212,6 +146,7 @@
                 <h3>Liên Kết Nhanh</h3>
                 <ul>
                     <li><a href="/">Trang Chủ</a></li>
+                    <li><a href="/#about">Giới Thiệu</a></li>
                     <li><a href="product">Sản Phẩm</a></li>
                     <li><a href="tin-tuc.html">Tin Tức</a></li>
                     <li><a href="dat-lich-hen.html">Đặt Lịch Hẹn</a></li>
@@ -229,6 +164,7 @@
         </div>
     </footer>
 
+    <!-- Widget liên hệ nhanh: Zalo / Messenger / Điện thoại -->
     <div class="quick-contact" id="quickContact">
         <div class="quick-contact-items">
             <a class="qc-item qc-zalo" href="https://zalo.me/0869110237" target="_blank" rel="noopener" aria-label="Chat Zalo">
@@ -257,12 +193,14 @@
     <script src="assets/js/catalog-render.js"></script>
     <script src="assets/js/site-search.js"></script>
     <script>
+        renderCategoryGrid(".product-category-grid");
         renderNavProductsDropdown("#navProductsDropdown");
 
         const menuToggle = document.querySelector('.menu-toggle');
         const nav = document.querySelector('.main-nav');
         menuToggle.addEventListener('click', () => nav.classList.toggle('active'));
 
+        // Xổ/thu dropdown "Dịch Vụ" / "Sản Phẩm" trên mobile (bấm nút mũi tên riêng)
         document.querySelectorAll('.nav-dropdown-toggle').forEach(btn => {
             btn.addEventListener('click', () => {
                 btn.closest('.has-dropdown').classList.toggle('dropdown-open');
@@ -272,59 +210,6 @@
         const quickContact = document.getElementById('quickContact');
         const quickContactToggle = document.getElementById('quickContactToggle');
         quickContactToggle.addEventListener('click', () => quickContact.classList.toggle('collapsed'));
-
-        document.getElementById('mtLastService').max = new Date().toISOString().split('T')[0];
-
-        const maintenanceForm = document.getElementById('maintenanceForm');
-        const maintenanceError = document.getElementById('maintenanceError');
-        maintenanceForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            maintenanceError.hidden = true;
-
-            const lastService = document.getElementById('mtLastService').value;
-            const interval = document.getElementById('mtInterval').value;
-            const note = document.getElementById('mtNote').value.trim();
-            const messageLines = [`Dòng xe: ${document.getElementById('mtCar').value.trim()}`, `Chu kỳ nhắc: ${interval}`];
-            if (lastService) messageLines.push(`Lần gần nhất: ${lastService}`);
-            if (note) messageLines.push(`Ghi chú: ${note}`);
-
-            const recaptchaToken = typeof grecaptcha !== 'undefined' ? grecaptcha.getResponse() : '';
-            if (!recaptchaToken) {
-                maintenanceError.textContent = 'Vui lòng xác nhận reCAPTCHA "Tôi không phải người máy".';
-                maintenanceError.hidden = false;
-                return;
-            }
-
-            const payload = {
-                type: 'maintenance',
-                name: document.getElementById('mtName').value.trim(),
-                phone: document.getElementById('mtPhone').value.trim(),
-                message: messageLines.join(' | '),
-                recaptcha_token: recaptchaToken
-            };
-
-            const submitBtn = maintenanceForm.querySelector('button[type="submit"]');
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang gửi...';
-            try {
-                const res = await fetch(`${API_BASE_URL}/api/contacts`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                const data = await res.json();
-                if (!res.ok) throw new Error(data.error || 'Gửi thất bại');
-
-                maintenanceForm.style.display = 'none';
-                document.getElementById('maintenanceSuccess').style.display = 'block';
-            } catch (err) {
-                maintenanceError.textContent = err.message + ' - vui lòng thử lại hoặc gọi hotline 0869 110 237.';
-                maintenanceError.hidden = false;
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = '<i class="fa-solid fa-bell"></i> Đăng Ký Nhắc Lịch';
-                if (typeof grecaptcha !== 'undefined') grecaptcha.reset();
-            }
-        });
     </script>
 </body>
 </html>

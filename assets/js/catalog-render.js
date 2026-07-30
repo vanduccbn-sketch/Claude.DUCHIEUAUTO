@@ -1,6 +1,6 @@
 /* =========================================================
    CATALOG RENDER - Hàm dùng chung cho các trang:
-   category-chi-tiet.html, brand-san-pham.html, san-pham-chi-tiet.html, san-pham.html
+   category-chi-tiet, brand-san-pham, san-pham-chi-tiet, product
 
    [Phase 7] categories/brands/products giờ lấy từ API /api/products/catalog (database thật,
    admin sửa được qua trang quản trị) thay vì đọc CATALOG tĩnh trong catalog-data.js.
@@ -104,12 +104,12 @@ function productImgFallback(id) {
     return `assets/images/products/${id}/anh-1.jpg`;
 }
 
-// Thẻ 1 sản phẩm trong lưới catalog - dùng chung cho brand-san-pham.html (renderBrandProducts) và
-// category-chi-tiet.html khi danh mục chỉ có đúng 1 thương hiệu (renderCategoryDetail bỏ qua bước
+// Thẻ 1 sản phẩm trong lưới catalog - dùng chung cho brand-san-pham (renderBrandProducts) và
+// category-chi-tiet khi danh mục chỉ có đúng 1 thương hiệu (renderCategoryDetail bỏ qua bước
 // chọn thương hiệu vì chỉ có 1 lựa chọn duy nhất, không cần bắt khách bấm thêm 1 lần vô nghĩa).
 function productCardCatalogHtml(p) {
     return `
-        <a class="product-card-catalog" href="san-pham-chi-tiet.html?id=${p.id}">
+        <a class="product-card-catalog" href="san-pham-chi-tiet?id=${p.id}">
             <div class="product-img-catalog">
                 <label class="compare-checkbox">
                     <input type="checkbox" class="compare-check" data-id="${p.id}" data-name="${p.name}">
@@ -139,7 +139,7 @@ function serviceCardHtml(item) {
         </a>`;
 }
 
-/* ---------- Danh mục Sản Phẩm (san-pham.html) - giữ nguyên phẳng, đủ 8 danh mục ---------- */
+/* ---------- Danh mục Sản Phẩm (product) - giữ nguyên phẳng, đủ 8 danh mục ---------- */
 async function renderCategoryGrid(containerSelector) {
     const container = document.querySelector(containerSelector);
     if (!container) return;
@@ -148,12 +148,12 @@ async function renderCategoryGrid(containerSelector) {
     try {
         const categories = await loadApiCatalog();
         container.innerHTML = categories
-            .map(cat => serviceCardHtml({ ...cat, href: `category-chi-tiet.html?id=${cat.id}` }))
+            .map(cat => serviceCardHtml({ ...cat, href: `category-chi-tiet?id=${cat.id}` }))
             .join("");
 
         injectBreadcrumbSchema([
             { name: "Trang chủ", href: "/" },
-            { name: "Sản Phẩm", href: "san-pham.html" }
+            { name: "Sản Phẩm", href: "product" }
         ]);
         injectJsonLd("categoryListSchema", {
             "@context": "https://schema.org",
@@ -162,7 +162,7 @@ async function renderCategoryGrid(containerSelector) {
                 "@type": "ListItem",
                 "position": i + 1,
                 "name": cat.name,
-                "url": new URL(`category-chi-tiet.html?id=${cat.id}`, window.location.href).href
+                "url": new URL(`category-chi-tiet?id=${cat.id}`, window.location.href).href
             }))
         });
     } catch (err) {
@@ -199,14 +199,14 @@ async function renderNavProductsDropdown(containerSelector) {
             // thẳng từng dịch vụ/sản phẩm trong flyout, không bắt rê chuột thêm 1 lần vào tên
             // thương hiệu vô nghĩa khi chẳng có lựa chọn nào khác.
             const flyoutHtml = brands.length === 1 && !brands[0].types
-                ? brands[0].products.map(p => `<a href="san-pham-chi-tiet.html?id=${p.id}">${p.name}</a>`).join("")
+                ? brands[0].products.map(p => `<a href="san-pham-chi-tiet?id=${p.id}">${p.name}</a>`).join("")
                 : brands.length
-                    ? brands.map(b => `<a href="brand-san-pham.html?id=${cat.id}&brand=${b.id}">${b.name}</a>`).join("")
+                    ? brands.map(b => `<a href="brand-san-pham?id=${cat.id}&brand=${b.id}">${b.name}</a>`).join("")
                     : `<span class="nav-brand-empty">Đang cập nhật</span>`;
 
             return `
             <div class="nav-product-row">
-                <a class="nav-product-link" href="category-chi-tiet.html?id=${cat.id}">
+                <a class="nav-product-link" href="category-chi-tiet?id=${cat.id}">
                     <span class="nav-product-label"><i class="fa-solid ${icon}"></i>${cat.name}</span>
                     <i class="fa-solid fa-chevron-right nav-product-arrow"></i>
                 </a>
@@ -228,9 +228,9 @@ async function renderServiceGrid(containerSelector) {
         const doBanTai = findCategoryIn(categories, "do-ban-tai");
         const chamSocXe = findCategoryIn(categories, "cham-soc-xe");
         const items = [
-            ...(chamSocXe ? [{ ...chamSocXe, href: `category-chi-tiet.html?id=${chamSocXe.id}` }] : []),
-            ...CATALOG.serviceGroups.map(g => ({ ...g, href: `category-chi-tiet.html?group=${g.id}` })),
-            ...(doBanTai ? [{ ...doBanTai, href: `category-chi-tiet.html?id=${doBanTai.id}` }] : [])
+            ...(chamSocXe ? [{ ...chamSocXe, href: `category-chi-tiet?id=${chamSocXe.id}` }] : []),
+            ...CATALOG.serviceGroups.map(g => ({ ...g, href: `category-chi-tiet?group=${g.id}` })),
+            ...(doBanTai ? [{ ...doBanTai, href: `category-chi-tiet?id=${doBanTai.id}` }] : [])
         ];
 
         // Container này đồng thời là .swiper-wrapper (carousel Swiper trên trang chủ) nên mỗi thẻ
@@ -238,37 +238,37 @@ async function renderServiceGrid(containerSelector) {
         container.innerHTML = items.map(item => `<div class="swiper-slide">${serviceCardHtml(item)}</div>`).join("");
     } catch (err) {
         container.innerHTML = CATALOG.serviceGroups
-            .map(g => `<div class="swiper-slide">${serviceCardHtml({ ...g, href: `category-chi-tiet.html?group=${g.id}` })}</div>`)
+            .map(g => `<div class="swiper-slide">${serviceCardHtml({ ...g, href: `category-chi-tiet?group=${g.id}` })}</div>`)
             .join("");
     }
 }
 
 /* ---------- Dải logo thương hiệu chạy (index.html) - mỗi logo dẫn thẳng tới trang thương hiệu ---------- */
 const BRAND_MARQUEE_ITEMS = [
-    { logo: "assets/images/brands/xpel/logo.png", alt: "XPEL", href: "brand-san-pham.html?id=ppf-wrap-doi-mau&brand=xpel" },
-    { logo: "assets/images/brands/3m-film/logo.png", alt: "3M", href: "brand-san-pham.html?id=dan-phim-cach-nhiet&brand=3m-film" },
-    { logo: "assets/images/brands/jbl/logo.svg", alt: "JBL", href: "brand-san-pham.html?id=am-thanh-cach-am-oto&brand=jbl" },
-    { logo: "assets/images/brands/infinity/logo.png", alt: "Infinity", href: "brand-san-pham.html?id=am-thanh-cach-am-oto&brand=infinity" },
-    { logo: "assets/images/brands/harman-kardon/logo.png", alt: "Harman/Kardon", href: "brand-san-pham.html?id=am-thanh-cach-am-oto&brand=harman-kardon" },
-    { logo: "assets/images/brands/pioneer/logo.png", alt: "Pioneer", href: "brand-san-pham.html?id=am-thanh-cach-am-oto&brand=pioneer" },
-    { logo: "assets/images/brands/warn/logo.svg", alt: "WARN", href: "brand-san-pham.html?id=do-ban-tai&brand=toi-dien&loai=warn" },
-    { logo: "assets/images/brands/tjm/logo.svg", alt: "TJM", href: "brand-san-pham.html?id=do-ban-tai&brand=toi-dien&loai=tjm" },
-    { logo: "assets/images/brands/king-springs/logo.svg", alt: "King Springs", href: "brand-san-pham.html?id=do-ban-tai&brand=lo-xo-giam-xoc&loai=king-springs" },
-    { logo: "assets/images/brands/aeroklas/logo.png", alt: "Aeroklas", href: "brand-san-pham.html?id=do-ban-tai&brand=nap-thung&loai=aeroklas" },
-    { logo: "assets/images/brands/fogway/logo.png", alt: "Fogway", href: "brand-san-pham.html?id=do-den&brand=fogway" },
-    { logo: "assets/images/brands/aozoom/logo.svg", alt: "Aozoom", href: "brand-san-pham.html?id=do-den&brand=aozoom" },
-    { logo: "assets/images/brands/zestech/logo.svg", alt: "Zestech", href: "brand-san-pham.html?id=man-hinh-o-to&brand=zestech" },
-    { logo: "assets/images/brands/teyes/logo.png", alt: "Teyes", href: "brand-san-pham.html?id=man-hinh-o-to&brand=teyes" },
-    { logo: "assets/images/brands/gotech/logo.png", alt: "Gotech", href: "brand-san-pham.html?id=man-hinh-o-to&brand=gotech" },
-    { logo: "assets/images/brands/vietmap-cam/logo.png", alt: "VIETMAP", href: "brand-san-pham.html?id=camera-hanh-trinh&brand=vietmap-cam" },
-    { logo: "assets/images/brands/utour/logo.png", alt: "UTOUR", href: "brand-san-pham.html?id=camera-hanh-trinh&brand=utour" },
-    { logo: "assets/images/brands/blackvue/logo-wordmark.png", alt: "BlackVue", href: "brand-san-pham.html?id=camera-hanh-trinh&brand=blackvue" },
-    { logo: "assets/images/brands/carlinkit/logo.png", alt: "Carlinkit", href: "brand-san-pham.html?id=android-box-o-to&brand=carlinkit" },
-    { logo: "assets/images/brands/elliview/logo.png", alt: "Elliview", href: "brand-san-pham.html?id=android-box-o-to&brand=elliview" },
-    { logo: "assets/images/brands/ax-film/logo.png", alt: "AX Film", href: "brand-san-pham.html?id=ppf-wrap-doi-mau&brand=ax-film" },
-    { logo: "assets/images/brands/avery-dennison/logo.png", alt: "Avery Dennison", href: "brand-san-pham.html?id=ppf-wrap-doi-mau&brand=avery" },
-    { logo: "assets/images/brands/global-film/logo.png", alt: "Global", href: "brand-san-pham.html?id=dan-phim-cach-nhiet&brand=global-film" },
-    { logo: "assets/images/brands/70mai/logo.svg", alt: "70mai", href: "brand-san-pham.html?id=camera-hanh-trinh&brand=70mai" }
+    { logo: "assets/images/brands/xpel/logo.png", alt: "XPEL", href: "brand-san-pham?id=ppf-wrap-doi-mau&brand=xpel" },
+    { logo: "assets/images/brands/3m-film/logo.png", alt: "3M", href: "brand-san-pham?id=dan-phim-cach-nhiet&brand=3m-film" },
+    { logo: "assets/images/brands/jbl/logo.svg", alt: "JBL", href: "brand-san-pham?id=am-thanh-cach-am-oto&brand=jbl" },
+    { logo: "assets/images/brands/infinity/logo.png", alt: "Infinity", href: "brand-san-pham?id=am-thanh-cach-am-oto&brand=infinity" },
+    { logo: "assets/images/brands/harman-kardon/logo.png", alt: "Harman/Kardon", href: "brand-san-pham?id=am-thanh-cach-am-oto&brand=harman-kardon" },
+    { logo: "assets/images/brands/pioneer/logo.png", alt: "Pioneer", href: "brand-san-pham?id=am-thanh-cach-am-oto&brand=pioneer" },
+    { logo: "assets/images/brands/warn/logo.svg", alt: "WARN", href: "brand-san-pham?id=do-ban-tai&brand=toi-dien&loai=warn" },
+    { logo: "assets/images/brands/tjm/logo.svg", alt: "TJM", href: "brand-san-pham?id=do-ban-tai&brand=toi-dien&loai=tjm" },
+    { logo: "assets/images/brands/king-springs/logo.svg", alt: "King Springs", href: "brand-san-pham?id=do-ban-tai&brand=lo-xo-giam-xoc&loai=king-springs" },
+    { logo: "assets/images/brands/aeroklas/logo.png", alt: "Aeroklas", href: "brand-san-pham?id=do-ban-tai&brand=nap-thung&loai=aeroklas" },
+    { logo: "assets/images/brands/fogway/logo.png", alt: "Fogway", href: "brand-san-pham?id=do-den&brand=fogway" },
+    { logo: "assets/images/brands/aozoom/logo.svg", alt: "Aozoom", href: "brand-san-pham?id=do-den&brand=aozoom" },
+    { logo: "assets/images/brands/zestech/logo.svg", alt: "Zestech", href: "brand-san-pham?id=man-hinh-o-to&brand=zestech" },
+    { logo: "assets/images/brands/teyes/logo.png", alt: "Teyes", href: "brand-san-pham?id=man-hinh-o-to&brand=teyes" },
+    { logo: "assets/images/brands/gotech/logo.png", alt: "Gotech", href: "brand-san-pham?id=man-hinh-o-to&brand=gotech" },
+    { logo: "assets/images/brands/vietmap-cam/logo.png", alt: "VIETMAP", href: "brand-san-pham?id=camera-hanh-trinh&brand=vietmap-cam" },
+    { logo: "assets/images/brands/utour/logo.png", alt: "UTOUR", href: "brand-san-pham?id=camera-hanh-trinh&brand=utour" },
+    { logo: "assets/images/brands/blackvue/logo-wordmark.png", alt: "BlackVue", href: "brand-san-pham?id=camera-hanh-trinh&brand=blackvue" },
+    { logo: "assets/images/brands/carlinkit/logo.png", alt: "Carlinkit", href: "brand-san-pham?id=android-box-o-to&brand=carlinkit" },
+    { logo: "assets/images/brands/elliview/logo.png", alt: "Elliview", href: "brand-san-pham?id=android-box-o-to&brand=elliview" },
+    { logo: "assets/images/brands/ax-film/logo.png", alt: "AX Film", href: "brand-san-pham?id=ppf-wrap-doi-mau&brand=ax-film" },
+    { logo: "assets/images/brands/avery-dennison/logo.png", alt: "Avery Dennison", href: "brand-san-pham?id=ppf-wrap-doi-mau&brand=avery" },
+    { logo: "assets/images/brands/global-film/logo.png", alt: "Global", href: "brand-san-pham?id=dan-phim-cach-nhiet&brand=global-film" },
+    { logo: "assets/images/brands/70mai/logo.svg", alt: "70mai", href: "brand-san-pham?id=camera-hanh-trinh&brand=70mai" }
 ];
 
 function renderBrandMarquee(containerSelector) {
@@ -327,13 +327,13 @@ async function renderCategoryDetail() {
     document.querySelector(".category-title").textContent = cat.name;
 
     document.querySelector(".breadcrumb-parent").textContent = "Sản Phẩm";
-    document.querySelector(".breadcrumb-parent").href = "san-pham.html";
+    document.querySelector(".breadcrumb-parent").href = "product";
     document.querySelector(".breadcrumb-current").textContent = cat.name;
 
     injectBreadcrumbSchema([
         { name: "Trang chủ", href: "/" },
-        { name: "Sản Phẩm", href: "san-pham.html" },
-        { name: cat.name, href: `category-chi-tiet.html?id=${cat.id}` }
+        { name: "Sản Phẩm", href: "product" },
+        { name: cat.name, href: `category-chi-tiet?id=${cat.id}` }
     ]);
     injectServiceSchema(cat.name, cat.seo && cat.seo.metaDescription);
 
@@ -368,7 +368,7 @@ async function renderCategoryDetail() {
                 : brand.products.length;
             const logoHtml = brand.logo ? `<div class="brand-logo"><img src="${brand.logo}" alt="${brand.name}" loading="lazy"></div>` : "";
             return `
-            <a class="brand-card" href="brand-san-pham.html?id=${cat.id}&brand=${brand.id}">
+            <a class="brand-card" href="brand-san-pham?id=${cat.id}&brand=${brand.id}">
                 <div class="brand-card-info">
                     <h3>${brand.name}</h3>
                     <span>${count} sản phẩm <i class="fa-solid fa-arrow-right"></i></span>
@@ -448,7 +448,7 @@ async function renderServiceGroupDetail(groupId) {
     injectBreadcrumbSchema([
         { name: "Trang chủ", href: "/" },
         { name: "Dịch Vụ", href: "/#service" },
-        { name: group.name, href: `category-chi-tiet.html?group=${group.id}` }
+        { name: group.name, href: `category-chi-tiet?group=${group.id}` }
     ]);
     injectServiceSchema(group.name);
 
@@ -464,7 +464,7 @@ async function renderServiceGroupDetail(groupId) {
         grid.innerHTML = group.categories
             .map(catId => findCategoryIn(categories, catId))
             .filter(Boolean)
-            .map(cat => serviceCardHtml({ ...cat, href: `category-chi-tiet.html?id=${cat.id}` }))
+            .map(cat => serviceCardHtml({ ...cat, href: `category-chi-tiet?id=${cat.id}` }))
             .join("");
     } catch (err) {
         grid.innerHTML = `<p style="grid-column:1/-1;text-align:center;color:var(--text-muted);">Không tải được danh mục. Vui lòng thử lại sau.</p>`;
@@ -572,7 +572,7 @@ async function renderBrandProducts() {
 
     const breadcrumbCat = document.querySelector(".breadcrumb-cat");
     breadcrumbCat.textContent = cat.name;
-    breadcrumbCat.href = `category-chi-tiet.html?id=${cat.id}`;
+    breadcrumbCat.href = `category-chi-tiet?id=${cat.id}`;
 
     const breadcrumbBrandSep = document.querySelector(".breadcrumb-brand-sep");
     const breadcrumbBrand = document.querySelector(".breadcrumb-brand");
@@ -593,16 +593,16 @@ async function renderBrandProducts() {
 
         injectBreadcrumbSchema([
             { name: "Trang chủ", href: "/" },
-            { name: "Sản Phẩm", href: "san-pham.html" },
-            { name: cat.name, href: `category-chi-tiet.html?id=${cat.id}` },
-            { name: brand.name, href: `brand-san-pham.html?id=${cat.id}&brand=${brand.id}` }
+            { name: "Sản Phẩm", href: "product" },
+            { name: cat.name, href: `category-chi-tiet?id=${cat.id}` },
+            { name: brand.name, href: `brand-san-pham?id=${cat.id}&brand=${brand.id}` }
         ]);
 
         grid.classList.add("type-grid");
         grid.innerHTML = brand.types.map(t => {
             const typeLogoHtml = t.logo ? `<div class="brand-logo"><img src="${t.logo}" alt="${t.name}" loading="lazy"></div>` : "";
             return `
-            <a class="brand-card" href="brand-san-pham.html?id=${cat.id}&brand=${brand.id}&loai=${t.id}">
+            <a class="brand-card" href="brand-san-pham?id=${cat.id}&brand=${brand.id}&loai=${t.id}">
                 <div class="brand-card-info">
                     <h3>${t.name}</h3>
                     <span>${t.products.length} sản phẩm <i class="fa-solid fa-arrow-right"></i></span>
@@ -625,7 +625,7 @@ async function renderBrandProducts() {
         breadcrumbBrandSep.hidden = false;
         breadcrumbBrand.hidden = false;
         breadcrumbBrand.textContent = brand.name;
-        breadcrumbBrand.href = `brand-san-pham.html?id=${cat.id}&brand=${brand.id}`;
+        breadcrumbBrand.href = `brand-san-pham?id=${cat.id}&brand=${brand.id}`;
         document.querySelector(".breadcrumb-current").textContent = t.name;
         document.title = brand.name + " - " + t.name + " | Đức Hiếu Auto";
         setBrandTitle(brand.name + " - " + t.name, t.logo || brand.logo);
@@ -640,9 +640,9 @@ async function renderBrandProducts() {
 
     injectBreadcrumbSchema([
         { name: "Trang chủ", href: "/" },
-        { name: "Sản Phẩm", href: "san-pham.html" },
-        { name: cat.name, href: `category-chi-tiet.html?id=${cat.id}` },
-        ...(brand.types ? [{ name: brand.name, href: `brand-san-pham.html?id=${cat.id}&brand=${brand.id}` }] : []),
+        { name: "Sản Phẩm", href: "product" },
+        { name: cat.name, href: `category-chi-tiet?id=${cat.id}` },
+        ...(brand.types ? [{ name: brand.name, href: `brand-san-pham?id=${cat.id}&brand=${brand.id}` }] : []),
         { name: document.querySelector(".breadcrumb-current").textContent, href: window.location.pathname + window.location.search }
     ]);
     injectJsonLd("productListSchema", {
@@ -652,7 +652,7 @@ async function renderBrandProducts() {
             "@type": "ListItem",
             "position": i + 1,
             "name": p.name,
-            "url": new URL(`san-pham-chi-tiet.html?id=${p.id}`, window.location.href).href
+            "url": new URL(`san-pham-chi-tiet?id=${p.id}`, window.location.href).href
         }))
     });
 
@@ -818,7 +818,7 @@ function renderProductDetailContent(html) {
 function miniProductCardHtml(p) {
     const img = p.image || productImgFallback(p.id);
     return `
-        <a class="product-card-catalog" href="san-pham-chi-tiet.html?id=${p.id}">
+        <a class="product-card-catalog" href="san-pham-chi-tiet?id=${p.id}">
             <div class="product-img-catalog">
                 <img src="${img}" ${productSrcsetAttrs(img)} alt="${seoAlt(p.name)}" loading="lazy" onerror="this.src='assets/images/placeholder.svg'">
             </div>
@@ -1032,7 +1032,7 @@ function strategicProductCardHtml(item) {
                         ${priceTagHtml}
                     </div>
                     <div class="product-action">
-                        <a href="san-pham-chi-tiet.html?id=${item.productId}" class="btn btn-primary btn-sm">Xem Chi Tiết</a>
+                        <a href="san-pham-chi-tiet?id=${item.productId}" class="btn btn-primary btn-sm">Xem Chi Tiết</a>
                     </div>
                 </div>
             </div>
@@ -1043,7 +1043,7 @@ function techStoryCardHtml(item) {
     const tagHtml = item.tagText ? `<span class="tech-story-tag">${item.tagText}</span>` : "";
     return `
         <div class="swiper-slide">
-        <a class="tech-story-card" href="san-pham-chi-tiet.html?id=${item.productId}">
+        <a class="tech-story-card" href="san-pham-chi-tiet?id=${item.productId}">
             <div class="tech-story-img">
                 <img src="${item.image}" ${productSrcsetAttrs(item.image)} alt="${seoAlt(item.name)}" loading="lazy" onerror="this.src='assets/images/placeholder.svg'">
                 ${tagHtml}
@@ -1200,9 +1200,9 @@ async function renderProductDetail() {
         injectProductSchema(p, img, absoluteImgUrl, reviewStats);
         injectBreadcrumbSchema([
             { name: "Trang chủ", href: "/" },
-            { name: "Sản Phẩm", href: "san-pham.html" },
-            ...(p.category_name ? [{ name: p.category_name, href: `category-chi-tiet.html?id=${p.category_id}` }] : []),
-            { name: p.name, href: `san-pham-chi-tiet.html?id=${p.id}` }
+            { name: "Sản Phẩm", href: "product" },
+            ...(p.category_name ? [{ name: p.category_name, href: `category-chi-tiet?id=${p.category_id}` }] : []),
+            { name: p.name, href: `san-pham-chi-tiet?id=${p.id}` }
         ]);
     } catch (err) {
         wrap.innerHTML = "<p>Không tìm thấy sản phẩm.</p>";
@@ -1215,7 +1215,7 @@ async function renderCompareTable() {
     const ids = (getParam("ids") || "").split(",").map(s => s.trim()).filter(Boolean);
 
     if (ids.length < 2) {
-        content.innerHTML = `<p style="text-align:center;color:var(--text-muted);">Cần chọn ít nhất 2 sản phẩm để so sánh. <a href="san-pham.html">Quay lại chọn sản phẩm</a>.</p>`;
+        content.innerHTML = `<p style="text-align:center;color:var(--text-muted);">Cần chọn ít nhất 2 sản phẩm để so sánh. <a href="product">Quay lại chọn sản phẩm</a>.</p>`;
         return;
     }
 
@@ -1231,7 +1231,7 @@ async function renderCompareTable() {
     }
 
     if (products.length < 2) {
-        content.innerHTML = `<p style="text-align:center;color:var(--text-muted);">Không đủ sản phẩm để so sánh (có thể sản phẩm đã bị ẩn/xoá). <a href="san-pham.html">Quay lại chọn sản phẩm</a>.</p>`;
+        content.innerHTML = `<p style="text-align:center;color:var(--text-muted);">Không đủ sản phẩm để so sánh (có thể sản phẩm đã bị ẩn/xoá). <a href="product">Quay lại chọn sản phẩm</a>.</p>`;
         return;
     }
 
@@ -1247,7 +1247,7 @@ async function renderCompareTable() {
 
     function removeUrl(excludeId) {
         const remaining = products.filter(p => p.id !== excludeId).map(p => p.id);
-        return remaining.length >= 2 ? `so-sanh.html?ids=${remaining.join(",")}` : "san-pham.html";
+        return remaining.length >= 2 ? `so-sanh.html?ids=${remaining.join(",")}` : "product";
     }
 
     content.innerHTML = `
@@ -1260,7 +1260,7 @@ async function renderCompareTable() {
                             <th>
                                 <a href="${removeUrl(p.id)}" class="compare-remove" title="Bỏ khỏi so sánh"><i class="fa-solid fa-xmark"></i></a>
                                 <img src="${p.image}" ${productSrcsetAttrs(p.image)} alt="${seoAlt(p.name)}" loading="lazy" onerror="this.src='assets/images/placeholder.svg'">
-                                <a href="san-pham-chi-tiet.html?id=${p.id}" class="compare-product-name">${p.name}</a>
+                                <a href="san-pham-chi-tiet?id=${p.id}" class="compare-product-name">${p.name}</a>
                                 <span class="compare-product-brand">${p.brand}</span>
                             </th>`).join("")}
                     </tr>

@@ -32,7 +32,7 @@
     function resultItemHtml(p) {
         const img = p.image || `assets/images/products/${p.id}/anh-1.jpg`;
         return `
-            <a class="site-search-result-item" href="san-pham-chi-tiet.html?id=${p.id}">
+            <a class="site-search-result-item" href="san-pham-chi-tiet?id=${p.id}">
                 <img src="${img}" alt="" loading="lazy" onerror="this.src='assets/images/placeholder.svg'">
                 <div class="site-search-result-info">
                     <strong>${p.name}</strong>

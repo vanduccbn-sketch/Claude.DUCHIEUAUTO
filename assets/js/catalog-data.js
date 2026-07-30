@@ -372,8 +372,8 @@ const CATALOG = {
 
   /* =========================================================
      NHÓM DỊCH VỤ (chỉ dùng cho trang chủ index.html, mục "Dịch Vụ")
-     Trang "Sản Phẩm" (san-pham.html) vẫn dùng "categories" ở trên, giữ nguyên phẳng 8 danh mục.
-     Riêng "Đồ Bán Tải" không nằm trong nhóm nào - link thẳng vào category-chi-tiet.html?id=do-ban-tai.
+     Trang "Sản Phẩm" (product) vẫn dùng "categories" ở trên, giữ nguyên phẳng 8 danh mục.
+     Riêng "Đồ Bán Tải" không nằm trong nhóm nào - link thẳng vào category-chi-tiet?id=do-ban-tai.
      ========================================================= */
   serviceGroups: [
     {

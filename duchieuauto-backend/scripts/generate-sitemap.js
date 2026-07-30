@@ -21,8 +21,8 @@ const OUTPUT_PATH = path.join(__dirname, "..", "..", "sitemap.xml");
 
 // Trang tĩnh cố định - không đổi thường xuyên, không lấy được từ database.
 const STATIC_PAGES = [
-    { loc: "index.html", priority: "1.0", changefreq: "weekly" },
-    { loc: "san-pham.html", priority: "0.9", changefreq: "weekly" },
+    { loc: "", priority: "1.0", changefreq: "weekly" },
+    { loc: "product", priority: "0.9", changefreq: "weekly" },
     { loc: "tin-tuc.html", priority: "0.8", changefreq: "weekly" },
     { loc: "dat-lich-hen.html", priority: "0.8", changefreq: "monthly" },
     { loc: "nhac-bao-duong.html", priority: "0.6", changefreq: "monthly" },
@@ -32,7 +32,7 @@ const STATIC_PAGES = [
 
 function urlTag({ loc, priority, changefreq, lastmod }) {
     const lastmodTag = lastmod ? `\n    <lastmod>${lastmod.slice(0, 10)}</lastmod>` : "";
-    // XML yêu cầu escape "&" thành "&amp;" trong <loc> - URL nhiều tham số (brand-san-pham.html?id=..&brand=..&loai=..) có ký tự này.
+    // XML yêu cầu escape "&" thành "&amp;" trong <loc> - URL nhiều tham số (brand-san-pham?id=..&brand=..&loai=..) có ký tự này.
     const escapedLoc = `${SITE_URL}/${loc}`.replace(/&/g, "&amp;");
     return `  <url>\n    <loc>${escapedLoc}</loc>${lastmodTag}\n    <changefreq>${changefreq}</changefreq>\n    <priority>${priority}</priority>\n  </url>`;
 }
@@ -42,7 +42,7 @@ async function run() {
 
     const categories = await db.prepare("SELECT id, updated_at FROM categories ORDER BY sort_order").all();
     for (const cat of categories) {
-        urls.push(urlTag({ loc: `category-chi-tiet.html?id=${cat.id}`, priority: "0.7", changefreq: "monthly", lastmod: cat.updated_at }));
+        urls.push(urlTag({ loc: `category-chi-tiet?id=${cat.id}`, priority: "0.7", changefreq: "monthly", lastmod: cat.updated_at }));
     }
 
     // Thương hiệu/nhóm sản phẩm - trang cuối có lưới sản phẩm thật là brand-san-pham.html, có
@@ -57,13 +57,13 @@ async function run() {
         if (types.length) {
             for (const t of types) {
                 urls.push(urlTag({
-                    loc: `brand-san-pham.html?id=${brand.category_id}&brand=${brand.id}&loai=${t.id}`,
+                    loc: `brand-san-pham?id=${brand.category_id}&brand=${brand.id}&loai=${t.id}`,
                     priority: "0.6", changefreq: "monthly"
                 }));
             }
         } else {
             urls.push(urlTag({
-                loc: `brand-san-pham.html?id=${brand.category_id}&brand=${brand.id}`,
+                loc: `brand-san-pham?id=${brand.category_id}&brand=${brand.id}`,
                 priority: "0.6", changefreq: "monthly"
             }));
         }
@@ -71,7 +71,7 @@ async function run() {
 
     const products = await db.prepare("SELECT id, updated_at FROM products WHERE hidden = 0").all();
     for (const p of products) {
-        urls.push(urlTag({ loc: `san-pham-chi-tiet.html?id=${p.id}`, priority: "0.5", changefreq: "monthly", lastmod: p.updated_at }));
+        urls.push(urlTag({ loc: `san-pham-chi-tiet?id=${p.id}`, priority: "0.5", changefreq: "monthly", lastmod: p.updated_at }));
     }
 
     const posts = await db.prepare("SELECT slug, updated_at FROM posts WHERE published = 1").all();

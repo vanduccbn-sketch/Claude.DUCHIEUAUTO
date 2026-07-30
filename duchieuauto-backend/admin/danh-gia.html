@@ -59,7 +59,7 @@
 
                 tbody.innerHTML = reviews.map(r => `
                     <tr>
-                        <td><a href="../san-pham-chi-tiet.html?id=${r.product_id}" target="_blank">${r.product_name}</a></td>
+                        <td><a href="../san-pham-chi-tiet?id=${r.product_id}" target="_blank">${r.product_name}</a></td>
                         <td>${escapeHtml(r.customer_name)}</td>
                         <td>${"★".repeat(r.rating)}${"☆".repeat(5 - r.rating)}</td>
                         <td>${escapeHtml(r.comment)}</td>

@@ -149,6 +149,10 @@
 @media (max-width: 768px) {
     .category-seo-figure { float: none; width: 100%; margin: 0 0 20px; }
     .category-seo-content h2 { font-size: 1.25rem; }
+    /* Widget liên hệ nhanh (.quick-contact) cố định ở góc phải rộng ~56px (right:14px + 42px) -
+       chữ chạy sát mép phải sẽ bị nó che khi cuộn tới đúng khoảng widget đang đứng. Chừa thêm chỗ
+       cho khối văn bản dài để không bao giờ bị che, dù cuộn tới đâu. */
+    .category-seo-content { padding-right: 60px; }
 }
 
 /* ---------- Danh sách thương hiệu ----------
@@ -415,6 +419,12 @@
     justify-content: space-between;
     gap: 16px;
 }
+/* Class .sticky-product-cta ở trên có "display: flex" cùng độ ưu tiên (specificity) với quy tắc
+   mặc định [hidden]{display:none} của trình duyệt, và CSS tác giả luôn thắng vì nằm SAU stylesheet
+   mặc định trong thứ tự cascade - nếu không ghi đè lại rõ ràng ở đây, thanh CTA dính đáy sẽ LUÔN
+   HIỆN dù JS (catalog-render.js, setupStickyProductCta) đã gắn đúng thuộc tính hidden, che mất/trùng
+   lặp với nút "Đặt Lịch Ngay" gốc ngay trong trang. */
+.sticky-product-cta[hidden] { display: none; }
 .sticky-product-cta-info { display: flex; flex-direction: column; min-width: 0; }
 .sticky-product-cta-info strong { font-size: 13.5px; color: var(--text-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .sticky-product-cta-info span { font-size: 13px; color: var(--primary); font-weight: 700; }
@@ -710,6 +720,9 @@
     .category-poster { height: 200px; }
     .category-title { font-size: 1.9rem; }
     .specs-table th { width: 180px; }
+    /* Widget liên hệ nhanh (.quick-contact) cố định ở góc phải rộng ~56px (right:14px + 42px) -
+       chữ mô tả chạy sát mép phải sẽ bị nó che khi cuộn tới đúng khoảng widget đang đứng. */
+    .product-detail-desc { padding-right: 60px; }
 }
 
 @media (max-width: 576px) {

@@ -30,8 +30,15 @@
         document.querySelectorAll("[data-content-image-key]").forEach(el => {
             const value = content[el.dataset.contentImageKey];
             if (!value) return;
-            if (el.tagName === "VIDEO") el.poster = value;
-            else el.src = value;
+            const attr = el.tagName === "VIDEO" ? "poster" : "src";
+            // CHỈ gán lại khi giá trị THẬT SỰ khác - phát hiện lúc audit giao diện di động: DB mặc
+            // định lưu ĐÚNG BẰNG đường dẫn ảnh gốc trong HTML, nên trước đây luôn gán lại dù giống
+            // hệt, khiến trình duyệt coi như "đổi src" và tải lại request thứ 2 cho CÙNG 1 ảnh song
+            // song với request đầu tiên (từ HTML gốc) - 2 request trùng URL gần như đồng thời làm lộ
+            // race condition trong Service Worker (cache.put() 2 lần cho cùng key), khiến ảnh vỡ hẳn
+            // dù cả file lẫn mạng đều không có vấn đề gì.
+            if (el.getAttribute(attr) === value) return;
+            el[attr] = value;
         });
     }
 

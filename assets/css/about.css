@@ -63,6 +63,12 @@
     .about-stats { margin: 40px 0 36px; justify-content: center; }
 }
 @media (max-width: 576px) {
-    .stat-item { padding: 0 16px; }
+    /* 3 mục không chia đều số cột nên ở màn hẹp mục thứ 3 tự xuống dòng riêng - nếu vẫn dùng
+       border-left theo kiểu "cạnh trái phần tử liền kề" thì mục lẻ dòng dưới bị thừa 1 vạch dọc
+       trơ trọi bên trái (không còn mục nào ngay bên trái nó trên cùng dòng để vạch đó phân cách
+       nữa). Xếp dọc hẳn 1 cột + đổi vạch phân cách sang border-top thì luôn đúng bất kể số mục. */
+    .about-stats { flex-direction: column; align-items: center; gap: 20px; }
+    .stat-item, .stat-item:first-child { padding: 0; border-left: none; }
+    .stat-item + .stat-item { border-left: none; padding-top: 20px; border-top: 1px solid rgba(255, 255, 255, 0.16); }
     .stat-num, .stat-suffix { font-size: 1.4rem; }
 }

@@ -409,6 +409,10 @@
 
 @media (max-width: 768px) {
     .booking-wrap { padding: 26px 22px; }
+    /* Widget liên hệ nhanh (.quick-contact) cố định ở góc phải rộng ~56px (right:14px + 42px) -
+       chữ chạy sát mép phải sẽ bị nó che khi cuộn tới đúng khoảng widget đang đứng. Chừa thêm chỗ
+       cho các khối văn bản dài để không bao giờ bị che, dù cuộn tới đâu. */
+    .policy-content, .blog-detail-body { padding-right: 60px; }
 }
 
 @media (max-width: 576px) {

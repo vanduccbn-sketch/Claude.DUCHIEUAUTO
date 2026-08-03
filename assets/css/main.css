@@ -46,7 +46,14 @@ button { font-family: inherit; cursor: pointer; }
    (product.css) cho 2 thẻ đặt cạnh nhau, chỉ thêm phần layout dạng lưới ở đây. */
 .home-cta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
 @media (max-width: 768px) {
-    .home-cta-grid { grid-template-columns: 1fr; }
+    /* Giữ NGUYÊN 2 cột cạnh nhau trên di động (không xếp chồng dọc như trước) để đỡ tốn chiều cao
+       cuộn - thu nhỏ toàn bộ chữ/khoảng đệm/icon cho vừa cột hẹp hơn một nửa. */
+    .home-cta-grid { gap: 12px; }
+    .home-cta-grid .view-all-cta { flex-direction: column; align-items: center; text-align: center; gap: 8px; padding: 18px 14px; }
+    .home-cta-grid .view-all-cta-label { font-size: 10px; letter-spacing: 1px; margin-bottom: 2px; }
+    .home-cta-grid .view-all-cta-text h3 { font-size: 15px; line-height: 1.3; margin-bottom: 2px; }
+    .home-cta-grid .view-all-cta-text p { font-size: 11.5px; line-height: 1.4; }
+    .home-cta-grid .view-all-cta-arrow { width: 36px; height: 36px; font-size: 14px; }
 }
 /* right:22px (không phải 20px) để tâm nút thẳng hàng với widget liên hệ nhanh bên dưới: cột đó
    rộng 48px (theo .qc-item, phần tử con rộng nhất) neo ở right:20px, nên tâm cột nằm ở

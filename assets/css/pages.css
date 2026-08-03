@@ -343,7 +343,14 @@
 .blog-card:hover .blog-card-img img { transform: scale(1.08); }
 
 .blog-card-body { padding: 20px 22px 24px; display: flex; flex-direction: column; flex-grow: 1; }
-.blog-card-meta { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--m-blue); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; margin-bottom: 10px; }
+/* Danh mục + ngày đăng xếp 2 DÒNG RIÊNG (không còn chung 1 dòng nối bằng dấu chấm giữa) - phát
+   hiện lúc audit giao diện di động: card 2 cột trên màn hẹp không đủ chỗ cho cả 2 cùng lúc, tên
+   danh mục dài (VD "Camera Hành Trình - 360 Độ") làm dòng bị wrap 3-4 dòng lộn xộn, card cao thấp
+   không đều nhau. Tách hẳn 2 dòng: dòng danh mục cắt gọn 1 dòng (ellipsis) nếu quá dài, dòng ngày
+   đăng riêng - mọi card luôn cao đúng 2 dòng cho phần này, không phụ thuộc độ dài tên danh mục. */
+.blog-card-meta { display: flex; flex-direction: column; gap: 3px; font-size: 12px; color: var(--m-blue); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; margin-bottom: 10px; }
+.blog-card-cat { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.blog-card-date { color: var(--text-muted); font-weight: 500; letter-spacing: 0.3px; }
 .blog-card-body h3 { font-family: var(--font-title); font-size: 19px; letter-spacing: 0.3px; color: var(--text-color); margin-bottom: 10px; line-height: 1.3; }
 .blog-card-body p { color: var(--text-muted); font-size: 13.5px; line-height: 1.6; flex-grow: 1; margin-bottom: 14px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 .blog-card-link { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: var(--m-blue); text-transform: uppercase; letter-spacing: 0.5px; }

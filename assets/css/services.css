@@ -30,8 +30,21 @@
 }
 .service-slider .swiper-button-next,
 .service-slider .swiper-button-prev {
-    top: 105px;
+    top: 100px;
 }
+/* Kích thước/hiệu ứng đồng bộ với .tech-story-card ("Giải Mã Công Nghệ", project.css) theo yêu
+   cầu lấy khối đó làm mẫu chung cho cả 3 khối thẻ trang chủ - CHỈ áp dụng trong phạm vi slider
+   trang chủ (.service-slider), KHÔNG đụng .service-card dùng chung ở lưới danh mục trang /product
+   (ở đó 2 cột trên di động vẫn cần cỡ nhỏ gọn hơn, giữ nguyên như cũ). Viết dạng 2-class để độ ưu
+   tiên luôn thắng quy tắc chung/quy tắc trong @media (max-width:576px) bên dưới, không phụ thuộc
+   thứ tự khai báo trong file. */
+.service-slider .service-card { border-radius: 14px; }
+.service-slider .service-img { height: 200px; }
+.service-slider .service-overlay { font-size: 26px; }
+.service-slider .service-content { padding: 22px 20px 24px; }
+.service-slider .service-content h3 { font-size: 22px; margin-bottom: 12px; }
+.service-slider .service-content p { font-size: 13.5px; line-height: 1.65; }
+.service-slider .service-more { font-size: 13px; margin-top: 16px; }
 
 /* --- Card Dịch Vụ / Danh Mục Sản Phẩm (là <a> link, không còn popup) --- */
 .service-card {
@@ -151,7 +164,6 @@
     .service-more { font-size: 11px; margin-top: 8px; }
     .service-slider .swiper-button-next,
     .service-slider .swiper-button-prev {
-        top: 55px;
         width: 30px;
         height: 30px;
     }

@@ -64,7 +64,10 @@ function blogCardHtml(post) {
                 <img src="${cover}" alt="${seoAlt(post.title)}" loading="lazy">
             </div>
             <div class="blog-card-body">
-                <span class="blog-card-meta"><i class="fa-solid fa-tag"></i> ${post.category || "Tin tức"} <span>&middot;</span> ${formatBlogDate(post.created_at)}</span>
+                <span class="blog-card-meta">
+                    <span class="blog-card-cat"><i class="fa-solid fa-tag"></i> ${post.category || "Tin tức"}</span>
+                    <span class="blog-card-date">${formatBlogDate(post.created_at)}</span>
+                </span>
                 <h3>${post.title}</h3>
                 <p>${post.excerpt || ""}</p>
                 <span class="blog-card-link">Đọc tiếp <i class="fa-solid fa-arrow-right"></i></span>

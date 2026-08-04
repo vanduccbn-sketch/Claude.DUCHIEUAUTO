@@ -1,8 +1,7 @@
 #footer { background-color: var(--dark); padding-top: 80px; border-top: 3px solid transparent; border-image: var(--gradient-m-stripe) 1; }
 .footer-inner { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr); gap: 40px; margin-bottom: 50px; }
 .footer-col { min-width: 0; }
-.brand-col h3 { font-family: var(--font-title); font-size: 28px; letter-spacing: 1.5px; color: var(--white); margin-bottom: 16px; }
-.brand-col h3 span { color: var(--primary); }
+.brand-col .footer-logo { height: 52px; width: auto; display: inline-block; margin-bottom: 18px; }
 .footer-desc { color: var(--gray); margin-bottom: 22px; line-height: 1.7; overflow-wrap: break-word; }
 .brand-col .contact-info { margin-bottom: 22px; }
 .brand-col .contact-info li a { color: var(--gray); transition: var(--transition); }
@@ -31,7 +30,6 @@
        đẩy rộng ra ngoài màn hình khiến chữ bị cắt mất bởi overflow-x:hidden */
     .footer-inner { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 30px 16px; text-align: left; }
     .brand-col { grid-column: 1 / -1; text-align: center; }
-    .brand-col h3::after { left: 50%; transform: translateX(-50%); }
     .brand-col .contact-info li { justify-content: center; }
     .brand-col .social-links { justify-content: center; display: flex; }
     .footer-col:not(.brand-col) h3 { font-size: 16px; margin-bottom: 16px; }

@@ -15,8 +15,8 @@
 #header.scrolled:hover,
 #header.scrolled:focus-within { background: var(--glass-bg); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border-bottom-color: rgba(255, 255, 255, 0.06); }
 .header-inner { display: flex; justify-content: space-between; align-items: center; height: 80px; }
-.logo { font-family: var(--font-title); font-size: 32px; color: var(--white); letter-spacing: 2px; }
-.logo span { color: var(--primary); text-shadow: 0 0 20px rgba(228, 0, 43, 0.4); }
+.logo { display: inline-flex; align-items: center; }
+.logo img { height: 46px; width: auto; display: block; }
 .main-nav ul { display: flex; align-items: center; gap: 35px; }
 /* line-height cố định - nếu không, mục có icon (Dịch Vụ/Sản Phẩm) sẽ có khung dòng chữ
    cao hơn mục chữ thường (icon FontAwesome kéo line-height mặc định lên), khiến các mục
@@ -187,7 +187,7 @@
     /* Màn hình nhỏ: thu gọn logo + nút để không bị chật/tràn ngang trên 1 hàng */
     .header-inner { height: 62px; }
     html { scroll-padding-top: 62px; }
-    .logo { font-size: 22px; letter-spacing: 1px; }
+    .logo img { height: 34px; }
     .header-actions { gap: 8px; }
     .header-actions .btn { padding: 9px 14px; font-size: 11px; }
     .menu-toggle { width: 40px; height: 40px; font-size: 20px; }

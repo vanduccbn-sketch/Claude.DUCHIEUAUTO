@@ -170,7 +170,7 @@ function renderAdminNav(auth, activePage) {
         </div>`;
 
     nav.innerHTML = `
-        <div class="brand">ĐỨC HIẾU <span>ADMIN</span></div>
+        <div class="brand"><img src="assets/logo-header-white.png" alt="Đức Hiếu Auto"></div>
         <nav class="admin-nav">
             ${standaloneLinks.map(linkHtml).join("")}
             ${groups.map(groupHtml).join("")}

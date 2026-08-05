@@ -213,6 +213,64 @@ Cấu trúc trang hiện có:
   - Đã viết lại `huong-dan-viet-content-nhan-vien.md` theo đúng công cụ thật (trước đó chỉ có hướng dẫn tạm vì chưa có trang quản trị)
 - [x] **User xác nhận muốn làm Phase 7** (admin sửa được toàn bộ sản phẩm/danh mục/thông số/ảnh) — đã nêu rõ đánh đổi kiến trúc trước khi user chốt, đồng ý làm nhưng chia nhỏ nhiều buổi (xem chi tiết trong file kế hoạch)
 
+## Việc đã làm (2026-08-05) — Rà soát SEO/GEO tổng thể + chuyển toàn bộ ảnh sản phẩm sang WebP
+
+**Bối cảnh:** phiên làm việc này chạy trên **máy khác** (`DELL`, không phải máy `ECOM-PGI` trước đây) —
+không có sẵn Node.js/Python, phải dùng `C:\Users\DELL\AppData\Local\GitHubDesktop\...\git.exe` (bundled
+theo GitHub Desktop) để thao tác git. Nhật ký này đã lâu chưa cập nhật (lần cuối 2026-07-28) dù có thêm
+1 commit `Add brand logo across website and admin` (2026-08-04, đổi logo header/footer/admin/favicon) —
+đã đối chiếu qua `git log` để không bỏ sót, không cần ghi chi tiết thêm vì commit đã tự giải thích rõ.
+
+- [x] **Rà soát live thật (không chỉ tin tài liệu) 8 mục SEO** — phát hiện quan trọng nhất: bản
+  `robots.txt` LIVE trên `duchieuauto.vn` khác hẳn file trong repo — **Cloudflare tự chèn thêm chặn
+  hàng loạt bot AI** (GPTBot, ClaudeBot, Google-Extended, Applebot-Extended, Bytespider, CCBot,
+  meta-externalagent, Amazonbot) qua tính năng "AI Crawl Control", mâu thuẫn trực tiếp với mục tiêu
+  GEO đã đặt ra ở Phase 9-11. **User chọn gỡ chặn hết (ưu tiên GEO)** — cần user tự vào Cloudflare
+  dashboard (mục Security/AI Crawl Control) để tắt, Claude không có API token Cloudflare để tự làm.
+- [x] **Sửa lỗi Search Console** — field `google_search_console_verification` trong Cấu Hình admin bị
+  dán nhầm nguyên đoạn script Google Analytics thay vì mã xác minh thật → domain gần như chắc chắn
+  chưa được xác minh. Đã đăng nhập API xoá sạch giá trị sai (không đụng GA/field khác). Đã hướng dẫn
+  user 2 cách lấy mã thật: DNS TXT qua Cloudflare (khuyên dùng, phủ luôn www/api/admin) hoặc verify
+  qua GA có sẵn — **user chưa hoàn tất bước này, cần nhắc lại buổi sau**.
+- [x] **Kiểm tra "ưu tiên crawl sản phẩm/danh mục" trong sitemap** — đã đúng sẵn (category 0.7 >
+  brand 0.6 > product 0.5 > policy 0.4), không cần sửa gì.
+- [x] **Chuyển toàn bộ ảnh tĩnh .jpg sang .webp** (yêu cầu rõ của user, chọn cách "chuyển hẳn, xoá
+  .jpg cũ"):
+  - Máy không có công cụ mã hoá WebP sẵn (không Node/Python/ImageMagick) — đã tải bản chính thức
+    `libwebp-1.5.0-windows-x64` từ Google (`storage.googleapis.com/downloads.webmproject.org`) về
+    dùng `cwebp -q 82~85`.
+  - Chuyển đủ **516 file .jpg** (500 ảnh sản phẩm `assets/images/products/**` + 2 ảnh Giới Thiệu +
+    14 poster danh mục thật dưới 2 thư mục `products-category/` và `service/` — phát hiện muộn vì 2
+    thư mục này không nằm trong phạm vi đoán ban đầu, phải quét lại catalog thật mới thấy) — giảm
+    dung lượng ~46% (32MB → 17.2MB).
+  - **Bug thật quan trọng phát hiện lúc rà DB trước khi xoá jpg** (may mà kiểm tra trước, chưa xoá
+    file/DB nào ẩu): chỉ 18/255 sản phẩm có cột `products.image` khác NULL trong Turso — **237 sản
+    phẩm còn lại (93%) không lưu đường dẫn ảnh riêng, mà dựa vào QUY ƯỚC ngầm** (hàm
+    `productImagePath(id, image)` phía backend và `productImgFallback(id)` phía frontend tự ghép
+    `assets/images/products/<id>/anh-1.jpg` khi `image` rỗng). Nếu chỉ đổi tên file mà không sửa quy
+    ước này, 237 sản phẩm sẽ vỡ ảnh ngay lập tức trên toàn site.
+  - Đã sửa đúng **6 chỗ** hardcode `anh-1.jpg` thành `anh-1.webp` (đây là toàn bộ số chỗ dùng quy ước
+    này, đã grep xác nhận không sót — riêng `assets/js/catalog-data.js`, dữ liệu tĩnh cũ từ trước
+    Phase 7, xác nhận KHÔNG còn code nào đọc field `image`/sản phẩm từ đây nữa nên bỏ qua, không sửa):
+    `duchieuauto-backend/routes/products.js`, `duchieuauto-backend/routes/homepage.js`,
+    `assets/js/catalog-render.js`, `assets/js/site-search.js`,
+    `duchieuauto-backend/admin/assets/admin.js`, `duchieuauto-backend/admin/trang-chu.html`.
+  - Cập nhật DB (Turso) qua API admin cho phần CÓ lưu giá trị riêng: 12 sản phẩm, poster + seo_image
+    của 11 danh mục, logo của 30 nhóm thương hiệu (`brand_types`), 2 ảnh Giới Thiệu
+    (`homepage_content`) — toàn bộ dùng PUT partial-update sẵn có, không đụng field nào khác.
+  - Push 2 lần lên GitHub (đổi ảnh + sửa code, sau đó tăng `CACHE_NAME` Service Worker lên `v10` —
+    đúng bài học đã ghi ở lần trước, vì đổi `catalog-render.js`/`site-search.js` là JS bị Service
+    Worker cache). Render tự redeploy backend thành công.
+  - **Đã xác minh đầy đủ trên production thật** (không chỉ tin đã push): `GET /api/products/catalog`
+    quét toàn bộ không còn `.jpg` nào; test trực tiếp 7 sản phẩm ngẫu nhiên (gồm cả nhóm trước đây
+    `image=null`) đều trả đúng URL `.webp` và tải được (HTTP 200); ảnh `.jpg` cũ trả 404 đúng như kỳ
+    vọng (đã xoá thật, không phải quên xoá).
+  - Không đụng tới: logo thương hiệu (`.png`/`.svg`, không phải ảnh chụp, không cần WebP); 5 poster
+    "dịch vụ" chưa dùng (`phu-ceramic`, `phu-gam-oto`, `do-mam-xe`, `do-bodykit`, `decal-doi-mau-xe`)
+    — vẫn chuyển sang webp cho gọn nhưng KHÔNG xử lý vấn đề đã ghi nhận trước đó (`phu-ceramic` lộ
+    logo hãng khác "Ceramic Pro") vì ngoài phạm vi yêu cầu lần này, ảnh vẫn chưa được dùng ở đâu công
+    khai.
+
 ## Việc cần làm tiếp theo (TODO)
 
 - [ ] Deploy backend thật lên Render.com (tài khoản đã có, code đã test kỹ ở local) theo hướng dẫn trong `duchieuauto-backend/README.md`

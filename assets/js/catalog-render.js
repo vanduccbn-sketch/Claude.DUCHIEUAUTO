@@ -101,7 +101,7 @@ function findServiceGroup(id) {
 
 function productImgFallback(id) {
     // Ảnh sản phẩm dùng chung 1 folder duy nhất theo id
-    return `assets/images/products/${id}/anh-1.jpg`;
+    return `assets/images/products/${id}/anh-1.webp`;
 }
 
 // Thẻ 1 sản phẩm trong lưới catalog - dùng chung cho brand-san-pham (renderBrandProducts) và

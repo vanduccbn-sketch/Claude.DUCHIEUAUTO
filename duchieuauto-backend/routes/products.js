@@ -30,7 +30,7 @@ function isMissingResponsiveVariant(imagePath) {
 const canEditCatalog = requireRole("content", "super_admin");
 
 function productImagePath(id, image) {
-    return image || `assets/images/products/${id}/anh-1.jpg`;
+    return image || `assets/images/products/${id}/anh-1.webp`;
 }
 
 // "Đồ Bán Tải" là danh mục DUY NHẤT có cấu trúc đảo ngược: brand_id trên bảng products là NHÓM

@@ -17,7 +17,7 @@ const VALID_SECTIONS = ["strategic", "tech"];
 const CATEGORIES_WITH_PRODUCT_GROUPS = ["do-ban-tai"];
 
 function productImagePath(id, image) {
-    return image || `assets/images/products/${id}/anh-1.jpg`;
+    return image || `assets/images/products/${id}/anh-1.webp`;
 }
 
 // GET /api/homepage - public, trả về 2 danh sách đã join sẵn thông tin sản phẩm thật (tên/ảnh/giá/

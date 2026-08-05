@@ -50,7 +50,7 @@ const FRONTEND_BASE_URL = "https://duchieuauto.vn";
 // nguyên, ảnh cũ (đường dẫn tương đối hoặc chưa có) tự ghép domain frontend vào.
 function productImageUrl(p) {
     if (p.image && /^https?:\/\//.test(p.image)) return p.image;
-    return `${FRONTEND_BASE_URL}/${p.image || `assets/images/products/${p.id}/anh-1.jpg`}`;
+    return `${FRONTEND_BASE_URL}/${p.image || `assets/images/products/${p.id}/anh-1.webp`}`;
 }
 
 function getAuth() {

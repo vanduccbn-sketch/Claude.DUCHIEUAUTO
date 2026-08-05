@@ -19,6 +19,7 @@ const reviewsRoutes = require("./routes/reviews");
 const homepageRoutes = require("./routes/homepage");
 const leadsRoutes = require("./routes/leads");
 const homepageContentRoutes = require("./routes/homepage-content");
+const renderRoutes = require("./routes/render");
 
 const app = express();
 
@@ -123,6 +124,17 @@ app.use("/api/admins", adminsRoutes);
 app.use("/api/reviews", reviewsRoutes);
 app.use("/api/homepage", homepageRoutes);
 app.use("/api/homepage-content", homepageContentRoutes);
+
+// SSR cho bot (Phase 12) - Cloudflare Worker gọi các route này thay cho origin GitHub Pages khi
+// phát hiện đúng User-Agent bot AI/mạng xã hội (xem cloudflare-worker-bot-ssr.js). Rate limit riêng
+// vì không nằm dưới "/api" - vẫn cần chặn spam vì route public, không yêu cầu đăng nhập.
+app.use("/render", rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 600,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { error: "Quá nhiều request, vui lòng thử lại sau ít phút" }
+}), renderRoutes);
 
 // Ảnh upload (ảnh bìa bài viết, ảnh chèn nội dung) - phục vụ trực tiếp file tĩnh
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));

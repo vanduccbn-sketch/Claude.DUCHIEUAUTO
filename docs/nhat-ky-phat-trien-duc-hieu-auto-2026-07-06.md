@@ -271,6 +271,58 @@ theo GitHub Desktop) để thao tác git. Nhật ký này đã lâu chưa cập 
     logo hãng khác "Ceramic Pro") vì ngoài phạm vi yêu cầu lần này, ảnh vẫn chưa được dùng ở đâu công
     khai.
 
+## Việc đã làm (2026-08-05, lần 2) — Phase 12: Dynamic rendering cho bot AI/mạng xã hội (GEO)
+
+**Bối cảnh:** sau khi gỡ chặn AI bot ở Cloudflare (tắt "Managed robots.txt") và xác minh Search
+Console, phát hiện vấn đề lớn nhất còn lại: trang sản phẩm/danh mục/bài viết là CSR (JS gọi API rồi
+mới set title/meta/schema) - bot AI (không chạy JS) và bot preview mạng xã hội vẫn chỉ thấy khung
+trang rỗng dù đã được phép crawl. User yêu cầu làm luôn, nghiêm túc, đánh giá hiệu quả thật.
+
+- [x] **Backend SSR** (`duchieuauto-backend/utils/ssr-render.js` + `routes/render.js`, mount tại
+  `/render`): sinh HTML đầy đủ title/meta/OG/canonical + schema.org (`Product`+`Offer`, `Service`,
+  `FAQPage`, `Article`, `BreadcrumbList`) + nội dung thật (tên/giá/mô tả/thông số/FAQ) cho 3 loại
+  trang - `/render/product?id=`, `/render/category?id=`, `/render/post?slug=`. Tái dùng đúng công
+  thức title/meta/schema đã có trong `catalog-render.js`/`blog-render.js` phía client để đảm bảo nội
+  dung SSR TƯƠNG ĐƯƠNG (không nhiều/ít hơn) - đúng khuyến nghị "dynamic rendering" của Google, không
+  phải cloaking. Test trực tiếp qua curl trên production - đúng cả 3 route, escape HTML đầy đủ cho
+  field văn bản thô, giữ nguyên HTML đã sanitize sẵn cho `detail_content`/`content`.
+- [x] **Phát hiện + sửa 1 lỗi thật ngoài kế hoạch lúc build/test SSR:** cả 8 ảnh bìa bài viết
+  (`posts.cover_image`) đang vỡ (404) - sót field này khi rà DB đổi `.jpg`→`.webp` ở buổi trước
+  (chỉ rà `products.image`/`categories.poster`/`brand_types.logo`/`homepage_content`, quên
+  `posts.cover_image`). Đã quét lại toàn bộ bài viết (kể cả nháp) qua `GET /api/posts/admin/all`,
+  xác nhận file `.webp` tồn tại trước khi PUT, sửa đủ cả 8 bài.
+- [x] **Cloudflare Worker** (`duchieuauto-backend/cloudflare-worker-bot-ssr.js`, không deploy qua
+  git - phải copy-paste thủ công vào Cloudflare Dashboard): chặn đúng danh sách bot AI (GPTBot,
+  ClaudeBot, PerplexityBot, Google-Extended, Bytespider, CCBot, Amazonbot, Applebot-Extended,
+  meta-externalagent...) + bot preview mạng xã hội (facebookexternalhit, Twitterbot, Zalo...) truy
+  cập đúng 3 loại trang động, gọi sang `/render/*` thay vì để lọt qua GitHub Pages gốc. Người dùng
+  thật/Googlebot đi thẳng qua origin như cũ, không đổi gì. Có fallback an toàn: lỗi/timeout backend
+  thì tự `fetch(request)` bình thường - không có tình huống nào làm trang tệ hơn hiện trạng.
+- [x] **User tự triển khai qua Cloudflare Dashboard** (Claude hướng dẫn từng bước qua ảnh chụp màn
+  hình, không có quyền API Cloudflare để tự làm) - gặp 2 lỗi thật lúc làm, cả 2 đều do đặc thù giao
+  diện Cloudflare chứ không phải sai thao tác:
+  1. Route lưu lần đầu thành `*.duchieuauto.vn/*` (thừa dấu `.` sau `*`) - dạng này chỉ khớp
+     subdomain (`www.`, `admin.`...), KHÔNG khớp domain gốc `duchieuauto.vn` nên Worker không chạy
+     trên trang chính. Phải sửa đúng thành `duchieuauto.vn/*` (không dấu chấm sau `*`).
+  2. Nhân tiện đổi luôn "Failure mode" từ mặc định "Fail closed (block)" sang "Fail open (proceed)"
+     - route `duchieuauto.vn/*` phủ TOÀN BỘ domain, nếu Worker lỗi bất ngờ mà để "Fail closed" sẽ
+     chặn nhầm cả người dùng thật, không chỉ bot.
+- [x] **Đánh giá hiệu quả thật (không chỉ tin đã deploy)** - giả lập 4 kịch bản bằng header
+  User-Agent thật qua curl trên production:
+  - GPTBot vào trang sản phẩm → nhận đúng SSR (title "JBL Club 64 - JBL...", 4.7KB, có schema).
+  - Chrome bình thường vào CÙNG trang → không đổi gì (vẫn 18KB như cũ) - xác nhận không ảnh hưởng
+    người dùng thật.
+  - ClaudeBot vào trang danh mục → nhận đúng SSR kèm đủ `FAQPage` schema (4 câu hỏi thật).
+  - facebookexternalhit vào trang bài viết → nhận đúng SSR kèm `Article` schema.
+  - Tất cả PASS - dynamic rendering đã hoạt động thật trên production, không phải chỉ deploy xong
+    rồi tin là đúng.
+
+**Còn treo, không khẩn:** chưa làm SSR cho `brand-san-pham.html` (trang thương hiệu) - cố ý bỏ qua
+đợt này vì giá trị nội dung riêng thấp hơn (phần lớn trùng lặp với trang danh mục/sản phẩm đã có
+SSR), có thể bổ sung sau nếu cần. Cache SSR ở Cloudflare Worker đặt 1 giờ (`cacheTtl: 3600`) - chưa
+có cơ chế tự xoá cache khi admin sửa sản phẩm/danh mục, chấp nhận độ trễ tối đa 1 giờ (không khẩn,
+tương tự độ trễ vốn có của "ngủ" Render free tier).
+
 ## Việc cần làm tiếp theo (TODO)
 
 - [ ] Deploy backend thật lên Render.com (tài khoản đã có, code đã test kỹ ở local) theo hướng dẫn trong `duchieuauto-backend/README.md`

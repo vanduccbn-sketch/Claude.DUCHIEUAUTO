@@ -576,6 +576,13 @@ User báo lỗi thật: bài viết dài có chèn ảnh, đang gõ tiếp ở d
   đã sửa từ trước để upload thật) - làm DB phình to, không qua được bước cắt/Alt Text. Thêm
   `qeInterceptImagePaste()` chặn đúng lúc phát hiện file ảnh trong clipboard, upload thật lên
   Cloudinary (kèm cắt + hỏi Alt Text) thay vì nhúng base64.
+- [x] **User báo nút "Cắt ảnh" không hiện ra dù bấm đúng vào ảnh** - nguyên nhân: module resize ảnh
+  (`quill-image-resize-module`, thêm từ trước) chèn 1 lớp phủ trong suốt đè lên ảnh đang chọn để bắt
+  thao tác kéo, khiến `e.target` thực tế nhận click là lớp phủ đó chứ không phải chính thẻ `<img>` -
+  điều kiện kiểm tra cũ `e.target.tagName === "IMG"` luôn sai. Sửa bằng cách phát hiện ảnh theo
+  **toạ độ bấm** (`getBoundingClientRect()` của mọi ảnh trong bài, kiểm tra toạ độ click có nằm
+  trong đó không) thay vì dựa vào phần tử nhận click, đồng thời chuyển sang lắng nghe ở **capture
+  phase** trên `document` để chạy trước khi lớp phủ có cơ hội chặn sự kiện.
 
 ## Việc cần làm tiếp theo (TODO)
 

@@ -133,12 +133,14 @@
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/quill-image-resize-module@3.0.0/image-resize.min.js"></script>
     <script src="assets/admin.js"></script>
     <script>
         const auth = requireAuth(["content", "super_admin"]);
         let categoriesData = [];
         let productId = null;
         let quill;
+        Quill.register("modules/imageResize", ImageResize.default);
 
         if (auth) {
             renderAdminNav(auth, "san-pham");
@@ -172,7 +174,12 @@
         function initEditor() {
             quill = new Quill("#quillEditor", {
                 theme: "snow",
-                modules: { toolbar: "#quillToolbar" },
+                modules: {
+                    toolbar: "#quillToolbar",
+                    // Bấm vào ảnh trong bài -> hiện thanh công cụ căn lề (trái/giữa/phải/đầy đủ) +
+                    // kéo góc để đổi kích thước - đúng yêu cầu "công cụ cơ bản sửa ảnh" của user.
+                    imageResize: { modules: ["Resize", "DisplaySize", "Toolbar"] }
+                },
                 placeholder: "Viết mô tả chi tiết sản phẩm ở đây..."
             });
 

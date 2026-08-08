@@ -379,13 +379,13 @@ const CATALOG = {
     {
       id: "noi-that-o-to",
       name: "Nội Thất Ô Tô",
-      poster: "assets/images/products-category/man-hinh-o-to/poster.jpg",
+      poster: "assets/images/products-category/man-hinh-o-to/poster.webp",
       categories: ["man-hinh-o-to", "am-thanh-cach-am-oto", "android-box-o-to", "camera-hanh-trinh", "doi-mau-noi-that"]
     },
     {
       id: "ngoai-that-o-to",
       name: "Ngoại Thất Ô Tô",
-      poster: "assets/images/service/ppf-bao-ve-son-xe/poster.jpg",
+      poster: "assets/images/service/ppf-bao-ve-son-xe/poster.webp",
       categories: ["dan-phim-cach-nhiet", "ppf-wrap-doi-mau", "do-den"]
     }
   ],

@@ -362,10 +362,30 @@ function qeEnableInlineImageCrop(quill, purpose) {
     let activeBtn = null;
     function clearBtn() { if (activeBtn) { activeBtn.remove(); activeBtn = null; } }
 
-    quill.root.addEventListener("click", (e) => {
+    // Tìm ảnh nằm NGAY DƯỚI toạ độ bấm thay vì chỉ kiểm tra e.target === IMG - module resize ảnh
+    // (imageResize) chèn 1 lớp phủ trong suốt đè lên trên ảnh đang chọn để bắt thao tác kéo, khiến
+    // e.target thực tế là lớp phủ đó chứ không phải chính thẻ <img> (bug thật phát hiện lúc user
+    // báo không thấy nút "Cắt ảnh" hiện ra dù bấm đúng vào ảnh).
+    function findImageAtPoint(x, y) {
+        const imgs = quill.root.querySelectorAll("img");
+        for (const img of imgs) {
+            const r = img.getBoundingClientRect();
+            if (x >= r.left && x <= r.right && y >= r.top && y <= r.bottom) return img;
+        }
+        return null;
+    }
+
+    // Gắn ở CAPTURE phase trên document (không phải bubble phase trên quill.root) để chạy TRƯỚC
+    // khi lớp phủ của module resize có cơ hội chặn/dừng sự kiện (stopPropagation) - đảm bảo luôn
+    // phát hiện được đúng thời điểm bấm dù phần tử nhận click thực tế là gì.
+    document.addEventListener("click", (e) => {
+        // Bấm đúng vào nút "Cắt ảnh" đang hiện -> để nút tự xử lý click của chính nó, không dọn nút
+        // giữa chừng (nút không nằm đè lên ảnh nên findImageAtPoint() sẽ trả về null cho cú bấm
+        // này, nhưng vẫn cần chặn sớm để rõ ràng, không dựa vào thứ tự capture/bubble tình cờ đúng).
+        if (activeBtn && (e.target === activeBtn || activeBtn.contains(e.target))) return;
         clearBtn();
-        if (e.target.tagName !== "IMG") return;
-        const img = e.target;
+        const img = findImageAtPoint(e.clientX, e.clientY);
+        if (!img) return;
 
         const btn = document.createElement("button");
         btn.type = "button";
@@ -394,7 +414,7 @@ function qeEnableInlineImageCrop(quill, purpose) {
                 if (err) showToast(err.message, true);
             }
         });
-    });
+    }, true);
 
     document.addEventListener("scroll", clearBtn, true);
     window.addEventListener("resize", clearBtn);

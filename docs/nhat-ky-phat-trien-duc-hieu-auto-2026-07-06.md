@@ -379,12 +379,53 @@ cho tới khi cutover — xem đầy đủ quyết định kiến trúc + rủi 
   - Admin panel không có URL Render/onrender.com hardcode nào sót lại trong `admin.js`.
   - **Toàn bộ PASS.** Đã commit đủ 13.7/13.8 vào git local (chưa push).
 
-**Còn lại theo đúng plan, CHƯA làm — chờ lệnh:** 13.10 (gắn Custom Domain
-`api.duchieuauto.vn`/`admin.duchieuauto.vn` vào Worker mới — hành động cutover thật, giữ Render chạy
-song song 2-4 tuần làm phương án lùi) và 13.11 (ngừng Render sau thời gian theo dõi an toàn). Theo
-đúng yêu cầu của user: "làm và test tại local, khi hoàn tất hết user tự test mọi thứ rồi mới xin lệnh
-duyệt để đẩy lên" — Phase 13 dừng ở đây chờ user tự kiểm tra `*.workers.dev` trước khi cho phép
-`git push`/cutover domain thật.
+- [x] **Risk mitigation trước cutover:** phát hiện 2 rủi ro thật khi thảo luận với user (không phải
+  giả định) — (1) khoá brute-force qua KV có thể ngưng hoạt động nếu cạn quota 1.000 lượt ghi/ngày
+  (toàn tài khoản), (2) Workers Free không lưu log lâu dài như Render (chỉ xem real-time qua
+  `wrangler tail`). Xử lý (2) ngay: thêm `logSecurityEvent()` ghi 401/403 + sự kiện khoá brute-force
+  vào chính bảng `activity_log` (Turso) thay vì chỉ console.warn — user xem lại được qua trang "Lịch
+  Sử" bất cứ lúc nào. Cần **migration schema thật** (`admin_id` từ `NOT NULL` sang nullable) vì cột
+  này có ràng buộc FK NOT NULL không cho phép sự kiện không gắn admin nào — đã chạy migration an
+  toàn (tạo bảng mới, copy dữ liệu, đối chiếu đúng 206/206 dòng trước/sau, xoá bảng cũ, đổi tên),
+  không mất dữ liệu. Xử lý (1) bằng Cloudflare Rate Limiting Rule cho `/api/auth/login` (lớp phòng
+  thủ độc lập với KV, chặn ngay ở biên trước khi chạm Worker) — cấu hình qua dashboard vì token API
+  không có sẵn quyền Zone WAF/Firewall Services.
+- [x] **Phát hiện + sửa 2 bug thật lúc user tự test trang quản trị mới:**
+  1. Ảnh sản phẩm trong bảng danh sách không hiển thị trên `*.workers.dev` — **không phải bug**, do
+     Cloudflare "Hotlink Protection" chặn ảnh khi Referer không cùng zone `duchieuauto.vn` (domain
+     test tạm `workers.dev` bị coi là ngoài zone) — xác nhận bằng test trực tiếp (Referer
+     `admin.duchieuauto.vn` → tải được; Referer `workers.dev`/domain lạ → 403). Tự hết sau cutover.
+  2. Ảnh minh hoạ nhóm sản phẩm (trang Danh Mục), ảnh bìa bài viết — **bug thật có sẵn từ trước**,
+     không liên quan Phase 13: `brand_types.logo`/`categories.poster`/`categories.seo_image`/
+     `posts.cover_image` lưu đường dẫn tương đối cũ nhưng `danh-muc.html`/`bai-viet-form.html` gắn
+     thẳng làm `<img src>` mà không ghép domain frontend — vỡ ảnh trên CẢ Render lẫn Worker, chỉ
+     chưa ai để ý. Thêm hàm chung `resolveImageUrl()` vào `admin.js` (tái dùng logic đã đúng của
+     `productImageUrl()`), sửa 2 file, đồng bộ cả `duchieuauto-backend/admin/` và
+     `duchieuauto-worker/public/admin/`.
+- [x] **13.10 — CUTOVER HOÀN TẤT (2026-08-08).** User xác nhận rõ ràng qua AskUserQuestion muốn
+  cutover ngay (không đợi thêm), kèm chỉ đạo: giữ Render chạy tới **20/08/2026** để theo dõi ổn định,
+  trong thời gian đó phải xử lý dứt điểm các rủi ro đã nêu, tới ngày đó nếu ổn định thì tự động ngừng
+  Render **không cần hỏi lại** (đã lưu vào memory dự án vì cron/lịch của Claude chỉ tồn tại trong 1
+  phiên, tối đa 7 ngày — không đủ tới 20/08, cần phiên làm việc tương lai đọc lại memory này).
+  - Vướng mắc kỹ thuật: API token ban đầu (chỉ có quyền Workers Scripts/KV Edit) không đủ quyền gắn
+    Custom Domain vì Cloudflare cần xoá DNS record cũ (đang trỏ Render) trước khi tạo record mới trỏ
+    Worker — lỗi `100117`. User tự thêm quyền `Zone > DNS > Edit` vào token hiện có (không cần cấp
+    token mới), sau đó tự xoá 2 DNS record cũ (`admin.duchieuauto.vn`, `api.duchieuauto.vn` đều là
+    CNAME trỏ `claude-duchieuauto.onrender.com`) qua dashboard vì bản thân bước xoá DNS cũng cần thêm
+    quyền `Zone > Zone > Read` mà không muốn mất thêm 1 vòng chỉnh token nữa.
+  - Gắn Custom Domain thành công qua API (`PUT /accounts/{id}/workers/domains`) cho cả
+    `api.duchieuauto.vn` và `admin.duchieuauto.vn`, Cloudflare tự cấp SSL cert (~20-40 giây).
+  - **Đã kiểm tra toàn diện trên domain thật** (không chỉ tin đã gắn xong): `/api/health` +
+    `/api/products/catalog` trả đúng dữ liệu thật; đăng nhập thật qua domain thật thành công (JWT +
+    role đúng); ảnh sản phẩm tải được bình thường (xác nhận bug hotlink-protection đã tự hết như dự
+    đoán); CORS cho phép đúng origin `duchieuauto.vn`; `robots.txt` đúng `Disallow: /`; **SSR cho bot
+    (Phase 12) tự động trỏ đúng sang backend mới không cần sửa gì** — giả lập GPTBot truy cập trang
+    sản phẩm thật trên `duchieuauto.vn`, nhận đúng HTML SSR kèm schema.org từ backend Worker mới.
+  - Đã `git push` toàn bộ 11 commit Phase 13 lên GitHub (Render tự redeploy bản sửa lỗi ảnh vỡ, không
+    ảnh hưởng gì vì Render không còn nhận traffic thật nữa sau cutover).
+
+**Còn lại:** Rate Limiting Rule (`/api/auth/login`) đang chờ user tự cấu hình qua dashboard. 13.11
+(ngừng Render) chờ tới 20/08/2026 theo đúng chỉ đạo, xem chi tiết điều kiện trong memory dự án.
 
 ## Việc cần làm tiếp theo (TODO)
 

@@ -64,5 +64,16 @@ export function getDb(env) {
         ).run({ admin_id: admin.id, admin_username: admin.username, action, target: target || null });
     }
 
-    return { prepare, logActivity };
+    // Ghi sự kiện bảo mật (401/403, khoá brute-force) vào chính bảng activity_log - không tạo bảng
+    // mới, tận dụng hạ tầng sẵn có (Turso). Khác logActivity() ở chỗ KHÔNG có admin thật đứng sau
+    // hành động (request bị từ chối trước khi xác thực được ai), nên admin_id luôn NULL. Thêm để bù
+    // cho việc Workers Free không lưu console.log lâu dài (chỉ xem real-time qua `wrangler tail`) -
+    // xem thảo luận rủi ro ở docs/nhat-ky-phat-trien-duc-hieu-auto-2026-07-06.md mục Phase 13.
+    async function logSecurityEvent(action, detail) {
+        await prepare(
+            "INSERT INTO activity_log (admin_id, admin_username, action, target) VALUES (@admin_id, @admin_username, @action, @target)"
+        ).run({ admin_id: null, admin_username: "(hệ thống)", action, target: detail || null });
+    }
+
+    return { prepare, logActivity, logSecurityEvent };
 }

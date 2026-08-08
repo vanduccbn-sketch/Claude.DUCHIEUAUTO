@@ -23,6 +23,38 @@ import leadsRoutes from "./routes/leads.js";
 
 const app = new Hono();
 
+function clientIpFromHeader(c) {
+    return c.req.header("CF-Connecting-IP") || "unknown";
+}
+
+// Gắn sẵn `db` vào context cho mọi route - route handler dùng `c.get("db").prepare(...)`,
+// tương đương `db.prepare(...)` ở bản Express cũ (route file cũ làm `const db = require("../models/db")`).
+// Đăng ký SỚM (trước CSP/CORS) để middleware log 401/403 bên dưới luôn có db sẵn dùng, kể cả khi
+// CORS chặn request trước khi chạm tới route handler thật.
+app.use("*", async (c, next) => {
+    c.set("db", getDb(c.env));
+    await next();
+});
+
+// Phase 13.7 - port nguyên văn log 401/403 từ server.js gốc, giúp phát hiện sớm nếu có ai dò quét
+// /api. Đăng ký TRƯỚC CSP/CORS (bọc ngoài cùng) để vẫn bắt được cả trường hợp CORS tự trả 403 sớm
+// (middleware đó return thẳng, không gọi next() tiếp) - nếu đăng ký sau CORS sẽ bị bỏ lỡ hoàn toàn.
+// Bản 13.9 nâng cấp thêm: Workers Free không lưu console.log lâu dài (chỉ xem real-time qua
+// `wrangler tail`, khác Render) - nên ghi thêm vào bảng activity_log (Turso) để xem lại được sau,
+// không chỉ console.warn như bản đầu.
+app.use("*", async (c, next) => {
+    await next();
+    if (c.res.status === 401 || c.res.status === 403) {
+        const detail = `${clientIpFromHeader(c)} ${c.req.method} ${c.req.path}`;
+        console.warn(`[canh-bao-truy-cap] ${new Date().toISOString()} ${detail} -> ${c.res.status}`);
+        try {
+            await c.get("db").logSecurityEvent(`http_${c.res.status}`, detail);
+        } catch (err) {
+            console.error("[loi-ghi-log-bao-mat]", err.message);
+        }
+    }
+});
+
 // Phase 13.7 - port nguyên văn cấu hình CSP từ helmet() trong server.js gốc (xem comment gốc ở đó
 // về lý do 'unsafe-inline' và danh sách domain ảnh). hono/secure-headers giữ mặc định hợp lý cho
 // các header còn lại (X-Content-Type-Options, X-Frame-Options, Referrer-Policy, ...) tương đương
@@ -72,23 +104,6 @@ app.use("*", async (c, next) => {
         return c.body(null, 204);
     }
     await next();
-});
-
-// Gắn sẵn `db` vào context cho mọi route - route handler dùng `c.get("db").prepare(...)`,
-// tương đương `db.prepare(...)` ở bản Express cũ (route file cũ làm `const db = require("../models/db")`).
-app.use("*", async (c, next) => {
-    c.set("db", getDb(c.env));
-    await next();
-});
-
-// Phase 13.7 - port nguyên văn log 401/403 từ server.js gốc, giúp phát hiện sớm nếu có ai dò quét
-// /api. Workers Free không lưu log lâu dài (chỉ xem real-time qua `wrangler tail`), khác Render
-// trước đây nhưng chấp nhận được (đã ghi trong plan Phase 13).
-app.use("*", async (c, next) => {
-    await next();
-    if (c.res.status === 401 || c.res.status === 403) {
-        console.warn(`[canh-bao-truy-cap] ${new Date().toISOString()} ${c.req.method} ${c.req.path} -> ${c.res.status}`);
-    }
 });
 
 // Hono's c.json() không tự thêm "; charset=utf-8" vào Content-Type như Express res.json() -

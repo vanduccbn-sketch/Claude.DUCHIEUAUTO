@@ -77,6 +77,11 @@ app.post("/login", async (c) => {
         if (current.count >= MAX_ATTEMPTS) {
             current.lockedUntil = Date.now() + LOCK_MINUTES * 60000;
             current.count = 0;
+            try {
+                await c.get("db").logSecurityEvent("brute_force_lockout", `IP ${ip} bị khoá ${LOCK_MINUTES} phút (username thử: ${username})`);
+            } catch (err) {
+                console.error("[loi-ghi-log-bao-mat]", err.message);
+            }
         }
         await setLockRecord(c, ip, current);
         return c.json({ error: "Sai tên đăng nhập hoặc mật khẩu" }, 401);

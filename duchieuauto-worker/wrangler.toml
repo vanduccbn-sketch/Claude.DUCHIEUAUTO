@@ -1,0 +1,20 @@
+name = "duchieuauto-worker"
+main = "src/index.js"
+compatibility_date = "2025-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+# Biến không nhạy cảm (secret thật như JWT_SECRET/TURSO_AUTH_TOKEN đặt qua `wrangler secret put`,
+# không ghi trực tiếp ở đây - tránh lộ khi commit lên git, đúng nguyên tắc đã áp dụng cho .env cũ).
+[vars]
+FRONTEND_ORIGIN = "https://duchieuauto.vn"
+ADMIN_BASE_URL = "https://admin.duchieuauto.vn/admin"
+
+# KV namespace cho khoá đăng nhập sai (Phase 13.2) - "id" điền sau khi tạo namespace thật bằng
+# `wrangler kv namespace create BRUTE_FORCE_KV`.
+# [[kv_namespaces]]
+# binding = "BRUTE_FORCE_KV"
+# id = ""
+
+# Static assets cho trang quản trị (Phase 13.8).
+# [assets]
+# directory = "./public"

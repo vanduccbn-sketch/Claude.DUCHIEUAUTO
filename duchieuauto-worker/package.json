@@ -1,0 +1,22 @@
+{
+  "name": "duchieuauto-worker",
+  "version": "0.1.0",
+  "description": "Backend CMS Đức Hiếu Auto - Cloudflare Workers (Phase 13, thay thế duchieuauto-backend/ chạy trên Render). Xem docs/nhat-ky-phat-trien-duc-hieu-auto-2026-07-06.md mục Phase 13.",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev --show-interactive-dev-session=false",
+    "deploy": "wrangler deploy"
+  },
+  "dependencies": {
+    "@libsql/client": "^0.17.4",
+    "bcryptjs": "^2.4.3",
+    "hono": "^4.9.10",
+    "jsonwebtoken": "^9.0.2",
+    "sanitize-html": "^2.13.1"
+  },
+  "devDependencies": {
+    "wrangler": "^4.120.0"
+  },
+  "private": true
+}

@@ -1,0 +1,476 @@
+/**
+ * Port từ duchieuauto-backend/routes/products.js sang Hono (Phase 13). File lớn nhất trong toàn bộ
+ * migration - giữ ĐÚNG thứ tự đăng ký route như bản gốc (Hono, giống Express, khớp theo thứ tự
+ * đăng ký khi có pattern chồng nhau - /:id đứng trước /admin/list vẫn an toàn vì khác số đoạn path,
+ * nhưng giữ nguyên thứ tự để không phải suy luận lại).
+ *
+ * Khác biệt duy nhất so với bản gốc: bỏ hẳn `isMissingResponsiveVariant()` (dùng fs.existsSync đọc
+ * file frontend cục bộ - Workers không có filesystem, và lặp fetch() 250 lần/request sẽ vượt giới
+ * hạn subrequest). `missingResponsiveCount` trả cứng 0 - đây là cảnh báo admin dashboard, không phải
+ * chức năng cốt lõi, chấp nhận được theo đúng quyết định đã ghi trong kế hoạch Phase 13.
+ */
+import { Hono } from "hono";
+import { requireRole } from "../middleware/auth.js";
+import { sanitizeContent } from "../utils/sanitize-content.js";
+
+const canEditCatalog = requireRole("content", "super_admin");
+
+// Chỉ danh mục "do-ban-tai" có brand_type_id LÀ thương hiệu thật - mọi danh mục khác brand_id đã
+// là thương hiệu thật, brand_type_id chỉ là phân loại tính năng trong hãng.
+const CATEGORIES_WITH_PRODUCT_GROUPS = ["do-ban-tai"];
+
+function productImagePath(id, image) {
+    return image || `assets/images/products/${id}/anh-1.webp`;
+}
+
+async function resolveBrandName(db, categoryId, brandId, brandTypeId) {
+    if (brandTypeId && CATEGORIES_WITH_PRODUCT_GROUPS.includes(categoryId)) {
+        const t = await db.prepare("SELECT name FROM brand_types WHERE category_id = ? AND brand_id = ? AND id = ?").get(categoryId, brandId, brandTypeId);
+        if (t) return t.name;
+    }
+    const b = await db.prepare("SELECT name FROM brands WHERE category_id = ? AND id = ?").get(categoryId, brandId);
+    return b ? b.name : brandTypeId || brandId;
+}
+
+function slugifyId(str) {
+    return str
+        .toLowerCase()
+        .normalize("NFD").replace(/[̀-ͯ]/g, "")
+        .replace(/đ/g, "d")
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/(^-|-$)/g, "");
+}
+
+async function saveSpecs(db, productId, specs) {
+    await db.prepare("DELETE FROM product_specs WHERE product_id = ?").run(productId);
+    if (!Array.isArray(specs)) return;
+    for (let i = 0; i < specs.length; i++) {
+        const [key, value] = specs[i];
+        if (!key) continue;
+        await db.prepare(
+            "INSERT INTO product_specs (product_id, spec_key, spec_value, sort_order) VALUES (?, ?, ?, ?)"
+        ).run(productId, key, value || "", i);
+    }
+}
+
+const app = new Hono();
+
+/* =========================================================
+   PUBLIC - đọc dữ liệu cho frontend
+   ========================================================= */
+
+app.get("/catalog", async (c) => {
+    const db = c.get("db");
+    const categories = await db.prepare("SELECT * FROM categories ORDER BY sort_order").all();
+    const brands = await db.prepare("SELECT * FROM brands WHERE hidden = 0 ORDER BY sort_order").all();
+    const types = await db.prepare("SELECT * FROM brand_types ORDER BY sort_order").all();
+    const products = await db.prepare(
+        "SELECT id, category_id, brand_id, brand_type_id, name, price, image, sort_order FROM products WHERE hidden = 0 ORDER BY sort_order"
+    ).all();
+    const sections = await db.prepare("SELECT * FROM category_sections ORDER BY category_id, sort_order").all();
+    const faqs = await db.prepare("SELECT * FROM category_faqs ORDER BY category_id, sort_order").all();
+
+    function brandDisplayName(p) {
+        if (p.brand_type_id && CATEGORIES_WITH_PRODUCT_GROUPS.includes(p.category_id)) {
+            const t = types.find(t => t.category_id === p.category_id && t.brand_id === p.brand_id && t.id === p.brand_type_id);
+            if (t) return t.name;
+        }
+        const b = brands.find(b => b.category_id === p.category_id && b.id === p.brand_id);
+        return b ? b.name : p.brand_type_id || p.brand_id;
+    }
+
+    const result = categories.map(cat => {
+        const catBrands = brands.filter(b => b.category_id === cat.id).map(brand => {
+            const brandTypes = types.filter(t => t.category_id === cat.id && t.brand_id === brand.id);
+            const brandProducts = products.filter(p => p.category_id === cat.id && p.brand_id === brand.id);
+
+            const brandOut = { id: brand.id, name: brand.name, logo: brand.logo };
+            if (brandTypes.length) {
+                brandOut.types = brandTypes.map(t => ({
+                    id: t.id,
+                    name: t.name,
+                    logo: t.logo,
+                    products: brandProducts
+                        .filter(p => p.brand_type_id === t.id)
+                        .map(p => ({ id: p.id, name: p.name, price: p.price, image: productImagePath(p.id, p.image), brand: brandDisplayName(p) }))
+                }));
+            } else {
+                brandOut.products = brandProducts
+                    .filter(p => !p.brand_type_id)
+                    .map(p => ({ id: p.id, name: p.name, price: p.price, image: productImagePath(p.id, p.image), brand: brandDisplayName(p) }));
+            }
+            return brandOut;
+        });
+
+        return {
+            id: cat.id,
+            name: cat.name,
+            poster: cat.poster,
+            seo: {
+                title: cat.seo_title,
+                metaDescription: cat.seo_meta_description,
+                image: cat.seo_image,
+                imageCaption: cat.seo_image_caption,
+                intro: cat.seo_intro,
+                sections: sections.filter(s => s.category_id === cat.id).map(s => ({ heading: s.heading, body: s.body }))
+            },
+            faqs: faqs.filter(f => f.category_id === cat.id).map(f => ({ question: f.question, answer: f.answer })),
+            brands: catBrands
+        };
+    });
+
+    return c.json(result);
+});
+
+app.get("/:id", async (c) => {
+    const db = c.get("db");
+    const id = c.req.param("id");
+    const p = await db.prepare(`
+        SELECT products.*, categories.name as category_name
+        FROM products JOIN categories ON categories.id = products.category_id
+        WHERE products.id = ? AND products.hidden = 0
+    `).get(id);
+    if (!p) return c.json({ error: "Không tìm thấy sản phẩm" }, 404);
+
+    const specs = await db.prepare("SELECT spec_key, spec_value FROM product_specs WHERE product_id = ? ORDER BY sort_order").all(id);
+    const brandName = await resolveBrandName(db, p.category_id, p.brand_id, p.brand_type_id);
+
+    return c.json({
+        ...p,
+        image: productImagePath(p.id, p.image),
+        brand: brandName,
+        specs: specs.map(s => [s.spec_key, s.spec_value])
+    });
+});
+
+/* =========================================================
+   ADMIN - quản lý (chỉ content/super_admin)
+   ========================================================= */
+
+app.get("/admin/list", ...canEditCatalog, async (c) => {
+    const category = c.req.query("category");
+    const brand = c.req.query("brand");
+    const q = c.req.query("q");
+
+    let sql = `
+        SELECT p.*, cat.name as category_name, b.name as group_name,
+               CASE WHEN p.category_id = 'do-ban-tai' THEN COALESCE(bt.name, b.name) ELSE b.name END as brand_name
+        FROM products p
+        JOIN categories cat ON cat.id = p.category_id
+        JOIN brands b ON b.category_id = p.category_id AND b.id = p.brand_id
+        LEFT JOIN brand_types bt ON bt.category_id = p.category_id AND bt.brand_id = p.brand_id AND bt.id = p.brand_type_id
+        WHERE 1=1
+    `;
+    const args = [];
+    if (category) { sql += " AND p.category_id = ?"; args.push(category); }
+    if (brand) { sql += " AND p.brand_id = ?"; args.push(brand); }
+    if (q) { sql += " AND p.name LIKE ?"; args.push(`%${q}%`); }
+    sql += " ORDER BY p.updated_at DESC";
+
+    const db = c.get("db");
+    const products = await db.prepare(sql).all(...args);
+    return c.json(products);
+});
+
+app.get("/admin/categories/overview", ...canEditCatalog, async (c) => {
+    const db = c.get("db");
+    const categories = await db.prepare("SELECT id, name, poster FROM categories ORDER BY sort_order").all();
+    const productCounts = await db.prepare(`
+        SELECT category_id, COUNT(*) as total, SUM(CASE WHEN hidden = 1 THEN 1 ELSE 0 END) as hidden_count,
+               SUM(CASE WHEN description IS NULL OR TRIM(description) = '' THEN 1 ELSE 0 END) as missing_desc_count
+        FROM products GROUP BY category_id
+    `).all();
+    const brandCounts = await db.prepare(`
+        SELECT category_id, COUNT(*) as total FROM brands WHERE hidden = 0 GROUP BY category_id
+    `).all();
+    const faqCounts = await db.prepare(`
+        SELECT category_id, COUNT(*) as total FROM category_faqs GROUP BY category_id
+    `).all();
+
+    const result = categories.map(cat => {
+        const pc = productCounts.find(x => x.category_id === cat.id);
+        const bc = brandCounts.find(x => x.category_id === cat.id);
+        const fc = faqCounts.find(x => x.category_id === cat.id);
+        const total = pc ? pc.total : 0;
+        const hiddenCount = pc ? pc.hidden_count : 0;
+        return {
+            id: cat.id,
+            name: cat.name,
+            poster: cat.poster,
+            totalProducts: total,
+            visibleProducts: total - hiddenCount,
+            hiddenProducts: hiddenCount,
+            missingDescCount: pc ? pc.missing_desc_count : 0,
+            missingResponsiveCount: 0, // xem giải thích ở đầu file - không kiểm tra được filesystem trên Workers
+            brandCount: bc ? bc.total : 0,
+            faqCount: fc ? fc.total : 0
+        };
+    });
+    return c.json(result);
+});
+
+app.post("/admin/categories", ...canEditCatalog, async (c) => {
+    const { id, name } = await c.req.json();
+    if (!id || !name) return c.json({ error: "Thiếu id hoặc name" }, 400);
+    if (!/^[a-z0-9-]+$/.test(id)) return c.json({ error: "id chỉ được chứa chữ thường, số và dấu gạch ngang" }, 400);
+
+    const db = c.get("db");
+    const exists = await db.prepare("SELECT id FROM categories WHERE id = ?").get(id);
+    if (exists) return c.json({ error: "id danh mục đã tồn tại" }, 400);
+
+    const maxSort = (await db.prepare("SELECT COALESCE(MAX(sort_order), -1) as m FROM categories").get()).m;
+    await db.prepare("INSERT INTO categories (id, name, sort_order) VALUES (?, ?, ?)").run(id, name, maxSort + 1);
+
+    await db.logActivity(c.get("admin"), "create_category", `category:${id}`);
+    return c.json({ id }, 201);
+});
+
+app.get("/admin/categories", ...canEditCatalog, async (c) => {
+    const db = c.get("db");
+    const categories = await db.prepare("SELECT id, name FROM categories ORDER BY sort_order").all();
+    const brands = await db.prepare("SELECT category_id, id, name, hidden FROM brands ORDER BY sort_order").all();
+    const types = await db.prepare("SELECT category_id, brand_id, id, name, logo FROM brand_types ORDER BY sort_order").all();
+
+    const result = categories.map(cat => ({
+        id: cat.id,
+        name: cat.name,
+        brands: brands.filter(b => b.category_id === cat.id).map(b => ({
+            id: b.id,
+            name: b.name,
+            hidden: !!b.hidden,
+            types: types.filter(t => t.category_id === cat.id && t.brand_id === b.id).map(t => ({ id: t.id, name: t.name, logo: t.logo }))
+        }))
+    }));
+    return c.json(result);
+});
+
+app.put("/admin/brand-types/:category_id/:brand_id/:id", ...canEditCatalog, async (c) => {
+    const category_id = c.req.param("category_id");
+    const brand_id = c.req.param("brand_id");
+    const id = c.req.param("id");
+    const db = c.get("db");
+    const existing = await db.prepare(
+        "SELECT * FROM brand_types WHERE category_id = ? AND brand_id = ? AND id = ?"
+    ).get(category_id, brand_id, id);
+    if (!existing) return c.json({ error: "Không tìm thấy nhóm sản phẩm này" }, 404);
+
+    const { name, logo } = await c.req.json();
+    await db.prepare(
+        "UPDATE brand_types SET name = @name, logo = @logo WHERE category_id = @category_id AND brand_id = @brand_id AND id = @id"
+    ).run({
+        name: name !== undefined && name.trim() ? name.trim() : existing.name,
+        logo: logo !== undefined ? (logo || null) : existing.logo,
+        category_id, brand_id, id
+    });
+
+    await db.logActivity(c.get("admin"), "update_brand_type", `${category_id}/${brand_id}/${id}`);
+    return c.json({ ok: true });
+});
+
+app.get("/admin/categories/:id", ...canEditCatalog, async (c) => {
+    const db = c.get("db");
+    const cat = await db.prepare("SELECT * FROM categories WHERE id = ?").get(c.req.param("id"));
+    if (!cat) return c.json({ error: "Không tìm thấy danh mục" }, 404);
+    return c.json(cat);
+});
+
+app.get("/admin/id/:id", ...canEditCatalog, async (c) => {
+    const db = c.get("db");
+    const id = c.req.param("id");
+    const p = await db.prepare("SELECT * FROM products WHERE id = ?").get(id);
+    if (!p) return c.json({ error: "Không tìm thấy sản phẩm" }, 404);
+    const specs = await db.prepare("SELECT spec_key, spec_value FROM product_specs WHERE product_id = ? ORDER BY sort_order").all(id);
+    return c.json({ ...p, specs: specs.map(s => [s.spec_key, s.spec_value]) });
+});
+
+app.post("/", ...canEditCatalog, async (c) => {
+    const { category_id, brand_id, brand_type_id, name, price, description, detail_content, image, specs } = await c.req.json();
+    if (!category_id || !brand_id || !name) {
+        return c.json({ error: "Thiếu category_id, brand_id hoặc name" }, 400);
+    }
+
+    const db = c.get("db");
+    const brand = await db.prepare("SELECT id FROM brands WHERE category_id = ? AND id = ?").get(category_id, brand_id);
+    if (!brand) return c.json({ error: "Danh mục/thương hiệu không hợp lệ" }, 400);
+
+    let id = slugifyId(name);
+    const exists = await db.prepare("SELECT id FROM products WHERE id = ?").get(id);
+    if (exists) id = `${id}-${Date.now()}`;
+
+    await db.prepare(`
+        INSERT INTO products (id, category_id, brand_id, brand_type_id, name, price, description, detail_content, image, hidden, sort_order)
+        VALUES (@id, @category_id, @brand_id, @brand_type_id, @name, @price, @description, @detail_content, @image, 0, 0)
+    `).run({
+        id, category_id, brand_id,
+        brand_type_id: brand_type_id || null,
+        name,
+        price: price || null,
+        description: description || null,
+        detail_content: detail_content ? sanitizeContent(detail_content) : null,
+        image: image || null
+    });
+
+    await saveSpecs(db, id, specs);
+    await db.logActivity(c.get("admin"), "create_product", `product:${id}`);
+    return c.json({ id }, 201);
+});
+
+app.put("/:id", ...canEditCatalog, async (c) => {
+    const db = c.get("db");
+    const id = c.req.param("id");
+    const existing = await db.prepare("SELECT * FROM products WHERE id = ?").get(id);
+    if (!existing) return c.json({ error: "Không tìm thấy sản phẩm" }, 404);
+
+    const body = await c.req.json();
+    const merged = {
+        category_id: body.category_id ?? existing.category_id,
+        brand_id: body.brand_id ?? existing.brand_id,
+        brand_type_id: body.brand_type_id !== undefined ? body.brand_type_id : existing.brand_type_id,
+        name: body.name ?? existing.name,
+        price: body.price !== undefined ? body.price : existing.price,
+        description: body.description !== undefined ? body.description : existing.description,
+        detail_content: body.detail_content !== undefined ? sanitizeContent(body.detail_content || "") : existing.detail_content,
+        image: body.image !== undefined ? body.image : existing.image,
+        hidden: body.hidden === undefined ? existing.hidden : (body.hidden ? 1 : 0),
+        updated_at: new Date().toISOString(),
+        id: existing.id
+    };
+
+    await db.prepare(`
+        UPDATE products SET category_id=@category_id, brand_id=@brand_id, brand_type_id=@brand_type_id,
+        name=@name, price=@price, description=@description, detail_content=@detail_content, image=@image, hidden=@hidden,
+        updated_at=@updated_at WHERE id=@id
+    `).run(merged);
+
+    if (body.specs !== undefined) await saveSpecs(db, existing.id, body.specs);
+    await db.logActivity(c.get("admin"), "update_product", `product:${existing.id}`);
+    return c.json({ ok: true });
+});
+
+app.delete("/:id", ...canEditCatalog, async (c) => {
+    const db = c.get("db");
+    const id = c.req.param("id");
+    const existing = await db.prepare("SELECT id FROM products WHERE id = ?").get(id);
+    if (!existing) return c.json({ error: "Không tìm thấy sản phẩm" }, 404);
+
+    await db.prepare("DELETE FROM product_specs WHERE product_id = ?").run(existing.id);
+    await db.prepare("DELETE FROM products WHERE id = ?").run(existing.id);
+    await db.logActivity(c.get("admin"), "delete_product", `product:${existing.id}`);
+    return c.json({ ok: true });
+});
+
+app.post("/admin/brands", ...canEditCatalog, async (c) => {
+    const { category_id, name } = await c.req.json();
+    if (!category_id || !name) return c.json({ error: "Thiếu category_id hoặc name" }, 400);
+
+    const db = c.get("db");
+    const id = slugifyId(name);
+    const exists = await db.prepare("SELECT id FROM brands WHERE category_id = ? AND id = ?").get(category_id, id);
+    if (exists) return c.json({ error: "Thương hiệu này đã tồn tại trong danh mục" }, 400);
+
+    await db.prepare(`
+        INSERT INTO brands (category_id, id, name, logo, hidden, sort_order)
+        VALUES (?, ?, ?, NULL, 0, (SELECT COALESCE(MAX(sort_order), -1) + 1 FROM brands WHERE category_id = ?))
+    `).run(category_id, id, name, category_id);
+
+    await db.logActivity(c.get("admin"), "create_brand", `brand:${category_id}/${id}`);
+    return c.json({ id }, 201);
+});
+
+app.post("/admin/brand-types", ...canEditCatalog, async (c) => {
+    const { category_id, brand_id, name } = await c.req.json();
+    if (!category_id || !brand_id || !name) return c.json({ error: "Thiếu category_id, brand_id hoặc name" }, 400);
+
+    const db = c.get("db");
+    const id = slugifyId(name);
+    const exists = await db.prepare("SELECT id FROM brand_types WHERE category_id = ? AND brand_id = ? AND id = ?").get(category_id, brand_id, id);
+    if (exists) return c.json({ error: "Loại này đã tồn tại trong thương hiệu" }, 400);
+
+    await db.prepare(`
+        INSERT INTO brand_types (category_id, brand_id, id, name, logo, sort_order)
+        VALUES (?, ?, ?, ?, NULL, (SELECT COALESCE(MAX(sort_order), -1) + 1 FROM brand_types WHERE category_id = ? AND brand_id = ?))
+    `).run(category_id, brand_id, id, name, category_id, brand_id);
+
+    await db.logActivity(c.get("admin"), "create_brand_type", `brand_type:${category_id}/${brand_id}/${id}`);
+    return c.json({ id }, 201);
+});
+
+app.get("/admin/categories/:id/faqs", ...canEditCatalog, async (c) => {
+    const db = c.get("db");
+    const faqs = await db.prepare("SELECT * FROM category_faqs WHERE category_id = ? ORDER BY sort_order").all(c.req.param("id"));
+    return c.json(faqs);
+});
+
+app.post("/admin/categories/:id/faqs", ...canEditCatalog, async (c) => {
+    const { question, answer } = await c.req.json();
+    if (!question || !answer) return c.json({ error: "Thiếu câu hỏi hoặc câu trả lời" }, 400);
+
+    const db = c.get("db");
+    const id = c.req.param("id");
+    const category = await db.prepare("SELECT id FROM categories WHERE id = ?").get(id);
+    if (!category) return c.json({ error: "Không tìm thấy danh mục" }, 404);
+
+    const info = await db.prepare(`
+        INSERT INTO category_faqs (category_id, question, answer, sort_order)
+        VALUES (?, ?, ?, (SELECT COALESCE(MAX(sort_order), -1) + 1 FROM category_faqs WHERE category_id = ?))
+    `).run(id, question, answer, id);
+
+    await db.logActivity(c.get("admin"), "create_category_faq", `category:${id}`);
+    return c.json({ id: info.lastInsertRowid }, 201);
+});
+
+app.put("/admin/faqs/:id", ...canEditCatalog, async (c) => {
+    const { question, answer } = await c.req.json();
+    const db = c.get("db");
+    const id = c.req.param("id");
+    const existing = await db.prepare("SELECT * FROM category_faqs WHERE id = ?").get(id);
+    if (!existing) return c.json({ error: "Không tìm thấy câu hỏi" }, 404);
+
+    await db.prepare("UPDATE category_faqs SET question = ?, answer = ? WHERE id = ?")
+        .run(question ?? existing.question, answer ?? existing.answer, id);
+
+    await db.logActivity(c.get("admin"), "update_category_faq", `faq:${id}`);
+    return c.json({ ok: true });
+});
+
+app.delete("/admin/faqs/:id", ...canEditCatalog, async (c) => {
+    const db = c.get("db");
+    const id = c.req.param("id");
+    const info = await db.prepare("DELETE FROM category_faqs WHERE id = ?").run(id);
+    if (info.changes === 0) return c.json({ error: "Không tìm thấy câu hỏi" }, 404);
+
+    await db.logActivity(c.get("admin"), "delete_category_faq", `faq:${id}`);
+    return c.json({ ok: true });
+});
+
+app.put("/admin/categories/:id", ...canEditCatalog, async (c) => {
+    const db = c.get("db");
+    const id = c.req.param("id");
+    const existing = await db.prepare("SELECT * FROM categories WHERE id = ?").get(id);
+    if (!existing) return c.json({ error: "Không tìm thấy danh mục" }, 404);
+
+    const body = await c.req.json();
+    const merged = {
+        name: body.name ?? existing.name,
+        poster: body.poster !== undefined ? body.poster : existing.poster,
+        seo_title: body.seo_title !== undefined ? body.seo_title : existing.seo_title,
+        seo_meta_description: body.seo_meta_description !== undefined ? body.seo_meta_description : existing.seo_meta_description,
+        seo_image: body.seo_image !== undefined ? body.seo_image : existing.seo_image,
+        seo_image_caption: body.seo_image_caption !== undefined ? body.seo_image_caption : existing.seo_image_caption,
+        seo_intro: body.seo_intro !== undefined ? body.seo_intro : existing.seo_intro,
+        updated_at: new Date().toISOString(),
+        id: existing.id
+    };
+    await db.prepare(`
+        UPDATE categories SET name=@name, poster=@poster, seo_title=@seo_title,
+        seo_meta_description=@seo_meta_description, seo_image=@seo_image, seo_image_caption=@seo_image_caption,
+        seo_intro=@seo_intro, updated_at=@updated_at
+        WHERE id=@id
+    `).run(merged);
+
+    await db.logActivity(c.get("admin"), "update_category", `category:${existing.id}`);
+    return c.json({ ok: true });
+});
+
+export { productImagePath, resolveBrandName, CATEGORIES_WITH_PRODUCT_GROUPS };
+export default app;

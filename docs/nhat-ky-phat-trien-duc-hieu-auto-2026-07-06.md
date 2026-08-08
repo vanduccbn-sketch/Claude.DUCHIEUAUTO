@@ -323,10 +323,73 @@ SSR), có thể bổ sung sau nếu cần. Cache SSR ở Cloudflare Worker đặ
 có cơ chế tự xoá cache khi admin sửa sản phẩm/danh mục, chấp nhận độ trễ tối đa 1 giờ (không khẩn,
 tương tự độ trễ vốn có của "ngủ" Render free tier).
 
+## Việc đã làm (2026-08-08) — Phase 13: Viết lại backend sang Cloudflare Workers
+
+**Bối cảnh:** Render free tier gây sự cố thật (server không phản hồi hoàn toàn, không phải "ngủ"
+bình thường) khiến toàn bộ site sản phẩm/trang quản trị/SSR bot hỏng cùng lúc lúc khách đang truy
+cập. Quyết định khắc phục triệt để: viết lại toàn bộ backend từ Node.js/Express (Render) sang
+Cloudflare Workers (Hono framework) — nền tảng edge không "ngủ"/không cold-start-fail. Chốt trước 2
+nguyên tắc: **ưu tiên giữ miễn phí bằng mọi giá** (không tự nâng gói trả phí nếu vướng giới hạn CPU)
+và **deploy qua API token Cloudflare do user tạo** (không dán code thủ công vào dashboard). Toàn bộ
+code mới nằm ở thư mục riêng `duchieuauto-worker/`, `duchieuauto-backend/`(Render) không bị đụng tới
+cho tới khi cutover — xem đầy đủ quyết định kiến trúc + rủi ro trong plan Phase 13.
+
+- [x] **13.0 — Spike test xác nhận rủi ro kỹ thuật trước khi viết thật:** `nodejs_compat` chạy đúng
+  `jsonwebtoken`/`crypto`/`sanitize-html` (PASS). Phát hiện quan trọng: **`bcrypt.hashSync(...,12)`
+  (cost cũ) luôn vượt giới hạn CPU 10ms/request của Workers Free** (test lặp 8 lần/mức cost: cost
+  8-10 ổn định 0/8 lỗi, cost 11 không ổn định 2/8, cost 12 luôn lỗi 8/8) — quyết định hạ xuống
+  **cost 10**, ghi rõ lý do + số liệu trong code để không ai "nâng cấp nhầm" sau này mà không hiểu vì
+  sao. Bundle size 4 thư viện cộng lại chỉ 132.91KB nén, không đáng lo (giới hạn 3MB).
+- [x] **13.1-13.6 — Port toàn bộ 14 route file + hạ tầng cốt lõi** từ Express sang Hono
+  (`duchieuauto-worker/src/`): `db.js` (Turso qua `@libsql/client/web`, lazy-cache theo từng request
+  vì Workers không có `process.env` module-scope đáng tin cậy), `middleware/auth.js`
+  (`requireRole()` dùng `c.set/c.get` thay `req.admin`), toàn bộ route auth/admins/products (file
+  lớn nhất, giữ đúng thứ tự đăng ký route)/posts/homepage/homepage-content/contacts/reviews/settings/
+  banners/activity/render (SSR Phase 12)/leads (viết lại xác minh HMAC Facebook dùng `c.req.text()`
+  thay vì middleware `verify` riêng của Express). Viết lại nhiều nhất: `routes/uploads.js` (`multer` +
+  Cloudinary SDK → `c.req.formData()` chuẩn Web + gọi thẳng REST Cloudinary tự ký SHA-1). Khoá đăng
+  nhập sai chuyển từ `Map` trong bộ nhớ sang Cloudflare KV (`BRUTE_FORCE_KV`, tự dọn qua
+  `expirationTtl`, bọc try/catch không để lỗi KV làm sập route đăng nhập).
+- [x] **13.7 — Tầng bảo mật:** CSP qua `hono/secure-headers` (port nguyên văn directive từ
+  `helmet()` gốc), CORS tự viết tay (không dùng `hono/cors` thẳng vì cần giữ đúng 4 điều kiện allow
+  gốc — origin đúng `FRONTEND_ORIGIN`, localhost/127.0.0.1, same-host cho `/admin` cùng domain, tự xử
+  lý preflight OPTIONS), `GET /robots.txt` trả `Disallow: /`, `GET /` redirect `/admin/login.html`,
+  log cảnh báo 401/403, error handler nhận diện riêng lỗi CORS. Rate-limiting cố ý KHÔNG viết trong
+  code — dời hẳn sang Cloudflare Rate Limiting Rules cấu hình qua dashboard sau khi cutover (13.10).
+- [x] **13.8 — Static assets trang quản trị:** copy nguyên vẹn `duchieuauto-backend/admin/` →
+  `duchieuauto-worker/public/admin/` (24 file, không sửa gì — toàn bộ `fetch()` trong `admin.js`/
+  các trang admin đều dùng đường dẫn tương đối `/api/...`, tự động chạy đúng cùng-domain), bật
+  `[assets] directory="./public"` trong `wrangler.toml` thay cho `express.static("/admin")` gốc.
+  Bỏ hẳn `/uploads` static (Cloudinary đã thay thế từ lâu, không còn dùng).
+- [x] **13.9 — Đối chiếu song song với Render đang chạy thật** (Render chưa bị đụng, DNS thật vẫn
+  trỏ Render) trên `https://duchieuauto-worker.vanduc-cbn.workers.dev`:
+  - Toàn bộ API công khai (`/api/products/catalog`, `/api/posts`, `/api/homepage`,
+    `/api/homepage-content`, `/api/settings`, `/api/banners`) trả JSON **byte-identical** giữa Render
+    và Worker với cùng dữ liệu Turso thật.
+  - Cả 3 route SSR (`/render/product`, `/render/category`, `/render/post`) trả HTML **byte-identical**
+    với id/slug sản phẩm-danh mục-bài viết thật.
+  - Luồng đăng nhập thật qua trình duyệt giả lập (Origin cùng domain) → nhận đúng JWT, `/api/auth/me`
+    đúng thông tin, ghi/đọc `activity_log` đúng qua Turso.
+  - Round-trip ghi Turso qua CMS: PUT `/api/settings` → đọc lại đúng giá trị mới → khôi phục lại giá
+    trị cũ (không để lại dữ liệu test trên production).
+  - Khoá đăng nhập sai qua KV: 5 lần sai liên tiếp → lần 6 nhận đúng 429 "thử lại sau 15 phút"; xác
+    nhận khoá chặn luôn cả lần đăng nhập ĐÚNG mật khẩu tiếp theo từ cùng IP (đúng thiết kế bảo mật
+    theo IP, không phải theo username) — khớp 100% hành vi bản Express gốc.
+  - CSP/CORS/robots.txt/redirect đều đúng như thiết kế 13.7 khi test qua static assets thật.
+  - Admin panel không có URL Render/onrender.com hardcode nào sót lại trong `admin.js`.
+  - **Toàn bộ PASS.** Đã commit đủ 13.7/13.8 vào git local (chưa push).
+
+**Còn lại theo đúng plan, CHƯA làm — chờ lệnh:** 13.10 (gắn Custom Domain
+`api.duchieuauto.vn`/`admin.duchieuauto.vn` vào Worker mới — hành động cutover thật, giữ Render chạy
+song song 2-4 tuần làm phương án lùi) và 13.11 (ngừng Render sau thời gian theo dõi an toàn). Theo
+đúng yêu cầu của user: "làm và test tại local, khi hoàn tất hết user tự test mọi thứ rồi mới xin lệnh
+duyệt để đẩy lên" — Phase 13 dừng ở đây chờ user tự kiểm tra `*.workers.dev` trước khi cho phép
+`git push`/cutover domain thật.
+
 ## Việc cần làm tiếp theo (TODO)
 
-- [ ] Deploy backend thật lên Render.com (tài khoản đã có, code đã test kỹ ở local) theo hướng dẫn trong `duchieuauto-backend/README.md`
+- [ ] **User tự test Phase 13 trên `https://duchieuauto-worker.vanduc-cbn.workers.dev/admin/login.html`** (tài khoản `admin`/`Vanduc@123` — lưu ý IP test của Claude vừa bị khoá 15 phút do test brute-force ở 13.9, không ảnh hưởng IP thật của user) — chỉ sau khi user xác nhận ổn mới `git push` + làm Phase 13.10 (cutover domain thật)
 - [ ] Phase 7 (quản lý sản phẩm qua CMS) — làm theo từng bước nhỏ đã liệt kê trong file kế hoạch, không dồn 1 buổi
 - [ ] 3 trang Ads admin còn thiếu (Banner, Cấu hình chung, Activity log) — dời làm cùng Phase 7
-- [ ] Phase 2 còn thiếu: minify CSS/JS, đánh giá Cloudflare, reCAPTCHA cho form (cần quyết định/tài khoản từ user)
+- [ ] Phase 2 còn thiếu: minify CSS/JS, reCAPTCHA cho form (cần quyết định/tài khoản từ user)
 - [ ] Tìm logo chính hãng Titan (Film Cách Nhiệt) khi có nguồn đáng tin cậy mới (titanwindowfilm.vn đã ngừng hoạt động, Wayback Machine hiện bị rate-limit)

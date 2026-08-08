@@ -21,7 +21,7 @@ const CONTENT_SECTIONS = {
         "about_image_main", "about_image_detail1", "about_image_detail2"
     ],
     // Dịch Vụ: chỉ tiêu đề mục - thẻ dịch vụ tự render theo danh mục
-    service: ["service_section_title"],
+    service: ["service_section_title", "service_poster_noi_that", "service_poster_ngoai_that"],
     quick_actions: [
         "quick_actions_section_title",
         "quick_actions_cta1_label", "quick_actions_cta1_title", "quick_actions_cta1_desc",

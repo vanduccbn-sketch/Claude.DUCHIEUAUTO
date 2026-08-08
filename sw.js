@@ -8,7 +8,7 @@
 // bên dưới tự xoá sạch cache tên cũ khi thấy CACHE_NAME đổi, ép trình duyệt lấy bản mới hoàn toàn
 // thay vì có thể "kẹt" ở bản cache cũ dù đã sửa xong trên server (F5 thường/Ctrl+Shift+R không xoá
 // được cache của Service Worker - đây là cơ chế riêng, khác cache HTTP thường của trình duyệt).
-const CACHE_NAME = "dha-static-v13";
+const CACHE_NAME = "dha-static-v14";
 
 self.addEventListener("install", (event) => {
     self.skipWaiting();

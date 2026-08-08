@@ -227,9 +227,24 @@ async function renderServiceGrid(containerSelector) {
         const categories = await loadApiCatalog();
         const doBanTai = findCategoryIn(categories, "do-ban-tai");
         const chamSocXe = findCategoryIn(categories, "cham-soc-xe");
+
+        // CATALOG.serviceGroups là 2 nhóm gộp TĨNH (Nội Thất/Ngoại Thất Ô Tô, không phải danh mục
+        // thật trong Turso) nên không có sẵn đường sửa ảnh qua trang "Danh Mục" như các thẻ khác -
+        // admin đổi ảnh 2 nhóm này qua trang "Trang Chủ" (service_poster_noi_that/
+        // service_poster_ngoai_that trong homepage_content), ghi đè lên poster mặc định khi đã chọn.
+        let servicePosterOverrides = {};
+        try {
+            const contentRes = await fetch(`${API_BASE_URL}/api/homepage-content`);
+            if (contentRes.ok) {
+                const content = await contentRes.json();
+                if (content.service_poster_noi_that) servicePosterOverrides["noi-that-o-to"] = content.service_poster_noi_that;
+                if (content.service_poster_ngoai_that) servicePosterOverrides["ngoai-that-o-to"] = content.service_poster_ngoai_that;
+            }
+        } catch (err) { /* Giữ nguyên poster mặc định trong CATALOG.serviceGroups nếu gọi API lỗi */ }
+
         const items = [
             ...(chamSocXe ? [{ ...chamSocXe, href: `category-chi-tiet?id=${chamSocXe.id}` }] : []),
-            ...CATALOG.serviceGroups.map(g => ({ ...g, href: `category-chi-tiet?group=${g.id}` })),
+            ...CATALOG.serviceGroups.map(g => ({ ...g, poster: servicePosterOverrides[g.id] || g.poster, href: `category-chi-tiet?group=${g.id}` })),
             ...(doBanTai ? [{ ...doBanTai, href: `category-chi-tiet?id=${doBanTai.id}` }] : [])
         ];
 

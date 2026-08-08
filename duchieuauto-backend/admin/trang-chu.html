@@ -153,10 +153,25 @@
 
         <div class="settings-section" data-section="service">
             <h2>🛠️ Dịch Vụ</h2>
-            <p class="form-hint" style="margin-bottom:14px;">Thẻ dịch vụ tự lấy theo danh mục, chỉ tiêu đề mục là sửa được ở đây.</p>
+            <p class="form-hint" style="margin-bottom:14px;">Thẻ "Chăm Sóc Xe"/"Đồ Bán Tải" tự lấy ảnh theo danh mục thật (sửa ở trang Danh Mục). 2 thẻ "Nội Thất/Ngoại Thất Ô Tô" là nhóm gộp tĩnh, ảnh sửa trực tiếp ở đây.</p>
             <div class="form-group">
                 <label for="serviceSectionTitleInput">Tiêu đề mục</label>
                 <input type="text" id="serviceSectionTitleInput" placeholder="DỊCH VỤ CHUYÊN NGHIỆP">
+            </div>
+            <label style="display:block;font-size:13px;font-weight:600;margin:18px 0 8px;">Ảnh 2 nhóm dịch vụ tĩnh</label>
+            <div class="form-grid" style="grid-template-columns:repeat(2,1fr);">
+                <div class="form-group">
+                    <label>Ảnh Nội Thất Ô Tô</label>
+                    <input type="file" id="servicePosterNoiThatFile" accept="image/*">
+                    <div class="cover-preview" id="servicePosterNoiThatPreview" style="margin-top:10px;">Chưa chọn ảnh</div>
+                    <input type="hidden" id="servicePosterNoiThatInput">
+                </div>
+                <div class="form-group">
+                    <label>Ảnh Ngoại Thất Ô Tô</label>
+                    <input type="file" id="servicePosterNgoaiThatFile" accept="image/*">
+                    <div class="cover-preview" id="servicePosterNgoaiThatPreview" style="margin-top:10px;">Chưa chọn ảnh</div>
+                    <input type="hidden" id="servicePosterNgoaiThatInput">
+                </div>
             </div>
             <div class="editor-actions">
                 <button type="button" class="btn btn-primary" id="saveServiceBtn">Lưu Dịch Vụ</button>
@@ -534,6 +549,8 @@
             about_image_detail1: "aboutImageDetail1Input",
             about_image_detail2: "aboutImageDetail2Input",
             service_section_title: "serviceSectionTitleInput",
+            service_poster_noi_that: "servicePosterNoiThatInput",
+            service_poster_ngoai_that: "servicePosterNgoaiThatInput",
             quick_actions_section_title: "quickActionsTitleInput",
             quick_actions_cta1_label: "qaCta1LabelInput",
             quick_actions_cta1_title: "qaCta1TitleInput",
@@ -580,7 +597,9 @@
             hero_poster_image: "heroPosterImagePreview",
             about_image_main: "aboutImageMainPreview",
             about_image_detail1: "aboutImageDetail1Preview",
-            about_image_detail2: "aboutImageDetail2Preview"
+            about_image_detail2: "aboutImageDetail2Preview",
+            service_poster_noi_that: "servicePosterNoiThatPreview",
+            service_poster_ngoai_that: "servicePosterNgoaiThatPreview"
         };
 
         async function loadHomepageContent() {
@@ -663,6 +682,8 @@
         wireImageField("about_image_main", "aboutImageMainFile", "aboutImageMainInput", "aboutImageMainPreview", "content");
         wireImageField("about_image_detail1", "aboutImageDetail1File", "aboutImageDetail1Input", "aboutImageDetail1Preview", "content");
         wireImageField("about_image_detail2", "aboutImageDetail2File", "aboutImageDetail2Input", "aboutImageDetail2Preview", "content");
+        wireImageField("service_poster_noi_that", "servicePosterNoiThatFile", "servicePosterNoiThatInput", "servicePosterNoiThatPreview", "cover");
+        wireImageField("service_poster_ngoai_that", "servicePosterNgoaiThatFile", "servicePosterNgoaiThatInput", "servicePosterNgoaiThatPreview", "cover");
 
         async function saveHomepageContentFields(keys, statusElId) {
             const statusEl = document.getElementById(statusElId);
@@ -696,7 +717,7 @@
         });
 
         document.getElementById("saveServiceBtn").addEventListener("click", () => {
-            saveHomepageContentFields(["service_section_title"], "serviceSaveStatus");
+            saveHomepageContentFields(["service_section_title", "service_poster_noi_that", "service_poster_ngoai_that"], "serviceSaveStatus");
         });
 
         document.getElementById("saveQuickActionsBtn").addEventListener("click", () => {

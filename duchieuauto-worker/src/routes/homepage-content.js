@@ -15,7 +15,7 @@ const CONTENT_SECTIONS = {
         "about_stat3_number", "about_stat3_label",
         "about_image_main", "about_image_detail1", "about_image_detail2"
     ],
-    service: ["service_section_title"],
+    service: ["service_section_title", "service_poster_noi_that", "service_poster_ngoai_that"],
     quick_actions: [
         "quick_actions_section_title",
         "quick_actions_cta1_label", "quick_actions_cta1_title", "quick_actions_cta1_desc",

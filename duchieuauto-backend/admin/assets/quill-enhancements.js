@@ -28,6 +28,9 @@ function injectQuillEnhancementStyles() {
         .ql-editor table td { min-width: 60px; }
         .qe-crop-img-wrap { max-height: 55vh; overflow: hidden; background: #222; }
         .qe-crop-img-wrap img { display: block; max-width: 100%; }
+        .qe-inline-crop-btn { position: absolute; z-index: 50; background: var(--dark); color: #fff; border: none; border-radius: 6px; padding: 6px 12px; font-size: 12.5px; cursor: pointer; box-shadow: var(--shadow); white-space: nowrap; }
+        .qe-inline-crop-btn:hover { background: var(--primary); }
+        .ql-editor img { cursor: pointer; }
     `;
     document.head.appendChild(style);
 }
@@ -308,5 +311,133 @@ function qeCropImageBeforeUpload(file, aspectRatio) {
                 });
             }
         });
+    });
+}
+
+// ---- 9. Cắt lại 1 ảnh ĐÃ CÓ SẴN trong bài (dù chèn qua nút hay dán trực tiếp Ctrl+V) ----
+// Dùng crossorigin="anonymous" khi tải lại ảnh để tránh canvas bị "tainted" (khoá bởi CORS) khi ảnh
+// nằm ở domain khác (Cloudinary) - Cloudinary vốn đã trả về header CORS cho phép nên hoạt động được.
+// Bấm "Huỷ" -> reject(null), nơi gọi PHẢI kiểm tra lỗi rỗng trước khi hiện toast để không báo lỗi
+// nhầm lúc người dùng chỉ đơn giản đổi ý.
+function qeCropRemoteImage(url) {
+    return new Promise((resolve, reject) => {
+        let cropper;
+        qeOpenModal({
+            title: "Cắt Lại Ảnh",
+            width: "640px",
+            bodyHtml: `
+                <div class="qe-crop-img-wrap"><img id="qeCropImg2" crossorigin="anonymous" src="${url}"></div>
+                <p class="form-hint" style="margin-top:10px;">Kéo góc/viền để chọn vùng cắt, kéo vào giữa để di chuyển.</p>
+                <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:10px;">
+                    <button type="button" class="btn btn-secondary" id="qeCropCancel2">Huỷ</button>
+                    <button type="button" class="btn btn-primary" id="qeCropConfirm2">Cắt & Thay Ảnh</button>
+                </div>`,
+            onMount: (root, close) => {
+                const imgEl = root.querySelector("#qeCropImg2");
+                let settled = false;
+                const finish = (fn) => { if (settled) return; settled = true; if (cropper) cropper.destroy(); close(); fn(); };
+                imgEl.addEventListener("load", () => {
+                    cropper = new Cropper(imgEl, { viewMode: 1, autoCropArea: 1, background: false });
+                });
+                imgEl.addEventListener("error", () => {
+                    finish(() => reject(new Error("Không tải lại được ảnh để cắt (lỗi mạng hoặc ảnh đã bị xoá).")));
+                });
+                root.querySelector("#qeCropCancel2").addEventListener("click", () => finish(() => reject(null)));
+                root.querySelector("#qeCropConfirm2").addEventListener("click", () => {
+                    if (!cropper) { finish(() => reject(new Error("Ảnh chưa tải xong, thử lại."))); return; }
+                    cropper.getCroppedCanvas().toBlob((blob) => {
+                        finish(() => { if (blob) resolve(blob); else reject(new Error("Không cắt được ảnh.")); });
+                    }, "image/jpeg", 0.92);
+                });
+            }
+        });
+    });
+}
+
+// Gắn sự kiện: bấm vào BẤT KỲ ảnh nào đã có sẵn trong bài -> hiện nút nổi "✂️ Cắt ảnh" ngay cạnh ảnh
+// đó -> cắt xong tự tải ảnh mới lên (purpose "content") rồi thay thế src tại chỗ, giữ nguyên vị trí
+// trong bài. quill.update() để Quill nhận biết DOM vừa bị đổi bằng tay (ngoài API của Quill) và lưu
+// đúng khi bấm Lưu.
+function qeEnableInlineImageCrop(quill, purpose) {
+    let activeBtn = null;
+    function clearBtn() { if (activeBtn) { activeBtn.remove(); activeBtn = null; } }
+
+    quill.root.addEventListener("click", (e) => {
+        clearBtn();
+        if (e.target.tagName !== "IMG") return;
+        const img = e.target;
+
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "qe-inline-crop-btn";
+        btn.textContent = "✂️ Cắt ảnh";
+        document.body.appendChild(btn);
+        activeBtn = btn;
+        const rect = img.getBoundingClientRect();
+        btn.style.top = `${window.scrollY + rect.top - 34}px`;
+        btn.style.left = `${window.scrollX + rect.left}px`;
+
+        btn.addEventListener("click", async (ev) => {
+            ev.stopPropagation();
+            clearBtn();
+            try {
+                const blob = await qeCropRemoteImage(img.src);
+                const fd = new FormData();
+                fd.append("image", blob, "cropped.jpg");
+                fd.append("purpose", purpose || "content");
+                const res = await apiFetch("/api/uploads", { method: "POST", body: fd });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || "Tải ảnh thất bại");
+                img.src = data.url;
+                quill.update("user");
+            } catch (err) {
+                if (err) showToast(err.message, true);
+            }
+        });
+    });
+
+    document.addEventListener("scroll", clearBtn, true);
+    window.addEventListener("resize", clearBtn);
+}
+
+// ---- 10. Dán ảnh trực tiếp (Ctrl+V, VD ảnh chụp màn hình/copy từ nơi khác) - tự upload lên
+// Cloudinary thay vì để Quill nhúng thẳng base64 vào nội dung (mặc định của Quill nếu không chặn) ----
+// Nhúng base64 làm nội dung lưu trong DB phình to bất thường VÀ không đi qua được bước cắt ảnh/Alt
+// Text như ảnh chèn qua nút - chặn hành vi mặc định NGAY khi phát hiện đúng có file ảnh trong
+// clipboard, các loại dán khác (chữ/HTML thường) vẫn để Quill xử lý binh thường như cũ.
+function qeInterceptImagePaste(quill, purpose) {
+    quill.root.addEventListener("paste", (e) => {
+        const clipboardData = e.clipboardData || (e.originalEvent && e.originalEvent.clipboardData);
+        const items = clipboardData && clipboardData.items;
+        if (!items) return;
+        const imageItem = Array.from(items).find(it => it.type && it.type.startsWith("image/"));
+        if (!imageItem) return; // Không phải ảnh (chữ/HTML) - để Quill tự xử lý như cũ.
+
+        e.preventDefault();
+        e.stopPropagation();
+        const file = imageItem.getAsFile();
+        if (!file) return;
+
+        (async () => {
+            const range = quill.getSelection(true) || { index: quill.getLength() };
+            try {
+                const finalFile = await qeCropImageBeforeUpload(file);
+                const altText = await qeAskImageAlt("");
+                const fd = new FormData();
+                fd.append("image", finalFile, "pasted-image.png");
+                fd.append("purpose", purpose || "content");
+                const res = await apiFetch("/api/uploads", { method: "POST", body: fd });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || "Tải ảnh thất bại");
+                quill.insertEmbed(range.index, "image", data.url, "user");
+                if (altText) {
+                    const [leafBlot] = quill.getLeaf(range.index);
+                    if (leafBlot && leafBlot.domNode) leafBlot.domNode.alt = altText;
+                }
+                quill.setSelection(range.index + 1);
+            } catch (err) {
+                showToast(err.message, true);
+            }
+        })();
     });
 }

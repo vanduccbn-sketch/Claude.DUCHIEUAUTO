@@ -220,6 +220,8 @@
             qeInitPasteCleanup(quill);
             qeInitFindReplace(quill, document.getElementById("qeFindBtn"));
             qeInitTableInsert(quill, document.getElementById("qeTableBtn"));
+            qeEnableInlineImageCrop(quill, "content");
+            qeInterceptImagePaste(quill, "content");
 
             // Ghi đè nút chèn ảnh mặc định (nhúng base64 làm nội dung phình to) - thay bằng: cho
             // cắt ảnh tuỳ chọn -> hỏi Alt Text (SEO ảnh) -> upload thật lên Cloudinary -> chèn URL

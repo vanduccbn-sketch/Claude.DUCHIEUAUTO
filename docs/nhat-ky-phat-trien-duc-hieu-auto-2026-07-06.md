@@ -546,9 +546,27 @@ User báo lỗi thật: bài viết dài có chèn ảnh, đang gõ tiếp ở d
   Quill để giữ được thuộc tính width/align sau khi lưu - rủi ro cao nếu tự làm). Tải qua CDN
   jsdelivr (đã nằm sẵn trong CSP `scriptSrc` từ Phase 13.7, không cần sửa CSP). Áp dụng cả 2 form,
   đồng bộ cả 2 thư mục.
-- [ ] **Các cải tiến khác đã gợi ý cho khung soạn thảo, CHƯA làm, chờ user chọn:** Tìm & Thay thế
-  hàng loạt, đếm số từ/ký tự, bắt nhập Alt Text khi chèn ảnh (SEO ảnh), tự động lưu nháp, chèn Bảng,
-  khối "Lưu ý" nổi bật, nút Hoàn tác/Làm lại hiện trên toolbar, dán từ Word tự dọn định dạng thừa.
+- [x] **User chọn làm hết cả 8 gợi ý + thêm cắt ảnh tuỳ chỉnh, yêu cầu tự động đẩy lên khi xong.**
+  Tạo file mới `duchieuauto-backend/admin/assets/quill-enhancements.js` gom toàn bộ logic dùng
+  chung (chỉ 2 trang `san-pham-form.html`/`bai-viet-form.html` cần, không nhét vào `admin.js` dùng
+  mọi trang). Đủ 9 tính năng: đếm từ/ký tự, Hoàn tác/Làm lại (dùng `quill.history` có sẵn), bắt nhập
+  Alt Text khi chèn ảnh (SEO ảnh - Quill mặc định đã hỗ trợ giữ `alt` qua Image blot, không cần mở
+  rộng gì), tự động lưu nháp vào localStorage (kèm banner khôi phục khi phát hiện nháp cũ, tự xoá
+  sau khi lưu thật), khối "Lưu Ý" nổi bật (tái dùng blockquote có sẵn của Quill, chỉ đổi CSS - an
+  toàn hơn tự tạo Blot mới), dán từ Word tự dọn định dạng thừa (clipboard matcher), Tìm & Thay thế
+  hàng loạt (modal riêng, thay theo văn bản thuần), Bảng đơn giản 3x3 (chèn qua
+  `dangerouslyPasteHTML`, gõ trực tiếp vào ô qua contenteditable tự nhiên - **cố ý đơn giản hoá**,
+  không có nút thêm/xoá dòng-cột vì Quill 1.3.7 không có blot bảng thật, tự viết thêm rủi ro cao làm
+  hỏng cả khung soạn thảo, đã nói rõ giới hạn này với user), và cắt ảnh tuỳ chỉnh bằng
+  `Cropper.js@1.6.2` qua CDN (áp dụng cho cả ảnh bìa/ảnh sản phẩm - khoá tỉ lệ khớp đúng preset
+  Cloudinary sẵn có - lẫn ảnh chèn giữa bài - tỉ lệ tự do, luôn có nút "Dùng Ảnh Gốc" bỏ qua cắt).
+  Sửa thêm 1 lỗi thời điểm phát hiện khi làm: `bai-viet-form.html` gọi `loadExistingPost()` không
+  `await` trước đó, khiến banner nháp có thể hiện ra rồi bị nội dung thật load sau đè mất - bọc lại
+  thành `init()` async đúng thứ tự.
+  Đã kiểm tra được (không có trình duyệt): HTML/JS deploy đúng trên cả `workers.dev` lẫn domain thật
+  (đợi ~1 phút cache CDN Cloudflare hết hạn, lặp lại đúng hiện tượng đã gặp ở lần sửa `admin.css`
+  trước - không phải lỗi mới), toàn bộ thư viện ngoài tải được 200. Thao tác chuột thật (kéo cắt
+  ảnh, bấm nút...) cần user tự xác nhận. Đã tự động push theo đúng yêu cầu.
 
 ## Việc cần làm tiếp theo (TODO)
 

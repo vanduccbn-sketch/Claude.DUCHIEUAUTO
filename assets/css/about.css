@@ -1,4 +1,4 @@
-#about { position: relative; padding: 100px 0 90px; background-image: url('../images/nen2.jpg'); background-size: cover; background-position: center; background-repeat: no-repeat; color: var(--white); overflow: hidden; }
+#about { position: relative; padding: 100px 0 90px; background-image: url('../images/nen2.webp'); background-size: cover; background-position: center; background-repeat: no-repeat; color: var(--white); overflow: hidden; }
 #about::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, rgba(10, 11, 14, 0.93) 0%, rgba(21, 23, 28, 0.9) 45%, rgba(35, 20, 48, 0.86) 100%); z-index: 0; }
 #about .container { position: relative; z-index: 1; }
 

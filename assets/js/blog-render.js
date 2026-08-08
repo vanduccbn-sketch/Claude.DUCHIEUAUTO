@@ -178,7 +178,11 @@ async function renderBlogDetail() {
         if (metaDesc) metaDesc.setAttribute("content", post.meta_description || post.excerpt || "");
         setMetaTag("property", "og:title", post.meta_title || post.title);
         setMetaTag("property", "og:description", post.meta_description || post.excerpt || "");
-        if (post.cover_image) setMetaTag("property", "og:image", new URL(post.cover_image, API_BASE_URL).href);
+        // window.location.href (domain frontend), KHÔNG phải API_BASE_URL (domain backend) - ảnh
+        // tĩnh cũ dạng đường dẫn tương đối ("assets/images/...") chỉ tồn tại trên domain frontend,
+        // resolve nhầm sang API_BASE_URL sẽ ra URL 404 (phát hiện lúc rà soát ảnh .jpg/.webp). Ảnh
+        // Cloudinary (URL tuyệt đối) không bị ảnh hưởng vì new URL() bỏ qua base khi path đã tuyệt đối.
+        if (post.cover_image) setMetaTag("property", "og:image", new URL(post.cover_image, window.location.href).href);
         setMetaTag("property", "og:type", "article");
         setMetaTag("property", "og:url", window.location.href);
 
@@ -199,7 +203,7 @@ async function renderBlogDetail() {
             "@type": "Article",
             "headline": post.title,
             "description": post.meta_description || post.excerpt || "",
-            "image": post.cover_image ? [new URL(post.cover_image, API_BASE_URL).href] : undefined,
+            "image": post.cover_image ? [new URL(post.cover_image, window.location.href).href] : undefined,
             "datePublished": post.created_at,
             "dateModified": post.updated_at || post.created_at,
             "author": { "@type": "Organization", "name": "Đức Hiếu Auto" },

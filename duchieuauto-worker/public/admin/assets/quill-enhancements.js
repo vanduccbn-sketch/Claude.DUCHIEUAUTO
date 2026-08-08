@@ -4,6 +4,12 @@
    chung mọi trang) vì chỉ 2 trang này cần tới. Mỗi hàm độc lập, trang gọi hàm nào thì dùng tính
    năng đó - không có gì tự chạy nếu không được gọi.
    Cần nạp SAU quill.min.js, TRƯỚC cropperjs (nếu dùng cắt ảnh) và trước script khởi tạo trang.
+
+   QUAN TRỌNG: sửa file này xong PHẢI tăng số "?v=N" ở thẻ <script> nạp file này trong
+   san-pham-form.html/bai-viet-form.html (VD ?v=4 -> ?v=5) - phát hiện thật lúc sửa lỗi nút "Cắt
+   ảnh"/Tìm & Thay thế: cache CDN của Cloudflare cho static asset đôi khi vẫn phục vụ bản cũ ở 1 số
+   điểm cache dù đã deploy xong và đợi hết hạn cache thông thường, đổi tên URL (qua query string) là
+   cách duy nhất chắc chắn ép tải bản mới ngay lập tức, không phụ thuộc thời gian cache hết hạn.
    ========================================================= */
 
 // ---- CSS dùng chung cho mọi phần tử enhancement (modal, banner nháp, đếm chữ...) - tiêm 1 lần ----
@@ -183,6 +189,34 @@ function qeInitPasteCleanup(quill) {
     });
 }
 
+// Tìm mọi vị trí khớp "term" theo ĐÚNG không gian chỉ số của Quill (dùng được với deleteText()/
+// insertText()/setSelection()) - KHÔNG dùng quill.getText() để tìm vị trí vì hàm đó bỏ hẳn ảnh/embed
+// ra khỏi chuỗi trả về (chỉ nối các đoạn "insert" dạng string), làm chỉ số bị lệch dần với chỉ số
+// thật của Quill ngay sau tấm ảnh ĐẦU TIÊN trong bài - đây chính là bug thật gây xoá/chèn nhầm chỗ
+// (lặp chữ liên tục) khi bài viết có chèn ảnh giữa bài, user báo lại kèm ảnh chụp màn hình cụ thể.
+// Duyệt thẳng qua Delta gốc, chỉ tìm khớp bên trong từng đoạn text (không khớp xuyên qua ranh giới
+// ảnh), tự cộng dồn đúng 1 đơn vị chỉ số cho mỗi ảnh/embed - khớp chính xác cách Quill đánh số nội bộ.
+function qeFindAllPositions(quill, term) {
+    const positions = [];
+    if (!term) return positions;
+    const ops = quill.getContents().ops || [];
+    let docIndex = 0;
+    ops.forEach(op => {
+        if (typeof op.insert === "string") {
+            const text = op.insert;
+            let from = 0, idx;
+            while ((idx = text.indexOf(term, from)) !== -1) {
+                positions.push(docIndex + idx);
+                from = idx + term.length;
+            }
+            docIndex += text.length;
+        } else {
+            docIndex += 1; // ảnh/embed khác - luôn chiếm đúng 1 vị trí trong chỉ số của Quill.
+        }
+    });
+    return positions;
+}
+
 // ---- 6. Tìm & Thay thế hàng loạt ----
 // Thay theo VĂN BẢN THUẦN (không giữ định dạng riêng của đúng đoạn bị thay) - đủ dùng cho nhu cầu
 // sửa lỗi chính tả/đổi tên hàng loạt, không nhằm thay thế công cụ soạn thảo phức tạp.
@@ -215,11 +249,11 @@ function qeInitFindReplace(quill, triggerBtn) {
                 function findNext() {
                     const term = findInput.value;
                     if (!term) return;
-                    const text = quill.getText();
-                    let idx = text.indexOf(term, searchFrom);
-                    if (idx === -1) {
-                        idx = text.indexOf(term, 0);
-                        if (idx === -1) { status.textContent = "Không tìm thấy."; return; }
+                    const positions = qeFindAllPositions(quill, term);
+                    if (positions.length === 0) { status.textContent = "Không tìm thấy."; return; }
+                    let idx = positions.find(p => p >= searchFrom);
+                    if (idx === undefined) {
+                        idx = positions[0];
                         status.textContent = "Đã quay lại từ đầu bài.";
                     } else {
                         status.textContent = "";
@@ -232,13 +266,7 @@ function qeInitFindReplace(quill, triggerBtn) {
                     const term = findInput.value;
                     if (!term) return;
                     const replacement = replaceInput.value;
-                    const text = quill.getText();
-                    const positions = [];
-                    let from = 0, idx;
-                    while ((idx = text.indexOf(term, from)) !== -1) {
-                        positions.push(idx);
-                        from = idx + term.length;
-                    }
+                    const positions = qeFindAllPositions(quill, term);
                     // Thay từ cuối bài lên đầu để vị trí các chỗ chưa xử lý không bị lệch.
                     for (let i = positions.length - 1; i >= 0; i--) {
                         quill.deleteText(positions[i], term.length, "user");

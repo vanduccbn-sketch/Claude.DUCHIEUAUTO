@@ -458,6 +458,35 @@ cho tới khi cutover — xem đầy đủ quyết định kiến trúc + rủi 
   Cần lấy logo chính hãng mới (gtrvietnam.com, x-light.vn) rồi upload qua CMS - **CHƯA LÀM**, đang
   chờ xác nhận từ user có muốn làm ngay không.
 
+## Việc đã làm (2026-08-08, lần 4) — Rà soát toàn dự án tìm ảnh .jpg còn sót
+
+Theo yêu cầu user "kiểm tra toàn bộ hình ảnh còn sót .jpg không" sau khi phát hiện 2 bug ảnh vỡ ở
+lần trước - quét toàn bộ repo (loại `node_modules`, `docs/*.md`, `README.txt` placeholder trong thư
+mục sản phẩm chưa có ảnh thật).
+
+- [x] Xác nhận `assets/images/` (thư mục ảnh thật của site) **không còn file `.jpg` nào** - chỉ còn
+  đúng 1 file `.jpg` là `Logo/3D.DOC.jpg` nằm ngoài `assets/`, không được code nào tham chiếu (file
+  rời không thuộc website đang chạy, không đụng tới).
+- [x] Sửa thêm 2 tham chiếu `.jpg` vỡ trong `index.html` (`assets/images/about/detail-1.jpg`,
+  `detail-2.jpg`) - cùng loại lỗi với `catalog-data.js` lần trước (file `.jpg` đã xoá, `.webp` đúng
+  đã có sẵn). Do 2 ảnh này được `homepage-content.js` ghi đè qua CMS (giá trị Turso đã đúng `.webp`
+  từ đợt 2026-08-05) nên KHÔNG vỡ trên trình duyệt thật có JS chạy bình thường, nhưng bản HTML
+  gốc/fallback khi chưa cấu hình vẫn sai - sửa cho đúng theo đúng ý nghĩa comment trong
+  `homepage-content.js` ("trang chủ không bao giờ trống dù admin chưa cấu hình").
+- [x] Chuyển nốt `assets/images/logo-duchieu.jpg` (ảnh `og:image`/schema.org chia sẻ mạng xã hội
+  trang chủ, 1200x630) sang `.webp` bằng `cwebp -q85` (36.9KB → 9.9KB, giảm ~73%), cập nhật 2 chỗ
+  tham chiếu, xoá file cũ. Đây là file `.jpg` DUY NHẤT còn sót thật sự cần chuyển (không tính file
+  rời `Logo/3D.DOC.jpg` không dùng).
+- [x] Tăng `CACHE_NAME` Service Worker lên `v12`.
+- [ ] **2 vấn đề khác phát hiện thêm khi rà soát, KHÔNG liên quan .jpg/.webp, chưa xử lý:**
+  1. `assets/images/nen2.jpg` (ảnh nền mục "Giới Thiệu", khai báo trong `about.css`) **mất hoàn
+     toàn** - không tồn tại ở bất kỳ định dạng nào trên đĩa, không phải lỗi đổi tên đuôi file. Cần
+     tìm lại ảnh gốc hoặc chọn ảnh thay thế mới.
+  2. `blog-render.js` (trang `bai-viet-chi-tiet.html`) đang resolve `post.cover_image` tương đối với
+     `API_BASE_URL` (domain backend) thay vì domain frontend khi cập nhật thẻ `og:image`/schema.org
+     phía client - sai domain, nhưng ảnh hưởng thấp vì SSR (Phase 12, `ssr-render.js`) đã xử lý đúng
+     domain cho bot preview mạng xã hội thật (bot không chạy JS nên không đi qua đường lỗi này).
+
 ## Việc cần làm tiếp theo (TODO)
 
 - [ ] **User tự test Phase 13 trên `https://duchieuauto-worker.vanduc-cbn.workers.dev/admin/login.html`** (tài khoản `admin`/`Vanduc@123` — lưu ý IP test của Claude vừa bị khoá 15 phút do test brute-force ở 13.9, không ảnh hưởng IP thật của user) — chỉ sau khi user xác nhận ổn mới `git push` + làm Phase 13.10 (cutover domain thật)

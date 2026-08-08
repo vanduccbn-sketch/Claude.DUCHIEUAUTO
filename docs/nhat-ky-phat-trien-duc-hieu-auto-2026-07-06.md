@@ -511,6 +511,24 @@ mục sản phẩm chưa có ảnh thật).
 
 **Toàn bộ danh sách vấn đề ảnh phát hiện trong 5 lần rà soát ngày 08/08/2026 đã xử lý xong.**
 
+## Việc đã làm (2026-08-08, lần 6) — Cho phép admin tự đổi ảnh 2 thẻ "Dịch Vụ" tĩnh
+
+User hỏi vì sao không đổi ảnh thẻ "Nội Thất Ô Tô"/"Ngoại Thất Ô Tô" ở trang chủ được qua admin, yêu
+cầu bổ sung luôn. Rà soát phát hiện: đây là 2 nhóm gộp TĨNH (`CATALOG.serviceGroups` trong
+`catalog-data.js`, không phải danh mục thật trong Turso như "Chăm Sóc Xe"/"Đồ Bán Tải" - 2 thẻ đó
+ĐÃ sửa được sẵn qua trang "Danh Mục"), nên trước giờ không có đường sửa qua admin.
+
+- [x] Thêm 2 khoá `service_poster_noi_that`/`service_poster_ngoai_that` vào `homepage_content`
+  (route `routes/homepage-content.js`, cả Render lẫn Worker).
+- [x] Thêm UI upload ảnh trong khối "🛠️ Dịch Vụ" của trang admin "Trang Chủ" - dùng lại đúng cơ chế
+  upload/preview/lưu đã có (giống 3 ảnh khối Giới Thiệu).
+- [x] Sửa `renderServiceGrid()` (`catalog-render.js`) gọi thêm `/api/homepage-content`, ghi đè
+  poster mặc định trong `CATALOG.serviceGroups` khi admin đã chọn ảnh riêng - giữ nguyên ảnh mặc
+  định nếu chưa cấu hình gì (đúng nguyên tắc "trang chủ không bao giờ trống" đã áp dụng cho các khối
+  khác).
+- [x] Test thật qua API (ghi/đọc/khôi phục), xác nhận UI mới hiển thị đúng trên Worker, deploy +
+  push đầy đủ. Tăng `CACHE_NAME` lên `v14`.
+
 ## Việc cần làm tiếp theo (TODO)
 
 - [ ] **User tự test Phase 13 trên `https://duchieuauto-worker.vanduc-cbn.workers.dev/admin/login.html`** (tài khoản `admin`/`Vanduc@123` — lưu ý IP test của Claude vừa bị khoá 15 phút do test brute-force ở 13.9, không ảnh hưởng IP thật của user) — chỉ sau khi user xác nhận ổn mới `git push` + làm Phase 13.10 (cutover domain thật)

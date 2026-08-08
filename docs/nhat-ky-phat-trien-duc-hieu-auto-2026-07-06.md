@@ -568,6 +568,15 @@ User báo lỗi thật: bài viết dài có chèn ảnh, đang gõ tiếp ở d
   trước - không phải lỗi mới), toàn bộ thư viện ngoài tải được 200. Thao tác chuột thật (kéo cắt
   ảnh, bấm nút...) cần user tự xác nhận. Đã tự động push theo đúng yêu cầu.
 
+- [x] **User phát hiện thiếu: cắt ảnh chỉ áp dụng lúc upload mới, chưa cắt lại được ảnh đã có sẵn
+  trong bài** (VD ảnh dán trực tiếp Ctrl+V) - thêm `qeEnableInlineImageCrop()` (bấm vào bất kỳ ảnh
+  nào trong bài hiện nút nổi "✂️ Cắt ảnh", tải lại qua `crossOrigin="anonymous"` để tránh canvas bị
+  khoá CORS, cắt xong thay `src` tại chỗ). **Phát hiện thêm 1 vấn đề liên quan lúc kiểm tra ảnh dán
+  Ctrl+V của user:** Quill mặc định nhúng thẳng base64 khi dán ảnh trực tiếp (khác ảnh chèn qua nút
+  đã sửa từ trước để upload thật) - làm DB phình to, không qua được bước cắt/Alt Text. Thêm
+  `qeInterceptImagePaste()` chặn đúng lúc phát hiện file ảnh trong clipboard, upload thật lên
+  Cloudinary (kèm cắt + hỏi Alt Text) thay vì nhúng base64.
+
 ## Việc cần làm tiếp theo (TODO)
 
 - [ ] **User tự test Phase 13 trên `https://duchieuauto-worker.vanduc-cbn.workers.dev/admin/login.html`** (tài khoản `admin`/`Vanduc@123` — lưu ý IP test của Claude vừa bị khoá 15 phút do test brute-force ở 13.9, không ảnh hưởng IP thật của user) — chỉ sau khi user xác nhận ổn mới `git push` + làm Phase 13.10 (cutover domain thật)

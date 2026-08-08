@@ -253,7 +253,7 @@
 
                 if (post.cover_image) {
                     document.getElementById("coverImageUrl").value = post.cover_image;
-                    document.getElementById("coverPreview").innerHTML = `<img src="${post.cover_image}" alt="Ảnh bìa">`;
+                    document.getElementById("coverPreview").innerHTML = `<img src="${resolveImageUrl(post.cover_image)}" alt="Ảnh bìa">`;
                 }
             } catch (err) {
                 showToast(err.message, true);

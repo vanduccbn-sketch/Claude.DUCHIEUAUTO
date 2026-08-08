@@ -53,6 +53,15 @@ function productImageUrl(p) {
     return `${FRONTEND_BASE_URL}/${p.image || `assets/images/products/${p.id}/anh-1.webp`}`;
 }
 
+// Dùng cho các field ảnh dạng đường dẫn cũ khác ngoài sản phẩm (logo nhóm thương hiệu, poster/ảnh
+// SEO danh mục...) - cùng lý do với productImageUrl() ở trên (đường dẫn tương đối chỉ đúng khi mở
+// từ domain frontend), nhưng các field này không có quy ước fallback theo id nên chỉ cần ghép domain
+// khi có giá trị, không tự bịa đường dẫn khi rỗng.
+function resolveImageUrl(path) {
+    if (!path) return "";
+    return /^https?:\/\//.test(path) ? path : `${FRONTEND_BASE_URL}/${path}`;
+}
+
 function getAuth() {
     try {
         const raw = localStorage.getItem(STORAGE_KEY);

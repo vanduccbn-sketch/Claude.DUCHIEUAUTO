@@ -164,7 +164,7 @@
                         ${b.types.map(t => `
                             <div>
                                 <div style="font-size:13px;font-weight:600;margin-bottom:8px;">${escapeHtml(t.name)}</div>
-                                <div class="cat-img-preview" id="typeImgPreview-${b.id}-${t.id}" style="height:90px;">${t.logo ? `<img src="${t.logo}" alt="">` : "Chưa có ảnh"}</div>
+                                <div class="cat-img-preview" id="typeImgPreview-${b.id}-${t.id}" style="height:90px;">${t.logo ? `<img src="${resolveImageUrl(t.logo)}" alt="">` : "Chưa có ảnh"}</div>
                                 <input type="file" id="typeImgFile-${b.id}-${t.id}" accept="image/jpeg,image/png,image/webp,image/gif" style="display:none;">
                                 <button type="button" class="btn btn-secondary" style="width:100%;margin-top:6px;" data-pick-brand="${b.id}" data-pick-type="${t.id}">Chọn Ảnh</button>
                             </div>
@@ -223,11 +223,11 @@
 
                 document.getElementById("catPosterUrl").value = cat.poster || "";
                 document.getElementById("catPosterPreview").innerHTML = cat.poster
-                    ? `<img src="${cat.poster}" alt="" onerror="this.parentElement.textContent='Chưa có ảnh'">` : "Chưa có ảnh";
+                    ? `<img src="${resolveImageUrl(cat.poster)}" alt="" onerror="this.parentElement.textContent='Chưa có ảnh'">` : "Chưa có ảnh";
 
                 document.getElementById("catSeoImgUrl").value = cat.seo_image || "";
                 document.getElementById("catSeoImgPreview").innerHTML = cat.seo_image
-                    ? `<img src="${cat.seo_image}" alt="" onerror="this.parentElement.textContent='Chưa có ảnh'">` : "Chưa có ảnh";
+                    ? `<img src="${resolveImageUrl(cat.seo_image)}" alt="" onerror="this.parentElement.textContent='Chưa có ảnh'">` : "Chưa có ảnh";
             } catch (err) {
                 showToast(err.message, true);
             }

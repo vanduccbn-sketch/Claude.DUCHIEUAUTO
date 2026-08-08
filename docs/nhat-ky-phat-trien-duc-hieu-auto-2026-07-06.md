@@ -487,6 +487,30 @@ mục sản phẩm chưa có ảnh thật).
      phía client - sai domain, nhưng ảnh hưởng thấp vì SSR (Phase 12, `ssr-render.js`) đã xử lý đúng
      domain cho bot preview mạng xã hội thật (bot không chạy JS nên không đi qua đường lỗi này).
 
+## Việc đã làm (2026-08-08, lần 5) — Xử lý nốt 3 vấn đề còn treo + logo GTR/X-Light
+
+- [x] **`nen2.jpg` (ảnh nền mục Giới Thiệu) mất hoàn toàn, chưa từng có trong git history** - hỏi
+  user chọn hướng xử lý, được chọn: **trích 1 khung hình từ chính video `hero-bg.mp4` có sẵn** (đã có
+  bản quyền Pexels từ trước, đồng bộ phong cách với Hero). Tải `ffmpeg` portable (chưa có sẵn máy),
+  trích 5 khung hình mẫu ở các mốc giây khác nhau, chọn khung giây 25 (góc rộng, ánh sáng đẹp, đủ
+  khoảng trống cho chữ đè lên), chuyển `.webp` bằng `cwebp -q85`, cập nhật `about.css`.
+- [x] **Sửa bug domain sai trong `blog-render.js`** - `post.cover_image` resolve nhầm với
+  `API_BASE_URL` (domain backend) thay vì domain frontend, đổi sang `window.location.href` (an toàn
+  cho cả đường dẫn tương đối lẫn URL Cloudinary tuyệt đối vì `new URL()` bỏ qua base khi path đã
+  tuyệt đối).
+- [x] **Thêm logo GTR + X-Light (danh mục "Nâng Cấp Ánh Sáng")** - dùng `WebFetch` tìm đúng URL logo
+  chính hãng trên `gtrvietnam.com`/`x-light.vn`, xác nhận cả 2 có nền trong suốt (kênh alpha) trước
+  khi lưu vào `assets/images/brands/gtr-light/logo.png` và `assets/images/brands/x-light/logo.png`.
+  **Phát hiện thêm:** CMS hiện KHÔNG có route API nào cho phép sửa field `logo` cấp "brand" (chỉ có
+  route cho `brand_type`) - đây chính là lý do gốc rễ 2 brand này chưa từng có logo dù hệ thống CMS
+  đã hoạt động lâu (brand tạo mới qua CMS không có cách nào tự set logo). Xử lý tạm bằng script một
+  lần cập nhật thẳng Turso (`duchieuauto-worker/scripts/set-brand-logo-gtr-xlight.mjs`), đã xác nhận
+  qua API. **Còn treo:** nên cân nhắc thêm route PUT cho brand logo vào CMS ở buổi sau, để admin tự
+  làm được qua giao diện thay vì phải nhờ sửa DB trực tiếp mỗi lần có brand mới thiếu logo.
+- [x] Tăng `CACHE_NAME` Service Worker lên `v13`.
+
+**Toàn bộ danh sách vấn đề ảnh phát hiện trong 5 lần rà soát ngày 08/08/2026 đã xử lý xong.**
+
 ## Việc cần làm tiếp theo (TODO)
 
 - [ ] **User tự test Phase 13 trên `https://duchieuauto-worker.vanduc-cbn.workers.dev/admin/login.html`** (tài khoản `admin`/`Vanduc@123` — lưu ý IP test của Claude vừa bị khoá 15 phút do test brute-force ở 13.9, không ảnh hưởng IP thật của user) — chỉ sau khi user xác nhận ổn mới `git push` + làm Phase 13.10 (cutover domain thật)

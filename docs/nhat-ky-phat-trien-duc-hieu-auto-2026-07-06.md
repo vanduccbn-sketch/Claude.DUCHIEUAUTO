@@ -439,6 +439,25 @@ cho tới khi cutover — xem đầy đủ quyết định kiến trúc + rủi 
 **Phase 13 (Cloudflare Workers migration) COI NHƯ HOÀN TẤT tính đến 2026-08-08** - chỉ còn theo dõi
 ổn định tới 20/08/2026 rồi ngừng Render (13.11), xem điều kiện/uỷ quyền chi tiết trong memory dự án.
 
+## Việc đã làm (2026-08-08, lần 3) — Sửa lỗi ảnh + đổi số điện thoại (sau khi Phase 13 xong)
+
+- [x] **Sửa 2 poster vỡ ảnh ở trang chủ** ("Nội Thất Ô Tô"/"Ngoại Thất Ô Tô") - `catalog-data.js`
+  (`CATALOG.serviceGroups`, mảng DUY NHẤT trong file này còn được `catalog-render.js` đọc thật -
+  toàn bộ `categories`/`products` tĩnh còn lại đã xác nhận là dữ liệu chết) vẫn trỏ `.jpg` đã bị xoá
+  trong đợt chuyển WebP trước (2026-08-05) - sót lại vì đây không đi qua quy ước fallback 6 chỗ đã
+  ghi trong CLAUDE.md, mà là đường dẫn cứng riêng. Đổi lại `.webp`, xác nhận file tồn tại trước khi
+  sửa.
+- [x] **Đổi số điện thoại/Zalo toàn site** từ `0869 110 237` sang **`0916 955 957`** theo yêu cầu -
+  13 trang HTML (hotline header, link `tel:`, link `zalo.me`, schema.org `telephone` dạng quốc tế
+  `+84...`) + setting `social_zalo` trong Turso (hiện chưa có code frontend nào đọc field này, cập
+  nhật để đồng bộ dữ liệu). Đã tăng `CACHE_NAME` Service Worker lên `v11` (đổi cả HTML lẫn
+  `catalog-data.js`, đúng quy ước bắt buộc mỗi khi đổi CSS/JS/HTML quan trọng).
+- [ ] **Logo GTR + X-Light (danh mục "Nâng Cấp Ánh Sáng") không hiển thị** - kiểm tra qua API xác
+  nhận 2 brand này **chưa từng có field `logo`** (kể cả trong dữ liệu tĩnh cũ trước CMS, khác hẳn
+  Fogway/Aozoom đã có sẵn) - không phải lỗi đường dẫn sai như các bug khác, mà thiếu ảnh thật từ đầu.
+  Cần lấy logo chính hãng mới (gtrvietnam.com, x-light.vn) rồi upload qua CMS - **CHƯA LÀM**, đang
+  chờ xác nhận từ user có muốn làm ngay không.
+
 ## Việc cần làm tiếp theo (TODO)
 
 - [ ] **User tự test Phase 13 trên `https://duchieuauto-worker.vanduc-cbn.workers.dev/admin/login.html`** (tài khoản `admin`/`Vanduc@123` — lưu ý IP test của Claude vừa bị khoá 15 phút do test brute-force ở 13.9, không ảnh hưởng IP thật của user) — chỉ sau khi user xác nhận ổn mới `git push` + làm Phase 13.10 (cutover domain thật)

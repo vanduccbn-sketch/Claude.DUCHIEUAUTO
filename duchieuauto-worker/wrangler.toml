@@ -9,11 +9,10 @@ compatibility_flags = ["nodejs_compat"]
 FRONTEND_ORIGIN = "https://duchieuauto.vn"
 ADMIN_BASE_URL = "https://admin.duchieuauto.vn/admin"
 
-# KV namespace cho khoá đăng nhập sai (Phase 13.2) - "id" điền sau khi tạo namespace thật bằng
-# `wrangler kv namespace create BRUTE_FORCE_KV`.
-# [[kv_namespaces]]
-# binding = "BRUTE_FORCE_KV"
-# id = ""
+# KV namespace cho khoá đăng nhập sai (Phase 13.2).
+[[kv_namespaces]]
+binding = "BRUTE_FORCE_KV"
+id = "66a47422a1104075aa39247ea04ecd14"
 
 # Static assets cho trang quản trị (Phase 13.8).
 # [assets]

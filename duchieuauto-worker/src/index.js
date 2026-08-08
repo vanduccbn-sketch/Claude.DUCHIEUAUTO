@@ -5,6 +5,8 @@
  */
 import { Hono } from "hono";
 import { getDb } from "./db.js";
+import authRoutes from "./routes/auth.js";
+import adminsRoutes from "./routes/admins.js";
 
 const app = new Hono();
 
@@ -16,6 +18,9 @@ app.use("*", async (c, next) => {
 });
 
 app.get("/api/health", (c) => c.json({ ok: true, time: new Date().toISOString() }));
+
+app.route("/api/auth", authRoutes);
+app.route("/api/admins", adminsRoutes);
 
 app.notFound((c) => c.json({ error: "Không tìm thấy route" }, 404));
 

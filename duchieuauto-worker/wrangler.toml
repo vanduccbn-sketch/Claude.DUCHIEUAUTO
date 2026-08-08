@@ -14,6 +14,9 @@ ADMIN_BASE_URL = "https://admin.duchieuauto.vn/admin"
 binding = "BRUTE_FORCE_KV"
 id = "66a47422a1104075aa39247ea04ecd14"
 
-# Static assets cho trang quản trị (Phase 13.8).
-# [assets]
-# directory = "./public"
+# Static assets cho trang quản trị (Phase 13.8) - thay cho express.static("/admin") ở bản gốc.
+# Không set binding riêng: mặc định Workers Assets tự phục vụ file tĩnh khớp đường dẫn TRƯỚC khi
+# rơi vào code Worker (route "/", "/robots.txt" trong src/index.js không bị assets che vì không
+# trùng đường dẫn file tĩnh nào trong public/).
+[assets]
+directory = "./public"

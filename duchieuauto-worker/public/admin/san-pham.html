@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Sản Phẩm | Quản Trị Đức Hiếu Auto</title>
+    <link rel="icon" type="image/png" href="assets/favicon.png">
+    <link rel="stylesheet" href="assets/admin.css">
+</head>
+<body>
+    <div class="admin-topbar" id="adminTopbar"></div>
+
+    <main class="admin-main">
+        <div class="admin-header">
+            <div>
+                <h1>Sản Phẩm</h1>
+                <p class="desc">Quản lý toàn bộ sản phẩm, danh mục, thương hiệu - tìm kiếm hoặc lọc theo danh mục/thương hiệu bên dưới.</p>
+            </div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                <button type="button" class="btn btn-secondary" id="downloadTemplateBtn">Tải Mẫu CSV</button>
+                <button type="button" class="btn btn-secondary" id="importCsvBtn">Nhập CSV</button>
+                <input type="file" id="importCsvInput" accept=".csv" style="display:none;">
+                <button type="button" class="btn btn-secondary" id="exportCsvBtn">Xuất CSV</button>
+                <a href="san-pham-form.html" class="btn btn-primary">+ Thêm Sản Phẩm</a>
+            </div>
+        </div>
+
+        <div id="importPreview" hidden style="background:var(--bg-alt);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px 20px;margin-bottom:20px;"></div>
+
+        <div class="inline-form-card">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="filterCategory">Danh mục</label>
+                    <select id="filterCategory">
+                        <option value="">-- Tất cả danh mục --</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="filterBrand">Thương hiệu</label>
+                    <select id="filterBrand">
+                        <option value="">-- Tất cả thương hiệu --</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="filterSearch">Tìm theo tên</label>
+                    <input type="text" id="filterSearch" placeholder="VD: JBL Club, đèn LED...">
+                </div>
+            </div>
+        </div>
+
+        <p class="form-hint" id="resultCount" style="margin-bottom:10px;"></p>
+
+        <div class="bulk-toolbar" id="bulkToolbar" hidden style="display:flex;align-items:center;gap:12px;background:var(--bg-alt);border-radius:var(--radius);box-shadow:var(--shadow);padding:12px 16px;margin-bottom:12px;">
+            <span id="bulkCount" style="font-size:13.5px;font-weight:600;"></span>
+            <button type="button" class="btn btn-secondary" id="bulkHideBtn">Ẩn Đã Chọn</button>
+            <button type="button" class="btn btn-secondary" id="bulkShowBtn">Hiện Đã Chọn</button>
+            <button type="button" class="btn btn-danger" id="bulkDeleteBtn">Xoá Đã Chọn</button>
+        </div>
+
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th style="width:32px;"><input type="checkbox" id="selectAllCheck"></th>
+                    <th>Ảnh</th>
+                    <th>Tên sản phẩm</th>
+                    <th>Danh mục</th>
+                    <th>Thương hiệu</th>
+                    <th>Giá</th>
+                    <th>Trạng thái</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody id="productsBody">
+                <tr class="empty-row"><td colspan="8"><span class="admin-spinner"></span>Đang tải...</td></tr>
+            </tbody>
+        </table>
+    </main>
+
+    <script src="assets/admin.js"></script>
+    <script>
+        const auth = requireAuth(["content", "super_admin"]);
+        let categoriesData = [];
+        let debounceTimer;
+
+        if (auth) {
+            renderAdminNav(auth, "san-pham");
+            // Cho phép trang Tổng Quan gửi thẳng sang đây kèm sẵn danh mục cần xem
+            // (?category=...), tránh phải bấm chọn lại trong dropdown.
+            const preselectCategory = new URLSearchParams(window.location.search).get("category");
+            loadCategories().then(() => {
+                if (preselectCategory) {
+                    document.getElementById("filterCategory").value = preselectCategory;
+                    populateBrandFilter();
+                }
+                loadProducts();
+            });
+
+            document.getElementById("filterCategory").addEventListener("change", () => {
+                populateBrandFilter();
+                loadProducts();
+            });
+            document.getElementById("filterBrand").addEventListener("change", loadProducts);
+            document.getElementById("filterSearch").addEventListener("input", () => {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(loadProducts, 350);
+            });
+
+            document.getElementById("selectAllCheck").addEventListener("change", (e) => {
+                document.querySelectorAll(".row-check").forEach(c => { c.checked = e.target.checked; });
+                updateBulkToolbar();
+            });
+            document.getElementById("bulkHideBtn").addEventListener("click", () => bulkSetHidden(true));
+            document.getElementById("bulkShowBtn").addEventListener("click", () => bulkSetHidden(false));
+            document.getElementById("bulkDeleteBtn").addEventListener("click", bulkDelete);
+            document.getElementById("exportCsvBtn").addEventListener("click", exportCsv);
+            document.getElementById("downloadTemplateBtn").addEventListener("click", downloadCsvTemplate);
+            document.getElementById("importCsvBtn").addEventListener("click", () => document.getElementById("importCsvInput").click());
+            document.getElementById("importCsvInput").addEventListener("change", handleImportFile);
+        }
+
+        async function loadCategories() {
+            const res = await apiFetch("/api/products/admin/categories");
+            categoriesData = await res.json();
+            const sel = document.getElementById("filterCategory");
+            sel.innerHTML = `<option value="">-- Tất cả danh mục --</option>` +
+                categoriesData.map(c => `<option value="${c.id}">${c.name}</option>`).join("");
+        }
+
+        function populateBrandFilter() {
+            const catId = document.getElementById("filterCategory").value;
+            const sel = document.getElementById("filterBrand");
+            const cat = categoriesData.find(c => c.id === catId);
+            if (!cat) {
+                sel.innerHTML = `<option value="">-- Tất cả thương hiệu --</option>`;
+                return;
+            }
+            sel.innerHTML = `<option value="">-- Tất cả thương hiệu --</option>` +
+                cat.brands.map(b => `<option value="${b.id}">${b.name}</option>`).join("");
+        }
+
+        let lastProducts = [];
+
+        async function loadProducts() {
+            const category = document.getElementById("filterCategory").value;
+            const brand = document.getElementById("filterBrand").value;
+            const q = document.getElementById("filterSearch").value.trim();
+
+            const params = new URLSearchParams();
+            if (category) params.set("category", category);
+            if (brand) params.set("brand", brand);
+            if (q) params.set("q", q);
+
+            const res = await apiFetch(`/api/products/admin/list?${params.toString()}`);
+            const products = await res.json();
+            lastProducts = products;
+            const tbody = document.getElementById("productsBody");
+
+            document.getElementById("resultCount").textContent = `${products.length} sản phẩm`;
+            document.getElementById("selectAllCheck").checked = false;
+            updateBulkToolbar();
+
+            if (products.length === 0) {
+                tbody.innerHTML = `<tr class="empty-row"><td colspan="8">Không tìm thấy sản phẩm nào.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = products.slice(0, 100).map(p => {
+                const img = productImageUrl(p);
+                return `
+                <tr>
+                    <td><input type="checkbox" class="row-check" data-id="${p.id}"></td>
+                    <td><img class="thumb" src="${img}" alt="" onerror="this.style.visibility='hidden'"></td>
+                    <td>${p.name}</td>
+                    <td>${p.category_name}</td>
+                    <td>${p.brand_name}</td>
+                    <td>${p.price || "-"}</td>
+                    <td><span class="badge ${p.hidden ? "badge-draft" : "badge-published"}">${p.hidden ? "Đã ẩn" : "Đang hiện"}</span></td>
+                    <td class="actions">
+                        <a href="san-pham-form.html?id=${p.id}" class="btn btn-secondary">Sửa</a>
+                        <button type="button" class="btn btn-danger" data-delete="${p.id}" data-name="${p.name.replace(/"/g, "&quot;")}">Xoá</button>
+                    </td>
+                </tr>`;
+            }).join("") + (products.length > 100 ? `<tr class="empty-row"><td colspan="8">... còn ${products.length - 100} sản phẩm nữa, thu hẹp tìm kiếm để xem hết.</td></tr>` : "");
+
+            tbody.querySelectorAll("[data-delete]").forEach(btn => {
+                btn.addEventListener("click", () => deleteProduct(btn.dataset.delete, btn.dataset.name));
+            });
+            tbody.querySelectorAll(".row-check").forEach(c => {
+                c.addEventListener("change", updateBulkToolbar);
+            });
+        }
+
+        async function deleteProduct(id, name) {
+            if (!confirm(`Xoá sản phẩm "${name}"? Không thể hoàn tác.`)) return;
+            try {
+                const res = await apiFetch(`/api/products/${id}`, { method: "DELETE" });
+                if (!res.ok) throw new Error((await res.json()).error || "Xoá thất bại");
+                showToast("Đã xoá sản phẩm");
+                loadProducts();
+            } catch (err) {
+                showToast(err.message, true);
+            }
+        }
+
+        function getSelectedIds() {
+            return Array.from(document.querySelectorAll(".row-check:checked")).map(c => c.dataset.id);
+        }
+
+        function updateBulkToolbar() {
+            const ids = getSelectedIds();
+            const toolbar = document.getElementById("bulkToolbar");
+            toolbar.hidden = ids.length === 0;
+            document.getElementById("bulkCount").textContent = `Đã chọn ${ids.length} sản phẩm`;
+        }
+
+        // Không có endpoint bulk riêng ở backend - gọi song song đúng endpoint PUT/DELETE từng sản
+        // phẩm đã có sẵn (giữ nguyên logic ghi activity log/kiểm tra quyền của endpoint đơn), tránh
+        // phải thêm route mới chỉ để làm việc y hệt hàng loạt.
+        async function bulkSetHidden(hidden) {
+            const ids = getSelectedIds();
+            if (ids.length === 0) return;
+            if (!confirm(`${hidden ? "Ẩn" : "Hiện"} ${ids.length} sản phẩm đã chọn?`)) return;
+            try {
+                await Promise.all(ids.map(id => apiFetch(`/api/products/${id}`, { method: "PUT", body: { hidden } })));
+                showToast(`Đã ${hidden ? "ẩn" : "hiện"} ${ids.length} sản phẩm`);
+                loadProducts();
+            } catch (err) {
+                showToast(err.message, true);
+            }
+        }
+
+        async function bulkDelete() {
+            const ids = getSelectedIds();
+            if (ids.length === 0) return;
+            if (!confirm(`Xoá ${ids.length} sản phẩm đã chọn? Không thể hoàn tác.`)) return;
+            try {
+                await Promise.all(ids.map(id => apiFetch(`/api/products/${id}`, { method: "DELETE" })));
+                showToast(`Đã xoá ${ids.length} sản phẩm`);
+                loadProducts();
+            } catch (err) {
+                showToast(err.message, true);
+            }
+        }
+
+        // Dùng dấu ";" thay vì "," vì Excel bản tiếng Việt mặc định coi ";" là dấu phân cách cột,
+        // dùng "," sẽ dồn hết vào 1 cột. Thêm BOM UTF-8 đầu file để Excel không lỗi font tiếng Việt.
+        // Dùng chung cho cả Xuất CSV lẫn tải file mẫu Nhập CSV.
+        function downloadCsvRows(rows, filename) {
+            const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(";")).join("\r\n");
+            const blob = new Blob(["﻿" + csv], { type: "text/csv;charset=utf-8;" });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = filename;
+            link.click();
+            URL.revokeObjectURL(link.href);
+        }
+
+        // Xuất đúng danh sách đang lọc/hiển thị (không riêng 100 dòng đầu trên bảng).
+        function exportCsv() {
+            if (lastProducts.length === 0) return showToast("Không có dữ liệu để xuất", true);
+            const rows = [["Tên sản phẩm", "Danh mục", "Thương hiệu", "Giá", "Trạng thái", "ID"]];
+            lastProducts.forEach(p => {
+                rows.push([p.name, p.category_name, p.brand_name, p.price || "", p.hidden ? "Đã ẩn" : "Đang hiện", p.id]);
+            });
+            downloadCsvRows(rows, `san-pham-${new Date().toISOString().slice(0, 10)}.csv`);
+        }
+
+        // File mẫu dùng đúng Category ID/Brand ID thật (không phải tên hiển thị) - đây là 2 field
+        // bắt buộc để tạo sản phẩm, tên hiển thị không đủ để xác định chính xác (VD "Loa Sub" xuất
+        // hiện ở nhiều thương hiệu khác nhau). Lấy 1 danh mục/thương hiệu thật làm ví dụ minh hoạ.
+        function downloadCsvTemplate() {
+            const sampleCat = categoriesData[0];
+            const sampleBrand = sampleCat && sampleCat.brands[0];
+            const rows = [
+                ["Tên sản phẩm", "Category ID", "Brand ID", "Brand Type ID (tuỳ chọn)", "Giá", "Mô tả ngắn"],
+                ["VD: Tên sản phẩm mẫu", sampleCat ? sampleCat.id : "", sampleBrand ? sampleBrand.id : "", "", "1.500.000₫", "Mô tả ngắn gọn"]
+            ];
+            downloadCsvRows(rows, "mau-nhap-san-pham.csv");
+        }
+
+        // Parser CSV tối thiểu (dấu ";", có xử lý field trong dấu ngoặc kép kể cả dấu " lặp đôi để
+        // escape) - đủ dùng cho file admin tự xuất/nhập qua Excel, không cần thư viện ngoài.
+        function parseCsv(text) {
+            if (text.charCodeAt(0) === 0xFEFF) text = text.slice(1);
+            return text.split(/\r\n|\n/).filter(l => l.trim().length > 0).map(line => {
+                const cells = [];
+                let cur = "", inQuotes = false;
+                for (let i = 0; i < line.length; i++) {
+                    const ch = line[i];
+                    if (inQuotes) {
+                        if (ch === '"' && line[i + 1] === '"') { cur += '"'; i++; }
+                        else if (ch === '"') { inQuotes = false; }
+                        else cur += ch;
+                    } else if (ch === '"') { inQuotes = true; }
+                    else if (ch === ";") { cells.push(cur); cur = ""; }
+                    else cur += ch;
+                }
+                cells.push(cur);
+                return cells;
+            });
+        }
+
+        let pendingImportRows = [];
+
+        async function handleImportFile(e) {
+            const file = e.target.files[0];
+            e.target.value = ""; // cho phép chọn lại đúng file này lần nữa nếu cần
+            if (!file) return;
+
+            const text = await file.text();
+            const rows = parseCsv(text);
+            if (rows.length < 2) return showToast("File CSV không có dòng dữ liệu nào", true);
+
+            pendingImportRows = rows.slice(1).map((cells, i) => {
+                const [name, categoryId, brandId, brandTypeId, price, description] = cells;
+                const cat = categoriesData.find(c => c.id === (categoryId || "").trim());
+                const brand = cat ? cat.brands.find(b => b.id === (brandId || "").trim()) : null;
+
+                const errors = [];
+                if (!name || !name.trim()) errors.push("Thiếu tên sản phẩm");
+                if (!cat) errors.push(`Category ID "${categoryId}" không tồn tại`);
+                else if (!brand) errors.push(`Brand ID "${brandId}" không tồn tại trong danh mục "${cat.name}"`);
+
+                return {
+                    row: i + 2,
+                    name: (name || "").trim(),
+                    categoryId: (categoryId || "").trim(),
+                    brandId: (brandId || "").trim(),
+                    brandTypeId: (brandTypeId || "").trim() || null,
+                    price: (price || "").trim() || null,
+                    description: (description || "").trim() || null,
+                    categoryName: cat ? cat.name : null,
+                    brandName: brand ? brand.name : null,
+                    errors
+                };
+            });
+
+            renderImportPreview();
+        }
+
+        function renderImportPreview() {
+            const validCount = pendingImportRows.filter(r => r.errors.length === 0).length;
+            const box = document.getElementById("importPreview");
+            box.hidden = false;
+            box.innerHTML = `
+                <h3 style="font-size:15px;margin-bottom:12px;">Xem trước nhập CSV - ${validCount}/${pendingImportRows.length} dòng hợp lệ</h3>
+                <table class="data-table" style="margin-bottom:14px;">
+                    <thead><tr><th>Dòng</th><th>Tên</th><th>Danh mục</th><th>Thương hiệu</th><th>Giá</th><th>Trạng thái</th></tr></thead>
+                    <tbody>${pendingImportRows.map(r => `
+                        <tr style="${r.errors.length ? "background:#fdecea;" : ""}">
+                            <td>${r.row}</td>
+                            <td>${r.name || "-"}</td>
+                            <td>${r.categoryName || `<em>${r.categoryId}</em>`}</td>
+                            <td>${r.brandName || `<em>${r.brandId}</em>`}</td>
+                            <td>${r.price || "-"}</td>
+                            <td>${r.errors.length ? r.errors.join("; ") : "Hợp lệ"}</td>
+                        </tr>`).join("")}
+                    </tbody>
+                </table>
+                <button type="button" class="btn btn-primary" id="confirmImportBtn" ${validCount === 0 ? "disabled" : ""}>Nhập ${validCount} Dòng Hợp Lệ</button>
+                <button type="button" class="btn btn-secondary" id="cancelImportBtn">Huỷ</button>
+            `;
+            document.getElementById("confirmImportBtn").addEventListener("click", confirmImport);
+            document.getElementById("cancelImportBtn").addEventListener("click", () => {
+                box.hidden = true;
+                box.innerHTML = "";
+                pendingImportRows = [];
+            });
+        }
+
+        // Tạo lần lượt (không Promise.all) - nhập CSV có thể tạo hàng chục/hàng trăm sản phẩm cùng
+        // lúc, tạo song song dễ dồn dập request lên rate limit chung của API hoặc Turso hơn mức cần
+        // thiết cho 1 thao tác không gấp.
+        async function confirmImport() {
+            const validRows = pendingImportRows.filter(r => r.errors.length === 0);
+            if (validRows.length === 0) return;
+            if (!confirm(`Tạo mới ${validRows.length} sản phẩm từ CSV?`)) return;
+
+            const confirmBtn = document.getElementById("confirmImportBtn");
+            confirmBtn.disabled = true;
+            let success = 0, fail = 0;
+            for (const r of validRows) {
+                confirmBtn.textContent = `Đang nhập... (${success + fail}/${validRows.length})`;
+                try {
+                    const res = await apiFetch("/api/products", {
+                        method: "POST",
+                        body: {
+                            name: r.name, category_id: r.categoryId, brand_id: r.brandId,
+                            brand_type_id: r.brandTypeId, price: r.price, description: r.description
+                        }
+                    });
+                    if (res.ok) success++; else fail++;
+                } catch (err) {
+                    fail++;
+                }
+            }
+
+            showToast(`Đã nhập ${success} sản phẩm${fail ? `, ${fail} dòng lỗi` : ""}`);
+            document.getElementById("importPreview").hidden = true;
+            document.getElementById("importPreview").innerHTML = "";
+            pendingImportRows = [];
+            loadProducts();
+        }
+    </script>
+</body>
+</html>

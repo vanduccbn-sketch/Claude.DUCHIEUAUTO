@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Trang Chủ | Quản Trị Đức Hiếu Auto</title>
+    <link rel="icon" type="image/png" href="assets/favicon.png">
+    <link rel="stylesheet" href="assets/admin.css">
+    <style>
+        /* Mỗi mục nổi bật là 1 thẻ riêng (trước đây là hàng lưới dày đặc, khó phân biệt mục nọ với
+           mục kia) - ảnh lớn hơn để nhận diện nhanh, các trường nhóm rõ theo hàng, nút sắp xếp
+           lên/xuống điều chỉnh thứ tự hiển thị thật trên trang chủ (sort_order). */
+        .highlight-card {
+            display: grid; grid-template-columns: 72px 1fr auto; gap: 14px;
+            background: var(--bg-color); border: 1px solid var(--border); border-radius: 8px;
+            padding: 14px; margin-bottom: 14px; align-items: start;
+        }
+        .highlight-card img { width: 72px; height: 72px; object-fit: cover; border-radius: 6px; background: #eee; }
+        .highlight-card-fields { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+        .highlight-card-fields-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .highlight-card label { display: block; font-size: 11px; font-weight: 600; color: var(--text-muted); margin-bottom: 3px; }
+        .highlight-card input, .highlight-card textarea, .highlight-card select {
+            padding: 8px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; font-family: inherit; width: 100%;
+        }
+        .highlight-card textarea { resize: vertical; min-height: 44px; }
+        .highlight-card-side { display: flex; flex-direction: column; gap: 6px; align-items: stretch; }
+        .highlight-card-reorder { display: flex; gap: 4px; }
+        .highlight-card-reorder button { flex: 1; padding: 6px 8px; }
+        .highlight-add-form { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr auto; gap: 10px; align-items: end; margin-bottom: 24px; }
+        .highlight-add-form .form-group { margin: 0; }
+        .highlight-add-form label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 4px; }
+        .highlight-add-form select, .highlight-add-form input { width: 100%; padding: 9px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; }
+    </style>
+</head>
+<body>
+    <div class="admin-topbar" id="adminTopbar"></div>
+
+    <main class="admin-main">
+        <div class="admin-header">
+            <div>
+                <h1>Trang Chủ</h1>
+                <p class="desc">Sửa chữ và ảnh ở mọi khối trên trang chủ (Banner, Giới Thiệu, Dịch Vụ, Đặt Lịch/Nhắc Bảo Dưỡng, Sản Phẩm Chiến Lược, Giải Mã Công Nghệ, Liên Hệ, Footer), và chọn sản phẩm thật hiển thị ở 2 khu vực nổi bật "Sản Phẩm Chiến Lược"/"Giải Mã Công Nghệ".</p>
+            </div>
+            <button type="button" class="btn btn-secondary" id="previewBtn">Xem Trước Trang Chủ</button>
+        </div>
+
+        <details class="settings-section" id="historySection">
+            <summary style="cursor:pointer;font-size:16px;font-weight:700;">🕓 Lịch Sử Thay Đổi (50 gần nhất)</summary>
+            <p class="form-hint" style="margin:10px 0 14px;">Xem lại nội dung CŨ trước khi sửa gần nhất - bấm "Khôi phục" để đưa 1 khoá về đúng giá trị này (thao tác này cũng được ghi lại, khôi phục nhầm vẫn khôi phục ngược lại được).</p>
+            <div id="historyList"></div>
+        </details>
+
+        <div class="settings-section" data-section="hero">
+            <h2>🎬 Banner Đầu Trang (Hero)</h2>
+            <p class="form-hint" style="margin-bottom:14px;">Khối chữ lớn ngay đầu trang chủ, trên nền video. Để trống ô nào thì trang chủ tự giữ nguyên chữ đang có, không bị mất chữ.</p>
+            <div class="form-group">
+                <label for="heroSubtitleInput">Dòng nhỏ phía trên (VD: Premium Automotive Upgrade)</label>
+                <input type="text" id="heroSubtitleInput" placeholder="Premium Automotive Upgrade">
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="heroTitleLine1Input">Tiêu đề - dòng 1</label>
+                    <input type="text" id="heroTitleLine1Input" placeholder="ĐỊNH HÌNH PHONG CÁCH">
+                </div>
+                <div class="form-group">
+                    <label for="heroTitleLine2Input">Tiêu đề - dòng 2 (chữ màu đỏ nhấn)</label>
+                    <input type="text" id="heroTitleLine2Input" placeholder="ĐẲNG CẤP XẾ YÊU">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="heroDescriptionInput">Mô tả ngắn dưới tiêu đề</label>
+                <textarea id="heroDescriptionInput" rows="2" placeholder="Trung tâm chăm sóc và nâng cấp ô tô chuyên nghiệp hàng đầu."></textarea>
+            </div>
+            <div class="form-group">
+                <label>Ảnh nền (hiện trước khi video tải xong)</label>
+                <input type="file" id="heroPosterImageFile" accept="image/*">
+                <div class="cover-preview" id="heroPosterImagePreview" style="margin-top:10px;">Chưa chọn ảnh</div>
+                <input type="hidden" id="heroPosterImageInput">
+                <p class="form-hint">Không đổi được video nền ở đây, chỉ đổi được ảnh tĩnh hiện ra trước khi video kịp tải.</p>
+            </div>
+            <div class="editor-actions">
+                <button type="button" class="btn btn-primary" id="saveHeroBtn">Lưu Banner Đầu Trang</button>
+                <span class="save-status" id="heroSaveStatus"></span>
+            </div>
+        </div>
+
+        <div class="settings-section" data-section="about">
+            <h2>🏢 Giới Thiệu (Về Đức Hiếu Auto)</h2>
+            <p class="form-hint" style="margin-bottom:14px;">Khối "Về Đức Hiếu Auto" kèm số liệu thống kê trên trang chủ. Để trống ô nào thì giữ nguyên chữ/số đang có.</p>
+            <div class="form-group">
+                <label for="aboutBadgeInput">Nhãn nhỏ phía trên tiêu đề</label>
+                <input type="text" id="aboutBadgeInput" placeholder="Về Đức Hiếu Auto">
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="aboutSlogan1Input">Slogan - dòng 1</label>
+                    <input type="text" id="aboutSlogan1Input" placeholder="Nâng Tầm">
+                </div>
+                <div class="form-group">
+                    <label for="aboutSlogan2Input">Slogan - dòng 2 (chữ màu đỏ nhấn)</label>
+                    <input type="text" id="aboutSlogan2Input" placeholder="Trải Nghiệm">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="aboutDescriptionInput">Đoạn giới thiệu</label>
+                <textarea id="aboutDescriptionInput" rows="4" placeholder="Đoạn giới thiệu về Đức Hiếu Auto"></textarea>
+            </div>
+            <label style="display:block;font-size:13px;font-weight:600;margin:18px 0 8px;">Số liệu thống kê (3 ô)</label>
+            <div class="form-grid" style="grid-template-columns:repeat(3,1fr);">
+                <div class="form-group">
+                    <label for="aboutStat1NumInput">Số 1</label>
+                    <input type="text" inputmode="numeric" pattern="[0-9]*" id="aboutStat1NumInput" placeholder="240">
+                    <input type="text" id="aboutStat1LabelInput" placeholder="Nhãn: Sản phẩm chính hãng" style="margin-top:6px;">
+                </div>
+                <div class="form-group">
+                    <label for="aboutStat2NumInput">Số 2</label>
+                    <input type="text" inputmode="numeric" pattern="[0-9]*" id="aboutStat2NumInput" placeholder="30">
+                    <input type="text" id="aboutStat2LabelInput" placeholder="Nhãn: Thương hiệu quốc tế" style="margin-top:6px;">
+                </div>
+                <div class="form-group">
+                    <label for="aboutStat3NumInput">Số 3</label>
+                    <input type="text" inputmode="numeric" pattern="[0-9]*" id="aboutStat3NumInput" placeholder="8">
+                    <input type="text" id="aboutStat3LabelInput" placeholder="Nhãn: Danh mục dịch vụ" style="margin-top:6px;">
+                </div>
+            </div>
+            <label style="display:block;font-size:13px;font-weight:600;margin:18px 0 8px;">3 ảnh trong khối Giới Thiệu</label>
+            <div class="form-grid" style="grid-template-columns:repeat(3,1fr);">
+                <div class="form-group">
+                    <label>Ảnh chính (to)</label>
+                    <input type="file" id="aboutImageMainFile" accept="image/*">
+                    <div class="cover-preview" id="aboutImageMainPreview" style="margin-top:10px;">Chưa chọn ảnh</div>
+                    <input type="hidden" id="aboutImageMainInput">
+                </div>
+                <div class="form-group">
+                    <label>Ảnh nhỏ 1</label>
+                    <input type="file" id="aboutImageDetail1File" accept="image/*">
+                    <div class="cover-preview" id="aboutImageDetail1Preview" style="margin-top:10px;">Chưa chọn ảnh</div>
+                    <input type="hidden" id="aboutImageDetail1Input">
+                </div>
+                <div class="form-group">
+                    <label>Ảnh nhỏ 2</label>
+                    <input type="file" id="aboutImageDetail2File" accept="image/*">
+                    <div class="cover-preview" id="aboutImageDetail2Preview" style="margin-top:10px;">Chưa chọn ảnh</div>
+                    <input type="hidden" id="aboutImageDetail2Input">
+                </div>
+            </div>
+            <div class="editor-actions">
+                <button type="button" class="btn btn-primary" id="saveAboutBtn">Lưu Giới Thiệu</button>
+                <span class="save-status" id="aboutSaveStatus"></span>
+            </div>
+        </div>
+
+        <div class="settings-section" data-section="service">
+            <h2>🛠️ Dịch Vụ</h2>
+            <p class="form-hint" style="margin-bottom:14px;">Thẻ dịch vụ tự lấy theo danh mục, chỉ tiêu đề mục là sửa được ở đây.</p>
+            <div class="form-group">
+                <label for="serviceSectionTitleInput">Tiêu đề mục</label>
+                <input type="text" id="serviceSectionTitleInput" placeholder="DỊCH VỤ CHUYÊN NGHIỆP">
+            </div>
+            <div class="editor-actions">
+                <button type="button" class="btn btn-primary" id="saveServiceBtn">Lưu Dịch Vụ</button>
+                <span class="save-status" id="serviceSaveStatus"></span>
+            </div>
+        </div>
+
+        <div class="settings-section" data-section="quick_actions">
+            <h2>📅 Đặt Lịch Hẹn / Nhắc Bảo Dưỡng</h2>
+            <p class="form-hint" style="margin-bottom:14px;">Khối 2 thẻ CTA giữa trang chủ.</p>
+            <div class="form-group">
+                <label for="quickActionsTitleInput">Tiêu đề mục</label>
+                <input type="text" id="quickActionsTitleInput" placeholder="SẴN SÀNG PHỤC VỤ NGAY">
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Thẻ 1 - Đặt Lịch Hẹn</label>
+                    <input type="text" id="qaCta1LabelInput" placeholder="Nhãn nhỏ: Đặt Lịch Hẹn" style="margin-bottom:6px;">
+                    <input type="text" id="qaCta1TitleInput" placeholder="Tiêu đề: Giữ Chỗ Trước, Không Phải Chờ Đợi" style="margin-bottom:6px;">
+                    <input type="text" id="qaCta1DescInput" placeholder="Mô tả ngắn">
+                </div>
+                <div class="form-group">
+                    <label>Thẻ 2 - Nhắc Bảo Dưỡng</label>
+                    <input type="text" id="qaCta2LabelInput" placeholder="Nhãn nhỏ: Nhắc Bảo Dưỡng" style="margin-bottom:6px;">
+                    <input type="text" id="qaCta2TitleInput" placeholder="Tiêu đề: Không Bao Giờ Quên Lịch Bảo Dưỡng Xe" style="margin-bottom:6px;">
+                    <input type="text" id="qaCta2DescInput" placeholder="Mô tả ngắn">
+                </div>
+            </div>
+            <div class="editor-actions">
+                <button type="button" class="btn btn-primary" id="saveQuickActionsBtn">Lưu Đặt Lịch / Nhắc Bảo Dưỡng</button>
+                <span class="save-status" id="quickActionsSaveStatus"></span>
+            </div>
+        </div>
+
+        <div class="settings-section" data-section="product">
+            <h2>⭐ Sản Phẩm Chiến Lược</h2>
+            <p class="form-hint" style="margin-bottom:14px;">Tiêu đề mục + CTA "Xem tất cả". Hiện ở trang chủ dạng thẻ sản phẩm kèm huy hiệu (VD "Giá Sốc") và nhãn giá (VD "Ưu đãi hôm nay").</p>
+            <div class="form-group">
+                <label for="productSectionTitleInput">Tiêu đề mục</label>
+                <input type="text" id="productSectionTitleInput" placeholder="SẢN PHẨM CHIẾN LƯỢC">
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="productCtaLabelInput">Nhãn nhỏ CTA cuối mục</label>
+                    <input type="text" id="productCtaLabelInput" placeholder="Khám Phá Thêm">
+                </div>
+                <div class="form-group">
+                    <label for="productCtaTitleInput">Tiêu đề CTA</label>
+                    <input type="text" id="productCtaTitleInput" placeholder="Xem Tất Cả Danh Mục Sản Phẩm">
+                </div>
+                <div class="form-group full">
+                    <label for="productCtaDescInput">Mô tả CTA</label>
+                    <input type="text" id="productCtaDescInput" placeholder="Hàng trăm sản phẩm chính hãng đang chờ bạn khám phá">
+                </div>
+            </div>
+            <div class="editor-actions">
+                <button type="button" class="btn btn-primary" id="saveProductTextBtn">Lưu Tiêu Đề / CTA</button>
+                <span class="save-status" id="productTextSaveStatus"></span>
+            </div>
+            <hr style="border:none;border-top:1px solid var(--border);margin:20px 0;">
+            <div class="highlight-add-form">
+                <div class="form-group">
+                    <label>Chọn sản phẩm</label>
+                    <select id="strategicProductSelect"><option value="">-- Chọn sản phẩm --</option></select>
+                </div>
+                <div class="form-group">
+                    <label>Huy hiệu (tuỳ chọn)</label>
+                    <input type="text" id="strategicBadge" placeholder="VD: Giá Sốc">
+                </div>
+                <div class="form-group">
+                    <label>Nhãn giá (tuỳ chọn)</label>
+                    <input type="text" id="strategicPriceTag" placeholder="VD: Ưu đãi hôm nay">
+                </div>
+                <div class="form-group">
+                    <label>Mô tả ngắn (tuỳ chọn)</label>
+                    <input type="text" id="strategicDesc" placeholder="Mô tả tiếp thị ngắn">
+                </div>
+                <button type="button" class="btn btn-primary" id="addStrategicBtn">+ Thêm</button>
+            </div>
+            <div id="strategicList"></div>
+        </div>
+
+        <div class="settings-section" data-section="tech">
+            <h2>⚙️ Giải Mã Công Nghệ</h2>
+            <p class="form-hint" style="margin-bottom:14px;">Eyebrow + tiêu đề + đoạn dẫn của mục. Bên dưới là "câu chuyện công nghệ" - tag trên ảnh, tiêu đề câu chuyện, đoạn mô tả dài hơn.</p>
+            <div class="form-group">
+                <label for="techEyebrowInput">Eyebrow (dòng chữ nhỏ phía trên)</label>
+                <input type="text" id="techEyebrowInput" placeholder="Công Nghệ Thật - Sản Phẩm Thật">
+            </div>
+            <div class="form-group">
+                <label for="techSectionTitleInput">Tiêu đề mục</label>
+                <input type="text" id="techSectionTitleInput" placeholder="GIẢI MÃ CÔNG NGHỆ">
+            </div>
+            <div class="form-group">
+                <label for="techIntroInput">Đoạn dẫn</label>
+                <textarea id="techIntroInput" rows="2" placeholder="Đoạn giới thiệu ngắn"></textarea>
+            </div>
+            <div class="editor-actions">
+                <button type="button" class="btn btn-primary" id="saveTechTextBtn">Lưu Tiêu Đề / Đoạn Dẫn</button>
+                <span class="save-status" id="techTextSaveStatus"></span>
+            </div>
+            <hr style="border:none;border-top:1px solid var(--border);margin:20px 0;">
+            <div class="highlight-add-form">
+                <div class="form-group">
+                    <label>Chọn sản phẩm</label>
+                    <select id="techProductSelect"><option value="">-- Chọn sản phẩm --</option></select>
+                </div>
+                <div class="form-group">
+                    <label>Tag trên ảnh</label>
+                    <input type="text" id="techTag" placeholder="VD: PPF - Bảo Vệ Sơn Xe">
+                </div>
+                <div class="form-group">
+                    <label>Tiêu đề câu chuyện</label>
+                    <input type="text" id="techTitle" placeholder="VD: Vết Xước Tự Biến Mất">
+                </div>
+                <div class="form-group">
+                    <label>Nội dung câu chuyện</label>
+                    <input type="text" id="techDesc" placeholder="Đoạn mô tả ngắn">
+                </div>
+                <button type="button" class="btn btn-primary" id="addTechBtn">+ Thêm</button>
+            </div>
+            <div id="techList"></div>
+        </div>
+
+        <div class="settings-section" data-section="contact">
+            <h2>📞 Liên Hệ</h2>
+            <p class="form-hint" style="margin-bottom:14px;">Số điện thoại/địa chỉ/link mạng xã hội thật KHÔNG sửa ở đây (để tránh nút "Gọi ngay" trỏ sai) - chỉ sửa được phần chữ mô tả.</p>
+            <div class="form-group">
+                <label for="contactEyebrowInput">Eyebrow</label>
+                <input type="text" id="contactEyebrowInput" placeholder="Luôn Sẵn Sàng Hỗ Trợ Bạn">
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="contactTitleMainInput">Tiêu đề - phần 1</label>
+                    <input type="text" id="contactTitleMainInput" placeholder="KẾT NỐI VỚI">
+                </div>
+                <div class="form-group">
+                    <label for="contactTitleAccentInput">Tiêu đề - phần 2 (chữ màu đỏ nhấn)</label>
+                    <input type="text" id="contactTitleAccentInput" placeholder="ĐỨC HIẾU AUTO">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="contactIntroInput">Đoạn dẫn</label>
+                <textarea id="contactIntroInput" rows="2" placeholder="Đoạn giới thiệu ngắn"></textarea>
+            </div>
+            <label style="display:block;font-size:13px;font-weight:600;margin:18px 0 8px;">4 thẻ kênh liên hệ (tiêu đề + mô tả - không phải số điện thoại/link thật)</label>
+            <div class="form-grid" style="grid-template-columns:repeat(2,1fr);">
+                <div class="form-group">
+                    <label>Thẻ 1 - Gọi Ngay</label>
+                    <input type="text" id="contactCh1TitleInput" placeholder="Gọi Ngay" style="margin-bottom:6px;">
+                    <input type="text" id="contactCh1DescInput" placeholder="Tư vấn trực tiếp, nhanh chóng">
+                </div>
+                <div class="form-group">
+                    <label>Thẻ 2 - Chat Zalo</label>
+                    <input type="text" id="contactCh2TitleInput" placeholder="Chat Zalo" style="margin-bottom:6px;">
+                    <input type="text" id="contactCh2DescInput" placeholder="Gửi ảnh xe, nhận báo giá tức thì">
+                </div>
+                <div class="form-group">
+                    <label>Thẻ 3 - Messenger</label>
+                    <input type="text" id="contactCh3TitleInput" placeholder="Messenger" style="margin-bottom:6px;">
+                    <input type="text" id="contactCh3DescInput" placeholder="Kết nối qua Facebook">
+                </div>
+                <div class="form-group">
+                    <label>Thẻ 4 - Ghé Cửa Hàng</label>
+                    <input type="text" id="contactCh4TitleInput" placeholder="Ghé Cửa Hàng" style="margin-bottom:6px;">
+                    <input type="text" id="contactCh4DescInput" placeholder="251 Lý Thái Tổ, Phường Buôn Ma Thuột, Đắk Lắk">
+                </div>
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="contactFormTitleInput">Tiêu đề form liên hệ</label>
+                    <input type="text" id="contactFormTitleInput" placeholder="Để Lại Lời Nhắn">
+                </div>
+                <div class="form-group">
+                    <label for="contactFormDescInput">Mô tả form liên hệ</label>
+                    <input type="text" id="contactFormDescInput" placeholder="Điền thông tin bên dưới...">
+                </div>
+            </div>
+            <div class="editor-actions">
+                <button type="button" class="btn btn-primary" id="saveContactBtn">Lưu Liên Hệ</button>
+                <span class="save-status" id="contactSaveStatus"></span>
+            </div>
+        </div>
+
+        <div class="settings-section" data-section="footer">
+            <h2>🔗 Footer</h2>
+            <p class="form-hint" style="margin-bottom:14px;">Danh sách link điều hướng ở footer KHÔNG sửa ở đây - chỉ sửa được mô tả thương hiệu, tiêu đề 3 cột, dòng bản quyền.</p>
+            <div class="form-group">
+                <label for="footerBrandDescInput">Mô tả thương hiệu</label>
+                <textarea id="footerBrandDescInput" rows="2" placeholder="Trung tâm nâng cấp và chăm sóc ô tô chuyên nghiệp..."></textarea>
+            </div>
+            <div class="form-grid" style="grid-template-columns:repeat(3,1fr);">
+                <div class="form-group">
+                    <label for="footerCol1TitleInput">Tiêu đề cột 1</label>
+                    <input type="text" id="footerCol1TitleInput" placeholder="Nội Thất Ô Tô">
+                </div>
+                <div class="form-group">
+                    <label for="footerCol2TitleInput">Tiêu đề cột 2</label>
+                    <input type="text" id="footerCol2TitleInput" placeholder="Ngoại Thất & Khác">
+                </div>
+                <div class="form-group">
+                    <label for="footerCol3TitleInput">Tiêu đề cột 3</label>
+                    <input type="text" id="footerCol3TitleInput" placeholder="Liên Kết Nhanh">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="footerCopyrightInput">Dòng bản quyền</label>
+                <input type="text" id="footerCopyrightInput" placeholder="© 2026 Đức Hiếu Auto. All rights reserved.">
+            </div>
+            <div class="editor-actions">
+                <button type="button" class="btn btn-primary" id="saveFooterBtn">Lưu Footer</button>
+                <span class="save-status" id="footerSaveStatus"></span>
+            </div>
+        </div>
+
+        <div class="settings-section" data-section="other_pages">
+            <h2>📄 Trang Khác (FAQ / Chính Sách / Đặt Lịch Hẹn)</h2>
+            <p class="form-hint" style="margin-bottom:14px;">Chỉ tiêu đề/đoạn dẫn đầu mỗi trang. Nội dung chi tiết (câu hỏi FAQ, điều khoản chính sách) vẫn quản lý riêng, không sửa ở đây.</p>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="faqPageTitleInput">Tiêu đề trang FAQ</label>
+                    <input type="text" id="faqPageTitleInput" placeholder="CÂU HỎI THƯỜNG GẶP">
+                </div>
+                <div class="form-group">
+                    <label for="policyPageTitleInput">Tiêu đề trang Chính Sách</label>
+                    <input type="text" id="policyPageTitleInput" placeholder="CHÍNH SÁCH BẢO HÀNH - ĐỔI TRẢ - BẢO MẬT">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="faqPageIntroInput">Đoạn dẫn trang FAQ</label>
+                <textarea id="faqPageIntroInput" rows="2" placeholder="Đoạn giới thiệu ngắn"></textarea>
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="bookingPageTitleInput">Tiêu đề trang Đặt Lịch Hẹn</label>
+                    <input type="text" id="bookingPageTitleInput" placeholder="ĐẶT LỊCH HẸN THI CÔNG">
+                </div>
+                <div class="form-group">
+                    <label for="bookingPageIntroInput">Đoạn dẫn trang Đặt Lịch Hẹn</label>
+                    <input type="text" id="bookingPageIntroInput" placeholder="Đoạn giới thiệu ngắn">
+                </div>
+            </div>
+            <div class="editor-actions">
+                <button type="button" class="btn btn-primary" id="saveOtherPagesBtn">Lưu Trang Khác</button>
+                <span class="save-status" id="otherPagesSaveStatus"></span>
+            </div>
+        </div>
+    </main>
+
+    <script src="assets/admin.js"></script>
+    <script>
+        const auth = requireAuth(["content", "super_admin"]);
+        if (auth) {
+            renderAdminNav(auth, "trang-chu");
+            init();
+        }
+
+        let allProducts = [];
+        let productOptionsHtml = "";
+        // Nhớ danh sách đã tải của mỗi khu vực để đổi chỗ (sort_order) khi bấm nút lên/xuống mà
+        // không phải gọi lại API chỉ để biết mục đứng trước/sau.
+        const loadedItems = { strategic: [], tech: [] };
+
+        async function init() {
+            const res = await apiFetch("/api/products/admin/list");
+            allProducts = await res.json();
+            productOptionsHtml = allProducts.map(p => `<option value="${p.id}">${p.name} (${p.brand_name})</option>`).join("");
+            document.getElementById("strategicProductSelect").innerHTML = `<option value="">-- Chọn sản phẩm --</option>` + productOptionsHtml;
+            document.getElementById("techProductSelect").innerHTML = `<option value="">-- Chọn sản phẩm --</option>` + productOptionsHtml;
+
+            loadHighlights("strategic");
+            loadHighlights("tech");
+            loadHomepageContent();
+            loadHistory();
+            applyContentPermissions();
+        }
+
+        // Khoá phần UI các khối admin (role content) không được super_admin gán quyền - chỉ ẩn/khoá
+        // GIAO DIỆN cho gọn, chặn THẬT SỰ vẫn nằm ở backend (PUT/revert kiểm tra lại, xem
+        // getAllowedSections() trong routes/homepage-content.js) - phòng trường hợp gọi API trực tiếp.
+        async function applyContentPermissions() {
+            try {
+                const res = await apiFetch("/api/homepage-content/my-permissions");
+                if (!res.ok) return;
+                const perm = await res.json();
+                if (perm.full) return;
+
+                document.querySelectorAll(".settings-section[data-section]").forEach(section => {
+                    if (perm.sections.includes(section.dataset.section)) return;
+                    section.querySelectorAll("input, textarea, button").forEach(el => el.disabled = true);
+                    section.style.opacity = "0.55";
+                    const notice = document.createElement("p");
+                    notice.className = "form-hint";
+                    notice.style.cssText = "color:#b7791f;font-weight:600;margin-top:10px;";
+                    notice.textContent = "🔒 Bạn không có quyền sửa khối này - liên hệ Super Admin nếu cần.";
+                    section.appendChild(notice);
+                });
+            } catch (err) {
+                // Im lặng bỏ qua - không để lỗi tra quyền chặn cả trang load bình thường.
+            }
+        }
+
+        // ---- Lịch sử thay đổi / khôi phục ----
+        function formatHistoryTime(isoLike) {
+            // changed_at lưu dạng "datetime('now')" của SQLite (UTC, "YYYY-MM-DD HH:MM:SS") - Date()
+            // hiểu đúng nếu thêm "Z", nếu không sẽ bị hiểu nhầm thành giờ local, lệch múi giờ hiển thị.
+            const iso = isoLike.includes("T") ? isoLike : isoLike.replace(" ", "T") + "Z";
+            return new Date(iso).toLocaleString("vi-VN");
+        }
+
+        async function loadHistory() {
+            const list = document.getElementById("historyList");
+            list.innerHTML = loadingHintHtml();
+            try {
+                const res = await apiFetch("/api/homepage-content/history");
+                if (!res.ok) throw new Error((await res.json()).error || "Không tải được lịch sử");
+                const rows = await res.json();
+                if (rows.length === 0) {
+                    list.innerHTML = emptyHintHtml("Chưa có thay đổi nào được ghi lại.");
+                    return;
+                }
+                list.innerHTML = rows.map(r => {
+                    const preview = r.old_value ? escapeHtml(r.old_value).slice(0, 80) : "(rỗng)";
+                    return `
+                    <div class="highlight-card" style="grid-template-columns:1fr auto;">
+                        <div>
+                            <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px;">${escapeHtml(r.key)} · ${r.changed_by} · ${formatHistoryTime(r.changed_at)}</div>
+                            <div style="font-size:13px;">Giá trị cũ: "${preview}${r.old_value && r.old_value.length > 80 ? "..." : ""}"</div>
+                        </div>
+                        <button type="button" class="btn btn-secondary btn-revert" data-id="${r.id}">Khôi phục</button>
+                    </div>`;
+                }).join("");
+                list.querySelectorAll(".btn-revert").forEach(btn => {
+                    btn.addEventListener("click", () => revertHistory(Number(btn.dataset.id)));
+                });
+            } catch (err) {
+                showToast(err.message, true);
+            }
+        }
+
+        async function revertHistory(historyId) {
+            if (!confirm("Khôi phục khoá này về đúng giá trị cũ? Giá trị hiện tại sẽ được ghi vào lịch sử để có thể khôi phục ngược lại nếu cần.")) return;
+            try {
+                const res = await apiFetch("/api/homepage-content/revert", { method: "POST", body: { historyId } });
+                if (!res.ok) throw new Error((await res.json()).error || "Khôi phục thất bại");
+                showToast("Đã khôi phục");
+                loadHomepageContent();
+                loadHistory();
+            } catch (err) {
+                showToast(err.message, true);
+            }
+        }
+
+        // Ánh xạ key trong DB (routes/homepage-content.js) <-> id ô input trên form. Dùng chung cho
+        // cả load và save để không lặp danh sách 2 lần dễ lệch nhau khi sửa sau này. Khoá ảnh cũng
+        // nằm chung ở đây, trỏ tới ô input ẩn giữ URL - saveHomepageContentFields() đọc value như
+        // mọi ô khác, không cần code riêng cho ảnh.
+        const HOMEPAGE_CONTENT_FIELDS = {
+            hero_subtitle: "heroSubtitleInput",
+            hero_title_line1: "heroTitleLine1Input",
+            hero_title_line2: "heroTitleLine2Input",
+            hero_description: "heroDescriptionInput",
+            hero_poster_image: "heroPosterImageInput",
+            about_badge: "aboutBadgeInput",
+            about_slogan_line1: "aboutSlogan1Input",
+            about_slogan_line2: "aboutSlogan2Input",
+            about_description: "aboutDescriptionInput",
+            about_stat1_number: "aboutStat1NumInput",
+            about_stat1_label: "aboutStat1LabelInput",
+            about_stat2_number: "aboutStat2NumInput",
+            about_stat2_label: "aboutStat2LabelInput",
+            about_stat3_number: "aboutStat3NumInput",
+            about_stat3_label: "aboutStat3LabelInput",
+            about_image_main: "aboutImageMainInput",
+            about_image_detail1: "aboutImageDetail1Input",
+            about_image_detail2: "aboutImageDetail2Input",
+            service_section_title: "serviceSectionTitleInput",
+            quick_actions_section_title: "quickActionsTitleInput",
+            quick_actions_cta1_label: "qaCta1LabelInput",
+            quick_actions_cta1_title: "qaCta1TitleInput",
+            quick_actions_cta1_desc: "qaCta1DescInput",
+            quick_actions_cta2_label: "qaCta2LabelInput",
+            quick_actions_cta2_title: "qaCta2TitleInput",
+            quick_actions_cta2_desc: "qaCta2DescInput",
+            product_section_title: "productSectionTitleInput",
+            product_cta_label: "productCtaLabelInput",
+            product_cta_title: "productCtaTitleInput",
+            product_cta_desc: "productCtaDescInput",
+            tech_eyebrow: "techEyebrowInput",
+            tech_section_title: "techSectionTitleInput",
+            tech_intro: "techIntroInput",
+            contact_eyebrow: "contactEyebrowInput",
+            contact_title_main: "contactTitleMainInput",
+            contact_title_accent: "contactTitleAccentInput",
+            contact_intro: "contactIntroInput",
+            contact_channel1_title: "contactCh1TitleInput",
+            contact_channel1_desc: "contactCh1DescInput",
+            contact_channel2_title: "contactCh2TitleInput",
+            contact_channel2_desc: "contactCh2DescInput",
+            contact_channel3_title: "contactCh3TitleInput",
+            contact_channel3_desc: "contactCh3DescInput",
+            contact_channel4_title: "contactCh4TitleInput",
+            contact_channel4_desc: "contactCh4DescInput",
+            contact_form_title: "contactFormTitleInput",
+            contact_form_desc: "contactFormDescInput",
+            footer_brand_desc: "footerBrandDescInput",
+            footer_col1_title: "footerCol1TitleInput",
+            footer_col2_title: "footerCol2TitleInput",
+            footer_col3_title: "footerCol3TitleInput",
+            footer_copyright: "footerCopyrightInput",
+            faq_page_title: "faqPageTitleInput",
+            faq_page_intro: "faqPageIntroInput",
+            policy_page_title: "policyPageTitleInput",
+            booking_page_title: "bookingPageTitleInput",
+            booking_page_intro: "bookingPageIntroInput"
+        };
+
+        // Khoá ảnh -> id preview box, để loadHomepageContent() hiện lại ảnh đang lưu (không chỉ
+        // điền URL vào ô ẩn mà còn hiện thumbnail cho admin thấy đang là ảnh nào).
+        const IMAGE_PREVIEW_IDS = {
+            hero_poster_image: "heroPosterImagePreview",
+            about_image_main: "aboutImageMainPreview",
+            about_image_detail1: "aboutImageDetail1Preview",
+            about_image_detail2: "aboutImageDetail2Preview"
+        };
+
+        async function loadHomepageContent() {
+            try {
+                const res = await apiFetch("/api/homepage-content");
+                const content = await res.json();
+                Object.entries(HOMEPAGE_CONTENT_FIELDS).forEach(([key, elId]) => {
+                    document.getElementById(elId).value = content[key] || "";
+                });
+                Object.entries(IMAGE_PREVIEW_IDS).forEach(([key, previewId]) => {
+                    const url = content[key];
+                    document.getElementById(previewId).innerHTML = url
+                        ? `<img src="${url}" alt="" style="max-width:160px;border-radius:6px;">`
+                        : "Chưa chọn ảnh";
+                });
+            } catch (err) {
+                showToast(err.message, true);
+            }
+        }
+
+        // ---- Cảnh báo rời trang khi còn thay đổi chưa lưu ----
+        // Theo dõi riêng từng khoá (không phải 1 cờ dirty chung) - bấm Lưu ở 1 khối chỉ xoá đúng
+        // khoá của khối đó khỏi danh sách, khối khác còn sửa dở vẫn tiếp tục cảnh báo đúng.
+        const dirtyKeys = new Set();
+        function markDirty(key) { dirtyKeys.add(key); }
+        function clearDirty(keys) { keys.forEach(k => dirtyKeys.delete(k)); }
+
+        Object.entries(HOMEPAGE_CONTENT_FIELDS).forEach(([key, elId]) => {
+            document.getElementById(elId).addEventListener("input", () => markDirty(key));
+        });
+
+        window.addEventListener("beforeunload", (e) => {
+            if (dirtyKeys.size === 0) return;
+            e.preventDefault();
+            e.returnValue = "";
+        });
+
+        // ---- Xem trước trang chủ với nội dung ĐANG GÕ, kể cả chưa bấm Lưu ----
+        // Trang chủ công khai (assets/js/homepage-content.js) hiểu tham số ?preview=<json mã hoá>:
+        // nếu có, dùng thẳng dữ liệu này thay vì gọi API - không cần lưu tạm vào DB thật rồi phải
+        // dọn lại. Dùng query string (không phải sessionStorage) vì trang xem trước mở ở origin
+        // khác (domain công khai), 2 origin không chia sẻ được sessionStorage với nhau.
+        document.getElementById("previewBtn").addEventListener("click", () => {
+            const content = {};
+            Object.entries(HOMEPAGE_CONTENT_FIELDS).forEach(([key, elId]) => {
+                content[key] = document.getElementById(elId).value;
+            });
+            const isLocal = ["localhost", "127.0.0.1"].includes(window.location.hostname);
+            const publicBase = isLocal ? "http://localhost:5500" : "https://duchieuauto.vn";
+            const url = `${publicBase}/?preview=${encodeURIComponent(JSON.stringify(content))}`;
+            window.open(url, "_blank");
+        });
+
+        // Dùng lại đúng cơ chế upload ảnh đã có ở admin/banner.html: chọn file -> upload thẳng lên
+        // Cloudinary qua /api/uploads -> lưu URL trả về vào ô input ẩn (khoá tương ứng trong
+        // HOMEPAGE_CONTENT_FIELDS) -> hiện thumbnail xem trước. Bấm nút "Lưu" của khối mới ghi vào DB.
+        function wireImageField(key, fileInputId, hiddenInputId, previewId, purpose) {
+            document.getElementById(fileInputId).addEventListener("change", async (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                const preview = document.getElementById(previewId);
+                preview.textContent = "Đang tải ảnh lên...";
+                try {
+                    const fd = new FormData();
+                    fd.append("image", file);
+                    fd.append("purpose", purpose);
+                    const res = await apiFetch("/api/uploads", { method: "POST", body: fd });
+                    if (!res.ok) throw new Error((await res.json()).error || "Tải ảnh thất bại");
+                    const data = await res.json();
+                    document.getElementById(hiddenInputId).value = data.url;
+                    preview.innerHTML = `<img src="${data.url}" alt="" style="max-width:160px;border-radius:6px;">`;
+                    markDirty(key); // set .value bằng JS không tự bắn sự kiện "input" như gõ tay
+                } catch (err) {
+                    preview.textContent = "Chưa chọn ảnh";
+                    showToast(err.message, true);
+                }
+            });
+        }
+        wireImageField("hero_poster_image", "heroPosterImageFile", "heroPosterImageInput", "heroPosterImagePreview", "cover");
+        wireImageField("about_image_main", "aboutImageMainFile", "aboutImageMainInput", "aboutImageMainPreview", "content");
+        wireImageField("about_image_detail1", "aboutImageDetail1File", "aboutImageDetail1Input", "aboutImageDetail1Preview", "content");
+        wireImageField("about_image_detail2", "aboutImageDetail2File", "aboutImageDetail2Input", "aboutImageDetail2Preview", "content");
+
+        async function saveHomepageContentFields(keys, statusElId) {
+            const statusEl = document.getElementById(statusElId);
+            const body = {};
+            keys.forEach(key => { body[key] = document.getElementById(HOMEPAGE_CONTENT_FIELDS[key]).value.trim(); });
+            try {
+                const res = await apiFetch("/api/homepage-content", { method: "PUT", body });
+                if (!res.ok) throw new Error((await res.json()).error || "Lưu thất bại");
+                showToast("Đã lưu");
+                clearDirty(keys);
+                if (statusEl) {
+                    statusEl.textContent = "Đã lưu lúc " + new Date().toLocaleTimeString("vi-VN");
+                }
+            } catch (err) {
+                showToast(err.message, true);
+            }
+        }
+
+        document.getElementById("saveHeroBtn").addEventListener("click", () => {
+            saveHomepageContentFields(["hero_subtitle", "hero_title_line1", "hero_title_line2", "hero_description", "hero_poster_image"], "heroSaveStatus");
+        });
+
+        document.getElementById("saveAboutBtn").addEventListener("click", () => {
+            saveHomepageContentFields([
+                "about_badge", "about_slogan_line1", "about_slogan_line2", "about_description",
+                "about_stat1_number", "about_stat1_label",
+                "about_stat2_number", "about_stat2_label",
+                "about_stat3_number", "about_stat3_label",
+                "about_image_main", "about_image_detail1", "about_image_detail2"
+            ], "aboutSaveStatus");
+        });
+
+        document.getElementById("saveServiceBtn").addEventListener("click", () => {
+            saveHomepageContentFields(["service_section_title"], "serviceSaveStatus");
+        });
+
+        document.getElementById("saveQuickActionsBtn").addEventListener("click", () => {
+            saveHomepageContentFields([
+                "quick_actions_section_title",
+                "quick_actions_cta1_label", "quick_actions_cta1_title", "quick_actions_cta1_desc",
+                "quick_actions_cta2_label", "quick_actions_cta2_title", "quick_actions_cta2_desc"
+            ], "quickActionsSaveStatus");
+        });
+
+        document.getElementById("saveProductTextBtn").addEventListener("click", () => {
+            saveHomepageContentFields(["product_section_title", "product_cta_label", "product_cta_title", "product_cta_desc"], "productTextSaveStatus");
+        });
+
+        document.getElementById("saveTechTextBtn").addEventListener("click", () => {
+            saveHomepageContentFields(["tech_eyebrow", "tech_section_title", "tech_intro"], "techTextSaveStatus");
+        });
+
+        document.getElementById("saveContactBtn").addEventListener("click", () => {
+            saveHomepageContentFields([
+                "contact_eyebrow", "contact_title_main", "contact_title_accent", "contact_intro",
+                "contact_channel1_title", "contact_channel1_desc",
+                "contact_channel2_title", "contact_channel2_desc",
+                "contact_channel3_title", "contact_channel3_desc",
+                "contact_channel4_title", "contact_channel4_desc",
+                "contact_form_title", "contact_form_desc"
+            ], "contactSaveStatus");
+        });
+
+        document.getElementById("saveFooterBtn").addEventListener("click", () => {
+            saveHomepageContentFields([
+                "footer_brand_desc", "footer_col1_title", "footer_col2_title", "footer_col3_title", "footer_copyright"
+            ], "footerSaveStatus");
+        });
+
+        document.getElementById("saveOtherPagesBtn").addEventListener("click", () => {
+            saveHomepageContentFields([
+                "faq_page_title", "faq_page_intro", "policy_page_title", "booking_page_title", "booking_page_intro"
+            ], "otherPagesSaveStatus");
+        });
+
+        document.getElementById("addStrategicBtn").addEventListener("click", () => {
+            addHighlight("strategic", {
+                product_id: document.getElementById("strategicProductSelect").value,
+                badge_text: document.getElementById("strategicBadge").value.trim(),
+                price_tag: document.getElementById("strategicPriceTag").value.trim(),
+                description: document.getElementById("strategicDesc").value.trim()
+            }, ["strategicProductSelect", "strategicBadge", "strategicPriceTag", "strategicDesc"]);
+        });
+
+        document.getElementById("addTechBtn").addEventListener("click", () => {
+            addHighlight("tech", {
+                product_id: document.getElementById("techProductSelect").value,
+                tag_text: document.getElementById("techTag").value.trim(),
+                story_title: document.getElementById("techTitle").value.trim(),
+                description: document.getElementById("techDesc").value.trim()
+            }, ["techProductSelect", "techTag", "techTitle", "techDesc"]);
+        });
+
+        async function addHighlight(section, body, clearIds) {
+            if (!body.product_id) return showToast("Vui lòng chọn sản phẩm", true);
+            try {
+                const res = await apiFetch("/api/homepage", { method: "POST", body: { section, ...body } });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || "Thêm thất bại");
+                showToast("Đã thêm");
+                clearIds.forEach(id => { document.getElementById(id).value = ""; });
+                loadHighlights(section);
+            } catch (err) {
+                showToast(err.message, true);
+            }
+        }
+
+        function productImg(id) {
+            return `https://duchieuauto.vn/assets/images/products/${id}/anh-1.webp`;
+        }
+
+        async function loadHighlights(section) {
+            const listEl = document.getElementById(section === "strategic" ? "strategicList" : "techList");
+            try {
+                const res = await apiFetch(`/api/homepage/admin/all?section=${section}`);
+                const items = await res.json();
+                loadedItems[section] = items;
+                if (items.length === 0) {
+                    listEl.innerHTML = emptyHintHtml("Chưa có sản phẩm nào trong khu vực này.");
+                    return;
+                }
+                listEl.innerHTML = items.map((it, i) => highlightRowHtml(section, it, i, items.length)).join("");
+                items.forEach(it => {
+                    document.querySelector(`.btn-save-highlight[data-id="${it.id}"]`)
+                        .addEventListener("click", () => saveHighlight(section, it.id));
+                    document.querySelector(`.btn-delete-highlight[data-id="${it.id}"]`)
+                        .addEventListener("click", () => deleteHighlight(section, it.id));
+                    document.querySelectorAll(`.btn-move-up[data-id="${it.id}"]`)
+                        .forEach(b => b.addEventListener("click", () => moveHighlight(section, it.id, -1)));
+                    document.querySelectorAll(`.btn-move-down[data-id="${it.id}"]`)
+                        .forEach(b => b.addEventListener("click", () => moveHighlight(section, it.id, 1)));
+                });
+            } catch (err) {
+                showToast(err.message, true);
+            }
+        }
+
+        function productSelectHtml(currentId) {
+            return `<option value="">-- Chọn sản phẩm --</option>` +
+                productOptionsHtml.replace(`value="${currentId}"`, `value="${currentId}" selected`);
+        }
+
+        function highlightRowHtml(section, it, index, total) {
+            const fieldsRow = section === "strategic"
+                ? `
+                    <div class="highlight-card-fields-row">
+                        <div><label>Huy hiệu</label><input type="text" class="f-badge" value="${it.badge_text || ""}" placeholder="VD: Giá Sốc"></div>
+                        <div><label>Nhãn giá</label><input type="text" class="f-price-tag" value="${it.price_tag || ""}" placeholder="VD: Ưu đãi hôm nay"></div>
+                    </div>`
+                : `
+                    <div class="highlight-card-fields-row">
+                        <div><label>Tag trên ảnh</label><input type="text" class="f-tag" value="${it.tag_text || ""}" placeholder="VD: PPF - Bảo Vệ Sơn Xe"></div>
+                        <div><label>Tiêu đề câu chuyện</label><input type="text" class="f-story-title" value="${it.story_title || ""}" placeholder="VD: Vết Xước Tự Biến Mất"></div>
+                    </div>`;
+
+            return `
+                <div class="highlight-card" data-row-id="${it.id}">
+                    <img src="${productImg(it.product_id)}" alt="" onerror="this.style.visibility='hidden'">
+                    <div class="highlight-card-fields">
+                        <div><label>Sản phẩm</label><select class="f-product">${productSelectHtml(it.product_id)}</select></div>
+                        ${fieldsRow}
+                        <div><label>Mô tả</label><textarea class="f-description" placeholder="Mô tả ngắn">${it.description || ""}</textarea></div>
+                    </div>
+                    <div class="highlight-card-side">
+                        <div class="highlight-card-reorder">
+                            <button type="button" class="btn btn-secondary btn-move-up" data-id="${it.id}" ${index === 0 ? "disabled" : ""} title="Đưa lên trước">▲</button>
+                            <button type="button" class="btn btn-secondary btn-move-down" data-id="${it.id}" ${index === total - 1 ? "disabled" : ""} title="Đưa xuống sau">▼</button>
+                        </div>
+                        <button type="button" class="btn btn-primary btn-save-highlight" data-id="${it.id}">Lưu</button>
+                        <button type="button" class="btn btn-danger btn-delete-highlight" data-id="${it.id}">Xoá</button>
+                    </div>
+                </div>`;
+        }
+
+        async function saveHighlight(section, id) {
+            const row = document.querySelector(`[data-row-id="${id}"]`);
+            const body = { description: row.querySelector(".f-description").value.trim() };
+
+            const productId = row.querySelector(".f-product").value;
+            if (!productId) return showToast("Vui lòng chọn sản phẩm", true);
+            body.product_id = productId;
+
+            if (section === "strategic") {
+                body.badge_text = row.querySelector(".f-badge").value.trim();
+                body.price_tag = row.querySelector(".f-price-tag").value.trim();
+            } else {
+                body.tag_text = row.querySelector(".f-tag").value.trim();
+                body.story_title = row.querySelector(".f-story-title").value.trim();
+            }
+
+            try {
+                const res = await apiFetch(`/api/homepage/${id}`, { method: "PUT", body });
+                if (!res.ok) throw new Error((await res.json()).error || "Lưu thất bại");
+                showToast("Đã lưu");
+                loadHighlights(section);
+            } catch (err) {
+                showToast(err.message, true);
+            }
+        }
+
+        // Đổi chỗ sort_order với mục liền kề (lên: mục phía trước, xuống: mục phía sau) - đơn giản
+        // hơn kéo-thả (không cần thêm thư viện, đúng tinh thần dự án hiện tại không phụ thuộc
+        // ngoài nếu tự viết vài chục dòng là đủ).
+        async function moveHighlight(section, id, direction) {
+            const items = loadedItems[section];
+            const idx = items.findIndex(it => it.id === id);
+            const swapIdx = idx + direction;
+            if (swapIdx < 0 || swapIdx >= items.length) return;
+
+            const a = items[idx], b = items[swapIdx];
+            try {
+                await Promise.all([
+                    apiFetch(`/api/homepage/${a.id}`, { method: "PUT", body: { sort_order: b.sort_order } }),
+                    apiFetch(`/api/homepage/${b.id}`, { method: "PUT", body: { sort_order: a.sort_order } })
+                ]);
+                loadHighlights(section);
+            } catch (err) {
+                showToast(err.message, true);
+            }
+        }
+
+        async function deleteHighlight(section, id) {
+            if (!confirm("Xoá sản phẩm này khỏi khu vực nổi bật?")) return;
+            try {
+                const res = await apiFetch(`/api/homepage/${id}`, { method: "DELETE" });
+                if (!res.ok) throw new Error((await res.json()).error || "Xoá thất bại");
+                showToast("Đã xoá");
+                loadHighlights(section);
+            } catch (err) {
+                showToast(err.message, true);
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Đặt Lại Mật Khẩu | Đức Hiếu Auto</title>
+    <link rel="icon" type="image/png" href="assets/favicon.png">
+    <link rel="stylesheet" href="assets/admin.css">
+</head>
+<body>
+    <div class="login-page">
+        <div class="login-box">
+            <img class="login-logo" src="assets/logo-header.png" alt="Đức Hiếu Auto">
+            <p class="sub">Đặt mật khẩu mới</p>
+
+            <form id="resetForm">
+                <label for="newPassword">Mật khẩu mới (tối thiểu 8 ký tự)</label>
+                <input type="password" id="newPassword" autocomplete="new-password" required minlength="8">
+
+                <label for="confirmPassword">Nhập lại mật khẩu mới</label>
+                <input type="password" id="confirmPassword" autocomplete="new-password" required minlength="8">
+
+                <div class="login-error" id="formError"></div>
+
+                <button type="submit" id="submitBtn">Đặt Mật Khẩu Mới</button>
+            </form>
+            <p style="text-align:center;margin-top:16px;font-size:13px;"><a href="login.html">Quay lại đăng nhập</a></p>
+        </div>
+    </div>
+
+    <script>
+        const token = new URLSearchParams(window.location.search).get("token");
+        const form = document.getElementById("resetForm");
+        const errorBox = document.getElementById("formError");
+        const submitBtn = document.getElementById("submitBtn");
+
+        if (!token) {
+            errorBox.textContent = "Liên kết không hợp lệ - thiếu token. Vui lòng yêu cầu lại từ trang \"Quên mật khẩu\".";
+            errorBox.classList.add("show");
+            submitBtn.disabled = true;
+        }
+
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            errorBox.classList.remove("show");
+
+            const newPassword = document.getElementById("newPassword").value;
+            const confirmPassword = document.getElementById("confirmPassword").value;
+            if (newPassword !== confirmPassword) {
+                errorBox.textContent = "Mật khẩu mới nhập lại không khớp";
+                errorBox.classList.add("show");
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = "Đang xử lý...";
+
+            try {
+                const res = await fetch("/api/auth/reset-password", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ token, newPassword })
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || "Đặt lại mật khẩu thất bại");
+
+                alert("Đã đặt lại mật khẩu thành công. Vui lòng đăng nhập lại.");
+                window.location.href = "login.html";
+            } catch (err) {
+                errorBox.textContent = err.message;
+                errorBox.classList.add("show");
+                submitBtn.disabled = false;
+                submitBtn.textContent = "Đặt Mật Khẩu Mới";
+            }
+        });
+    </script>
+</body>
+</html>

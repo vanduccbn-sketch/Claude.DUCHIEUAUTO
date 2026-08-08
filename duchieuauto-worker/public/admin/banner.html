@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Banner | Quản Trị Đức Hiếu Auto</title>
+    <link rel="icon" type="image/png" href="assets/favicon.png">
+    <link rel="stylesheet" href="assets/admin.css">
+</head>
+<body>
+    <div class="admin-topbar" id="adminTopbar"></div>
+
+    <main class="admin-main">
+        <div class="admin-header">
+            <div>
+                <h1>Banner / Slider</h1>
+                <p class="desc">Quản lý banner quảng cáo hiển thị trên trang công khai. Có thể đặt ngày bắt đầu/kết thúc để tự động ẩn/hiện.</p>
+            </div>
+        </div>
+
+        <div class="inline-form-card">
+            <h2 id="formTitle">+ Thêm Banner Mới</h2>
+            <form id="bannerForm">
+                <input type="hidden" id="bannerId">
+                <div class="form-grid">
+                    <div class="form-group full">
+                        <label for="title">Tiêu đề (nội bộ, không hiện ra khách)</label>
+                        <input type="text" id="title" required placeholder="VD: Banner khuyến mãi PPF tháng 8">
+                    </div>
+                    <div class="form-group full">
+                        <label for="image">Ảnh banner</label>
+                        <input type="file" id="imageFile" accept="image/*">
+                        <div class="cover-preview" id="imagePreview" style="margin-top:10px;">Chưa chọn ảnh</div>
+                        <input type="hidden" id="image">
+                    </div>
+                    <div class="form-group full">
+                        <label for="link">Link khi bấm vào banner (không bắt buộc)</label>
+                        <input type="text" id="link" placeholder="VD: /product?danh-muc=ppf-wrap">
+                    </div>
+                    <div class="form-group">
+                        <label for="sort_order">Thứ tự hiển thị (số nhỏ hiện trước)</label>
+                        <input type="text" id="sort_order" placeholder="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="start_date">Ngày bắt đầu hiện (để trống = hiện ngay)</label>
+                        <input type="date" id="start_date">
+                    </div>
+                    <div class="form-group">
+                        <label for="end_date">Ngày kết thúc (để trống = không tự ẩn)</label>
+                        <input type="date" id="end_date">
+                    </div>
+                </div>
+                <div class="editor-actions">
+                    <button type="submit" class="btn btn-primary" id="submitBtn">Lưu Banner</button>
+                    <button type="button" class="btn btn-secondary" id="previewBtn">Xem Trước</button>
+                    <button type="button" class="btn btn-secondary" id="cancelEditBtn" style="display:none;">Huỷ Sửa</button>
+                    <span class="save-status" id="saveStatus"></span>
+                </div>
+            </form>
+        </div>
+
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Ảnh</th>
+                    <th>Tiêu đề</th>
+                    <th>Thứ tự</th>
+                    <th>Thời gian hiện</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody id="bannersBody">
+                <tr class="empty-row"><td colspan="5"><span class="admin-spinner"></span>Đang tải...</td></tr>
+            </tbody>
+        </table>
+    </main>
+
+    <script src="assets/admin.js"></script>
+    <script>
+        const auth = requireAuth(["ads", "super_admin"]);
+        if (auth) {
+            renderAdminNav(auth, "banner");
+            loadBanners();
+        }
+
+        document.getElementById("imageFile").addEventListener("change", async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const preview = document.getElementById("imagePreview");
+            preview.textContent = "Đang tải ảnh lên...";
+            try {
+                const fd = new FormData();
+                fd.append("image", file);
+                fd.append("purpose", "cover");
+                const res = await apiFetch("/api/uploads", { method: "POST", body: fd });
+                if (!res.ok) throw new Error((await res.json()).error || "Tải ảnh thất bại");
+                const data = await res.json();
+                document.getElementById("image").value = data.url;
+                preview.innerHTML = `<img src="${data.url}" alt="">`;
+            } catch (err) {
+                preview.textContent = "Chưa chọn ảnh";
+                showToast(err.message, true);
+            }
+        });
+
+        async function loadBanners() {
+            const res = await apiFetch("/api/banners/admin/all");
+            const banners = await res.json();
+            const tbody = document.getElementById("bannersBody");
+
+            if (banners.length === 0) {
+                tbody.innerHTML = emptyRowHtml(5, "Chưa có banner nào.");
+                return;
+            }
+
+            tbody.innerHTML = banners.map(b => `
+                <tr>
+                    <td><img class="thumb" src="${b.image}" alt=""></td>
+                    <td>${b.title}</td>
+                    <td>${b.sort_order}</td>
+                    <td>${b.start_date || "…"} → ${b.end_date || "…"}</td>
+                    <td class="actions">
+                        <button type="button" class="btn btn-secondary" data-edit="${b.id}">Sửa</button>
+                        <button type="button" class="btn btn-danger" data-delete="${b.id}" data-title="${b.title.replace(/"/g, "&quot;")}">Xoá</button>
+                    </td>
+                </tr>
+            `).join("");
+
+            tbody.querySelectorAll("[data-edit]").forEach(btn => {
+                btn.addEventListener("click", () => editBanner(banners.find(b => String(b.id) === btn.dataset.edit)));
+            });
+            tbody.querySelectorAll("[data-delete]").forEach(btn => {
+                btn.addEventListener("click", () => deleteBanner(btn.dataset.delete, btn.dataset.title));
+            });
+        }
+
+        function editBanner(b) {
+            document.getElementById("bannerId").value = b.id;
+            document.getElementById("title").value = b.title;
+            document.getElementById("image").value = b.image;
+            document.getElementById("imagePreview").innerHTML = `<img src="${b.image}" alt="">`;
+            document.getElementById("link").value = b.link || "";
+            document.getElementById("sort_order").value = b.sort_order;
+            document.getElementById("start_date").value = b.start_date || "";
+            document.getElementById("end_date").value = b.end_date || "";
+            document.getElementById("formTitle").textContent = "Sửa Banner";
+            document.getElementById("submitBtn").textContent = "Cập Nhật Banner";
+            document.getElementById("cancelEditBtn").style.display = "inline-flex";
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+
+        function resetForm() {
+            document.getElementById("bannerForm").reset();
+            document.getElementById("bannerId").value = "";
+            document.getElementById("image").value = "";
+            document.getElementById("imagePreview").innerHTML = "Chưa chọn ảnh";
+            document.getElementById("formTitle").textContent = "+ Thêm Banner Mới";
+            document.getElementById("submitBtn").textContent = "Lưu Banner";
+            document.getElementById("cancelEditBtn").style.display = "none";
+        }
+
+        document.getElementById("cancelEditBtn").addEventListener("click", resetForm);
+        document.getElementById("previewBtn").addEventListener("click", openPreview);
+
+        // Xem trước bằng dữ liệu ĐANG ĐIỀN trên form (chưa cần lưu) - cùng cơ chế Xem Trước đã có
+        // ở form bài viết/sản phẩm. Banner hiện hiển thị dạng ảnh full-width kèm link khi bấm vào
+        // (đúng quy ước hero banner phổ biến) - CHÚ Ý: hệ thống banner hiện chưa được gắn vào trang
+        // công khai nào (không có slider nào đọc GET /api/banners), nên đây là hình dung hợp lý
+        // theo đúng dữ liệu đang có (ảnh + link + tiêu đề nội bộ), không phải bản xem trước khớp
+        // 100% với 1 giao diện thật đã tồn tại.
+        function openPreview() {
+            const title = document.getElementById("title").value.trim() || "(Chưa có tiêu đề)";
+            const image = document.getElementById("image").value;
+            const link = document.getElementById("link").value.trim();
+            if (!image) return showToast("Chọn ảnh banner trước khi xem trước", true);
+
+            const win = window.open("", "_blank");
+            win.document.write(`
+                <!DOCTYPE html><html lang="vi"><head><meta charset="UTF-8">
+                <title>Xem trước banner: ${title}</title>
+                <style>
+                    body { font-family: Arial, sans-serif; margin: 0; background: #f4f4f6; }
+                    .preview-note { background: #fff8e6; color: #b7791f; padding: 10px 16px; font-size: 13px; }
+                    .banner-wrap { display: block; max-width: 1400px; margin: 24px auto; }
+                    .banner-wrap img { width: 100%; border-radius: 10px; display: block; }
+                    .info { max-width: 1400px; margin: 0 auto 24px; padding: 0 16px; color: #666; font-size: 13px; }
+                </style></head><body>
+                <div class="preview-note">Đây là bản xem trước - chưa lưu vào hệ thống.</div>
+                ${link ? `<a class="banner-wrap" href="${link}" target="_blank">` : `<div class="banner-wrap">`}
+                    <img src="${image}" alt="${title}">
+                ${link ? `</a>` : `</div>`}
+                <div class="info">${link ? `Bấm vào banner sẽ mở: ${link}` : "Banner này không có link khi bấm vào."}</div>
+                </body></html>
+            `);
+            win.document.close();
+        }
+
+        document.getElementById("bannerForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const id = document.getElementById("bannerId").value;
+            const image = document.getElementById("image").value;
+            if (!image) { showToast("Vui lòng chọn ảnh banner", true); return; }
+
+            const body = {
+                title: document.getElementById("title").value.trim(),
+                image,
+                link: document.getElementById("link").value.trim() || null,
+                sort_order: parseInt(document.getElementById("sort_order").value, 10) || 0,
+                start_date: document.getElementById("start_date").value || null,
+                end_date: document.getElementById("end_date").value || null
+            };
+
+            const submitBtn = document.getElementById("submitBtn");
+            submitBtn.disabled = true;
+            try {
+                const res = id
+                    ? await apiFetch(`/api/banners/${id}`, { method: "PUT", body })
+                    : await apiFetch("/api/banners", { method: "POST", body });
+                if (!res.ok) throw new Error((await res.json()).error || "Lưu thất bại");
+                showToast(id ? "Đã cập nhật banner" : "Đã thêm banner");
+                resetForm();
+                loadBanners();
+            } catch (err) {
+                showToast(err.message, true);
+            } finally {
+                submitBtn.disabled = false;
+            }
+        });
+
+        async function deleteBanner(id, title) {
+            if (!confirm(`Xoá banner "${title}"? Không thể hoàn tác.`)) return;
+            try {
+                const res = await apiFetch(`/api/banners/${id}`, { method: "DELETE" });
+                if (!res.ok) throw new Error((await res.json()).error || "Xoá thất bại");
+                showToast("Đã xoá banner");
+                loadBanners();
+            } catch (err) {
+                showToast(err.message, true);
+            }
+        }
+    </script>
+</body>
+</html>

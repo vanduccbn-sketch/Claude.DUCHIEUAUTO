@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Tài Khoản | Quản Trị Đức Hiếu Auto</title>
+    <link rel="icon" type="image/png" href="assets/favicon.png">
+    <link rel="stylesheet" href="assets/admin.css">
+</head>
+<body>
+    <div class="admin-topbar" id="adminTopbar"></div>
+
+    <main class="admin-main">
+        <div class="admin-header">
+            <div>
+                <h1>Tài Khoản</h1>
+                <p class="desc">Đổi mật khẩu của bạn, hoặc quản lý tài khoản admin khác (chỉ Super Admin).</p>
+            </div>
+        </div>
+
+        <div class="inline-form-card">
+            <h2>Email Của Tôi</h2>
+            <p class="desc">Dùng để nhận email đặt lại mật khẩu khi quên - nên điền để không phải nhờ Super Admin cấp lại thủ công.</p>
+            <form id="emailForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="myEmail">Email</label>
+                        <input type="email" id="myEmail" autocomplete="email">
+                    </div>
+                </div>
+                <div class="editor-actions">
+                    <button type="submit" class="btn btn-primary">Lưu Email</button>
+                    <span class="save-status" id="emailSaveStatus"></span>
+                </div>
+            </form>
+        </div>
+
+        <div class="inline-form-card">
+            <h2>Đổi Mật Khẩu Của Tôi</h2>
+            <form id="changePasswordForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="currentPassword">Mật khẩu hiện tại</label>
+                        <input type="password" id="currentPassword" autocomplete="current-password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="newPassword">Mật khẩu mới (tối thiểu 8 ký tự)</label>
+                        <input type="password" id="newPassword" autocomplete="new-password" required minlength="8">
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmPassword">Nhập lại mật khẩu mới</label>
+                        <input type="password" id="confirmPassword" autocomplete="new-password" required minlength="8">
+                    </div>
+                </div>
+                <div class="editor-actions">
+                    <button type="submit" class="btn btn-primary">Đổi Mật Khẩu</button>
+                    <span class="save-status" id="passwordSaveStatus"></span>
+                </div>
+            </form>
+        </div>
+
+        <div id="adminManagement" hidden>
+            <div class="inline-form-card">
+                <h2>+ Thêm Tài Khoản Admin Mới</h2>
+                <form id="createAdminForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="newUsername">Tên đăng nhập</label>
+                            <input type="text" id="newUsername" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="newAdminPassword">Mật khẩu tạm (tối thiểu 8 ký tự)</label>
+                            <input type="password" id="newAdminPassword" required minlength="8">
+                        </div>
+                        <div class="form-group">
+                            <label for="newAdminRole">Vai trò</label>
+                            <select id="newAdminRole">
+                                <option value="content">Content Admin</option>
+                                <option value="ads">Ads Admin</option>
+                                <option value="super_admin">Super Admin</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="editor-actions">
+                        <button type="submit" class="btn btn-primary">Tạo Tài Khoản</button>
+                        <span class="save-status" id="createAdminStatus"></span>
+                    </div>
+                </form>
+            </div>
+
+            <h2 style="font-size:15px;margin-bottom:16px;">Danh Sách Tài Khoản Admin</h2>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Tên đăng nhập</th>
+                        <th>Vai trò</th>
+                        <th>Ngày tạo</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody id="adminsBody">
+                    <tr class="empty-row"><td colspan="4"><span class="admin-spinner"></span>Đang tải...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <script src="assets/admin.js"></script>
+    <script>
+        const auth = requireAuth();
+        // ROLE_LABEL đã có sẵn từ assets/admin.js (nạp ở thẻ script phía trên) - không khai báo lại
+        // ở đây, "const" trùng tên trong cùng ngữ cảnh toàn cục sẽ làm cả trang không chạy được.
+
+        if (auth) {
+            renderAdminNav(auth, "tai-khoan");
+
+            if (auth.role === "super_admin") {
+                document.getElementById("adminManagement").hidden = false;
+                loadAdmins();
+            }
+
+            loadMyEmail();
+            document.getElementById("emailForm").addEventListener("submit", saveMyEmail);
+            document.getElementById("changePasswordForm").addEventListener("submit", changePassword);
+            document.getElementById("createAdminForm")?.addEventListener("submit", createAdmin);
+        }
+
+        async function loadMyEmail() {
+            try {
+                const res = await apiFetch("/api/auth/me");
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || "Không tải được thông tin tài khoản");
+                document.getElementById("myEmail").value = data.email || "";
+            } catch (err) {
+                showToast(err.message, true);
+            }
+        }
+
+        async function saveMyEmail(e) {
+            e.preventDefault();
+            const email = document.getElementById("myEmail").value.trim();
+            try {
+                const res = await apiFetch("/api/auth/my-email", { method: "PUT", body: { email } });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || "Lưu email thất bại");
+                showToast("Đã lưu email");
+                document.getElementById("emailSaveStatus").textContent = "Đã lưu lúc " + new Date().toLocaleTimeString("vi-VN");
+            } catch (err) {
+                showToast(err.message, true);
+            }
+        }
+
+        async function changePassword(e) {
+            e.preventDefault();
+            const currentPassword = document.getElementById("currentPassword").value;
+            const newPassword = document.getElementById("newPassword").value;
+            const confirmPassword = document.getElementById("confirmPassword").value;
+
+            if (newPassword !== confirmPassword) {
+                return showToast("Mật khẩu mới nhập lại không khớp", true);
+            }
+
+            try {
+                const res = await apiFetch("/api/auth/change-password", { method: "PUT", body: { currentPassword, newPassword } });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || "Đổi mật khẩu thất bại");
+                showToast("Đã đổi mật khẩu thành công");
+                document.getElementById("changePasswordForm").reset();
+                document.getElementById("passwordSaveStatus").textContent = "Đã đổi lúc " + new Date().toLocaleTimeString("vi-VN");
+            } catch (err) {
+                showToast(err.message, true);
+            }
+        }
+
+        async function loadAdmins() {
+            try {
+                const res = await apiFetch("/api/admins");
+                const admins = await res.json();
+                const tbody = document.getElementById("adminsBody");
+                tbody.innerHTML = admins.map(a => `
+                    <tr>
+                        <td>${a.username}${a.id === auth.id ? " <span class=\"form-hint\">(bạn)</span>" : ""}</td>
+                        <td>
+                            <select class="status-select" data-role-id="${a.id}" ${a.id === auth.id ? "disabled" : ""}>
+                                <option value="content" ${a.role === "content" ? "selected" : ""}>Content Admin</option>
+                                <option value="ads" ${a.role === "ads" ? "selected" : ""}>Ads Admin</option>
+                                <option value="super_admin" ${a.role === "super_admin" ? "selected" : ""}>Super Admin</option>
+                            </select>
+                        </td>
+                        <td>${formatDateTime(a.created_at)}</td>
+                        <td class="actions">
+                            <button type="button" class="btn btn-secondary" data-reset-id="${a.id}" data-username="${a.username}">Đặt Lại MK</button>
+                            ${a.role === "content" ? `<button type="button" class="btn btn-secondary" data-perm-toggle="${a.id}">Phân Quyền Nội Dung</button>` : ""}
+                            ${a.id === auth.id ? "" : `<button type="button" class="btn btn-danger" data-delete-id="${a.id}" data-username="${a.username}">Xoá</button>`}
+                        </td>
+                    </tr>
+                    ${a.role === "content" ? `
+                    <tr class="perm-row" id="permRow${a.id}" hidden>
+                        <td colspan="4">
+                            <div class="form-hint" style="margin-bottom:8px;">Bỏ trống hết = sửa được TOÀN BỘ trang chủ (mặc định). Tick riêng vài khối = chỉ sửa được đúng các khối đó, khối còn lại bị khoá ở trang Trang Chủ.</div>
+                            <div id="permChecks${a.id}" style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:10px;"></div>
+                            <button type="button" class="btn btn-primary" data-perm-save="${a.id}">Lưu Phân Quyền</button>
+                            <span class="save-status" id="permStatus${a.id}"></span>
+                        </td>
+                    </tr>` : ""}
+                `).join("");
+
+                tbody.querySelectorAll("[data-role-id]").forEach(sel => {
+                    sel.addEventListener("change", () => updateAdminRole(sel.dataset.roleId, sel.value));
+                });
+                tbody.querySelectorAll("[data-reset-id]").forEach(btn => {
+                    btn.addEventListener("click", () => resetAdminPassword(btn.dataset.resetId, btn.dataset.username));
+                });
+                tbody.querySelectorAll("[data-delete-id]").forEach(btn => {
+                    btn.addEventListener("click", () => deleteAdmin(btn.dataset.deleteId, btn.dataset.username));
+                });
+                tbody.querySelectorAll("[data-perm-toggle]").forEach(btn => {
+                    btn.addEventListener("click", () => togglePermRow(btn.dataset.permToggle));
+                });
+                tbody.querySelectorAll("[data-perm-save]").forEach(btn => {
+                    btn.addEventListener("click", () => saveContentPermissions(btn.dataset.permSave));
+                });
+            } catch (err) {
+                showToast(err.message, true);
+            }
+        }
+
+        // Nhãn tiếng Việt cho từng khối - PHẢI khớp đúng key trong CONTENT_SECTIONS
+        // (routes/homepage-content.js) và routes/admins.js, sai tên sẽ bị API từ chối 400.
+        const CONTENT_SECTION_LABELS = {
+            hero: "Banner Đầu Trang", about: "Giới Thiệu", service: "Dịch Vụ",
+            quick_actions: "Đặt Lịch/Nhắc Bảo Dưỡng", product: "Sản Phẩm Chiến Lược",
+            tech: "Giải Mã Công Nghệ", contact: "Liên Hệ", footer: "Footer", other_pages: "Trang Khác"
+        };
+        const permsLoadedFor = new Set();
+
+        async function togglePermRow(id) {
+            const row = document.getElementById(`permRow${id}`);
+            row.hidden = !row.hidden;
+            if (!row.hidden && !permsLoadedFor.has(id)) {
+                permsLoadedFor.add(id);
+                await loadContentPermissions(id);
+            }
+        }
+
+        async function loadContentPermissions(id) {
+            const checksEl = document.getElementById(`permChecks${id}`);
+            checksEl.innerHTML = loadingHintHtml();
+            try {
+                const res = await apiFetch(`/api/admins/${id}/content-permissions`);
+                if (!res.ok) throw new Error((await res.json()).error || "Không tải được phân quyền");
+                const { sections } = await res.json();
+                checksEl.innerHTML = Object.entries(CONTENT_SECTION_LABELS).map(([key, label]) => `
+                    <label style="display:flex;align-items:center;gap:5px;font-size:13px;font-weight:400;">
+                        <input type="checkbox" class="perm-check" value="${key}" ${sections.includes(key) ? "checked" : ""}> ${label}
+                    </label>`).join("");
+            } catch (err) {
+                showToast(err.message, true);
+            }
+        }
+
+        async function saveContentPermissions(id) {
+            const checked = Array.from(document.querySelectorAll(`#permChecks${id} .perm-check:checked`)).map(c => c.value);
+            try {
+                const res = await apiFetch(`/api/admins/${id}/content-permissions`, { method: "PUT", body: { sections: checked } });
+                if (!res.ok) throw new Error((await res.json()).error || "Lưu phân quyền thất bại");
+                showToast("Đã lưu phân quyền");
+                document.getElementById(`permStatus${id}`).textContent = "Đã lưu lúc " + new Date().toLocaleTimeString("vi-VN");
+            } catch (err) {
+                showToast(err.message, true);
+            }
+        }
+
+        async function updateAdminRole(id, role) {
+            try {
+                const res = await apiFetch(`/api/admins/${id}`, { method: "PUT", body: { role } });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || "Cập nhật thất bại");
+                showToast("Đã cập nhật vai trò");
+            } catch (err) {
+                showToast(err.message, true);
+                loadAdmins();
+            }
+        }
+
+        async function resetAdminPassword(id, username) {
+            const newPassword = prompt(`Nhập mật khẩu mới cho "${username}" (tối thiểu 8 ký tự):`);
+            if (!newPassword) return;
+            if (newPassword.length < 8) return showToast("Mật khẩu phải có ít nhất 8 ký tự", true);
+
+            try {
+                const res = await apiFetch(`/api/admins/${id}/reset-password`, { method: "PUT", body: { newPassword } });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || "Đặt lại mật khẩu thất bại");
+                showToast(`Đã đặt lại mật khẩu cho "${username}"`);
+            } catch (err) {
+                showToast(err.message, true);
+            }
+        }
+
+        async function deleteAdmin(id, username) {
+            if (!confirm(`Xoá tài khoản "${username}"? Không thể hoàn tác.`)) return;
+            try {
+                const res = await apiFetch(`/api/admins/${id}`, { method: "DELETE" });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || "Xoá thất bại");
+                showToast(`Đã xoá tài khoản "${username}"`);
+                loadAdmins();
+            } catch (err) {
+                showToast(err.message, true);
+            }
+        }
+
+        async function createAdmin(e) {
+            e.preventDefault();
+            const payload = {
+                username: document.getElementById("newUsername").value.trim(),
+                password: document.getElementById("newAdminPassword").value,
+                role: document.getElementById("newAdminRole").value
+            };
+            try {
+                const res = await apiFetch("/api/admins", { method: "POST", body: payload });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || "Tạo tài khoản thất bại");
+                showToast(`Đã tạo tài khoản "${payload.username}"`);
+                document.getElementById("createAdminForm").reset();
+                loadAdmins();
+            } catch (err) {
+                showToast(err.message, true);
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Liên Hệ / Đặt Lịch | Quản Trị Đức Hiếu Auto</title>
+    <link rel="icon" type="image/png" href="assets/favicon.png">
+    <link rel="stylesheet" href="assets/admin.css">
+    <style>
+        .slot-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin-bottom: 28px; }
+        .slot-card { background: var(--bg-alt); border-radius: var(--radius); box-shadow: var(--shadow); padding: 14px 16px; border-left: 4px solid #27ae60; }
+        .slot-card.full { border-left-color: var(--primary); }
+        .slot-card .slot-time { font-weight: 700; font-size: 14px; margin-bottom: 4px; }
+        .slot-card .slot-count { font-size: 12px; color: var(--text-muted); margin-bottom: 8px; }
+        .slot-card .slot-customer { font-size: 12.5px; padding: 4px 0; border-top: 1px solid var(--border); }
+        .slot-card .slot-customer:first-of-type { border-top: none; }
+        .slot-card .slot-empty { font-size: 12.5px; color: var(--text-muted); font-style: italic; }
+    </style>
+</head>
+<body>
+    <div class="admin-topbar" id="adminTopbar"></div>
+
+    <main class="admin-main">
+        <div class="admin-header">
+            <div>
+                <h1>Liên Hệ / Đặt Lịch</h1>
+                <p class="desc">Danh sách khách để lại thông tin qua form liên hệ và đặt lịch hẹn trên website.</p>
+            </div>
+            <button type="button" class="btn btn-secondary" id="exportCsvBtn">Xuất CSV</button>
+        </div>
+
+        <div class="inline-form-card">
+            <h2>Lịch Đặt Hẹn Theo Ngày</h2>
+            <div class="form-grid" style="margin-bottom:0;">
+                <div class="form-group">
+                    <label for="calDate">Chọn ngày</label>
+                    <input type="date" id="calDate">
+                </div>
+                <div class="form-group" style="align-self:end;">
+                    <button type="button" class="btn btn-secondary" id="calTodayBtn">Hôm Nay</button>
+                </div>
+            </div>
+        </div>
+        <div class="slot-grid" id="slotGrid"></div>
+
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Loại</th>
+                    <th>Khách hàng</th>
+                    <th>SĐT</th>
+                    <th>Dịch vụ</th>
+                    <th>Thời gian gửi</th>
+                    <th>Trạng thái</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody id="contactsBody">
+                <tr class="empty-row"><td colspan="7"><span class="admin-spinner"></span>Đang tải...</td></tr>
+            </tbody>
+        </table>
+    </main>
+
+    <script src="assets/admin.js"></script>
+    <script>
+        const auth = requireAuth();
+        if (auth) {
+            renderAdminNav(auth, "lien-he");
+            loadContacts();
+            document.getElementById("exportCsvBtn").addEventListener("click", exportCsv);
+
+            const todayStr = new Date().toISOString().slice(0, 10);
+            document.getElementById("calDate").value = todayStr;
+            document.getElementById("calDate").addEventListener("change", renderSlotGrid);
+            document.getElementById("calTodayBtn").addEventListener("click", () => {
+                document.getElementById("calDate").value = todayStr;
+                renderSlotGrid();
+            });
+        }
+
+        const STATUS_LABEL = { new: "Mới", contacted: "Đã liên hệ", done: "Hoàn tất" };
+        const TYPE_LABEL = {
+            booking: "Đặt lịch", maintenance: "Nhắc bảo dưỡng", contact: "Liên hệ",
+            facebook_lead: "Facebook Lead Ads", tiktok_lead: "TikTok Lead Ads"
+        };
+        let lastContacts = [];
+
+        async function loadContacts() {
+            const res = await apiFetch("/api/contacts");
+            const contacts = await res.json();
+            lastContacts = contacts;
+            renderSlotGrid();
+            const tbody = document.getElementById("contactsBody");
+
+            if (contacts.length === 0) {
+                tbody.innerHTML = emptyRowHtml(7, "Chưa có liên hệ nào.");
+                return;
+            }
+
+            tbody.innerHTML = contacts.map(c => `
+                <tr>
+                    <td>${TYPE_LABEL[c.type] || "Liên hệ"}</td>
+                    <td>${escapeHtml(c.name)}${c.message ? `<div class="form-hint">${escapeHtml(c.message)}</div>` : ""}</td>
+                    <td><a href="tel:${encodeURIComponent(c.phone)}">${escapeHtml(c.phone)}</a></td>
+                    <td>${escapeHtml(c.service) || "-"}${c.preferred_date ? `<div class="form-hint">${escapeHtml(c.preferred_date)} ${escapeHtml(c.preferred_time || "")}</div>` : ""}</td>
+                    <td>${formatDateTime(c.created_at)}</td>
+                    <td>
+                        <select class="status-select" data-id="${c.id}">
+                            <option value="new" ${c.status === "new" ? "selected" : ""}>Mới</option>
+                            <option value="contacted" ${c.status === "contacted" ? "selected" : ""}>Đã liên hệ</option>
+                            <option value="done" ${c.status === "done" ? "selected" : ""}>Hoàn tất</option>
+                        </select>
+                    </td>
+                    <td class="actions">
+                        <button type="button" class="btn btn-danger" data-delete-id="${c.id}">Xoá</button>
+                    </td>
+                </tr>
+            `).join("");
+
+            tbody.querySelectorAll(".status-select").forEach(sel => {
+                sel.addEventListener("change", () => updateStatus(sel.dataset.id, sel.value));
+            });
+            tbody.querySelectorAll("[data-delete-id]").forEach(btn => {
+                btn.addEventListener("click", () => deleteContact(btn.dataset.deleteId));
+            });
+        }
+
+        // Xem lịch đặt hẹn trực quan theo 1 ngày cụ thể thay vì phải dò trong danh sách phẳng sắp
+        // theo thời gian GỬI form (không phải thời gian HẸN) - dùng lại đúng endpoint /availability
+        // đã có sẵn cho trang đặt lịch công khai để lấy sức chứa/số đã đặt mỗi khung giờ, ghép thêm
+        // tên/SĐT khách từ danh sách liên hệ đã tải (tránh phải thêm endpoint mới).
+        async function renderSlotGrid() {
+            const date = document.getElementById("calDate").value;
+            const grid = document.getElementById("slotGrid");
+            if (!date) { grid.innerHTML = ""; return; }
+
+            grid.innerHTML = loadingHintHtml();
+            try {
+                const res = await apiFetch(`/api/contacts/availability?date=${encodeURIComponent(date)}`);
+                const data = await res.json();
+                const bookingsForDate = lastContacts.filter(c => c.type === "booking" && c.preferred_date === date);
+
+                grid.innerHTML = data.slots.map(s => {
+                    const customers = bookingsForDate.filter(c => c.preferred_time === s.slot);
+                    return `
+                        <div class="slot-card ${s.full ? "full" : ""}">
+                            <div class="slot-time">${s.slot}</div>
+                            <div class="slot-count">${s.booked}/${data.capacity} chỗ đã đặt${s.full ? " - Đầy" : ""}</div>
+                            ${customers.length
+                                ? customers.map(c => `<div class="slot-customer"><strong>${escapeHtml(c.name)}</strong> - <a href="tel:${encodeURIComponent(c.phone)}">${escapeHtml(c.phone)}</a></div>`).join("")
+                                : `<div class="slot-empty">Còn trống</div>`}
+                        </div>`;
+                }).join("");
+            } catch (err) {
+                grid.innerHTML = `<p class="form-hint">Không tải được lịch ngày này.</p>`;
+            }
+        }
+
+        async function updateStatus(id, status) {
+            try {
+                const res = await apiFetch(`/api/contacts/${id}/status`, { method: "PUT", body: { status } });
+                if (!res.ok) throw new Error((await res.json()).error || "Cập nhật thất bại");
+                showToast("Đã cập nhật trạng thái");
+            } catch (err) {
+                showToast(err.message, true);
+            }
+        }
+
+        async function deleteContact(id) {
+            if (!confirm("Xoá liên hệ này? Không thể hoàn tác.")) return;
+            try {
+                const res = await apiFetch(`/api/contacts/${id}`, { method: "DELETE" });
+                if (!res.ok) throw new Error((await res.json()).error || "Xoá thất bại");
+                showToast("Đã xoá");
+                loadContacts();
+            } catch (err) {
+                showToast(err.message, true);
+            }
+        }
+
+        // Dùng ";" thay vì "," (Excel bản tiếng Việt mặc định coi ";" là dấu phân cách cột) + BOM
+        // UTF-8 đầu file để không lỗi font tiếng Việt khi mở bằng Excel - giống cách làm ở san-pham.html.
+        function exportCsv() {
+            if (lastContacts.length === 0) return showToast("Không có dữ liệu để xuất", true);
+            const rows = [["Loại", "Khách hàng", "SĐT", "Dịch vụ", "Ngày hẹn", "Giờ hẹn", "Ghi chú", "Thời gian gửi", "Trạng thái"]];
+            lastContacts.forEach(c => {
+                rows.push([
+                    TYPE_LABEL[c.type] || "Liên hệ", c.name, c.phone, c.service || "",
+                    c.preferred_date || "", c.preferred_time || "", c.message || "",
+                    formatDateTime(c.created_at), STATUS_LABEL[c.status] || c.status
+                ]);
+            });
+            const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(";")).join("\r\n");
+            const blob = new Blob(["﻿" + csv], { type: "text/csv;charset=utf-8;" });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = `lien-he-${new Date().toISOString().slice(0, 10)}.csv`;
+            link.click();
+            URL.revokeObjectURL(link.href);
+        }
+    </script>
+</body>
+</html>

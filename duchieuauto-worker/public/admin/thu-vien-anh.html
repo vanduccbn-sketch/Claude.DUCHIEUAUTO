@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Thư Viện Ảnh | Quản Trị Đức Hiếu Auto</title>
+    <link rel="icon" type="image/png" href="assets/favicon.png">
+    <link rel="stylesheet" href="assets/admin.css">
+    <style>
+        .media-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 14px; }
+        .media-card { background: var(--bg-alt); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
+        .media-card img { width: 100%; height: 130px; object-fit: cover; display: block; background: var(--bg); }
+        .media-card-body { padding: 10px 12px; }
+        .media-card-meta { font-size: 11px; color: var(--text-muted); margin-bottom: 8px; }
+        .media-card-actions { display: flex; gap: 6px; }
+        .media-card-actions .btn { flex: 1; padding: 6px 8px; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <div class="admin-topbar" id="adminTopbar"></div>
+
+    <main class="admin-main">
+        <div class="admin-header">
+            <div>
+                <h1>Thư Viện Ảnh</h1>
+                <p class="desc">Toàn bộ ảnh đã tải lên (sản phẩm, bài viết, banner...) - sao chép URL để tái dùng thay vì tải lên lại từ máy.</p>
+            </div>
+        </div>
+
+        <p class="form-hint" id="resultCount" style="margin-bottom:14px;"></p>
+        <div class="media-grid" id="mediaGrid"></div>
+    </main>
+
+    <script src="assets/admin.js"></script>
+    <script>
+        const auth = requireAuth(["content", "ads", "super_admin"]);
+        if (auth) {
+            renderAdminNav(auth, "thu-vien-anh");
+            loadLibrary();
+        }
+
+        function formatBytes(bytes) {
+            if (bytes < 1024) return `${bytes} B`;
+            if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} KB`;
+            return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+        }
+
+        async function loadLibrary() {
+            const grid = document.getElementById("mediaGrid");
+            grid.innerHTML = loadingHintHtml();
+            try {
+                const res = await apiFetch("/api/uploads/library");
+                if (!res.ok) throw new Error((await res.json()).error || "Không tải được thư viện ảnh");
+                const images = await res.json();
+
+                document.getElementById("resultCount").textContent = `${images.length} ảnh (tối đa 200 ảnh gần nhất)`;
+                if (images.length === 0) {
+                    grid.innerHTML = emptyHintHtml("Chưa có ảnh nào được tải lên.");
+                    return;
+                }
+
+                grid.innerHTML = images.map((img, i) => `
+                    <div class="media-card">
+                        <img src="${img.url}" alt="" loading="lazy">
+                        <div class="media-card-body">
+                            <div class="media-card-meta">${img.width}×${img.height} · ${formatBytes(img.bytes)}</div>
+                            <div class="media-card-actions">
+                                <button type="button" class="btn btn-secondary" data-copy="${i}">Sao Chép URL</button>
+                                <button type="button" class="btn btn-danger" data-delete="${i}">Xoá</button>
+                            </div>
+                        </div>
+                    </div>`).join("");
+
+                grid.querySelectorAll("[data-copy]").forEach(btn => {
+                    const img = images[Number(btn.dataset.copy)];
+                    btn.addEventListener("click", () => copyUrl(img.url, btn));
+                });
+                grid.querySelectorAll("[data-delete]").forEach(btn => {
+                    const img = images[Number(btn.dataset.delete)];
+                    btn.addEventListener("click", () => deleteImage(img));
+                });
+            } catch (err) {
+                grid.innerHTML = `<p class="form-hint">${err.message}</p>`;
+            }
+        }
+
+        // Không kiểm tra ảnh có đang dùng ở sản phẩm/bài viết/banner nào không - cảnh báo rõ trong
+        // hộp thoại xác nhận để admin tự cân nhắc trước khi xoá, giống cách các trang xoá khác trong
+        // admin (VD san-pham.html) luôn có dòng "Không thể hoàn tác" trong confirm().
+        async function deleteImage(img) {
+            if (!confirm("Xoá ảnh này khỏi thư viện? Nếu ảnh đang được dùng ở sản phẩm/bài viết/banner nào đó, chỗ đó sẽ bị vỡ ảnh. Không thể hoàn tác.")) return;
+            try {
+                const res = await apiFetch("/api/uploads", { method: "DELETE", body: { publicId: img.publicId } });
+                if (!res.ok) throw new Error((await res.json()).error || "Xoá ảnh thất bại");
+                showToast("Đã xoá ảnh");
+                loadLibrary();
+            } catch (err) {
+                showToast(err.message, true);
+            }
+        }
+
+        async function copyUrl(url, btn) {
+            try {
+                await navigator.clipboard.writeText(url);
+                const original = btn.textContent;
+                btn.textContent = "Đã sao chép!";
+                setTimeout(() => { btn.textContent = original; }, 1500);
+            } catch (err) {
+                showToast("Không sao chép được, vui lòng copy thủ công: " + url, true);
+            }
+        }
+    </script>
+</body>
+</html>

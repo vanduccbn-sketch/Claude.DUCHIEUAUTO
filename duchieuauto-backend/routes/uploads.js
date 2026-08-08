@@ -77,6 +77,41 @@ router.post("/", requireRole("content", "ads", "super_admin"), (req, res) => {
     });
 });
 
+// POST /api/uploads/from-url - tải lại 1 ảnh đang nằm ở domain KHÁC (VD dán nguyên cả trang có ảnh
+// hotlink từ site đối thủ vào mô tả chi tiết) về lưu thật lên Cloudinary - xem giải thích đầy đủ ở
+// bản Worker (duchieuauto-worker/src/routes/uploads.js), port sang Express giữ nguyên logic.
+router.post("/from-url", requireRole("content", "ads", "super_admin"), async (req, res) => {
+    const { url, purpose } = req.body;
+    if (!url) return res.status(400).json({ error: "Thiếu url ảnh nguồn" });
+
+    try {
+        const imgRes = await fetch(url);
+        if (!imgRes.ok) throw new Error(`Không tải được ảnh nguồn (HTTP ${imgRes.status})`);
+        const contentType = (imgRes.headers.get("content-type") || "").split(";")[0].trim();
+        if (!ALLOWED_TYPES.includes(contentType)) {
+            return res.status(400).json({ error: "Định dạng ảnh nguồn không được hỗ trợ (chỉ JPEG/PNG/WEBP/GIF)" });
+        }
+        const arrayBuffer = await imgRes.arrayBuffer();
+        const buffer = Buffer.from(arrayBuffer);
+        if (buffer.length > 5 * 1024 * 1024) return res.status(400).json({ error: "Ảnh nguồn vượt quá 5MB" });
+
+        const stream = cloudinary.uploader.upload_stream(
+            { folder: "duchieuauto" },
+            (error, result) => {
+                if (error) {
+                    console.error("Lỗi upload Cloudinary (from-url):", error.message);
+                    return res.status(502).json({ error: "Không tải/lưu được ảnh từ nguồn đó, vui lòng thử lại" });
+                }
+                res.status(201).json({ url: applyTransform(result.secure_url, purpose) });
+            }
+        );
+        stream.end(buffer);
+    } catch (error) {
+        console.error("Lỗi tải ảnh từ URL ngoài:", error.message);
+        res.status(502).json({ error: "Không tải/lưu được ảnh từ nguồn đó, vui lòng thử lại" });
+    }
+});
+
 // GET /api/uploads/library - liệt kê ảnh đã upload lên Cloudinary (thư mục "duchieuauto") để admin
 // xem lại/tái dùng URL thay vì phải tải lên lại từ máy mỗi lần cần đúng 1 ảnh đã dùng ở chỗ khác.
 // Dùng thẳng Cloudinary Admin API (cùng API key/secret đã cấu hình ở trên) - không cần bảng DB

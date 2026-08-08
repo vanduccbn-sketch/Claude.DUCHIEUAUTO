@@ -38,6 +38,35 @@ app.post("/", ...canUpload, async (c) => {
     }
 });
 
+// POST /api/uploads/from-url - tải lại 1 ảnh đang nằm ở domain KHÁC (VD dán nguyên cả trang có ảnh
+// hotlink từ site đối thủ vào mô tả chi tiết) về lưu thật lên Cloudinary. Cần cho tính năng "cắt
+// ảnh" ở trang quản trị: trình duyệt không đọc được dữ liệu ảnh domain khác để cắt do CORS (ảnh gốc
+// không cấp quyền Access-Control-Allow-Origin cho domain admin), nhưng SERVER gọi fetch() tới domain
+// đó thì không bị giới hạn này (CORS chỉ áp dụng cho trình duyệt) - tải hộ về rồi lưu lại lên
+// Cloudinary, trả URL Cloudinary mới (luôn hỗ trợ CORS) để trình duyệt cắt được bình thường. Có lợi
+// ích phụ: ảnh không còn phụ thuộc domain gốc nữa, tránh vỡ nếu trang nguồn xoá/đổi ảnh sau này.
+app.post("/from-url", ...canUpload, async (c) => {
+    const { url, purpose } = await c.req.json();
+    if (!url) return c.json({ error: "Thiếu url ảnh nguồn" }, 400);
+
+    try {
+        const imgRes = await fetch(url);
+        if (!imgRes.ok) throw new Error(`Không tải được ảnh nguồn (HTTP ${imgRes.status})`);
+        const contentType = (imgRes.headers.get("content-type") || "").split(";")[0].trim();
+        if (!ALLOWED_TYPES.includes(contentType)) {
+            return c.json({ error: "Định dạng ảnh nguồn không được hỗ trợ (chỉ JPEG/PNG/WEBP/GIF)" }, 400);
+        }
+        const blob = await imgRes.blob();
+        if (blob.size > MAX_SIZE) return c.json({ error: "Ảnh nguồn vượt quá 5MB" }, 400);
+
+        const result = await uploadImage(blob, "duchieuauto", c.env);
+        return c.json({ url: applyTransform(result.secure_url, purpose) }, 201);
+    } catch (err) {
+        console.error("Lỗi tải ảnh từ URL ngoài:", err.message);
+        return c.json({ error: "Không tải/lưu được ảnh từ nguồn đó, vui lòng thử lại" }, 502);
+    }
+});
+
 app.get("/library", ...canUpload, async (c) => {
     try {
         const resources = await listImages(c.env);

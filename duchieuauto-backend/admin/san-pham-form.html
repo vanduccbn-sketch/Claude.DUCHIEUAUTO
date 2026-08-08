@@ -26,7 +26,10 @@
                 <h1 id="formTitle">Thêm Sản Phẩm</h1>
                 <p class="desc">Chọn đúng danh mục/thương hiệu trước khi điền các phần còn lại.</p>
             </div>
-            <a href="san-pham.html" class="btn btn-secondary">← Quay Lại Danh Sách</a>
+            <div style="display:flex;gap:10px;">
+                <button type="button" class="btn btn-primary" id="saveBtnTop">Lưu Sản Phẩm</button>
+                <a href="san-pham.html" class="btn btn-secondary">← Quay Lại Danh Sách</a>
+            </div>
         </div>
 
         <div class="editor-layout">
@@ -147,7 +150,7 @@
     <script src="https://cdn.jsdelivr.net/npm/quill-image-resize-module@3.0.0/image-resize.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/cropperjs@1.6.2/dist/cropper.min.js"></script>
     <script src="assets/admin.js"></script>
-    <script src="assets/quill-enhancements.js?v=4"></script>
+    <script src="assets/quill-enhancements.js?v=5"></script>
     <script>
         const auth = requireAuth(["content", "super_admin"]);
         let categoriesData = [];
@@ -197,6 +200,7 @@
             document.getElementById("imageBtn").addEventListener("click", () => document.getElementById("imageInput").click());
             document.getElementById("imageInput").addEventListener("change", uploadImage);
             document.getElementById("saveBtn").addEventListener("click", saveProduct);
+            document.getElementById("saveBtnTop").addEventListener("click", saveProduct);
             document.getElementById("previewBtn").addEventListener("click", openPreview);
 
             if (!productId) addSpecRow("", "");
@@ -222,6 +226,7 @@
             qeInitTableInsert(quill, document.getElementById("qeTableBtn"));
             qeEnableInlineImageCrop(quill, "content");
             qeInterceptImagePaste(quill, "content");
+            qeInitSelectionToolbar(quill);
 
             // Ghi đè nút chèn ảnh mặc định (nhúng base64 làm nội dung phình to) - thay bằng: cho
             // cắt ảnh tuỳ chọn -> hỏi Alt Text (SEO ảnh) -> upload thật lên Cloudinary -> chèn URL
@@ -429,8 +434,11 @@
             };
 
             const saveBtn = document.getElementById("saveBtn");
+            const saveBtnTop = document.getElementById("saveBtnTop");
             saveBtn.disabled = true;
             saveBtn.textContent = "Đang lưu...";
+            saveBtnTop.disabled = true;
+            saveBtnTop.textContent = "Đang lưu...";
             try {
                 const res = productId
                     ? await apiFetch(`/api/products/${productId}`, { method: "PUT", body: payload })
@@ -451,6 +459,8 @@
             } finally {
                 saveBtn.disabled = false;
                 saveBtn.textContent = "Lưu Sản Phẩm";
+                saveBtnTop.disabled = false;
+                saveBtnTop.textContent = "Lưu Sản Phẩm";
             }
         }
 

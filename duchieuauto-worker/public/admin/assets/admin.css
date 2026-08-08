@@ -12,7 +12,12 @@
     --font: 'Segoe UI', Roboto, Arial, sans-serif;
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: var(--font); background: var(--bg); color: var(--text); line-height: 1.5; }
+/* overflow-anchor: none TOÀN TRANG (không chỉ riêng #quillEditor) - lỗi "nhảy trang" khi gõ chữ ở
+   bài dài có ảnh vẫn tái diễn sau khi chỉ tắt scroll anchoring trong #quillEditor, khả năng do các
+   phần tử MỚI thêm sau đó (nút nổi "Cắt ảnh", banner nháp tự động lưu...) nằm NGOÀI #quillEditor
+   cũng trở thành điểm neo cuộn trang. Tắt hẳn ở cấp body để chắc chắn không phần tử nào trên toàn
+   trang quản trị có thể bị chọn làm điểm neo, dứt điểm cả lớp lỗi này thay vì vá từng chỗ. */
+body { font-family: var(--font); background: var(--bg); color: var(--text); line-height: 1.5; overflow-anchor: none; }
 a { color: var(--m-blue); text-decoration: none; }
 a:hover { text-decoration: underline; }
 button { font-family: inherit; cursor: pointer; }
@@ -155,6 +160,10 @@ select.status-select { padding: 6px 10px; border-radius: 6px; border: 1px solid 
 .save-status { font-size: 12px; color: var(--text-muted); margin-left: auto; align-self: center; }
 
 .toast { position: fixed; bottom: 24px; right: 24px; background: var(--dark); color: #fff; padding: 14px 20px; border-radius: 8px; font-size: 13px; box-shadow: var(--shadow); opacity: 0; transform: translateY(10px); transition: 0.25s; z-index: 999; }
+
+/* Đặt bên TRÁI (không phải phải như .toast ở trên) để 2 nút nổi không đè lên nhau. */
+.back-to-top-btn { position: fixed; bottom: 24px; left: 24px; width: 44px; height: 44px; border-radius: 50%; background: var(--dark); color: #fff; border: none; font-size: 20px; line-height: 1; box-shadow: var(--shadow); z-index: 500; }
+.back-to-top-btn:hover { background: var(--primary); }
 .toast.show { opacity: 1; transform: translateY(0); }
 .toast.error { background: #c0392b; }
 

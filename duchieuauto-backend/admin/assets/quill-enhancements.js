@@ -37,12 +37,22 @@ function injectQuillEnhancementStyles() {
         .qe-inline-crop-btn { position: absolute; z-index: 50; background: var(--dark); color: #fff; border: none; border-radius: 6px; padding: 6px 12px; font-size: 12.5px; cursor: pointer; box-shadow: var(--shadow); white-space: nowrap; }
         .qe-inline-crop-btn:hover { background: var(--primary); }
         .ql-editor img { cursor: pointer; }
+        .qe-selection-toolbar { position: absolute; z-index: 60; display: flex; align-items: center; gap: 2px; background: var(--dark); border-radius: 8px; padding: 4px; box-shadow: var(--shadow); }
+        .qe-selection-toolbar button { background: none; border: none; color: #fff; width: 30px; height: 28px; border-radius: 5px; font-size: 13px; cursor: pointer; }
+        .qe-selection-toolbar button:hover { background: rgba(255,255,255,0.15); }
+        .qe-selection-toolbar button.active { background: var(--primary); }
+        .qe-sel-sep { width: 1px; height: 18px; background: rgba(255,255,255,0.25); margin: 0 2px; }
     `;
     document.head.appendChild(style);
 }
 
 // ---- Modal dùng chung (Alt Text, Tìm & Thay thế, Cắt ảnh đều tái dùng cái này) ----
-function qeOpenModal({ title, bodyHtml, onMount, width }) {
+// onClose (tuỳ chọn): gọi đúng 1 lần khi modal đóng theo BẤT KỲ cách nào - kể cả bấm nút "✕"/nhấn
+// Esc/bấm ra ngoài, không chỉ riêng các nút bấm tự viết trong onMount(). Quan trọng cho các hàm trả
+// về Promise (Alt Text, cắt ảnh...): thiếu hook này thì đóng modal theo cách khác ngoài nút chính sẽ
+// làm Promise treo mãi mãi (không bao giờ resolve/reject), phải tải lại trang mới thoát được - bug
+// thật phát hiện khi rà lại toàn bộ modal.
+function qeOpenModal({ title, bodyHtml, onMount, width, onClose }) {
     injectQuillEnhancementStyles();
     const overlay = document.createElement("div");
     overlay.className = "qe-overlay";
@@ -54,9 +64,13 @@ function qeOpenModal({ title, bodyHtml, onMount, width }) {
         </div>`;
     document.body.appendChild(overlay);
 
+    let closed = false;
     function close() {
+        if (closed) return;
+        closed = true;
         overlay.remove();
         document.removeEventListener("keydown", onEsc);
+        if (onClose) onClose();
     }
     function onEsc(e) { if (e.key === "Escape") close(); }
     document.addEventListener("keydown", onEsc);
@@ -88,13 +102,18 @@ function qeInitUndoRedo(quill, undoBtn, redoBtn) {
     if (redoBtn) redoBtn.addEventListener("click", (e) => { e.preventDefault(); quill.history.redo(); });
 }
 
-// ---- 3. Bắt nhập Alt Text khi chèn ảnh - gọi TRƯỚC khi insertEmbed, trả về Promise<string> ----
+// ---- 3. Bắt nhập Alt Text khi chèn ảnh (KHÔNG bắt buộc, chỉ gợi ý - luôn bỏ qua được) - gọi TRƯỚC
+// khi insertEmbed, trả về Promise<string>. Đóng modal bằng bất kỳ cách nào (kể cả "✕"/Esc/bấm ra
+// ngoài) đều coi như bỏ qua, không chỉ riêng nút "Bỏ Qua" - tránh Promise treo mãi mãi.
 function qeAskImageAlt(suggestedText) {
     return new Promise((resolve) => {
+        let settled = false;
+        const settle = (val) => { if (settled) return; settled = true; resolve(val); };
         qeOpenModal({
-            title: "Mô tả ảnh (Alt Text)",
+            title: "Mô tả ảnh (Alt Text) - không bắt buộc",
+            onClose: () => settle(""),
             bodyHtml: `
-                <p class="form-hint" style="margin-bottom:10px;">Mô tả ngắn gọn nội dung ảnh - giúp Google/AI hiểu ảnh này là gì (tốt cho SEO), và hiện thay ảnh nếu ảnh lỗi không tải được.</p>
+                <p class="form-hint" style="margin-bottom:10px;">Gợi ý: mô tả ngắn gọn nội dung ảnh giúp Google/AI hiểu ảnh này là gì (tốt cho SEO). Không nhập gì cũng được, bấm "Bỏ Qua" hoặc đóng lại là chèn ảnh ngay.</p>
                 <div class="form-group">
                     <input type="text" id="qeAltInput" placeholder="VD: Kỹ thuật viên đánh bóng xe ô tô tại Đức Hiếu Auto">
                 </div>
@@ -107,9 +126,9 @@ function qeAskImageAlt(suggestedText) {
                 input.value = suggestedText || "";
                 input.focus();
                 input.select();
-                const confirm = () => { resolve(input.value.trim()); close(); };
+                const confirm = () => { settle(input.value.trim()); close(); };
                 root.querySelector("#qeAltOk").addEventListener("click", confirm);
-                root.querySelector("#qeAltSkip").addEventListener("click", () => { resolve(""); close(); });
+                root.querySelector("#qeAltSkip").addEventListener("click", () => { settle(""); close(); });
                 input.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); confirm(); } });
             }
         });
@@ -304,9 +323,20 @@ function qeCropImageBeforeUpload(file, aspectRatio) {
     return new Promise((resolve) => {
         const objectUrl = URL.createObjectURL(file);
         let cropper;
+        let settled = false;
+        const finish = (result) => {
+            if (settled) return;
+            settled = true;
+            URL.revokeObjectURL(objectUrl);
+            if (cropper) cropper.destroy();
+            resolve(result);
+        };
         qeOpenModal({
             title: "Cắt Ảnh (Tuỳ Chọn)",
             width: "640px",
+            // Đóng modal bằng bất kỳ cách nào khác ngoài 2 nút chính (bấm "✕"/Esc/bấm ra ngoài) -
+            // coi như "Dùng Ảnh Gốc", không để Promise treo mãi mãi.
+            onClose: () => finish(file),
             bodyHtml: `
                 <div class="qe-crop-img-wrap"><img id="qeCropImg" src="${objectUrl}"></div>
                 <p class="form-hint" style="margin-top:10px;">Kéo góc/viền để chọn vùng cắt, kéo vào giữa để di chuyển. Không cắt gì cũng được, bấm "Dùng Ảnh Gốc".</p>
@@ -316,12 +346,6 @@ function qeCropImageBeforeUpload(file, aspectRatio) {
                 </div>`,
             onMount: (root, close) => {
                 const imgEl = root.querySelector("#qeCropImg");
-                const finish = (result) => {
-                    URL.revokeObjectURL(objectUrl);
-                    if (cropper) cropper.destroy();
-                    close();
-                    resolve(result);
-                };
                 imgEl.addEventListener("load", () => {
                     cropper = new Cropper(imgEl, {
                         aspectRatio: aspectRatio || NaN,
@@ -330,11 +354,12 @@ function qeCropImageBeforeUpload(file, aspectRatio) {
                         background: false
                     });
                 });
-                root.querySelector("#qeCropSkip").addEventListener("click", () => finish(file));
+                root.querySelector("#qeCropSkip").addEventListener("click", () => { finish(file); close(); });
                 root.querySelector("#qeCropConfirm").addEventListener("click", () => {
-                    if (!cropper) { finish(file); return; }
+                    if (!cropper) { finish(file); close(); return; }
                     cropper.getCroppedCanvas().toBlob((blob) => {
                         finish(blob || file);
+                        close();
                     }, file.type && file.type.startsWith("image/") ? file.type : "image/jpeg", 0.92);
                 });
             }
@@ -342,19 +367,35 @@ function qeCropImageBeforeUpload(file, aspectRatio) {
     });
 }
 
-// ---- 9. Cắt lại 1 ảnh ĐÃ CÓ SẴN trong bài (dù chèn qua nút hay dán trực tiếp Ctrl+V) ----
-// Dùng crossorigin="anonymous" khi tải lại ảnh để tránh canvas bị "tainted" (khoá bởi CORS) khi ảnh
-// nằm ở domain khác (Cloudinary) - Cloudinary vốn đã trả về header CORS cho phép nên hoạt động được.
-// Bấm "Huỷ" -> reject(null), nơi gọi PHẢI kiểm tra lỗi rỗng trước khi hiện toast để không báo lỗi
-// nhầm lúc người dùng chỉ đơn giản đổi ý.
-function qeCropRemoteImage(url) {
+// ---- 9. Cắt lại 1 ảnh ĐÃ CÓ SẴN trong bài (dù chèn qua nút, dán trực tiếp Ctrl+V, hay dán nguyên
+// cả trang có ảnh hotlink từ site khác) ----
+// Ảnh Cloudinary: dùng crossorigin="anonymous" tải lại trực tiếp là cắt được ngay (Cloudinary vốn
+// đã trả về header CORS cho phép). Ảnh domain KHÁC (hotlink từ trang dán vào, VD dán nguyên cả 1
+// trang web có nhiều ảnh) - trình duyệt KHÔNG đọc được dữ liệu ảnh đó để cắt do domain gốc không
+// cấp quyền CORS cho domain admin, dù có gắn crossorigin cũng chỉ làm ảnh tải lỗi hẳn (bug thật
+// user báo kèm ảnh chụp "Không tải lại được ảnh để cắt"). Xử lý: gọi trước
+// POST /api/uploads/from-url để SERVER tải hộ ảnh đó về lưu thật lên Cloudinary (server gọi domain
+// khác không bị CORS chặn vì CORS chỉ áp dụng cho trình duyệt), rồi cắt trên bản đã lưu này - nhờ
+// vậy ảnh ở BẤT KỲ domain nào cũng cắt được, không riêng ảnh dán từng cái một.
+async function qeCropRemoteImage(url, purpose) {
+    let cropUrl = url;
+    if (!/^https:\/\/res\.cloudinary\.com\//.test(url)) {
+        const rehostRes = await apiFetch("/api/uploads/from-url", { method: "POST", body: { url, purpose: purpose || "content" } });
+        const rehostData = await rehostRes.json();
+        if (!rehostRes.ok) throw new Error(rehostData.error || "Không tải được ảnh nguồn để cắt");
+        cropUrl = rehostData.url;
+    }
+
     return new Promise((resolve, reject) => {
         let cropper;
+        let settled = false;
+        const finish = (fn) => { if (settled) return; settled = true; if (cropper) cropper.destroy(); fn(); };
         qeOpenModal({
             title: "Cắt Lại Ảnh",
             width: "640px",
+            onClose: () => finish(() => reject(null)),
             bodyHtml: `
-                <div class="qe-crop-img-wrap"><img id="qeCropImg2" crossorigin="anonymous" src="${url}"></div>
+                <div class="qe-crop-img-wrap"><img id="qeCropImg2" crossorigin="anonymous" src="${cropUrl}"></div>
                 <p class="form-hint" style="margin-top:10px;">Kéo góc/viền để chọn vùng cắt, kéo vào giữa để di chuyển.</p>
                 <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:10px;">
                     <button type="button" class="btn btn-secondary" id="qeCropCancel2">Huỷ</button>
@@ -362,19 +403,19 @@ function qeCropRemoteImage(url) {
                 </div>`,
             onMount: (root, close) => {
                 const imgEl = root.querySelector("#qeCropImg2");
-                let settled = false;
-                const finish = (fn) => { if (settled) return; settled = true; if (cropper) cropper.destroy(); close(); fn(); };
                 imgEl.addEventListener("load", () => {
                     cropper = new Cropper(imgEl, { viewMode: 1, autoCropArea: 1, background: false });
                 });
                 imgEl.addEventListener("error", () => {
                     finish(() => reject(new Error("Không tải lại được ảnh để cắt (lỗi mạng hoặc ảnh đã bị xoá).")));
+                    close();
                 });
-                root.querySelector("#qeCropCancel2").addEventListener("click", () => finish(() => reject(null)));
+                root.querySelector("#qeCropCancel2").addEventListener("click", () => { finish(() => reject(null)); close(); });
                 root.querySelector("#qeCropConfirm2").addEventListener("click", () => {
-                    if (!cropper) { finish(() => reject(new Error("Ảnh chưa tải xong, thử lại."))); return; }
+                    if (!cropper) { finish(() => reject(new Error("Ảnh chưa tải xong, thử lại."))); close(); return; }
                     cropper.getCroppedCanvas().toBlob((blob) => {
                         finish(() => { if (blob) resolve(blob); else reject(new Error("Không cắt được ảnh.")); });
+                        close();
                     }, "image/jpeg", 0.92);
                 });
             }
@@ -429,7 +470,7 @@ function qeEnableInlineImageCrop(quill, purpose) {
             ev.stopPropagation();
             clearBtn();
             try {
-                const blob = await qeCropRemoteImage(img.src);
+                const blob = await qeCropRemoteImage(img.src, purpose);
                 const fd = new FormData();
                 fd.append("image", blob, "cropped.jpg");
                 fd.append("purpose", purpose || "content");
@@ -446,6 +487,85 @@ function qeEnableInlineImageCrop(quill, purpose) {
 
     document.addEventListener("scroll", clearBtn, true);
     window.addEventListener("resize", clearBtn);
+}
+
+// ---- 11. Bảng công cụ mini nổi khi tô chọn chữ (giống Word) - Đậm/Nghiêng/Căn lề/Tiêu đề ----
+function qeInitSelectionToolbar(quill) {
+    let toolbarEl = null;
+    function removeToolbar() { if (toolbarEl) { toolbarEl.remove(); toolbarEl = null; } }
+
+    function buildToolbar(range) {
+        removeToolbar();
+        const el = document.createElement("div");
+        el.className = "qe-selection-toolbar";
+        el.innerHTML = `
+            <button type="button" data-fmt="bold" title="Đậm"><b>B</b></button>
+            <button type="button" data-fmt="italic" title="Nghiêng"><i>I</i></button>
+            <span class="qe-sel-sep"></span>
+            <button type="button" data-align="" title="Căn trái">☰⟸</button>
+            <button type="button" data-align="center" title="Căn giữa">☰⟺</button>
+            <button type="button" data-align="right" title="Căn phải">☰⟹</button>
+            <span class="qe-sel-sep"></span>
+            <button type="button" data-header="2" title="Tiêu đề lớn">H2</button>
+            <button type="button" data-header="3" title="Tiêu đề nhỏ">H3</button>
+            <button type="button" data-header="" title="Chữ thường">P</button>
+        `;
+        document.body.appendChild(el);
+        toolbarEl = el;
+
+        // preventDefault() ở mousedown (KHÔNG phải click) - đây là cách chuẩn để giữ nguyên vùng
+        // đang tô chọn khi bấm nút trên toolbar nổi: nếu không chặn, trình duyệt tự bỏ chọn/chuyển
+        // focus ra khỏi khung soạn thảo NGAY khi bấm chuột xuống (trước cả khi sự kiện click tới
+        // nút), khiến Quill bắn selection-change về rỗng và toolbar này tự ẩn mất trước khi nút kịp
+        // xử lý xong - bug thật gặp phải lúc thử nghiệm ban đầu.
+        el.querySelectorAll("button").forEach(btn => btn.addEventListener("mousedown", (e) => e.preventDefault()));
+
+        function updateActiveStates() {
+            const current = quill.getFormat(range.index, range.length);
+            el.querySelectorAll("[data-fmt]").forEach(b => b.classList.toggle("active", !!current[b.dataset.fmt]));
+            el.querySelectorAll("[data-align]").forEach(b => b.classList.toggle("active", (current.align || "") === b.dataset.align));
+            el.querySelectorAll("[data-header]").forEach(b => b.classList.toggle("active", String(current.header || "") === b.dataset.header));
+        }
+
+        el.querySelectorAll("[data-fmt]").forEach(btn => {
+            btn.addEventListener("click", () => {
+                const fmt = btn.dataset.fmt;
+                quill.format(fmt, !quill.getFormat(range.index, range.length)[fmt], "user");
+                updateActiveStates();
+            });
+        });
+        el.querySelectorAll("[data-align]").forEach(btn => {
+            btn.addEventListener("click", () => {
+                quill.format("align", btn.dataset.align || false, "user");
+                updateActiveStates();
+            });
+        });
+        el.querySelectorAll("[data-header]").forEach(btn => {
+            btn.addEventListener("click", () => {
+                quill.format("header", btn.dataset.header ? Number(btn.dataset.header) : false, "user");
+                updateActiveStates();
+            });
+        });
+
+        const bounds = quill.getBounds(range.index, range.length);
+        const editorRect = quill.root.getBoundingClientRect();
+        const top = window.scrollY + editorRect.top + bounds.top - el.offsetHeight - 10;
+        const left = window.scrollX + editorRect.left + bounds.left;
+        el.style.top = `${Math.max(window.scrollY + 4, top)}px`;
+        el.style.left = `${Math.max(0, left)}px`;
+
+        updateActiveStates();
+    }
+
+    quill.on("selection-change", (range) => {
+        if (!range || range.length === 0) { removeToolbar(); return; }
+        buildToolbar(range);
+    });
+
+    // Cuộn/resize trang thì ẩn đi luôn (không tính lại vị trí cho đơn giản) - tô chọn lại chữ sẽ
+    // hiện lại đúng vị trí mới.
+    document.addEventListener("scroll", removeToolbar, true);
+    window.addEventListener("resize", removeToolbar);
 }
 
 // ---- 10. Dán ảnh trực tiếp (Ctrl+V, VD ảnh chụp màn hình/copy từ nơi khác) - tự upload lên

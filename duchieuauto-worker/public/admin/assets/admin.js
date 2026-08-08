@@ -197,6 +197,24 @@ function renderAdminNav(auth, activePage) {
     document.getElementById("logoutBtn").addEventListener("click", logout);
     loadContactBadge();
     initGlobalSearch(canEditPosts);
+    initBackToTop();
+}
+
+// Nút "Lên đầu trang" - hiện khi cuộn xuống đủ xa (400px), bấm để cuộn mượt lên đầu. Gắn ở đây (gọi
+// chung trong renderAdminNav) để có mặt trên MỌI trang quản trị đã đăng nhập, không chỉ riêng trang
+// soạn sản phẩm/bài viết dài - hữu ích cho bất kỳ trang nào có nội dung dài (VD Trang Chủ, Lịch Sử).
+function initBackToTop() {
+    if (document.getElementById("backToTopBtn")) return;
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.id = "backToTopBtn";
+    btn.className = "back-to-top-btn";
+    btn.textContent = "↑";
+    btn.setAttribute("aria-label", "Lên đầu trang");
+    btn.hidden = true;
+    document.body.appendChild(btn);
+    btn.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
+    window.addEventListener("scroll", () => { btn.hidden = window.scrollY < 400; });
 }
 
 // Tìm nhanh xuyên suốt admin (sản phẩm/bài viết/liên hệ) ngay từ ô tìm kiếm trên thanh menu -

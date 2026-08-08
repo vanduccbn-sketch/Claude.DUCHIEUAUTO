@@ -424,8 +424,20 @@ cho tới khi cutover — xem đầy đủ quyết định kiến trúc + rủi 
   - Đã `git push` toàn bộ 11 commit Phase 13 lên GitHub (Render tự redeploy bản sửa lỗi ảnh vỡ, không
     ảnh hưởng gì vì Render không còn nhận traffic thật nữa sau cutover).
 
-**Còn lại:** Rate Limiting Rule (`/api/auth/login`) đang chờ user tự cấu hình qua dashboard. 13.11
-(ngừng Render) chờ tới 20/08/2026 theo đúng chỉ đạo, xem chi tiết điều kiện trong memory dự án.
+- [x] **Rate Limiting Rule cho `/api/auth/login` — HOÀN TẤT.** User tự tạo qua dashboard (Security →
+  Security rules → Rate limiting rules, KHÔNG phải "Custom rules" thường - 2 mục khác nhau dù giao
+  diện tạo gần giống). Gói Free không có field "Hostname" trong danh sách gợi ý của riêng mục Rate
+  limiting rules (dù vẫn hợp lệ ở tầng engine) - phải dùng "Edit expression" gõ tay
+  `http.request.uri.path eq "/api/auth/login" and http.host eq "admin.duchieuauto.vn"`. Gói Free
+  cũng khoá cứng Period = 10 giây (không chọn được mốc khác) - chấp nhận, vẫn đủ chặt (10
+  request/10s so với người dùng thật không bao giờ đăng nhập nhanh vậy). Action: Block, Duration: 10
+  phút. **Đã test thật:** gửi 14 request liên tiếp - 5 request đầu bị KV lockout trả 401 (đúng cơ
+  chế cũ), từ request thứ 6 trả 429 **body rỗng** (khác hẳn JSON của KV lockout) - xác nhận đây là
+  Cloudflare edge chặn, không phải Worker. Test tiếp `/api/health` và `/admin/login.html` (route
+  khác, không nằm trong điều kiện rule) vẫn hoạt động bình thường - xác nhận rule không chặn nhầm.
+
+**Phase 13 (Cloudflare Workers migration) COI NHƯ HOÀN TẤT tính đến 2026-08-08** - chỉ còn theo dõi
+ổn định tới 20/08/2026 rồi ngừng Render (13.11), xem điều kiện/uỷ quyền chi tiết trong memory dự án.
 
 ## Việc cần làm tiếp theo (TODO)
 

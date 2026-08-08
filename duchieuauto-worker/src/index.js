@@ -18,6 +18,7 @@ import settingsRoutes from "./routes/settings.js";
 import bannersRoutes from "./routes/banners.js";
 import activityRoutes from "./routes/activity.js";
 import uploadsRoutes from "./routes/uploads.js";
+import leadsRoutes from "./routes/leads.js";
 
 const app = new Hono();
 
@@ -57,6 +58,7 @@ app.route("/api/settings", settingsRoutes);
 app.route("/api/banners", bannersRoutes);
 app.route("/api/activity", activityRoutes);
 app.route("/api/uploads", uploadsRoutes);
+app.route("/api/leads", leadsRoutes);
 
 app.notFound((c) => c.json({ error: "Không tìm thấy route" }, 404));
 

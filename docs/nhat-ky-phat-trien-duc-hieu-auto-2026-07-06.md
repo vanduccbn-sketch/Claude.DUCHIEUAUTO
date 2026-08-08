@@ -529,6 +529,27 @@ cầu bổ sung luôn. Rà soát phát hiện: đây là 2 nhóm gộp TĨNH (`C
 - [x] Test thật qua API (ghi/đọc/khôi phục), xác nhận UI mới hiển thị đúng trên Worker, deploy +
   push đầy đủ. Tăng `CACHE_NAME` lên `v14`.
 
+## Việc đã làm (2026-08-08, lần 7) — Cải tiến khung soạn thảo Quill (bài viết/sản phẩm)
+
+User báo lỗi thật: bài viết dài có chèn ảnh, đang gõ tiếp ở dưới thì màn hình tự nhảy ngược lên
+đúng chỗ có ảnh mỗi lần gõ 1 ký tự. Đồng thời hỏi thêm cải tiến cho công cụ soạn thảo.
+
+- [x] **Sửa lỗi nhảy trang** - nguyên nhân: cơ chế "CSS Scroll Anchoring" mặc định của mọi trình
+  duyệt hiện đại (không phải lỗi code Quill) chọn nhầm 1 ảnh trong bài làm điểm neo cuộn trang, nhảy
+  lại đó mỗi khi có thay đổi nhỏ dù ảnh không đổi kích thước thật. Sửa bằng `overflow-anchor: none`
+  trên `#quillEditor` trong `admin.css` (áp dụng chung cho cả `san-pham-form.html` lẫn
+  `bai-viet-form.html` vì dùng chung khung Quill) - đã lên live, xác nhận CSS đúng trên domain thật
+  (phải đợi cache CDN Cloudflare hết hạn ~1 phút, không phải lỗi mới).
+- [x] **Thêm công cụ sửa ảnh trực tiếp trong bài** (bấm vào ảnh hiện thanh công cụ căn lề trái/giữa/
+  phải/đầy đủ + kéo góc đổi kích thước) - dùng thư viện có sẵn `quill-image-resize-module@3.0.0`
+  (viết riêng cho đúng Quill 1.3.7 đang dùng, không tự viết lại vì cần đăng ký lại Image Blot của
+  Quill để giữ được thuộc tính width/align sau khi lưu - rủi ro cao nếu tự làm). Tải qua CDN
+  jsdelivr (đã nằm sẵn trong CSP `scriptSrc` từ Phase 13.7, không cần sửa CSP). Áp dụng cả 2 form,
+  đồng bộ cả 2 thư mục.
+- [ ] **Các cải tiến khác đã gợi ý cho khung soạn thảo, CHƯA làm, chờ user chọn:** Tìm & Thay thế
+  hàng loạt, đếm số từ/ký tự, bắt nhập Alt Text khi chèn ảnh (SEO ảnh), tự động lưu nháp, chèn Bảng,
+  khối "Lưu ý" nổi bật, nút Hoàn tác/Làm lại hiện trên toolbar, dán từ Word tự dọn định dạng thừa.
+
 ## Việc cần làm tiếp theo (TODO)
 
 - [ ] **User tự test Phase 13 trên `https://duchieuauto-worker.vanduc-cbn.workers.dev/admin/login.html`** (tài khoản `admin`/`Vanduc@123` — lưu ý IP test của Claude vừa bị khoá 15 phút do test brute-force ở 13.9, không ảnh hưởng IP thật của user) — chỉ sau khi user xác nhận ổn mới `git push` + làm Phase 13.10 (cutover domain thật)

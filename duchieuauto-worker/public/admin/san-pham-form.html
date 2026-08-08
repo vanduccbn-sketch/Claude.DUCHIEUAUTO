@@ -8,11 +8,13 @@
     <link rel="icon" type="image/png" href="assets/favicon.png">
     <link rel="stylesheet" href="assets/admin.css">
     <link href="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.snow.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/cropperjs@1.6.2/dist/cropper.min.css" rel="stylesheet">
     <style>
         .spec-row { display: grid; grid-template-columns: 1fr 1fr auto; gap: 10px; margin-bottom: 10px; }
         .spec-row input { padding: 9px 11px; border: 1px solid var(--border); border-radius: 6px; font-size: 13.5px; }
         .inline-add { display: flex; gap: 8px; margin-top: 8px; }
         .inline-add input { flex: 1; padding: 8px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; }
+        #qeUndoBtn, #qeRedoBtn, #qeTableBtn, #qeFindBtn { font-size: 16px; line-height: 1; }
     </style>
 </head>
 <body>
@@ -68,11 +70,20 @@
                             <button class="ql-image"></button>
                         </span>
                         <span class="ql-formats">
+                            <button class="ql-blockquote" title="Khối Lưu Ý nổi bật"></button>
+                            <button type="button" id="qeTableBtn" title="Chèn bảng 3x3">▦</button>
+                        </span>
+                        <span class="ql-formats">
+                            <button type="button" id="qeUndoBtn" title="Hoàn tác">↶</button>
+                            <button type="button" id="qeRedoBtn" title="Làm lại">↷</button>
+                            <button type="button" id="qeFindBtn" title="Tìm & Thay thế">🔍</button>
+                        </span>
+                        <span class="ql-formats">
                             <button class="ql-clean"></button>
                         </span>
                     </div>
                     <div id="quillEditor"></div>
-                    <p class="form-hint">Bấm biểu tượng ảnh để chèn ảnh giữa bài (tự động tải lên). Dùng nút <strong>in nghiêng</strong> ngay dưới ảnh để tạo dòng chú thích nhỏ cho ảnh đó.</p>
+                    <p class="form-hint">Bấm biểu tượng ảnh để chèn ảnh giữa bài (có thể cắt ảnh + nhập mô tả ảnh trước khi tải lên). Dùng nút <strong>in nghiêng</strong> ngay dưới ảnh để tạo dòng chú thích nhỏ cho ảnh đó. Bấm vào ảnh đã chèn để căn lề/đổi kích thước.</p>
                 </div>
             </div>
 
@@ -134,12 +145,15 @@
 
     <script src="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/quill-image-resize-module@3.0.0/image-resize.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/cropperjs@1.6.2/dist/cropper.min.js"></script>
     <script src="assets/admin.js"></script>
+    <script src="assets/quill-enhancements.js"></script>
     <script>
         const auth = requireAuth(["content", "super_admin"]);
         let categoriesData = [];
         let productId = null;
         let quill;
+        let autosave;
         Quill.register("modules/imageResize", ImageResize.default);
 
         if (auth) {
@@ -154,6 +168,23 @@
             const params = new URLSearchParams(window.location.search);
             productId = params.get("id");
             if (productId) await loadExistingProduct(productId);
+
+            autosave = qeInitAutosave({
+                storageKey: `dha_draft_product_${productId || "new"}`,
+                quill,
+                getExtraFields: () => ({
+                    name: document.getElementById("name").value,
+                    price: document.getElementById("price").value,
+                    description: document.getElementById("description").value
+                }),
+                applyExtraFields: (extra) => {
+                    if (extra.name !== undefined) document.getElementById("name").value = extra.name;
+                    if (extra.price !== undefined) document.getElementById("price").value = extra.price;
+                    if (extra.description !== undefined) document.getElementById("description").value = extra.description;
+                },
+                mountBefore: document.querySelector(".editor-layout")
+            });
+            autosave.checkAndShowBanner();
 
             document.getElementById("category").addEventListener("change", () => {
                 populateBrandSelect();
@@ -178,13 +209,21 @@
                     toolbar: "#quillToolbar",
                     // Bấm vào ảnh trong bài -> hiện thanh công cụ căn lề (trái/giữa/phải/đầy đủ) +
                     // kéo góc để đổi kích thước - đúng yêu cầu "công cụ cơ bản sửa ảnh" của user.
-                    imageResize: { modules: ["Resize", "DisplaySize", "Toolbar"] }
+                    imageResize: { modules: ["Resize", "DisplaySize", "Toolbar"] },
+                    history: { userOnly: false }
                 },
                 placeholder: "Viết mô tả chi tiết sản phẩm ở đây..."
             });
 
-            // Ghi đè nút chèn ảnh mặc định (nhúng base64 làm nội dung phình to) - thay bằng upload
-            // thật lên Cloudinary rồi chèn URL trả về, giống hệt cách làm ở form bài viết.
+            qeInitWordCount(quill);
+            qeInitUndoRedo(quill, document.getElementById("qeUndoBtn"), document.getElementById("qeRedoBtn"));
+            qeInitPasteCleanup(quill);
+            qeInitFindReplace(quill, document.getElementById("qeFindBtn"));
+            qeInitTableInsert(quill, document.getElementById("qeTableBtn"));
+
+            // Ghi đè nút chèn ảnh mặc định (nhúng base64 làm nội dung phình to) - thay bằng: cho
+            // cắt ảnh tuỳ chọn -> hỏi Alt Text (SEO ảnh) -> upload thật lên Cloudinary -> chèn URL
+            // trả về kèm alt.
             quill.getModule("toolbar").addHandler("image", () => {
                 const input = document.createElement("input");
                 input.type = "file";
@@ -193,14 +232,20 @@
                     const file = input.files[0];
                     if (!file) return;
                     try {
+                        const finalFile = await qeCropImageBeforeUpload(file);
+                        const altText = await qeAskImageAlt(document.getElementById("name").value.trim());
                         const fd = new FormData();
-                        fd.append("image", file);
+                        fd.append("image", finalFile, file.name);
                         fd.append("purpose", "content");
                         const res = await apiFetch("/api/uploads", { method: "POST", body: fd });
                         const data = await res.json();
                         if (!res.ok) throw new Error(data.error || "Tải ảnh thất bại");
                         const range = quill.getSelection(true);
                         quill.insertEmbed(range.index, "image", data.url);
+                        if (altText) {
+                            const [leafBlot] = quill.getLeaf(range.index);
+                            if (leafBlot && leafBlot.domNode) leafBlot.domNode.alt = altText;
+                        }
                         quill.setSelection(range.index + 1);
                     } catch (err) {
                         showToast(err.message, true);
@@ -312,10 +357,13 @@
             if (!file) return;
             const btn = document.getElementById("imageBtn");
             btn.disabled = true;
-            btn.textContent = "Đang tải lên...";
             try {
+                // Khoá tỉ lệ 4:3 khớp đúng preset Cloudinary "product" (c_fill ar_4:3) áp dụng sau
+                // khi upload - cắt trước theo đúng tỉ lệ để bản xem trước lúc cắt khớp kết quả cuối.
+                const finalFile = await qeCropImageBeforeUpload(file, 4 / 3);
+                btn.textContent = "Đang tải lên...";
                 const fd = new FormData();
-                fd.append("image", file);
+                fd.append("image", finalFile, file.name);
                 fd.append("purpose", "product");
                 const res = await apiFetch("/api/uploads", { method: "POST", body: fd });
                 const data = await res.json();
@@ -390,6 +438,7 @@
 
                 showToast("Đã lưu sản phẩm thành công");
                 document.getElementById("saveStatus").textContent = "Đã lưu lúc " + new Date().toLocaleTimeString("vi-VN");
+                autosave.clearDraft();
                 if (!productId && data.id) {
                     productId = data.id;
                     window.history.replaceState(null, "", `san-pham-form.html?id=${data.id}`);

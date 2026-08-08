@@ -8,6 +8,10 @@
     <link rel="icon" type="image/png" href="assets/favicon.png">
     <link rel="stylesheet" href="assets/admin.css">
     <link href="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.snow.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/cropperjs@1.6.2/dist/cropper.min.css" rel="stylesheet">
+    <style>
+        #qeUndoBtn, #qeRedoBtn, #qeTableBtn, #qeFindBtn { font-size: 16px; line-height: 1; }
+    </style>
 </head>
 <body>
     <div class="admin-topbar" id="adminTopbar"></div>
@@ -53,11 +57,20 @@
                             <button class="ql-image"></button>
                         </span>
                         <span class="ql-formats">
+                            <button class="ql-blockquote" title="Khối Lưu Ý nổi bật"></button>
+                            <button type="button" id="qeTableBtn" title="Chèn bảng 3x3">▦</button>
+                        </span>
+                        <span class="ql-formats">
+                            <button type="button" id="qeUndoBtn" title="Hoàn tác">↶</button>
+                            <button type="button" id="qeRedoBtn" title="Làm lại">↷</button>
+                            <button type="button" id="qeFindBtn" title="Tìm & Thay thế">🔍</button>
+                        </span>
+                        <span class="ql-formats">
                             <button class="ql-clean"></button>
                         </span>
                     </div>
                     <div id="quillEditor"></div>
-                    <p class="form-hint">Bấm biểu tượng ảnh trên thanh công cụ để chèn ảnh vào giữa bài viết (tự động tải lên server).</p>
+                    <p class="form-hint">Bấm biểu tượng ảnh để chèn ảnh vào giữa bài (có thể cắt ảnh + nhập mô tả ảnh trước khi tải lên). Bấm vào ảnh đã chèn để căn lề/đổi kích thước.</p>
                 </div>
             </div>
 
@@ -132,20 +145,45 @@
 
     <script src="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/quill-image-resize-module@3.0.0/image-resize.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/cropperjs@1.6.2/dist/cropper.min.js"></script>
     <script src="assets/admin.js"></script>
+    <script src="assets/quill-enhancements.js"></script>
     <script>
         const auth = requireAuth(["content", "super_admin"]);
         let quill, postId = null;
+        let autosave;
         Quill.register("modules/imageResize", ImageResize.default);
 
         if (auth) {
             renderAdminNav(auth, "bai-viet");
+            init();
+        }
+
+        // Bọc async để CHỜ loadExistingPost() tải xong nội dung thật rồi mới kiểm tra banner nháp -
+        // trước đó gọi rời rạc (không await) nên banner "phát hiện bản nháp" có thể hiện ra rồi bị
+        // nội dung thật load sau đó đè mất, gây cảm giác nhấp nháy/khó hiểu.
+        async function init() {
             initEditor();
             initCoverUpload();
 
             const params = new URLSearchParams(window.location.search);
             postId = params.get("id");
-            if (postId) loadExistingPost(postId);
+            if (postId) await loadExistingPost(postId);
+
+            autosave = qeInitAutosave({
+                storageKey: `dha_draft_post_${postId || "new"}`,
+                quill,
+                getExtraFields: () => ({
+                    title: document.getElementById("title").value,
+                    excerpt: document.getElementById("excerpt").value
+                }),
+                applyExtraFields: (extra) => {
+                    if (extra.title !== undefined) document.getElementById("title").value = extra.title;
+                    if (extra.excerpt !== undefined) document.getElementById("excerpt").value = extra.excerpt;
+                },
+                mountBefore: document.querySelector(".editor-layout")
+            });
+            autosave.checkAndShowBanner();
 
             document.getElementById("saveBtn").addEventListener("click", savePost);
             document.getElementById("previewBtn").addEventListener("click", openPreview);
@@ -163,8 +201,15 @@
                 placeholder: "Viết nội dung bài viết ở đây..."
             });
 
+            qeInitWordCount(quill);
+            qeInitUndoRedo(quill, document.getElementById("qeUndoBtn"), document.getElementById("qeRedoBtn"));
+            qeInitPasteCleanup(quill);
+            qeInitFindReplace(quill, document.getElementById("qeFindBtn"));
+            qeInitTableInsert(quill, document.getElementById("qeTableBtn"));
+
             // Ghi đè nút chèn ảnh mặc định (Quill mặc định nhúng base64 làm nội dung DB phình to) -
-            // thay bằng upload thật lên server rồi chèn URL trả về.
+            // thay bằng: cho cắt ảnh tuỳ chọn -> hỏi Alt Text (SEO ảnh) -> upload thật lên server ->
+            // chèn URL trả về kèm alt.
             quill.getModule("toolbar").addHandler("image", () => {
                 const input = document.createElement("input");
                 input.type = "file";
@@ -173,9 +218,15 @@
                     const file = input.files[0];
                     if (!file) return;
                     try {
-                        const url = await uploadImage(file, "content");
+                        const finalFile = await qeCropImageBeforeUpload(file);
+                        const altText = await qeAskImageAlt(document.getElementById("title").value.trim());
+                        const url = await uploadImage(finalFile, "content", file.name);
                         const range = quill.getSelection(true);
                         quill.insertEmbed(range.index, "image", url);
+                        if (altText) {
+                            const [leafBlot] = quill.getLeaf(range.index);
+                            if (leafBlot && leafBlot.domNode) leafBlot.domNode.alt = altText;
+                        }
                         quill.setSelection(range.index + 1);
                     } catch (err) {
                         showToast(err.message, true);
@@ -193,9 +244,12 @@
                 const file = coverInput.files[0];
                 if (!file) return;
                 coverBtn.disabled = true;
-                coverBtn.textContent = "Đang tải lên...";
                 try {
-                    const url = await uploadImage(file, "cover");
+                    // Khoá tỉ lệ 16:9 khớp preset Cloudinary "cover" (c_fill ar_16:9) áp dụng sau khi
+                    // upload - cắt trước theo đúng tỉ lệ để bản xem trước lúc cắt khớp kết quả cuối.
+                    const finalFile = await qeCropImageBeforeUpload(file, 16 / 9);
+                    coverBtn.textContent = "Đang tải lên...";
+                    const url = await uploadImage(finalFile, "cover", file.name);
                     document.getElementById("coverImageUrl").value = url;
                     document.getElementById("coverPreview").innerHTML = `<img src="${url}" alt="Ảnh bìa">`;
                 } catch (err) {
@@ -225,9 +279,9 @@
             if (e.target.value) document.getElementById("publishedToggle").checked = false;
         });
 
-        async function uploadImage(file, purpose) {
+        async function uploadImage(file, purpose, fileName) {
             const formData = new FormData();
-            formData.append("image", file);
+            formData.append("image", file, fileName || undefined);
             if (purpose) formData.append("purpose", purpose);
             const res = await apiFetch("/api/uploads", { method: "POST", body: formData });
             const data = await res.json();
@@ -305,6 +359,7 @@
 
                 showToast("Đã lưu bài viết thành công");
                 document.getElementById("saveStatus").textContent = "Đã lưu lúc " + new Date().toLocaleTimeString("vi-VN");
+                autosave.clearDraft();
                 if (!postId && data.slug) {
                     postId = data.id;
                     window.history.replaceState(null, "", `bai-viet-form.html?id=${data.id}`);

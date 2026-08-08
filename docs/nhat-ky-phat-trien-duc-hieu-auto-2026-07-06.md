@@ -584,6 +584,20 @@ User báo lỗi thật: bài viết dài có chèn ảnh, đang gõ tiếp ở d
   trong đó không) thay vì dựa vào phần tử nhận click, đồng thời chuyển sang lắng nghe ở **capture
   phase** trên `document` để chạy trước khi lớp phủ có cơ hội chặn sự kiện.
 
+- [x] **User báo bug thật nghiêm trọng ở Tìm & Thay thế** (kèm ảnh chụp màn hình): thay "AKauto"
+  bằng "Đức Hiếu Auto" trong bài có chèn ảnh giữa bài làm chữ bị lặp/hỏng liên tục mỗi lần bấm "Thay
+  Tất Cả". Nguyên nhân gốc: hàm cũ dùng `quill.getText()` để tính vị trí chữ, nhưng hàm này **bỏ hẳn
+  ảnh/embed ra khỏi chuỗi trả về**, làm chỉ số bị lệch dần với chỉ số THẬT của Quill ngay sau tấm ảnh
+  đầu tiên trong bài - `deleteText()`/`insertText()` xoá/chèn nhầm vị trí. Sửa bằng
+  `qeFindAllPositions()` duyệt thẳng Delta gốc, tự cộng đúng 1 đơn vị chỉ số cho mỗi ảnh - khớp chính
+  xác cách Quill đánh số nội bộ.
+- [x] **Nút "Cắt ảnh" (mục trước) vẫn không hiện dù code đã đúng trên server** - xác nhận qua API
+  nhiều lần vẫn đúng, nghi ngờ cache CDN Cloudflare phục vụ bản cũ ở 1 số điểm cache khác nhau (khác
+  điểm mình test) dù đã đợi qua thời gian cache thông thường. Thêm `?v=N` vào URL script
+  `quill-enhancements.js` trong cả 2 trang - ép trình duyệt/CDN luôn coi là URL hoàn toàn mới, tải
+  lại ngay không phụ thuộc cache hết hạn. **Quy ước mới:** mọi lần sửa file này sau này đều phải tăng
+  số `?v=N` kèm theo.
+
 ## Việc cần làm tiếp theo (TODO)
 
 - [ ] **User tự test Phase 13 trên `https://duchieuauto-worker.vanduc-cbn.workers.dev/admin/login.html`** (tài khoản `admin`/`Vanduc@123` — lưu ý IP test của Claude vừa bị khoá 15 phút do test brute-force ở 13.9, không ảnh hưởng IP thật của user) — chỉ sau khi user xác nhận ổn mới `git push` + làm Phase 13.10 (cutover domain thật)

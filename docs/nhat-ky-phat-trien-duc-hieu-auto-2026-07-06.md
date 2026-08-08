@@ -598,6 +598,33 @@ User báo lỗi thật: bài viết dài có chèn ảnh, đang gõ tiếp ở d
   lại ngay không phụ thuộc cache hết hạn. **Quy ước mới:** mọi lần sửa file này sau này đều phải tăng
   số `?v=N` kèm theo.
 
+- [x] **User báo tiếp 6 việc (bug + yêu cầu mới) trong 1 lượt, sau khi test kỹ khung soạn thảo mới:**
+  1. **Bug thật:** cắt ảnh báo lỗi "Không tải lại được ảnh để cắt" khi ảnh được dán vào bằng cách
+     copy nguyên cả 1 trang web (ảnh hotlink domain khác, không phải Cloudinary) - do giới hạn CORS
+     của trình duyệt (domain nguồn không cấp quyền đọc dữ liệu ảnh cho domain admin). Sửa bằng route
+     mới `POST /api/uploads/from-url` (cả backend lẫn worker) - SERVER tải hộ ảnh domain khác về lưu
+     lên Cloudinary trước (server-to-server không bị CORS chặn), rồi cắt trên bản đã lưu này. Nhờ
+     vậy ảnh ở bất kỳ domain nào cũng cắt được, không riêng ảnh dán từng cái một.
+  2. Xác nhận Alt Text vốn đã KHÔNG bắt buộc (có sẵn nút "Bỏ Qua"), làm rõ thêm chữ trong modal.
+  3. **Bug thật khác kèm theo:** đóng modal (Alt Text/cắt ảnh) bằng cách khác ngoài 2 nút chính (bấm
+     "✕"/Esc/bấm ra ngoài) làm Promise treo mãi mãi, phải tải lại trang - thêm hook `onClose` cho
+     `qeOpenModal()` đảm bảo luôn resolve/reject đúng 1 lần dù đóng theo cách nào.
+  4. **Lỗi nhảy trang tái diễn** dù đã sửa trước đó - mở rộng `overflow-anchor: none` từ riêng
+     `#quillEditor` ra toàn `body`, vì các phần tử MỚI thêm sau (nút nổi Cắt ảnh, banner nháp) nằm
+     ngoài `#quillEditor` cũng có thể là điểm neo cuộn gây lỗi.
+  5. Thêm nút "Lên đầu trang" - gắn trong `renderAdminNav()` (`admin.js`) nên có mặt trên MỌI trang
+     quản trị đã đăng nhập, không riêng 2 trang soạn thảo.
+  6. Thêm nút "Lưu" ở đầu trang (cạnh "Quay Lại Danh Sách") cho cả 2 form, đồng bộ trạng thái với
+     nút Lưu ở cuối trang khi đang xử lý.
+  7. Thêm bảng công cụ mini nổi khi tô chọn chữ (giống Word): Đậm/Nghiêng/Căn trái-giữa-phải/Tiêu đề
+     lớn-nhỏ/Chữ thường - dùng `mousedown` + `preventDefault()` trên các nút để giữ nguyên vùng đang
+     chọn (dùng `click` trực tiếp sẽ làm mất vùng chọn trước khi kịp xử lý).
+  Tăng `?v=5` cho `quill-enhancements.js`. **Tự phát hiện và sửa kịp 1 lỗi thao tác của chính mình
+  trong lúc làm:** lệnh copy file vô tình ghi đè nhầm `duchieuauto-worker/src/routes/uploads.js`
+  (bản Hono) bằng nội dung bản Express của backend - phát hiện ngay qua cảnh báo hệ thống, khôi phục
+  đúng nội dung Hono trước khi deploy, đã xác nhận qua `git diff` chỉ thêm đúng 29 dòng route mới,
+  không còn sót code Express nào.
+
 ## Việc cần làm tiếp theo (TODO)
 
 - [ ] **User tự test Phase 13 trên `https://duchieuauto-worker.vanduc-cbn.workers.dev/admin/login.html`** (tài khoản `admin`/`Vanduc@123` — lưu ý IP test của Claude vừa bị khoá 15 phút do test brute-force ở 13.9, không ảnh hưởng IP thật của user) — chỉ sau khi user xác nhận ổn mới `git push` + làm Phase 13.10 (cutover domain thật)

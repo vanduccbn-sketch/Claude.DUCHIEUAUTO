@@ -625,9 +625,85 @@ User báo lỗi thật: bài viết dài có chèn ảnh, đang gõ tiếp ở d
   đúng nội dung Hono trước khi deploy, đã xác nhận qua `git diff` chỉ thêm đúng 29 dòng route mới,
   không còn sót code Express nào.
 
+## Việc đã làm (2026-08-09) — Xác minh thật bằng Puppeteer + tính năng giá nhiều mức theo loại xe
+
+User yêu cầu rõ: "khoan hẵng đẩy lên mà test local đã" - không được báo đã sửa xong chỉ dựa vào kiểm
+tra API, phải tự lái trình duyệt thật (Puppeteer, Chrome hệ thống qua `puppeteer-core`, không tải
+Chromium riêng) để xác nhận từng bug trước khi deploy/push.
+
+- [x] **Bug "cắt ảnh domain ngoài" hoá ra KHÔNG phải lỗi code** - URL Wikipedia dùng để test bị chính
+  Wikimedia trả về `400 Use thumbnail sizes listed...` (giới hạn kích thước thumbnail hợp lệ), sau đó
+  đổi ảnh test lại còn dính thêm `429` do IP egress của Cloudflare Worker bị Wikimedia rate-limit (bị
+  nhiều Worker khác trên toàn Cloudflare lạm dụng) - cả 2 đều là vấn đề của ảnh/domain test, không
+  liên quan code. Đổi ảnh test sang `httpbin.org/image/jpeg` (ổn định hơn) thì luồng cắt ảnh
+  domain-ngoài chạy đúng thật 100% (rehost qua Cloudinary → mở Cropper.js → bấm "Cắt & Thay Ảnh" →
+  ảnh trong bài đổi sang URL Cloudinary mới) - xác nhận bằng Puppeteer thao tác chuột thật, không chỉ
+  gọi API. Fix User-Agent/Referer cho fetch() trong `/api/uploads/from-url` (đề phòng site khác thật
+  sự chặn bot) vẫn giữ lại vì vô hại, dù không phải nguyên nhân chính của lần này.
+- [x] **Modal Alt Text đóng bằng Esc không bị treo** - xác nhận đúng qua Puppeteer (Promise settle
+  đúng 1 lần, không cần sửa gì thêm).
+- [x] **Bug thật sự nghiêm trọng tìm ra ở mục "bảng công cụ mini khi tô chọn chữ"**: `san-pham-form.html`
+  và `bai-viet-form.html` **chưa bao giờ gọi** `injectQuillEnhancementStyles()` trong `initEditor()` -
+  hàm và toàn bộ CSS đã viết sẵn trong `quill-enhancements.js` nhưng không có dòng nào gọi nó! Hệ quả:
+  mọi phần tử `.qe-*` (modal, nút nổi "Cắt ảnh", bảng công cụ mini) đều thiếu `position: absolute`,
+  rơi về `position: static` mặc định → bị đẩy xuống cuối trang (cách xa vị trí thật hàng nghìn px) dù
+  `el.style.top` tính đúng. Phát hiện qua chuỗi debug dài: Puppeteer báo "not clickable", kiểm tra
+  `getBoundingClientRect()` lệch hẳn với `el.style.top`, cuối cùng lần ra `document.getElementById("qeStyles")`
+  không tồn tại. Sửa bằng 1 dòng `injectQuillEnhancementStyles();` đầu `initEditor()` ở cả 2 trang -
+  xác nhận lại bằng Puppeteer: bảng công cụ mini hiện đúng vị trí, bấm "Đậm" áp dụng định dạng thật.
+- [x] **Lỗi nhảy trang khi gõ tiếng Việt có dấu (â/á/ơ/ô...) - user xác nhận CHỈ xảy ra khi gõ dấu,
+  không xảy ra với chữ Latin, chỉ trong khung Quill, dùng Unikey (không phải extension).** Tìm thêm 1
+  lỗ hổng thật trong lần sửa `overflow-anchor: none` trước đó: chỉ đặt trên `body`, nhưng phần tử
+  cuộn trang THẬT SỰ (`document.scrollingElement`) là `<html>` khi trang không tự đặt `overflow`
+  riêng cho `body` - xác nhận qua DevTools: `getComputedStyle(document.documentElement).overflowAnchor`
+  vẫn là `"auto"` dù `body` đã `"none"`. Thêm `html { overflow-anchor: none; }` vào `admin.css`. User
+  test lại vẫn còn bị nhảy sau fix này - thử thêm `quill.root.setAttribute("spellcheck", "false")`
+  (nghi ngờ bộ kiểm tra chính tả của Chrome xử lý tiếng Việt kém, tính toán lại gây giật) như 1 thử
+  nghiệm rẻ/an toàn. **Đã thử tái hiện bằng Puppeteer qua 8 cách khác nhau** (nội dung thật của sản
+  phẩm có ảnh Cloudinary thật, click chuột thật đặt con trỏ, mô phỏng cách gõ Unikey bằng
+  backspace+gõ-lại, gõ liên tục tốc độ cao, ghi lại scrollY liên tục qua `requestAnimationFrame` để
+  không bỏ sót jump thoáng qua) **nhưng không tái hiện được** - đã bật thử "Layout Shift Regions" của
+  Chrome DevTools cùng user, không thấy vùng nào sáng lên. **Chưa xác nhận được 2 fix này (html
+  overflow-anchor + tắt spellcheck) đã thật sự dứt điểm chưa** - cần user test lại và xác nhận, đây
+  vẫn là việc còn treo quan trọng nhất.
+
+- [x] **Tính năng mới: giá theo loại/cỡ xe cho 1 sản phẩm** (VD "Xe 4 chỗ - Cỡ nhỏ": 1.200.000đ, "Xe 7
+  chỗ - Cỡ lớn": 1.800.000đ...), theo yêu cầu user kèm ảnh tham khảo từ 1 site đối thủ. Thiết kế theo
+  ĐÚNG mô hình bảng con 1-nhiều đã có sẵn cho `product_specs` (xoá hết rồi insert lại theo mảng mỗi
+  lần lưu) - thêm bảng `product_price_tiers(id, product_id, label, price, sort_order)` trong
+  `db.js`. Cột `products.price` (TEXT) giữ nguyên vai trò giá thấp nhất/mặc định cho thẻ sản phẩm ở
+  danh mục, sắp xếp, schema.org - sản phẩm không khai báo mức giá nào thì hiển thị y hệt như trước.
+  Route `POST/PUT /api/products` (cả bản Express `duchieuauto-backend` lẫn Hono
+  `duchieuauto-worker`) thêm `savePriceTiers()` y hệt logic `saveSpecs()`; `GET /:id` và
+  `GET /admin/id/:id` trả kèm `priceTiers: [[label, price], ...]`. Admin form thêm khung "Giá theo
+  loại xe (tuỳ chọn)" - copy gần nguyên khối UI `addSpecRow`/`collectSpecs` sang `addPriceTierRow`/
+  `collectPriceTiers`, đổi tên class từ `.spec-row` sang `.tier-row` (tự phát hiện qua Puppeteer: dùng
+  lại đúng class `.spec-row` làm `collectSpecs()` - vốn query KHÔNG giới hạn phạm vi trong
+  `#specsList` từ trước - vô tình khớp luôn cả hàng giá mới, crash lúc lưu; sẵn tiện sửa luôn
+  `collectSpecs()` cho giới hạn đúng phạm vi `#specsList`). Trang công khai
+  `san-pham-chi-tiet.html`/`catalog-render.js`: nếu sản phẩm có `priceTiers`, ẩn dòng giá đơn
+  (`.product-detail-price`) đi và hiện lưới thẻ giá (`.product-detail-price-tiers`) thay thế - **gặp
+  đúng gotcha specificity `[hidden]` đã ghi chú sẵn trong `catalog-pages.css` cho
+  `.sticky-product-cta`** (class tự đặt `display: block/grid` cùng độ ưu tiên với `[hidden]{display:none}`
+  mặc định, CSS tác giả luôn thắng vì nằm sau stylesheet mặc định trong cascade) - phải khai báo lại
+  rõ ràng `.product-detail-price[hidden]`/`.product-detail-price-tiers[hidden] { display: none; }`.
+  **Đã test full luồng bằng Puppeteer + server local thật** (`node server.js` trỏ đúng Turso
+  production qua `.env`, dựng thêm 1 static file server Node thuần cho frontend tĩnh ở
+  `localhost:8080` vì `api-config.js` chỉ tự chuyển sang `localhost:4000` khi `window.location.hostname`
+  là `localhost`/`127.0.0.1`, không hoạt động với `file://`): thêm/xoá/sửa mức giá qua admin → lưu →
+  xác nhận qua API → xác nhận trang công khai hiện đúng lưới giá. Demo thử trên sản phẩm thật "Đánh
+  Bóng Xe" bằng đúng 4 mức giá trong ảnh tham khảo của user, **user xem xong yêu cầu dọn số liệu mẫu
+  đi** ("giá tôi sẽ tự tuỳ chỉnh trên trang admin sau") - đã xoá sạch `priceTiers` mẫu trước khi
+  deploy, chỉ đẩy code/tính năng lên, không đẩy giá bịa lên site thật.
+
 ## Việc cần làm tiếp theo (TODO)
 
-- [ ] **User tự test Phase 13 trên `https://duchieuauto-worker.vanduc-cbn.workers.dev/admin/login.html`** (tài khoản `admin`/`Vanduc@123` — lưu ý IP test của Claude vừa bị khoá 15 phút do test brute-force ở 13.9, không ảnh hưởng IP thật của user) — chỉ sau khi user xác nhận ổn mới `git push` + làm Phase 13.10 (cutover domain thật)
+- [ ] **User cần xác nhận lỗi nhảy trang khi gõ tiếng Việt có dấu đã hết hẳn chưa** (2 fix đã lên
+  live: `html { overflow-anchor: none }` + `spellcheck="false"` trên khung Quill) - không tái hiện
+  được qua Puppeteer dù thử 8 cách, cần người dùng Unikey thật xác nhận trực tiếp.
+- [ ] **User tự nhập giá thật theo từng loại xe** cho các sản phẩm/dịch vụ cần thiết qua trang admin
+  (tính năng đã lên production, chưa có sản phẩm nào có sẵn dữ liệu mẫu).
+
 - [ ] Phase 7 (quản lý sản phẩm qua CMS) — làm theo từng bước nhỏ đã liệt kê trong file kế hoạch, không dồn 1 buổi
 - [ ] 3 trang Ads admin còn thiếu (Banner, Cấu hình chung, Activity log) — dời làm cùng Phase 7
 - [ ] Phase 2 còn thiếu: minify CSS/JS, reCAPTCHA cho form (cần quyết định/tài khoản từ user)

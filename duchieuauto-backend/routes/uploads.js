@@ -85,7 +85,13 @@ router.post("/from-url", requireRole("content", "ads", "super_admin"), async (re
     if (!url) return res.status(400).json({ error: "Thiếu url ảnh nguồn" });
 
     try {
-        const imgRes = await fetch(url);
+        // Gắn User-Agent + Referer giống trình duyệt thật - xem giải thích đầy đủ ở bản Worker.
+        const imgRes = await fetch(url, {
+            headers: {
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+                "Referer": new URL(url).origin + "/"
+            }
+        });
         if (!imgRes.ok) throw new Error(`Không tải được ảnh nguồn (HTTP ${imgRes.status})`);
         const contentType = (imgRes.headers.get("content-type") || "").split(";")[0].trim();
         if (!ALLOWED_TYPES.includes(contentType)) {

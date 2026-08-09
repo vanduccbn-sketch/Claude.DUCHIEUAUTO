@@ -1180,7 +1180,24 @@ async function renderProductDetail() {
         detailImg.onerror = () => { detailImg.onerror = null; detailImg.srcset = ""; detailImg.src = "assets/images/placeholder.svg"; };
         document.querySelector(".product-detail-brand").textContent = p.brand;
         document.querySelector(".product-detail-name").textContent = p.name;
-        document.querySelector(".product-detail-price").textContent = p.price || "Liên hệ để biết giá";
+        // Sản phẩm có nhiều mức giá theo loại/cỡ xe (VD "Xe 4 chỗ - Cỡ nhỏ": 1.200.000đ) thì hiện
+        // lưới nhiều mức giá thay cho dòng giá đơn - p.price vẫn giữ vai trò giá thấp nhất/mặc định
+        // cho thẻ sản phẩm ở danh mục/tìm kiếm, chỉ trang chi tiết này ưu tiên hiện đủ các mức.
+        const priceEl = document.querySelector(".product-detail-price");
+        const priceTiersEl = document.querySelector(".product-detail-price-tiers");
+        if (p.priceTiers && p.priceTiers.length) {
+            priceEl.hidden = true;
+            priceTiersEl.innerHTML = p.priceTiers.map(([label, tierPrice]) => `
+                <div class="price-tier-card">
+                    <div class="price-tier-label">${label}</div>
+                    <div class="price-tier-value">${tierPrice}</div>
+                </div>`).join("");
+            priceTiersEl.hidden = false;
+        } else {
+            priceEl.hidden = false;
+            priceEl.textContent = p.price || "Liên hệ để biết giá";
+            priceTiersEl.hidden = true;
+        }
         document.querySelector(".product-detail-desc").textContent = p.description || "Thông tin chi tiết đang được cập nhật. Vui lòng liên hệ hotline để được tư vấn.";
 
         setupStickyProductCta(p);

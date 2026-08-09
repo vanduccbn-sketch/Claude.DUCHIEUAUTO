@@ -131,13 +131,15 @@ router.get("/:id", async (req, res) => {
     if (!p) return res.status(404).json({ error: "Không tìm thấy sản phẩm" });
 
     const specs = await db.prepare("SELECT spec_key, spec_value FROM product_specs WHERE product_id = ? ORDER BY sort_order").all(req.params.id);
+    const priceTiers = await db.prepare("SELECT label, price FROM product_price_tiers WHERE product_id = ? ORDER BY sort_order").all(req.params.id);
     const brandName = await resolveBrandName(p.category_id, p.brand_id, p.brand_type_id);
 
     res.json({
         ...p,
         image: productImagePath(p.id, p.image),
         brand: brandName,
-        specs: specs.map(s => [s.spec_key, s.spec_value])
+        specs: specs.map(s => [s.spec_key, s.spec_value]),
+        priceTiers: priceTiers.map(t => [t.label, t.price])
     });
 });
 
@@ -294,7 +296,8 @@ router.get("/admin/id/:id", canEditCatalog, async (req, res) => {
     const p = await db.prepare("SELECT * FROM products WHERE id = ?").get(req.params.id);
     if (!p) return res.status(404).json({ error: "Không tìm thấy sản phẩm" });
     const specs = await db.prepare("SELECT spec_key, spec_value FROM product_specs WHERE product_id = ? ORDER BY sort_order").all(req.params.id);
-    res.json({ ...p, specs: specs.map(s => [s.spec_key, s.spec_value]) });
+    const priceTiers = await db.prepare("SELECT label, price FROM product_price_tiers WHERE product_id = ? ORDER BY sort_order").all(req.params.id);
+    res.json({ ...p, specs: specs.map(s => [s.spec_key, s.spec_value]), priceTiers: priceTiers.map(t => [t.label, t.price]) });
 });
 
 function slugifyId(str) {
@@ -318,9 +321,21 @@ async function saveSpecs(productId, specs) {
     }
 }
 
+async function savePriceTiers(productId, tiers) {
+    await db.prepare("DELETE FROM product_price_tiers WHERE product_id = ?").run(productId);
+    if (!Array.isArray(tiers)) return;
+    for (let i = 0; i < tiers.length; i++) {
+        const [label, price] = tiers[i];
+        if (!label || !price) continue;
+        await db.prepare(
+            "INSERT INTO product_price_tiers (product_id, label, price, sort_order) VALUES (?, ?, ?, ?)"
+        ).run(productId, label, price, i);
+    }
+}
+
 // POST /api/products - tạo sản phẩm mới
 router.post("/", canEditCatalog, async (req, res) => {
-    const { category_id, brand_id, brand_type_id, name, price, description, detail_content, image, specs } = req.body;
+    const { category_id, brand_id, brand_type_id, name, price, description, detail_content, image, specs, priceTiers } = req.body;
     if (!category_id || !brand_id || !name) {
         return res.status(400).json({ error: "Thiếu category_id, brand_id hoặc name" });
     }
@@ -346,6 +361,7 @@ router.post("/", canEditCatalog, async (req, res) => {
     });
 
     await saveSpecs(id, specs);
+    await savePriceTiers(id, priceTiers);
     await db.logActivity(req.admin, "create_product", `product:${id}`);
     res.status(201).json({ id });
 });
@@ -376,6 +392,7 @@ router.put("/:id", canEditCatalog, async (req, res) => {
     `).run(merged);
 
     if (req.body.specs !== undefined) await saveSpecs(existing.id, req.body.specs);
+    if (req.body.priceTiers !== undefined) await savePriceTiers(existing.id, req.body.priceTiers);
     await db.logActivity(req.admin, "update_product", `product:${existing.id}`);
     res.json({ ok: true });
 });
@@ -386,6 +403,7 @@ router.delete("/:id", canEditCatalog, async (req, res) => {
     if (!existing) return res.status(404).json({ error: "Không tìm thấy sản phẩm" });
 
     await db.prepare("DELETE FROM product_specs WHERE product_id = ?").run(existing.id);
+    await db.prepare("DELETE FROM product_price_tiers WHERE product_id = ?").run(existing.id);
     await db.prepare("DELETE FROM products WHERE id = ?").run(existing.id);
     await db.logActivity(req.admin, "delete_product", `product:${existing.id}`);
     res.json({ ok: true });

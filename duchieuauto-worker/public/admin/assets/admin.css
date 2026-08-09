@@ -12,11 +12,14 @@
     --font: 'Segoe UI', Roboto, Arial, sans-serif;
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }
-/* overflow-anchor: none TOÀN TRANG (không chỉ riêng #quillEditor) - lỗi "nhảy trang" khi gõ chữ ở
-   bài dài có ảnh vẫn tái diễn sau khi chỉ tắt scroll anchoring trong #quillEditor, khả năng do các
-   phần tử MỚI thêm sau đó (nút nổi "Cắt ảnh", banner nháp tự động lưu...) nằm NGOÀI #quillEditor
-   cũng trở thành điểm neo cuộn trang. Tắt hẳn ở cấp body để chắc chắn không phần tử nào trên toàn
-   trang quản trị có thể bị chọn làm điểm neo, dứt điểm cả lớp lỗi này thay vì vá từng chỗ. */
+/* overflow-anchor: none TOÀN TRANG - đặt trên body là CHƯA ĐỦ: phần tử cuộn trang THẬT SỰ
+   (document.scrollingElement) là <html>, không phải <body>, khi trang không tự đặt overflow riêng
+   cho body (đúng trường hợp ở đây) - xác nhận qua DevTools: getComputedStyle(document.documentElement)
+   .overflowAnchor vẫn là "auto" dù body đã "none", nên trình duyệt vẫn coi <html> là container cuộn
+   root và áp dụng scroll anchoring bình thường ở đó. Đây là lý do lỗi "nhảy trang khi gõ dấu tiếng
+   Việt" (user xác nhận Unikey, gõ â/á/ơ/ô... mới bị) vẫn tái diễn dù đã tắt ở body. Theo đúng khuyến
+   nghị MDN: phải tắt overflow-anchor ở CHÍNH document element (<html>) mới triệt để cho toàn trang. */
+html { overflow-anchor: none; }
 body { font-family: var(--font); background: var(--bg); color: var(--text); line-height: 1.5; overflow-anchor: none; }
 a { color: var(--m-blue); text-decoration: none; }
 a:hover { text-decoration: underline; }

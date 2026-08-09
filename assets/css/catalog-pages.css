@@ -491,6 +491,37 @@
     color: var(--primary);
     margin-bottom: 24px;
 }
+/* Cung 1 gotcha specificity nhu .sticky-product-cta[hidden] o duoi - "display: block" o tren co
+   cung do uu tien voi [hidden]{display:none} mac dinh, phai ghi de lai ro rang o day khong thi
+   JS gan hidden=true (khi san pham co nhieu muc gia) se khong an duoc dong gia don di. */
+.product-detail-price[hidden] { display: none; }
+
+/* Bảng giá theo loại/cỡ xe (tuỳ chọn, chỉ hiện khi sản phẩm có khai báo trong admin) - khi có, JS
+   ẩn .product-detail-price (giá đơn) đi và hiện lưới này thay thế. */
+.product-detail-price-tiers {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 12px;
+    margin-bottom: 24px;
+}
+.product-detail-price-tiers[hidden] { display: none; }
+.price-tier-card {
+    border: 1px solid var(--border-color-light);
+    border-radius: 8px;
+    padding: 12px 14px;
+    box-shadow: var(--shadow-sm);
+}
+.price-tier-label {
+    font-weight: 700;
+    font-size: 13.5px;
+    color: var(--text-color);
+    margin-bottom: 4px;
+}
+.price-tier-value {
+    color: var(--primary);
+    font-weight: 700;
+    font-size: 16px;
+}
 
 .product-detail-desc {
     color: var(--text-muted);

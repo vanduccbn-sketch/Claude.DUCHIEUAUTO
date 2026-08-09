@@ -239,6 +239,20 @@ const ready = (async () => {
             sort_order INTEGER NOT NULL DEFAULT 0
         );
 
+        -- Giá theo từng loại/cỡ xe cho 1 sản phẩm (VD "Xe 4 chỗ (Cỡ nhỏ)" 1.200.000đ, "Xe 7 chỗ (Cỡ
+        -- lớn)" 1.800.000đ) - tuỳ chọn, không bắt buộc. Cùng mô hình bảng con 1-nhiều như
+        -- product_specs (xoá hết rồi insert lại theo mảng mỗi lần lưu). products.price (TEXT) vẫn
+        -- giữ nguyên làm giá hiển thị mặc định/giá thấp nhất cho nơi chỉ cần 1 giá (thẻ sản phẩm
+        -- trong danh mục, sắp xếp theo giá, schema.org, bảng so sánh) - sản phẩm không có mức giá
+        -- nào trong bảng này thì vẫn hiển thị đúng như trước (dùng products.price).
+        CREATE TABLE IF NOT EXISTS product_price_tiers (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            product_id TEXT NOT NULL REFERENCES products(id),
+            label TEXT NOT NULL,
+            price TEXT NOT NULL,
+            sort_order INTEGER NOT NULL DEFAULT 0
+        );
+
         -- Đánh giá khách hàng cho sản phẩm - khách tự gửi (public), mặc định "pending" chờ admin
         -- duyệt mới hiện công khai (chống spam/nội dung bậy) - giống mô hình comment cần duyệt.
         CREATE TABLE IF NOT EXISTS reviews (

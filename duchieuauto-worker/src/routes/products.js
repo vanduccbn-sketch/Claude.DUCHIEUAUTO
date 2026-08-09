@@ -53,6 +53,18 @@ async function saveSpecs(db, productId, specs) {
     }
 }
 
+async function savePriceTiers(db, productId, tiers) {
+    await db.prepare("DELETE FROM product_price_tiers WHERE product_id = ?").run(productId);
+    if (!Array.isArray(tiers)) return;
+    for (let i = 0; i < tiers.length; i++) {
+        const [label, price] = tiers[i];
+        if (!label || !price) continue;
+        await db.prepare(
+            "INSERT INTO product_price_tiers (product_id, label, price, sort_order) VALUES (?, ?, ?, ?)"
+        ).run(productId, label, price, i);
+    }
+}
+
 const app = new Hono();
 
 /* =========================================================
@@ -133,13 +145,15 @@ app.get("/:id", async (c) => {
     if (!p) return c.json({ error: "Không tìm thấy sản phẩm" }, 404);
 
     const specs = await db.prepare("SELECT spec_key, spec_value FROM product_specs WHERE product_id = ? ORDER BY sort_order").all(id);
+    const priceTiers = await db.prepare("SELECT label, price FROM product_price_tiers WHERE product_id = ? ORDER BY sort_order").all(id);
     const brandName = await resolveBrandName(db, p.category_id, p.brand_id, p.brand_type_id);
 
     return c.json({
         ...p,
         image: productImagePath(p.id, p.image),
         brand: brandName,
-        specs: specs.map(s => [s.spec_key, s.spec_value])
+        specs: specs.map(s => [s.spec_key, s.spec_value]),
+        priceTiers: priceTiers.map(t => [t.label, t.price])
     });
 });
 
@@ -280,11 +294,12 @@ app.get("/admin/id/:id", ...canEditCatalog, async (c) => {
     const p = await db.prepare("SELECT * FROM products WHERE id = ?").get(id);
     if (!p) return c.json({ error: "Không tìm thấy sản phẩm" }, 404);
     const specs = await db.prepare("SELECT spec_key, spec_value FROM product_specs WHERE product_id = ? ORDER BY sort_order").all(id);
-    return c.json({ ...p, specs: specs.map(s => [s.spec_key, s.spec_value]) });
+    const priceTiers = await db.prepare("SELECT label, price FROM product_price_tiers WHERE product_id = ? ORDER BY sort_order").all(id);
+    return c.json({ ...p, specs: specs.map(s => [s.spec_key, s.spec_value]), priceTiers: priceTiers.map(t => [t.label, t.price]) });
 });
 
 app.post("/", ...canEditCatalog, async (c) => {
-    const { category_id, brand_id, brand_type_id, name, price, description, detail_content, image, specs } = await c.req.json();
+    const { category_id, brand_id, brand_type_id, name, price, description, detail_content, image, specs, priceTiers } = await c.req.json();
     if (!category_id || !brand_id || !name) {
         return c.json({ error: "Thiếu category_id, brand_id hoặc name" }, 400);
     }
@@ -311,6 +326,7 @@ app.post("/", ...canEditCatalog, async (c) => {
     });
 
     await saveSpecs(db, id, specs);
+    await savePriceTiers(db, id, priceTiers);
     await db.logActivity(c.get("admin"), "create_product", `product:${id}`);
     return c.json({ id }, 201);
 });
@@ -343,6 +359,7 @@ app.put("/:id", ...canEditCatalog, async (c) => {
     `).run(merged);
 
     if (body.specs !== undefined) await saveSpecs(db, existing.id, body.specs);
+    if (body.priceTiers !== undefined) await savePriceTiers(db, existing.id, body.priceTiers);
     await db.logActivity(c.get("admin"), "update_product", `product:${existing.id}`);
     return c.json({ ok: true });
 });
@@ -354,6 +371,7 @@ app.delete("/:id", ...canEditCatalog, async (c) => {
     if (!existing) return c.json({ error: "Không tìm thấy sản phẩm" }, 404);
 
     await db.prepare("DELETE FROM product_specs WHERE product_id = ?").run(existing.id);
+    await db.prepare("DELETE FROM product_price_tiers WHERE product_id = ?").run(existing.id);
     await db.prepare("DELETE FROM products WHERE id = ?").run(existing.id);
     await db.logActivity(c.get("admin"), "delete_product", `product:${existing.id}`);
     return c.json({ ok: true });

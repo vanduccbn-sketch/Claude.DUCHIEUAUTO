@@ -527,22 +527,34 @@ function qeInitSelectionToolbar(quill) {
             el.querySelectorAll("[data-header]").forEach(b => b.classList.toggle("active", String(current.header || "") === b.dataset.header));
         }
 
+        // QUAN TRỌNG: dùng formatText()/formatLine() với ĐÚNG (range.index, range.length) truyền
+        // vào - KHÔNG dùng quill.format() (bug thật phát hiện qua test tự động: quill.format() áp
+        // dụng theo selection HIỆN TẠI của Quill tại thời điểm gọi, không phải theo range đã ghi
+        // nhớ lúc mở toolbar; dù đã preventDefault() mousedown để giữ vùng chọn, selection nội bộ
+        // của Quill vẫn có thể lệch/mất theo focus thực tế của trình duyệt khi bấm nút nằm NGOÀI
+        // #quillEditor, khiến định dạng bị áp dụng nhầm vào con trỏ rỗng thay vì đúng đoạn đã chọn -
+        // bấm "Đậm" không có tác dụng gì). formatText()/formatLine() nhận thẳng toạ độ, không phụ
+        // thuộc trạng thái selection hiện tại.
         el.querySelectorAll("[data-fmt]").forEach(btn => {
             btn.addEventListener("click", () => {
                 const fmt = btn.dataset.fmt;
-                quill.format(fmt, !quill.getFormat(range.index, range.length)[fmt], "user");
+                const current = quill.getFormat(range.index, range.length);
+                quill.formatText(range.index, range.length, fmt, !current[fmt], "user");
+                quill.setSelection(range.index, range.length, "silent");
                 updateActiveStates();
             });
         });
         el.querySelectorAll("[data-align]").forEach(btn => {
             btn.addEventListener("click", () => {
-                quill.format("align", btn.dataset.align || false, "user");
+                quill.formatLine(range.index, range.length, "align", btn.dataset.align || false, "user");
+                quill.setSelection(range.index, range.length, "silent");
                 updateActiveStates();
             });
         });
         el.querySelectorAll("[data-header]").forEach(btn => {
             btn.addEventListener("click", () => {
-                quill.format("header", btn.dataset.header ? Number(btn.dataset.header) : false, "user");
+                quill.formatLine(range.index, range.length, "header", btn.dataset.header ? Number(btn.dataset.header) : false, "user");
+                quill.setSelection(range.index, range.length, "silent");
                 updateActiveStates();
             });
         });

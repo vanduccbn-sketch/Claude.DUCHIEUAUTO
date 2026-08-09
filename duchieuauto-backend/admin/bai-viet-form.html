@@ -150,7 +150,7 @@
     <script src="https://cdn.jsdelivr.net/npm/quill-image-resize-module@3.0.0/image-resize.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/cropperjs@1.6.2/dist/cropper.min.js"></script>
     <script src="assets/admin.js"></script>
-    <script src="assets/quill-enhancements.js?v=5"></script>
+    <script src="assets/quill-enhancements.js?v=6"></script>
     <script>
         const auth = requireAuth(["content", "super_admin"]);
         let quill, postId = null;
@@ -194,6 +194,7 @@
         }
 
         function initEditor() {
+            injectQuillEnhancementStyles();
             quill = new Quill("#quillEditor", {
                 theme: "snow",
                 modules: {
@@ -204,6 +205,8 @@
                 },
                 placeholder: "Viết nội dung bài viết ở đây..."
             });
+            // Tat kiem tra chinh ta cua trinh duyet - xem giai thich day du o ban san-pham-form.html.
+            quill.root.setAttribute("spellcheck", "false");
 
             qeInitWordCount(quill);
             qeInitUndoRedo(quill, document.getElementById("qeUndoBtn"), document.getElementById("qeRedoBtn"));

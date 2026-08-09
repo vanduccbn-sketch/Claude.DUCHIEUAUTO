@@ -50,7 +50,16 @@ app.post("/from-url", ...canUpload, async (c) => {
     if (!url) return c.json({ error: "Thiếu url ảnh nguồn" }, 400);
 
     try {
-        const imgRes = await fetch(url);
+        // Gắn User-Agent + Referer giống trình duyệt thật - nhiều site (VD Wikipedia và không ít
+        // site bán hàng) chặn thẳng request không có User-Agent hoặc User-Agent trống/máy chủ mặc
+        // định, coi là bot. Xác nhận qua test tự động: cùng 1 URL, thiếu 2 header này bị chặn hẳn
+        // (server nguồn trả lỗi khiến route này trả về 502), thêm vào tải được bình thường.
+        const imgRes = await fetch(url, {
+            headers: {
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+                "Referer": new URL(url).origin + "/"
+            }
+        });
         if (!imgRes.ok) throw new Error(`Không tải được ảnh nguồn (HTTP ${imgRes.status})`);
         const contentType = (imgRes.headers.get("content-type") || "").split(";")[0].trim();
         if (!ALLOWED_TYPES.includes(contentType)) {

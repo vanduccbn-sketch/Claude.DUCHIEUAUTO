@@ -123,6 +123,7 @@ app.get("/catalog", async (c) => {
                 metaDescription: cat.seo_meta_description,
                 image: cat.seo_image,
                 imageCaption: cat.seo_image_caption,
+                h1: cat.seo_h1,
                 intro: cat.seo_intro,
                 sections: sections.filter(s => s.category_id === cat.id).map(s => ({ heading: s.heading, body: s.body }))
             },
@@ -475,14 +476,15 @@ app.put("/admin/categories/:id", ...canEditCatalog, async (c) => {
         seo_meta_description: body.seo_meta_description !== undefined ? body.seo_meta_description : existing.seo_meta_description,
         seo_image: body.seo_image !== undefined ? body.seo_image : existing.seo_image,
         seo_image_caption: body.seo_image_caption !== undefined ? body.seo_image_caption : existing.seo_image_caption,
-        seo_intro: body.seo_intro !== undefined ? body.seo_intro : existing.seo_intro,
+        seo_h1: body.seo_h1 !== undefined ? body.seo_h1 : existing.seo_h1,
+        seo_intro: body.seo_intro !== undefined ? sanitizeContent(body.seo_intro || "") : existing.seo_intro,
         updated_at: new Date().toISOString(),
         id: existing.id
     };
     await db.prepare(`
         UPDATE categories SET name=@name, poster=@poster, seo_title=@seo_title,
         seo_meta_description=@seo_meta_description, seo_image=@seo_image, seo_image_caption=@seo_image_caption,
-        seo_intro=@seo_intro, updated_at=@updated_at
+        seo_h1=@seo_h1, seo_intro=@seo_intro, updated_at=@updated_at
         WHERE id=@id
     `).run(merged);
 

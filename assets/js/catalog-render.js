@@ -339,7 +339,7 @@ async function renderCategoryDetail() {
     posterImg.src = cat.poster;
     posterImg.alt = seoAlt(cat.name);
     posterImg.onerror = () => { posterImg.onerror = null; posterImg.src = "assets/images/placeholder.svg"; };
-    document.querySelector(".category-title").textContent = cat.name;
+    document.querySelector(".category-title").textContent = (cat.seo && cat.seo.h1) ? cat.seo.h1 : cat.name;
 
     document.querySelector(".breadcrumb-parent").textContent = "Sản Phẩm";
     document.querySelector(".breadcrumb-parent").href = "product";
@@ -359,9 +359,12 @@ async function renderCategoryDetail() {
             ? `<figure class="category-seo-figure"><img src="${cat.seo.image}" alt="${seoAlt(cat.name)}" loading="lazy" onerror="this.closest('figure').remove()">${cat.seo.imageCaption ? `<figcaption>${cat.seo.imageCaption}</figcaption>` : ""}</figure>`
             : "";
         const sectionsHtml = (cat.seo.sections || []).map(s => `<h2>${s.heading}</h2><p>${s.body}</p>`).join("");
+        // seo.intro giờ là HTML đầy đủ soạn qua Quill (đã sanitize lúc lưu ở backend) - chèn thẳng,
+        // KHÔNG bọc lại trong <p> như trước (khi intro còn là 1 đoạn text thuần) - bọc lại sẽ làm
+        // hỏng cấu trúc nếu intro đã tự chứa <h2>/<table>/<ul> riêng.
         seoBox.innerHTML = `
             ${imgHtml}
-            ${cat.seo.intro ? `<p class="category-seo-intro">${cat.seo.intro}</p>` : ""}
+            ${cat.seo.intro ? `<div class="category-seo-intro">${cat.seo.intro}</div>` : ""}
             ${sectionsHtml}
         `;
     }

@@ -42,8 +42,175 @@ function injectQuillEnhancementStyles() {
         .qe-selection-toolbar button:hover { background: rgba(255,255,255,0.15); }
         .qe-selection-toolbar button.active { background: var(--primary); }
         .qe-sel-sep { width: 1px; height: 18px; background: rgba(255,255,255,0.25); margin: 0 2px; }
+
+        /* Phóng to các điểm/cạnh kéo của Cropper.js - mặc định chỉ 5px (quá nhỏ, khó rê trúng chuột
+           - user báo thật khó dùng), ghi đè luôn cả media query tự thu nhỏ ".point-se" về 5px trên
+           màn hình rộng ≥1200px (mặc định Cropper coi đây là "nút chính" nên giữ to ở màn nhỏ, nhưng
+           lại thu nhỏ đúng lúc màn hình admin desktop rộng - ngược với nhu cầu thật). */
+        .cropper-point { width: 16px !important; height: 16px !important; opacity: 0.9 !important; background-color: var(--primary); border-radius: 50%; border: 2px solid #fff; box-shadow: 0 1px 3px rgba(0,0,0,.5); }
+        .cropper-point.point-e, .cropper-point.point-w { margin-top: -8px !important; }
+        .cropper-point.point-n, .cropper-point.point-s { margin-left: -8px !important; }
+        .cropper-point.point-e, .cropper-point.point-ne, .cropper-point.point-se { right: -8px !important; }
+        .cropper-point.point-w, .cropper-point.point-nw, .cropper-point.point-sw { left: -8px !important; }
+        .cropper-point.point-n, .cropper-point.point-ne, .cropper-point.point-nw { top: -8px !important; }
+        .cropper-point.point-s, .cropper-point.point-se, .cropper-point.point-sw { bottom: -8px !important; }
+        .cropper-line.line-e, .cropper-line.line-w { width: 10px !important; }
+        .cropper-line.line-e { right: -5px !important; }
+        .cropper-line.line-w { left: -5px !important; }
+        .cropper-line.line-n, .cropper-line.line-s { height: 10px !important; }
+        .cropper-line.line-n { top: -5px !important; }
+        .cropper-line.line-s { bottom: -5px !important; }
+
+        /* Chuyển đổi Cắt/Làm mờ trong modal cắt ảnh - "Làm mờ" dùng để che logo/SĐT của bên khác khi
+           dán ảnh có sẵn watermark, tách hẳn khỏi thao tác cắt để không xung đột thao tác kéo chuột. */
+        .qe-crop-mode-toolbar { display: flex; gap: 8px; margin-bottom: 10px; }
+        .qe-crop-mode-btn { padding: 7px 14px; border: 1px solid var(--border); border-radius: 6px; background: #fff; cursor: pointer; font-size: 13px; font-weight: 600; }
+        .qe-crop-mode-btn.active { background: var(--dark); color: #fff; border-color: var(--dark); }
+        .qe-blur-overlay { position: absolute; inset: 0; z-index: 50; cursor: crosshair; display: none; }
+        .qe-blur-drag-box { position: absolute; border: 2px dashed #fff; background: rgba(57,153,255,0.25); pointer-events: none; }
     `;
     document.head.appendChild(style);
+}
+
+// ---- 12. Công cụ làm mờ 1 vùng NGAY trong modal cắt ảnh (dùng chung cho cả 2 luồng cắt ảnh) -----
+// Cần khi ảnh dán vào có sẵn logo/watermark/SĐT của bên khác (hay gặp khi copy nguyên trang web đối
+// thủ) cần che trước khi dùng - làm ngay trong modal, không cần công cụ ngoài. Kéo chuột chọn vùng
+// hình chữ nhật -> làm mờ NGAY vùng đó (không cần nút "xác nhận" riêng, làm mờ được nhiều vùng liên
+// tiếp). Ghi đè ảnh đang hiện trong Cropper qua cropper.replace(url, true) để vùng mờ được GIỮ LẠI
+// khi người dùng tiếp tục kéo/cắt/zoom - không dùng CSS filter (chỉ là hiệu ứng thị giác, không
+// "khắc" vào dữ liệu ảnh thật, sẽ mất khi cắt/lưu ảnh cuối cùng).
+// getCroppedCanvas() trả về null nếu bấm "Cắt & Thay Ảnh" ngay sau khi vừa dùng công cụ Làm Mờ (gọi
+// cropper.replace() trước đó) - Cropper.js cần tải lại ảnh MỚI (qua 1 thẻ <img> nội bộ riêng) trước
+// khi canvas/crop box sẵn sàng lại, việc này thật sự bất đồng bộ (đo thật: vài trăm ms, có lúc hơn
+// 1 giây tuỳ tốc độ máy) - đợi 1 khung hình (requestAnimationFrame) là KHÔNG đủ (bug thật phát hiện
+// qua test tự động: luôn luôn null nếu chỉ thử lại vài khung hình). Poll bằng setTimeout, đủ lâu để
+// bao trọn cả trường hợp máy chậm, trước khi báo lỗi thật cho người dùng.
+function qeGetCroppedCanvasSafe(cropper, options, attempt = 0) {
+    return new Promise((resolve) => {
+        const canvas = cropper.getCroppedCanvas(options);
+        if (canvas || attempt >= 10) return resolve(canvas);
+        setTimeout(() => resolve(qeGetCroppedCanvasSafe(cropper, options, attempt + 1)), 150);
+    });
+}
+
+function qeSetupBlurTool(modalRoot, imgEl, cropper) {
+    const cropBtn = modalRoot.querySelector('[data-crop-mode="crop"]');
+    const blurBtn = modalRoot.querySelector('[data-crop-mode="blur"]');
+    const hint = modalRoot.querySelector(".qe-crop-mode-hint");
+    const container = modalRoot.querySelector(".cropper-container");
+    if (!cropBtn || !blurBtn || !container) return;
+
+    const overlay = document.createElement("div");
+    overlay.className = "qe-blur-overlay";
+    container.appendChild(overlay);
+
+    let masterCanvas = null;
+    let dragStart = null;
+    let dragBox = null;
+    let blurModeActive = false;
+
+    function getMasterCanvas() {
+        if (!masterCanvas) {
+            masterCanvas = document.createElement("canvas");
+            masterCanvas.width = imgEl.naturalWidth;
+            masterCanvas.height = imgEl.naturalHeight;
+            masterCanvas.getContext("2d").drawImage(imgEl, 0, 0);
+        }
+        return masterCanvas;
+    }
+
+    function setMode(mode) {
+        blurModeActive = mode === "blur";
+        cropBtn.classList.toggle("active", !blurModeActive);
+        blurBtn.classList.toggle("active", blurModeActive);
+        overlay.style.display = blurModeActive ? "block" : "none";
+        // disable() thay vì setDragMode("none") - CHỈ disable() mới chặn được HẲN thao tác kéo/giãn
+        // vùng cắt ĐANG CÓ SẴN của Cropper (setDragMode("none") chỉ chặn tạo vùng MỚI, để lọt thao
+        // tác kéo/giãn vùng cũ đè lên overlay làm mờ - bug thật phát hiện qua test tự động: kéo
+        // chuột thật lúc "Làm Mờ" vẫn kéo trúng vùng cắt của Cropper thay vì chọn vùng mờ).
+        if (blurModeActive) cropper.disable(); else cropper.enable();
+        if (hint) hint.textContent = blurModeActive
+            ? "Kéo chuột để chọn vùng cần làm mờ (VD logo/SĐT của bên khác) - có thể làm mờ nhiều vùng liên tiếp, xong bấm lại \"Cắt\" để cắt như bình thường."
+            : "Kéo góc/viền để chọn vùng cắt, kéo vào giữa để di chuyển.";
+    }
+
+    // Bắt sự kiện ở CAPTURE phase trên document (không phải bubble phase trên overlay) + luôn
+    // stopPropagation() khi đang ở chế độ Làm Mờ - đảm bảo chạy TRƯỚC và CHẶN HẲN mọi listener kéo/
+    // giãn vùng cắt có sẵn của chính Cropper.js (nằm đè lên/xung quanh overlay). Đây là kỹ thuật
+    // tương tự đã dùng cho nút nổi "Cắt ảnh" (qeEnableInlineImageCrop) - đơn giản tắt setDragMode
+    // hay cropper.disable() KHÔNG đủ: setDragMode("none") chỉ tắt tạo vùng cắt mới, không tắt di
+    // chuyển/kéo giãn vùng cắt ĐANG CÓ (bug thật phát hiện qua test tự động: kéo chuột thật lúc Làm
+    // Mờ vẫn kéo trúng vùng cắt của Cropper); còn cropper.disable() thì lại làm cropper.replace() về
+    // sau không cập nhật được ảnh hiển thị nữa (bug thật KHÁC, cũng phát hiện qua test).
+    document.addEventListener("mousedown", (e) => {
+        if (!blurModeActive) return;
+        const rect = overlay.getBoundingClientRect();
+        if (e.clientX < rect.left || e.clientX > rect.right || e.clientY < rect.top || e.clientY > rect.bottom) return;
+        e.preventDefault();
+        e.stopPropagation();
+        dragStart = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+        dragBox = document.createElement("div");
+        dragBox.className = "qe-blur-drag-box";
+        overlay.appendChild(dragBox);
+    }, true);
+    document.addEventListener("mousemove", (e) => {
+        if (!dragStart) return;
+        e.stopPropagation();
+        const rect = overlay.getBoundingClientRect();
+        const x = e.clientX - rect.left, y = e.clientY - rect.top;
+        const left = Math.min(x, dragStart.x), top = Math.min(y, dragStart.y);
+        dragBox.style.left = `${left}px`;
+        dragBox.style.top = `${top}px`;
+        dragBox.style.width = `${Math.abs(x - dragStart.x)}px`;
+        dragBox.style.height = `${Math.abs(y - dragStart.y)}px`;
+    }, true);
+    document.addEventListener("mouseup", (e) => {
+        if (!dragStart) return;
+        e.stopPropagation();
+        const box = {
+            left: parseFloat(dragBox.style.left) || 0,
+            top: parseFloat(dragBox.style.top) || 0,
+            width: parseFloat(dragBox.style.width) || 0,
+            height: parseFloat(dragBox.style.height) || 0
+        };
+        dragBox.remove();
+        dragBox = null;
+        dragStart = null;
+        if (box.width < 4 || box.height < 4) return; // quá nhỏ, coi như bấm nhầm
+
+        // Đổi toạ độ trong overlay (= toạ độ trong .cropper-container) sang toạ độ ảnh GỐC (pixel
+        // thật) qua getCanvasData() - {left, top, width, height, naturalWidth, naturalHeight} đều
+        // tính tương đối so với .cropper-container, cùng hệ toạ độ với overlay.
+        const cd = cropper.getCanvasData();
+        const scaleX = cd.naturalWidth / cd.width;
+        const scaleY = cd.naturalHeight / cd.height;
+        const nx = (box.left - cd.left) * scaleX;
+        const ny = (box.top - cd.top) * scaleY;
+        const nw = box.width * scaleX;
+        const nh = box.height * scaleY;
+
+        const canvas = getMasterCanvas();
+        const ctx = canvas.getContext("2d");
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(nx, ny, nw, nh);
+        ctx.clip();
+        ctx.filter = `blur(${Math.max(8, Math.min(nw, nh) * 0.06)}px)`;
+        ctx.drawImage(canvas, 0, 0);
+        ctx.restore();
+
+        // cropper.replace() không cập nhật lại ảnh hiển thị nếu cropper đang ở trạng thái disable()
+        // (bug thật khác phát hiện qua test tự động) - bật tạm lại enable() đúng lúc gọi replace(),
+        // xong disable() lại ngay để tiếp tục chặn thao tác kéo/giãn vùng cắt cũ (vẫn đang ở chế độ
+        // Làm Mờ, có thể làm mờ thêm vùng khác tiếp).
+        cropper.enable();
+        cropper.replace(canvas.toDataURL("image/png"), true);
+        cropper.disable();
+    }, true);
+
+    cropBtn.addEventListener("click", () => setMode("crop"));
+    blurBtn.addEventListener("click", () => setMode("blur"));
+    setMode("crop");
 }
 
 // ---- Modal dùng chung (Alt Text, Tìm & Thay thế, Cắt ảnh đều tái dùng cái này) ----
@@ -338,26 +505,44 @@ function qeCropImageBeforeUpload(file, aspectRatio) {
             // coi như "Dùng Ảnh Gốc", không để Promise treo mãi mãi.
             onClose: () => finish(file),
             bodyHtml: `
+                <div class="qe-crop-mode-toolbar">
+                    <button type="button" class="qe-crop-mode-btn" data-crop-mode="crop">✂️ Cắt</button>
+                    <button type="button" class="qe-crop-mode-btn" data-crop-mode="blur">💧 Làm Mờ</button>
+                </div>
                 <div class="qe-crop-img-wrap"><img id="qeCropImg" src="${objectUrl}"></div>
-                <p class="form-hint" style="margin-top:10px;">Kéo góc/viền để chọn vùng cắt, kéo vào giữa để di chuyển. Không cắt gì cũng được, bấm "Dùng Ảnh Gốc".</p>
+                <p class="form-hint qe-crop-mode-hint" style="margin-top:10px;">Kéo góc/viền để chọn vùng cắt, kéo vào giữa để di chuyển. Không cắt gì cũng được, bấm "Dùng Ảnh Gốc".</p>
                 <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:10px;">
                     <button type="button" class="btn btn-secondary" id="qeCropSkip">Dùng Ảnh Gốc</button>
                     <button type="button" class="btn btn-primary" id="qeCropConfirm">Cắt & Dùng Ảnh Này</button>
                 </div>`,
             onMount: (root, close) => {
                 const imgEl = root.querySelector("#qeCropImg");
+                // { once: true } - BẮT BUỘC: cropper.replace() (dùng trong công cụ Làm Mờ) tự đổi lại
+                // imgEl.src, khiến trình duyệt bắn "load" LẦN NỮA - nếu listener này còn gắn, nó sẽ
+                // tạo THÊM 1 Cropper instance mới đè lên biến `cropper` dùng chung, làm nút "Cắt" sau
+                // đó thao tác nhầm lên instance cũ/hỏng (bug thật phát hiện qua test tự động:
+                // getCroppedCanvas() trả về null vì cropper bên trong nút bấm khác hẳn cropper thật).
                 imgEl.addEventListener("load", () => {
                     cropper = new Cropper(imgEl, {
                         aspectRatio: aspectRatio || NaN,
                         viewMode: 1,
                         autoCropArea: 1,
-                        background: false
+                        background: false,
+                        // .cropper-container chỉ thực sự tồn tại trong DOM sau sự kiện "ready" (Cropper
+                        // dựng DOM không đồng bộ, không xong ngay lúc constructor return) - gọi
+                        // qeSetupBlurTool() sớm hơn sẽ không tìm thấy container, bug thật gặp lúc test.
+                        ready: () => qeSetupBlurTool(root, imgEl, cropper)
                     });
-                });
+                }, { once: true });
                 root.querySelector("#qeCropSkip").addEventListener("click", () => { finish(file); close(); });
-                root.querySelector("#qeCropConfirm").addEventListener("click", () => {
+                const confirmBtn = root.querySelector("#qeCropConfirm");
+                confirmBtn.addEventListener("click", async () => {
                     if (!cropper) { finish(file); close(); return; }
-                    cropper.getCroppedCanvas().toBlob((blob) => {
+                    confirmBtn.disabled = true;
+                    confirmBtn.textContent = "Đang xử lý...";
+                    const canvas = await qeGetCroppedCanvasSafe(cropper);
+                    if (!canvas) { finish(file); close(); return; }
+                    canvas.toBlob((blob) => {
                         finish(blob || file);
                         close();
                     }, file.type && file.type.startsWith("image/") ? file.type : "image/jpeg", 0.92);
@@ -395,25 +580,42 @@ async function qeCropRemoteImage(url, purpose) {
             width: "640px",
             onClose: () => finish(() => reject(null)),
             bodyHtml: `
+                <div class="qe-crop-mode-toolbar">
+                    <button type="button" class="qe-crop-mode-btn" data-crop-mode="crop">✂️ Cắt</button>
+                    <button type="button" class="qe-crop-mode-btn" data-crop-mode="blur">💧 Làm Mờ</button>
+                </div>
                 <div class="qe-crop-img-wrap"><img id="qeCropImg2" crossorigin="anonymous" src="${cropUrl}"></div>
-                <p class="form-hint" style="margin-top:10px;">Kéo góc/viền để chọn vùng cắt, kéo vào giữa để di chuyển.</p>
+                <p class="form-hint qe-crop-mode-hint" style="margin-top:10px;">Kéo góc/viền để chọn vùng cắt, kéo vào giữa để di chuyển.</p>
                 <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:10px;">
                     <button type="button" class="btn btn-secondary" id="qeCropCancel2">Huỷ</button>
                     <button type="button" class="btn btn-primary" id="qeCropConfirm2">Cắt & Thay Ảnh</button>
                 </div>`,
             onMount: (root, close) => {
                 const imgEl = root.querySelector("#qeCropImg2");
+                // { once: true } - xem giải thích đầy đủ ở bản qeCropImageBeforeUpload phía trên:
+                // cropper.replace() tự đổi imgEl.src, bắn "load" lần nữa, nếu không chặn sẽ tạo thêm
+                // 1 Cropper instance đè lên biến dùng chung, làm nút Cắt sau đó thao tác nhầm instance.
                 imgEl.addEventListener("load", () => {
-                    cropper = new Cropper(imgEl, { viewMode: 1, autoCropArea: 1, background: false });
-                });
+                    cropper = new Cropper(imgEl, {
+                        viewMode: 1,
+                        autoCropArea: 1,
+                        background: false,
+                        ready: () => qeSetupBlurTool(root, imgEl, cropper)
+                    });
+                }, { once: true });
                 imgEl.addEventListener("error", () => {
                     finish(() => reject(new Error("Không tải lại được ảnh để cắt (lỗi mạng hoặc ảnh đã bị xoá).")));
                     close();
                 });
                 root.querySelector("#qeCropCancel2").addEventListener("click", () => { finish(() => reject(null)); close(); });
-                root.querySelector("#qeCropConfirm2").addEventListener("click", () => {
+                const confirmBtn2 = root.querySelector("#qeCropConfirm2");
+                confirmBtn2.addEventListener("click", async () => {
                     if (!cropper) { finish(() => reject(new Error("Ảnh chưa tải xong, thử lại."))); close(); return; }
-                    cropper.getCroppedCanvas().toBlob((blob) => {
+                    confirmBtn2.disabled = true;
+                    confirmBtn2.textContent = "Đang xử lý...";
+                    const canvas = await qeGetCroppedCanvasSafe(cropper);
+                    if (!canvas) { finish(() => reject(new Error("Không cắt được ảnh, thử lại."))); close(); return; }
+                    canvas.toBlob((blob) => {
                         finish(() => { if (blob) resolve(blob); else reject(new Error("Không cắt được ảnh.")); });
                         close();
                     }, "image/jpeg", 0.92);

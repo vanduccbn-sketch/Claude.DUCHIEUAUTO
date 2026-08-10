@@ -183,9 +183,9 @@ export function renderCategoryHtml(cat, sections, faqs) {
 
     const bodyHtml = `
 <nav><a href="/">Trang chủ</a> &raquo; <a href="/product">Sản Phẩm</a> &raquo; ${escapeHtml(cat.name)}</nav>
-<h1>${escapeHtml(cat.name)}</h1>
+<h1>${escapeHtml(cat.seo_h1 || cat.name)}</h1>
 ${posterUrl ? `<img src="${posterUrl}" alt="${escapeHtml(cat.name)}">` : ""}
-${cat.seo_intro ? `<p>${escapeHtml(cat.seo_intro)}</p>` : ""}
+${cat.seo_intro ? cat.seo_intro : ""}
 ${sectionsHtml}
 ${faqHtml}
 `;

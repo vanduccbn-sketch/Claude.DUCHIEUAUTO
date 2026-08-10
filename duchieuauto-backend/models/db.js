@@ -322,6 +322,16 @@ const ready = (async () => {
     if (!postColumnsCheck.includes("publish_at")) {
         await exec("ALTER TABLE posts ADD COLUMN publish_at TEXT");
     }
+
+    // Migration tương tự cho "categories" - thêm "seo_h1" (H1 công khai tuỳ chỉnh, để trống thì vẫn
+    // dùng "name" như trước - không phá dữ liệu cũ). "seo_intro" GIỮ NGUYÊN tên cột nhưng đổi ngữ
+    // nghĩa từ "1 đoạn text thuần" sang "nội dung SEO dạng rich-HTML" (soạn qua khung Quill, giống
+    // products.detail_content) - không cần đổi tên cột vì kiểu dữ liệu (TEXT) và nơi lưu không đổi,
+    // chỉ đổi CÁCH sanitize lúc lưu (sanitizeContent()) và cách render (HTML thô thay vì bọc <p>).
+    const categoryColumnsCheck = (await prepare("PRAGMA table_info(categories)").all()).map(c => c.name);
+    if (!categoryColumnsCheck.includes("seo_h1")) {
+        await exec("ALTER TABLE categories ADD COLUMN seo_h1 TEXT");
+    }
 })();
 
 module.exports = { prepare, exec, logActivity, ready };

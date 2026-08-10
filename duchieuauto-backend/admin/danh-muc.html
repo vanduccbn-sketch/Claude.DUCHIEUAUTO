@@ -7,6 +7,8 @@
     <title>Danh Mục / FAQ | Quản Trị Đức Hiếu Auto</title>
     <link rel="icon" type="image/png" href="assets/favicon.png">
     <link rel="stylesheet" href="assets/admin.css">
+    <link href="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.snow.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/cropperjs@1.6.2/dist/cropper.min.css" rel="stylesheet">
     <style>
         .faq-row { display: grid; grid-template-columns: 1fr 1fr auto; gap: 10px; margin-bottom: 12px; align-items: start; }
         .faq-row textarea { padding: 9px 11px; border: 1px solid var(--border); border-radius: 6px; font-size: 13.5px; font-family: inherit; resize: vertical; min-height: 60px; }
@@ -14,6 +16,7 @@
         .cat-img-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 16px; }
         .cat-img-preview { width: 100%; height: 120px; border: 1px dashed var(--border); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 12.5px; overflow: hidden; margin-bottom: 8px; }
         .cat-img-preview img { width: 100%; height: 100%; object-fit: cover; }
+        #qeUndoBtn, #qeRedoBtn, #qeTableBtn, #qeFindBtn { font-size: 16px; line-height: 1; }
     </style>
 </head>
 <body>
@@ -69,8 +72,44 @@
                     <textarea id="catSeoDesc" rows="2"></textarea>
                 </div>
                 <div class="form-group">
-                    <label for="catSeoIntro">Đoạn giới thiệu (hiện đầu trang danh mục, giúp SEO/GEO)</label>
-                    <textarea id="catSeoIntro" rows="6"></textarea>
+                    <label for="catSeoH1">Tiêu đề H1 tuỳ chỉnh (để trống thì hiện đúng "Tên danh mục" ở trên)</label>
+                    <input type="text" id="catSeoH1" placeholder="VD: Màn Hình Android Ô Tô Chính Hãng - Giá Ưu Đãi, Lắp Tận Nơi">
+                    <p class="form-hint">Nên khác chút so với Meta Title để tối ưu thêm 1 biến thể từ khoá khác, giống cách các trang SEO mạnh hay làm.</p>
+                </div>
+                <div class="form-group">
+                    <label>Nội dung SEO (hiện đầu trang danh mục - có thể viết dài, nhiều tiêu đề/bảng/ảnh như 1 bài viết thật để tăng khả năng SEO/GEO)</label>
+                    <div id="catQuillToolbar">
+                        <span class="ql-formats">
+                            <select class="ql-header"><option value="2">Tiêu đề lớn</option><option value="3">Tiêu đề nhỏ</option><option selected></option></select>
+                        </span>
+                        <span class="ql-formats">
+                            <button class="ql-bold"></button>
+                            <button class="ql-italic"></button>
+                            <button class="ql-underline"></button>
+                        </span>
+                        <span class="ql-formats">
+                            <button class="ql-list" value="ordered"></button>
+                            <button class="ql-list" value="bullet"></button>
+                        </span>
+                        <span class="ql-formats">
+                            <button class="ql-link"></button>
+                            <button class="ql-image"></button>
+                        </span>
+                        <span class="ql-formats">
+                            <button class="ql-blockquote" title="Khối Lưu Ý nổi bật"></button>
+                            <button type="button" id="catQeTableBtn" title="Chèn bảng 3x3">▦</button>
+                        </span>
+                        <span class="ql-formats">
+                            <button type="button" id="catQeUndoBtn" title="Hoàn tác">↶</button>
+                            <button type="button" id="catQeRedoBtn" title="Làm lại">↷</button>
+                            <button type="button" id="catQeFindBtn" title="Tìm & Thay thế">🔍</button>
+                        </span>
+                        <span class="ql-formats">
+                            <button class="ql-clean"></button>
+                        </span>
+                    </div>
+                    <div id="catQuillEditor"></div>
+                    <p class="form-hint">Bấm biểu tượng ảnh để chèn ảnh giữa bài (có thể cắt/làm mờ ảnh trước khi tải lên). Bấm vào ảnh đã chèn để căn lề/đổi kích thước/cắt lại.</p>
                 </div>
                 <button type="button" class="btn btn-primary" id="saveCategoryBtn">Lưu Thông Tin Danh Mục</button>
             </div>
@@ -93,12 +132,77 @@
         </div>
     </main>
 
+    <script src="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/quill-image-resize-module@3.0.0/image-resize.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/cropperjs@1.6.2/dist/cropper.min.js"></script>
     <script src="assets/admin.js"></script>
+    <script src="assets/quill-enhancements.js?v=9"></script>
     <script>
+        Quill.register("modules/imageResize", ImageResize.default);
+
         const auth = requireAuth(["content", "super_admin"]);
+        let quill;
         if (auth) {
             renderAdminNav(auth, "danh-muc");
+            initEditor();
             loadCategories();
+        }
+
+        // Nội dung SEO danh mục - dùng CHUNG 1 khung Quill duy nhất cho toàn trang (không tạo lại
+        // mỗi lần đổi danh mục ở dropdown), chỉ đổi nội dung bên trong qua quill.root.innerHTML khi
+        // người dùng chọn danh mục khác - giống hệt cách san-pham-form.html/bai-viet-form.html khởi
+        // tạo Quill 1 lần lúc load trang.
+        function initEditor() {
+            injectQuillEnhancementStyles();
+            quill = new Quill("#catQuillEditor", {
+                theme: "snow",
+                modules: {
+                    toolbar: "#catQuillToolbar",
+                    imageResize: { modules: ["Resize", "DisplaySize", "Toolbar"] },
+                    history: { userOnly: false }
+                },
+                placeholder: "Viết nội dung SEO cho danh mục ở đây..."
+            });
+            quill.root.setAttribute("spellcheck", "false");
+
+            qeInitWordCount(quill);
+            qeInitUndoRedo(quill, document.getElementById("catQeUndoBtn"), document.getElementById("catQeRedoBtn"));
+            qeInitPasteCleanup(quill);
+            qeInitFindReplace(quill, document.getElementById("catQeFindBtn"));
+            qeInitTableInsert(quill, document.getElementById("catQeTableBtn"));
+            qeEnableInlineImageCrop(quill, "content");
+            qeInterceptImagePaste(quill, "content");
+            qeInitSelectionToolbar(quill);
+
+            quill.getModule("toolbar").addHandler("image", () => {
+                const input = document.createElement("input");
+                input.type = "file";
+                input.accept = "image/jpeg,image/png,image/webp,image/gif";
+                input.onchange = async () => {
+                    const file = input.files[0];
+                    if (!file) return;
+                    try {
+                        const finalFile = await qeCropImageBeforeUpload(file);
+                        const altText = await qeAskImageAlt(document.getElementById("catName").value.trim());
+                        const fd = new FormData();
+                        fd.append("image", finalFile, file.name);
+                        fd.append("purpose", "content");
+                        const res = await apiFetch("/api/uploads", { method: "POST", body: fd });
+                        const data = await res.json();
+                        if (!res.ok) throw new Error(data.error || "Tải ảnh thất bại");
+                        const range = quill.getSelection(true);
+                        quill.insertEmbed(range.index, "image", data.url);
+                        if (altText) {
+                            const [leafBlot] = quill.getLeaf(range.index);
+                            if (leafBlot && leafBlot.domNode) leafBlot.domNode.alt = altText;
+                        }
+                        quill.setSelection(range.index + 1);
+                    } catch (err) {
+                        showToast(err.message, true);
+                    }
+                };
+                input.click();
+            });
         }
 
         const categorySelect = document.getElementById("categorySelect");
@@ -218,7 +322,8 @@
                 document.getElementById("catName").value = cat.name || "";
                 document.getElementById("catSeoTitle").value = cat.seo_title || "";
                 document.getElementById("catSeoDesc").value = cat.seo_meta_description || "";
-                document.getElementById("catSeoIntro").value = cat.seo_intro || "";
+                document.getElementById("catSeoH1").value = cat.seo_h1 || "";
+                quill.root.innerHTML = cat.seo_intro || "";
                 document.getElementById("catSeoImgCaption").value = cat.seo_image_caption || "";
 
                 document.getElementById("catPosterUrl").value = cat.poster || "";
@@ -269,9 +374,10 @@
                 poster: document.getElementById("catPosterUrl").value || null,
                 seo_title: document.getElementById("catSeoTitle").value.trim() || null,
                 seo_meta_description: document.getElementById("catSeoDesc").value.trim() || null,
+                seo_h1: document.getElementById("catSeoH1").value.trim() || null,
                 seo_image: document.getElementById("catSeoImgUrl").value || null,
                 seo_image_caption: document.getElementById("catSeoImgCaption").value.trim() || null,
-                seo_intro: document.getElementById("catSeoIntro").value.trim() || null
+                seo_intro: quill.getText().trim() ? quill.root.innerHTML : null
             };
             if (!body.name) return showToast("Tên danh mục không được để trống", true);
 

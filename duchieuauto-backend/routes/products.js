@@ -110,6 +110,7 @@ router.get("/catalog", async (req, res) => {
                 metaDescription: cat.seo_meta_description,
                 image: cat.seo_image,
                 imageCaption: cat.seo_image_caption,
+                h1: cat.seo_h1,
                 intro: cat.seo_intro,
                 sections: sections.filter(s => s.category_id === cat.id).map(s => ({ heading: s.heading, body: s.body }))
             },
@@ -503,14 +504,17 @@ router.put("/admin/categories/:id", canEditCatalog, async (req, res) => {
         seo_meta_description: req.body.seo_meta_description !== undefined ? req.body.seo_meta_description : existing.seo_meta_description,
         seo_image: req.body.seo_image !== undefined ? req.body.seo_image : existing.seo_image,
         seo_image_caption: req.body.seo_image_caption !== undefined ? req.body.seo_image_caption : existing.seo_image_caption,
-        seo_intro: req.body.seo_intro !== undefined ? req.body.seo_intro : existing.seo_intro,
+        seo_h1: req.body.seo_h1 !== undefined ? req.body.seo_h1 : existing.seo_h1,
+        // seo_intro giờ là HTML soạn qua Quill (giống products.detail_content) - BẮT BUỘC
+        // sanitizeContent() để chặn stored-XSS, khác trước đây chỉ là text thuần không cần lọc.
+        seo_intro: req.body.seo_intro !== undefined ? sanitizeContent(req.body.seo_intro || "") : existing.seo_intro,
         updated_at: new Date().toISOString(),
         id: existing.id
     };
     await db.prepare(`
         UPDATE categories SET name=@name, poster=@poster, seo_title=@seo_title,
         seo_meta_description=@seo_meta_description, seo_image=@seo_image, seo_image_caption=@seo_image_caption,
-        seo_intro=@seo_intro, updated_at=@updated_at
+        seo_h1=@seo_h1, seo_intro=@seo_intro, updated_at=@updated_at
         WHERE id=@id
     `).run(merged);
 

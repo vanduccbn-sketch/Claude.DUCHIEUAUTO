@@ -696,13 +696,56 @@ Chromium riêng) để xác nhận từng bug trước khi deploy/push.
   đi** ("giá tôi sẽ tự tuỳ chỉnh trên trang admin sau") - đã xoá sạch `priceTiers` mẫu trước khi
   deploy, chỉ đẩy code/tính năng lên, không đẩy giá bịa lên site thật.
 
-## Việc cần làm tiếp theo (TODO)
+## Việc đã làm (2026-08-10) — Cải tiến công cụ cắt ảnh + nâng cấp SEO danh mục
+
+- [x] **User báo công cụ cắt ảnh khó dùng: điểm kéo góc/cạnh quá nhỏ, muốn thêm công cụ làm mờ
+  1 vùng ngay trong ảnh** (để che logo/SĐT của đối thủ khi dán ảnh tham khảo). Phóng to
+  `.cropper-point`/`.cropper-line` của Cropper.js lên 16px/10px (mặc định chỉ 5px, còn tự thu nhỏ
+  về 5px ở màn hình ≥1200px do 1 media query gốc của thư viện - ghi đè `!important` để bỏ hẳn hành
+  vi đó). Thêm `qeSetupBlurTool()` dùng chung cho cả 2 modal cắt ảnh: kéo chuột chọn 1 vùng chữ
+  nhật -> làm mờ ngay bằng canvas 2D (`ctx.filter = blur(...)`) -> `cropper.replace()` ghi đè ảnh
+  đang hiện để vùng mờ được giữ lại khi cắt/zoom tiếp.
+- [x] **3 bug thật liên tiếp phát hiện qua test tự động** (Puppeteer, kéo chuột thật nhiều bước nhỏ
+  thay vì click tức thời - user báo "chọn vùng làm mờ nhưng không mờ" sau khi tôi báo đã xong, phải
+  đào lại):
+  1. Listener `"load"` trên ảnh trong modal vẫn còn gắn sau lần đầu - `cropper.replace()` tự đổi
+     `src`, trình duyệt bắn `"load"` lần nữa, tạo THÊM 1 Cropper instance đè lên biến dùng chung,
+     khiến nút "Cắt & Thay Ảnh" thao tác nhầm instance cũ/hỏng (`getCroppedCanvas()` trả về `null`).
+     Sửa bằng `{ once: true }`.
+  2. `cropper.setDragMode("none")` chỉ tắt được việc TẠO vùng cắt mới, không tắt việc DI CHUYỂN/KÉO
+     GIÃN vùng cắt ĐANG CÓ SẴN - kéo chuột lúc "Làm Mờ" vẫn kéo trúng vùng cắt của Cropper thay vì
+     chọn vùng mờ. Thử `cropper.disable()` thì chặn được, nhưng lại phát sinh bug thứ 3.
+  3. `cropper.disable()` làm `cropper.replace()` sau đó không cập nhật lại ảnh hiển thị nữa. Giải
+     pháp cuối: `disable()` khi vào chế độ Làm Mờ (chặn tương tác vùng cắt cũ) nhưng `enable()` tạm
+     thời đúng lúc gọi `replace()` rồi `disable()` lại ngay - kết hợp thêm bắt sự kiện ở capture
+     phase + `stopPropagation()` trên `document` làm lớp phòng thủ thứ 2. Cũng thêm
+     `qeGetCroppedCanvasSafe()` tự thử lại (poll `setTimeout`, tối đa 10 lần x 150ms) phòng
+     `getCroppedCanvas()` trả `null` do `replace()` chưa tải xong ảnh mới kịp lúc bấm "Cắt".
+  Xác nhận lại toàn bộ bằng Puppeteer với thao tác kéo chuột giống thật (nhiều bước nhỏ + độ trễ),
+  không chỉ dispatch sự kiện tức thời - cách test tức thời trước đó từng "pass giả" dù bug vẫn còn.
+
+- [x] **User yêu cầu thêm công cụ SEO cho trang danh mục giống sản phẩm**, kèm 1 trang tham khảo
+  (akauto.com.vn/man-hinh-o-to) có cấu trúc nội dung rất dài (nhiều H2/H3, bảng giá, FAQ). Khảo sát
+  cho thấy "Đoạn giới thiệu" của danh mục trước đây chỉ là 1 textarea thường (text thuần, không định
+  dạng được) - nâng cấp thành khung Quill đầy đủ công cụ y hệt sản phẩm (định dạng, bảng, chèn ảnh +
+  cắt/làm mờ, Tìm & Thay thế...), lưu vào ĐÚNG cột `categories.seo_intro` cũ (chỉ đổi ngữ nghĩa từ
+  "text thuần" sang "HTML đã sanitize", không đổi tên cột). Thêm cột mới `categories.seo_h1` (H1
+  công khai tuỳ chỉnh, để trống thì vẫn dùng `name` như cũ). Bắt buộc thêm `sanitizeContent()` khi
+  lưu `seo_intro` (trước đây không sanitize vì chỉ là text thuần, giờ là HTML nên bắt buộc phải lọc
+  để chặn stored-XSS - đúng theo pattern `products.detail_content` đã dùng). Đồng bộ đủ 2 phía
+  Express + Worker (route GET/PUT category, GET catalog, SSR bot render). Đã kiểm tra kỹ dữ liệu
+  `seo_intro` cũ của mọi danh mục không chứa ký tự `<`/`>`/`&` nào có thể vỡ khi đổi từ hiển thị
+  escape sang chèn HTML thô. Test qua Puppeteer: soạn nội dung có H2/danh sách trong khung Quill ->
+  lưu -> xác nhận trang công khai hiển thị đúng cả H1 tuỳ chỉnh lẫn nội dung định dạng, sau đó khôi
+  phục lại đúng dữ liệu gốc của danh mục thật đã dùng để test.
 
 - [ ] **User cần xác nhận lỗi nhảy trang khi gõ tiếng Việt có dấu đã hết hẳn chưa** (2 fix đã lên
   live: `html { overflow-anchor: none }` + `spellcheck="false"` trên khung Quill) - không tái hiện
   được qua Puppeteer dù thử 8 cách, cần người dùng Unikey thật xác nhận trực tiếp.
 - [ ] **User tự nhập giá thật theo từng loại xe** cho các sản phẩm/dịch vụ cần thiết qua trang admin
   (tính năng đã lên production, chưa có sản phẩm nào có sẵn dữ liệu mẫu).
+- [ ] **User tự viết nội dung SEO dài cho các trang danh mục** qua khung Quill mới ở `danh-muc.html`
+  (tính năng đã lên production, chưa có danh mục nào có sẵn nội dung mẫu mới).
 
 - [ ] Phase 7 (quản lý sản phẩm qua CMS) — làm theo từng bước nhỏ đã liệt kê trong file kế hoạch, không dồn 1 buổi
 - [ ] 3 trang Ads admin còn thiếu (Banner, Cấu hình chung, Activity log) — dời làm cùng Phase 7

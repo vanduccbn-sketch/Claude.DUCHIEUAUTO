@@ -133,17 +133,26 @@
     margin-bottom: 22px;
 }
 
-.category-seo-content h2 {
+.category-seo-content h2,
+.category-seo-content h3 {
     font-family: var(--font-title);
-    font-size: 1.5rem;
     letter-spacing: 0.5px;
     color: var(--text-color);
     text-transform: uppercase;
     margin: 28px 0 12px;
 }
+.category-seo-content h2 { font-size: 1.5rem; }
+.category-seo-content h3 { font-size: 1.2rem; }
 
 .category-seo-content p {
     margin-bottom: 14px;
+}
+
+.category-seo-content img {
+    max-width: 100%;
+    border-radius: 8px;
+    margin: 16px 0 4px;
+    display: block;
 }
 
 @media (max-width: 768px) {

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
     <loc>https://duchieuauto.vn/</loc>
     <changefreq>weekly</changefreq>
@@ -37,69 +37,149 @@
   </url>
   <url>
     <loc>https://duchieuauto.vn/category-chi-tiet?id=man-hinh-o-to</loc>
-    <lastmod>2026-07-26</lastmod>
+    <lastmod>2026-08-09</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products-category/man-hinh-o-to/poster.webp</image:loc>
+      <image:title>Màn Hình Ô Tô</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/zestech-zx10-cao-cap/anh-1.webp</image:loc>
+      <image:title>Zestech ZX10 Bản Cao Cấp - một trong các dòng màn hình Android chính hãng tại Đức Hiếu Auto</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/category-chi-tiet?id=am-thanh-cach-am-oto</loc>
-    <lastmod>2026-07-27</lastmod>
+    <lastmod>2026-08-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/service/cach-am-oto/poster.webp</image:loc>
+      <image:title>Âm Thanh - Cách Âm Ô Tô</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/jbl-basspro-lite/anh-1.webp</image:loc>
+      <image:title>Loa sub JBL Bass Pro LITE - một trong các dòng loa chính hãng đang phân phối tại Đức Hiếu Auto</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/category-chi-tiet?id=android-box-o-to</loc>
-    <lastmod>2026-07-28</lastmod>
+    <lastmod>2026-08-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products-category/android-box-o-to/poster.webp</image:loc>
+      <image:title>Android Box Ô Tô</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/vietmap-box-bs10/anh-1.webp</image:loc>
+      <image:title>VIETMAP Android Box BS10 - thiết bị biến màn hình zin thành màn hình thông minh, không cần thay màn hình mới</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/category-chi-tiet?id=dan-phim-cach-nhiet</loc>
-    <lastmod>2026-07-26</lastmod>
+    <lastmod>2026-08-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/service/dan-phim-cach-nhiet/poster.webp</image:loc>
+      <image:title>Film Cách Nhiệt</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/category-chi-tiet?id=camera-hanh-trinh</loc>
-    <lastmod>2026-07-28</lastmod>
+    <lastmod>2026-08-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products-category/camera-hanh-trinh/poster.webp</image:loc>
+      <image:title>Camera Hành Trình - 360 Độ</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/vietmap-sc620/anh-1.webp</image:loc>
+      <image:title>VIETMAP SC620 - camera hành trình trước sau, một trong các dòng chính hãng tại Đức Hiếu Auto</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/category-chi-tiet?id=ppf-wrap-doi-mau</loc>
-    <lastmod>2026-07-26</lastmod>
+    <lastmod>2026-08-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/service/ppf-bao-ve-son-xe/poster.webp</image:loc>
+      <image:title>PPF - Wrap Đổi Màu</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/xpel-ultimate-plus/anh-1.webp</image:loc>
+      <image:title>XPEL Ultimate Plus - dòng phim PPF cao cấp với công nghệ tự phục hồi, một trong các thương hiệu chính hãng tại Đức Hiếu Auto</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/category-chi-tiet?id=do-den</loc>
-    <lastmod>2026-07-26</lastmod>
+    <lastmod>2026-08-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/service/do-den/poster.webp</image:loc>
+      <image:title>Nâng Cấp Ánh Sáng</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/gtr-premium-2-0/anh-1.webp</image:loc>
+      <image:title>GTR Premium 2.0 - cụm bi LED chính hãng đang phân phối tại Đức Hiếu Auto</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/category-chi-tiet?id=do-ban-tai</loc>
-    <lastmod>2026-07-26</lastmod>
+    <lastmod>2026-08-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products-category/do-ban-tai/poster.webp</image:loc>
+      <image:title>Đồ Bán Tải</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/category-chi-tiet?id=cham-soc-xe</loc>
-    <lastmod>2026-07-28</lastmod>
+    <lastmod>2026-08-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/zytf6rnh/image/upload/c_limit,w_1600,q_auto,f_auto/v1786204142/duchieuauto/ily3egtqvuvs6ia4zpyt.jpg</image:loc>
+      <image:title>Chăm Sóc Xe - Detailing</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/zytf6rnh/image/upload/c_limit,w_1600,q_auto,f_auto/v1786204155/duchieuauto/mtjepzbe4brpwx974h2c.jpg</image:loc>
+      <image:title>Đánh bóng xe bằng máy chuyên dụng - một trong các dịch vụ chăm sóc xe tại Đức Hiếu Auto</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/category-chi-tiet?id=doi-mau-noi-that</loc>
-    <lastmod>2026-07-28</lastmod>
+    <lastmod>2026-08-09</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products-category/doi-mau-noi-that/poster.webp</image:loc>
+      <image:title>Đổi Màu Nội Thất</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/boc-ghe-da/anh-1.webp</image:loc>
+      <image:title>Ghế da bọc kiểu giả kim cương (diamond stitch) - một trong các kiểu bọc phổ biến tại Đức Hiếu Auto</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/category-chi-tiet?id=phu-kien-tien-ich</loc>
-    <lastmod>2026-07-28</lastmod>
+    <lastmod>2026-08-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products-category/phu-kien-tien-ich/poster.webp</image:loc>
+      <image:title>Phụ Kiện Tiện Ích</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/gia-do-dien-thoai/anh-1.webp</image:loc>
+      <image:title>Giá đỡ điện thoại gắn táp-lô - một trong các phụ kiện tiện ích tại Đức Hiếu Auto</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/brand-san-pham?id=man-hinh-o-to&amp;brand=gotech&amp;loai=co-camera-360</loc>
@@ -373,1580 +453,2642 @@
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=gotech-g4</loc>
-    <lastmod>2026-07-26</lastmod>
+    <lastmod>2026-08-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/gotech-g4/anh-1.webp</image:loc>
+      <image:title>Gotech G4</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=gotech-gts4</loc>
-    <lastmod>2026-07-26</lastmod>
+    <lastmod>2026-08-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/gotech-gts4/anh-1.webp</image:loc>
+      <image:title>Gotech GTS4</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=gotech-gt2k-new</loc>
-    <lastmod>2026-07-26</lastmod>
+    <lastmod>2026-08-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/gotech-gt2k-new/anh-1.webp</image:loc>
+      <image:title>Gotech GT2K New</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=gotech-gt2k-max</loc>
-    <lastmod>2026-07-26</lastmod>
+    <lastmod>2026-08-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/gotech-gt2k-max/anh-1.webp</image:loc>
+      <image:title>Gotech GT2K MAX</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=gotech-gt-mazda-pro</loc>
-    <lastmod>2026-07-26</lastmod>
+    <lastmod>2026-08-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/gotech-gt-mazda-pro/anh-1.webp</image:loc>
+      <image:title>Gotech GT Mazda PRO</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=gotech-gt-mazda-limited</loc>
-    <lastmod>2026-07-26</lastmod>
+    <lastmod>2026-08-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/gotech-gt-mazda-limited/anh-1.webp</image:loc>
+      <image:title>Gotech GT Mazda Limited</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=gotech-g360</loc>
-    <lastmod>2026-07-26</lastmod>
+    <lastmod>2026-08-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/gotech-g360/anh-1.webp</image:loc>
+      <image:title>Gotech G360</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=gotech-gt2k-360</loc>
-    <lastmod>2026-07-26</lastmod>
+    <lastmod>2026-08-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/gotech-gt2k-360/anh-1.webp</image:loc>
+      <image:title>Gotech GT2K 360</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=gotech-gt2k-max-360</loc>
-    <lastmod>2026-07-26</lastmod>
+    <lastmod>2026-08-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/gotech-gt2k-max-360/anh-1.webp</image:loc>
+      <image:title>Gotech GT2K MAX 360</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=gotech-gt11-5i-360</loc>
-    <lastmod>2026-07-26</lastmod>
+    <lastmod>2026-08-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/gotech-gt11-5i-360/anh-1.webp</image:loc>
+      <image:title>Gotech GT11.5i 360</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=gotech-gt-mazda-360-pro</loc>
-    <lastmod>2026-07-26</lastmod>
+    <lastmod>2026-08-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/gotech-gt-mazda-360-pro/anh-1.webp</image:loc>
+      <image:title>Gotech GT Mazda 360 PRO</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=gotech-gt-mazda-360-limited</loc>
-    <lastmod>2026-07-26</lastmod>
+    <lastmod>2026-08-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/gotech-gt-mazda-360-limited/anh-1.webp</image:loc>
+      <image:title>Gotech GT Mazda 360 Limited</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=zestech-zt360-base</loc>
-    <lastmod>2026-07-26</lastmod>
+    <lastmod>2026-08-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/zestech-zt360-base/anh-1.webp</image:loc>
+      <image:title>Zestech ZT360 Base 2K</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=zestech-zt360g</loc>
-    <lastmod>2026-07-26</lastmod>
+    <lastmod>2026-08-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/zestech-zt360g/anh-1.webp</image:loc>
+      <image:title>Zestech ZT360G</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=zestech-z18-360</loc>
-    <lastmod>2026-07-26</lastmod>
+    <lastmod>2026-08-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/zestech-z18-360/anh-1.webp</image:loc>
+      <image:title>Zestech Z18 360</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=zestech-zt3-360-vf3</loc>
-    <lastmod>2026-07-26</lastmod>
+    <lastmod>2026-08-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/zytf6rnh/image/upload/c_fill,g_auto,ar_4:3,w_800,q_auto,f_auto/v1786519426/duchieuauto/ukxmmsgssi1zz1fk4blj.jpg</image:loc>
+      <image:title>Zestech ZT3 Tích Hợp Camera 360 (VinFast VF3)</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=zestech-zx-adas-cc-360</loc>
-    <lastmod>2026-07-26</lastmod>
+    <lastmod>2026-08-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/zestech-zx-adas-cc-360/anh-1.webp</image:loc>
+      <image:title>Zestech ZX ADAS Cao Cấp Có Camera 360</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=zestech-zx-adas-tc-360</loc>
-    <lastmod>2026-07-26</lastmod>
+    <lastmod>2026-08-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/zestech-zx-adas-tc-360/anh-1.webp</image:loc>
+      <image:title>Zestech ZX ADAS Tiêu Chuẩn Có Camera 360</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=zestech-z18</loc>
-    <lastmod>2026-07-26</lastmod>
+    <lastmod>2026-08-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/zestech-z18/anh-1.webp</image:loc>
+      <image:title>Zestech Z18</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=zestech-zx10-gioi-han</loc>
-    <lastmod>2026-07-26</lastmod>
+    <lastmod>2026-08-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/zestech-zx10-gioi-han/anh-1.webp</image:loc>
+      <image:title>Zestech ZX10 Bản Giới Hạn</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=zestech-zx10-cao-cap</loc>
-    <lastmod>2026-07-26</lastmod>
+    <lastmod>2026-08-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/zestech-zx10-cao-cap/anh-1.webp</image:loc>
+      <image:title>Zestech ZX10 Bản Cao Cấp</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=zestech-zx-adas-tc</loc>
-    <lastmod>2026-07-26</lastmod>
+    <lastmod>2026-08-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/zestech-zx-adas-tc/anh-1.webp</image:loc>
+      <image:title>Zestech ZX ADAS Tiêu Chuẩn</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=zestech-zx-adas-gioi-han</loc>
-    <lastmod>2026-07-26</lastmod>
+    <lastmod>2026-08-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/zestech-zx-adas-gioi-han/anh-1.webp</image:loc>
+      <image:title>Zestech ZX ADAS Giới Hạn (RAM 12GB/ROM 512GB)</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=zestech-zt5-vf5</loc>
-    <lastmod>2026-07-26</lastmod>
+    <lastmod>2026-08-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/zestech-zt5-vf5/anh-1.webp</image:loc>
+      <image:title>Zestech ZT5 13 Inch (VinFast VF5)</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=kovar-t2</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/kovar-t2/anh-1.webp</image:loc>
+      <image:title>Kovar T2</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=teyes-cc4-pro</loc>
-    <lastmod>2026-07-26</lastmod>
+    <lastmod>2026-08-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/teyes-cc4-pro/anh-1.webp</image:loc>
+      <image:title>Teyes CC4 Pro</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=teyes-cc3-2k</loc>
-    <lastmod>2026-07-26</lastmod>
+    <lastmod>2026-08-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/teyes-cc3-2k/anh-1.webp</image:loc>
+      <image:title>Teyes CC3 2K</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=teyes-cc3-2k-max</loc>
-    <lastmod>2026-07-26</lastmod>
+    <lastmod>2026-08-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/teyes-cc3-2k-max/anh-1.webp</image:loc>
+      <image:title>Teyes CC3 2K MAX</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=teyes-cc3l-lite</loc>
-    <lastmod>2026-07-26</lastmod>
+    <lastmod>2026-08-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/teyes-cc3l-lite/anh-1.webp</image:loc>
+      <image:title>Teyes CC3L Lite</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=teyes-cc3l</loc>
-    <lastmod>2026-07-26</lastmod>
+    <lastmod>2026-08-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/teyes-cc3l/anh-1.webp</image:loc>
+      <image:title>Teyes CC3L</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=teyes-cc3l-360</loc>
-    <lastmod>2026-07-26</lastmod>
+    <lastmod>2026-08-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/teyes-cc3l-360/anh-1.webp</image:loc>
+      <image:title>Teyes CC3L 360</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=teyes-cc3-2k-360</loc>
-    <lastmod>2026-07-26</lastmod>
+    <lastmod>2026-08-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/teyes-cc3-2k-360/anh-1.webp</image:loc>
+      <image:title>Teyes CC3 2K 360</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=teyes-cc3-2k-max-360</loc>
-    <lastmod>2026-07-26</lastmod>
+    <lastmod>2026-08-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/teyes-cc3-2k-max-360/anh-1.webp</image:loc>
+      <image:title>Teyes CC3 2K MAX 360</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=safeview-elite-360</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/safeview-elite-360/anh-1.webp</image:loc>
+      <image:title>Safeview Elite 360</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=jbl-club-64</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/jbl-club-64/anh-1.webp</image:loc>
+      <image:title>JBL Club 64</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=jbl-club-64c</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/jbl-club-64c/anh-1.webp</image:loc>
+      <image:title>JBL Club 64C</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=jbl-club-64csq</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/jbl-club-64csq/anh-1.webp</image:loc>
+      <image:title>JBL Club 64CSQ</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=jbl-club-605csq</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/jbl-club-605csq/anh-1.webp</image:loc>
+      <image:title>JBL Club 605CSQ</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=jbl-club-64sq</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/jbl-club-64sq/anh-1.webp</image:loc>
+      <image:title>JBL Club 64SQ</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=jbl-stage1-62cf</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/jbl-stage1-62cf/anh-1.webp</image:loc>
+      <image:title>JBL Stage1 62CF</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=jbl-stadium-62cf</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/jbl-stadium-62cf/anh-1.webp</image:loc>
+      <image:title>JBL Stadium 62CF</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=jbl-basspro-hub</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/jbl-basspro-hub/anh-1.webp</image:loc>
+      <image:title>JBL BASSPRO HUB</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=jbl-basspro-sl2</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/jbl-basspro-sl2/anh-1.webp</image:loc>
+      <image:title>JBL BASSPRO SL2</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=jbl-stage3-x637f</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/jbl-stage3-x637f/anh-1.webp</image:loc>
+      <image:title>JBL Stage3 X637F</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=jbl-stage2-634</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/jbl-stage2-634/anh-1.webp</image:loc>
+      <image:title>JBL Stage2 634</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=jbl-stage3-607cf</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/jbl-stage3-607cf/anh-1.webp</image:loc>
+      <image:title>JBL Stage3 607CF</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=jbl-club-marine-10-sub</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/jbl-club-marine-10-sub/anh-1.webp</image:loc>
+      <image:title>JBL Club Marine 10 Subwoofer</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=jbl-stage-1200d</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/jbl-stage-1200d/anh-1.webp</image:loc>
+      <image:title>JBL Stage 1200D</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=jbl-club-1000ssl</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/jbl-club-1000ssl/anh-1.webp</image:loc>
+      <image:title>JBL CLUB 1000SSL</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=jbl-club-122sl</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/jbl-club-122sl/anh-1.webp</image:loc>
+      <image:title>JBL CLUB 122SL</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=jbl-club-102sl</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/jbl-club-102sl/anh-1.webp</image:loc>
+      <image:title>JBL CLUB 102SL</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=jbl-basspro-lite</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/jbl-basspro-lite/anh-1.webp</image:loc>
+      <image:title>JBL Bass pro LITE</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=jbl-sub-st82</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/jbl-sub-st82/anh-1.webp</image:loc>
+      <image:title>JBL SUB ST82</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=jbl-basspro-go</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/jbl-basspro-go/anh-1.webp</image:loc>
+      <image:title>JBL Basspro Go</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=jbl-basspro-nano</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/jbl-basspro-nano/anh-1.webp</image:loc>
+      <image:title>JBL Basspro Nano</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=jbl-dsp-k86</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/jbl-dsp-k86/anh-1.webp</image:loc>
+      <image:title>JBL DSP K86</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=jbl-dsp-3544</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/jbl-dsp-3544/anh-1.webp</image:loc>
+      <image:title>JBL DSP 3544</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=jbl-ms8</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/jbl-ms8/anh-1.webp</image:loc>
+      <image:title>JBL MS8</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=jbl-club-a754</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/jbl-club-a754/anh-1.webp</image:loc>
+      <image:title>JBL CLUB A754</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=jbl-gto1201-1-ii</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/jbl-gto1201-1-ii/anh-1.webp</image:loc>
+      <image:title>JBL GTO1201.1 II</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=jbl-dsp-4086</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/jbl-dsp-4086/anh-1.webp</image:loc>
+      <image:title>JBL DSP 4086</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=jbl-stadium-4</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/jbl-stadium-4/anh-1.webp</image:loc>
+      <image:title>JBL STADIUM 4</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=jbl-stadium-1000</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/jbl-stadium-1000/anh-1.webp</image:loc>
+      <image:title>JBL STADIUM 1000</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=jbl-ampcb-a600</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/jbl-ampcb-a600/anh-1.webp</image:loc>
+      <image:title>JBL AMPCB A600</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=jbl-marine-ma4505</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/jbl-marine-ma4505/anh-1.webp</image:loc>
+      <image:title>JBL Marine MA4505</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=infinity-spkka203s</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/infinity-spkka203s/anh-1.webp</image:loc>
+      <image:title>Infinity SPKKA203S</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=infinity-kap-60-11cs</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/infinity-kap-60-11cs/anh-1.webp</image:loc>
+      <image:title>Infinity KAP-60.11CS</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=infinity-ref-1070</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/infinity-ref-1070/anh-1.webp</image:loc>
+      <image:title>Infinity REF 1070</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=infinity-primus-603cf</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/infinity-primus-603cf/anh-1.webp</image:loc>
+      <image:title>Infinity Primus 603CF</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=infinity-infspkka603cf</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/infinity-infspkka603cf/anh-1.webp</image:loc>
+      <image:title>Infinity INFSPKKA603CF</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=infinity-spkka63xf</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/infinity-spkka63xf/anh-1.webp</image:loc>
+      <image:title>Infinity SPKKA63XF</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=infinity-primus-693c</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/infinity-primus-693c/anh-1.webp</image:loc>
+      <image:title>Infinity Primus 693C</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=infinity-beta-be621</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/infinity-beta-be621/anh-1.webp</image:loc>
+      <image:title>Infinity BETA BE621</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=infinity-ref-375tx</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/infinity-ref-375tx/anh-1.webp</image:loc>
+      <image:title>Infinity REF 375TX</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=infinity-perfect-300m</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/infinity-perfect-300m/anh-1.webp</image:loc>
+      <image:title>Infinity Perfect 300m</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=infinity-kappa-20mx</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/infinity-kappa-20mx/anh-1.webp</image:loc>
+      <image:title>Infinity Kappa 20MX</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=infinity-ref-1220de</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/infinity-ref-1220de/anh-1.webp</image:loc>
+      <image:title>Infinity REF 1220DE</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=infinity-primus-1270b</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/infinity-primus-1270b/anh-1.webp</image:loc>
+      <image:title>Infinity Primus 1270B</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=infinity-kappa-1000w</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/infinity-kappa-1000w/anh-1.webp</image:loc>
+      <image:title>Infinity Kappa 1000W</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=infinity-kappa-800w</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/infinity-kappa-800w/anh-1.webp</image:loc>
+      <image:title>Infinity KAPPA 800W</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=infinity-ref1000s</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/infinity-ref1000s/anh-1.webp</image:loc>
+      <image:title>Infinity REF1000S (Reference 10)</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=infinity-subrf123w</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/infinity-subrf123w/anh-1.webp</image:loc>
+      <image:title>Infinity SUBRF123W</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=infinity-reference-1000ssl</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/infinity-reference-1000ssl/anh-1.webp</image:loc>
+      <image:title>Infinity REFERENCE 1000SSL</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=infinity-basslink-dc-blk</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/infinity-basslink-dc-blk/anh-1.webp</image:loc>
+      <image:title>Infinity Basslink DC BLK</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=infinity-basslink-sm2</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/infinity-basslink-sm2/anh-1.webp</image:loc>
+      <image:title>Infinity Basslink SM2</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=infinity-basslink-mini</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/infinity-basslink-mini/anh-1.webp</image:loc>
+      <image:title>Infinity BASSLINK MINI</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=infinity-primus60041a</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/infinity-primus60041a/anh-1.webp</image:loc>
+      <image:title>Infinity PRIMUS60041A</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=infinity-kappa-four</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/infinity-kappa-four/anh-1.webp</image:loc>
+      <image:title>Infinity Kappa FOUR</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=infinity-kappa-onek</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/infinity-kappa-onek/anh-1.webp</image:loc>
+      <image:title>Infinity Kappa OneK</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=infinity-reference-3004a</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/infinity-reference-3004a/anh-1.webp</image:loc>
+      <image:title>Infinity REFERENCE 3004A</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=infinity-kappa-five</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/infinity-kappa-five/anh-1.webp</image:loc>
+      <image:title>Infinity Kappa Five</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=infinity-sdp4425</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/infinity-sdp4425/anh-1.webp</image:loc>
+      <image:title>Infinity SDP4425</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=hk-f6cf</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/hk-f6cf/anh-1.webp</image:loc>
+      <image:title>Harman/Kardon F6CF</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=hk-f6f</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/hk-f6f/anh-1.webp</image:loc>
+      <image:title>Harman/Kardon F6F</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=hk-flow75t</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/hk-flow75t/anh-1.webp</image:loc>
+      <image:title>Harman/Kardon FLOW75T</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=hk-flow-300s</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/hk-flow-300s/anh-1.webp</image:loc>
+      <image:title>Harman/Kardon FLOW 300S</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=hk-flow-600cf</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/hk-flow-600cf/anh-1.webp</image:loc>
+      <image:title>Harman/Kardon FLOW 600CF</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=hk-feel-700</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/hk-feel-700/anh-1.webp</image:loc>
+      <image:title>Harman/Kardon Feel 700</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=hk-flow-80</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/hk-flow-80/anh-1.webp</image:loc>
+      <image:title>Harman/Kardon Flow 80</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=hk-ca-5250</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/hk-ca-5250/anh-1.webp</image:loc>
+      <image:title>Harman/Kardon CA 5250</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=hk-ca-280</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/hk-ca-280/anh-1.webp</image:loc>
+      <image:title>Harman/Kardon CA 280</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=pioneer-ts-z65ch</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/pioneer-ts-z65ch/anh-1.webp</image:loc>
+      <image:title>Pioneer TS-Z65CH</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=pioneer-ts-a1608c</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/pioneer-ts-a1608c/anh-1.webp</image:loc>
+      <image:title>Pioneer TS-A1608C</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=pioneer-ts-g1620f-2</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/pioneer-ts-g1620f-2/anh-1.webp</image:loc>
+      <image:title>Pioneer TS-G1620F-2</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=pioneer-ts-a30s4</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/pioneer-ts-a30s4/anh-1.webp</image:loc>
+      <image:title>Pioneer TS-A30S4</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=pioneer-ts-wx140da</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/pioneer-ts-wx140da/anh-1.webp</image:loc>
+      <image:title>Pioneer TS-WX140DA</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=pioneer-gm-a6704</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/pioneer-gm-a6704/anh-1.webp</image:loc>
+      <image:title>Pioneer GM-A6704</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=pioneer-gm-d8704</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/pioneer-gm-d8704/anh-1.webp</image:loc>
+      <image:title>Pioneer GM-D8704</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=vietmap-box-bs10</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/vietmap-box-bs10/anh-1.webp</image:loc>
+      <image:title>VIETMAP BS10</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=vietmap-box-bs10-lite</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/vietmap-box-bs10-lite/anh-1.webp</image:loc>
+      <image:title>VIETMAP BS10 Lite</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=vietmap-box-bm9</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/vietmap-box-bm9/anh-1.webp</image:loc>
+      <image:title>VIETMAP BM9</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=zestech-box-dx165</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/zestech-box-dx165/anh-1.webp</image:loc>
+      <image:title>Zestech DX165 Thế Hệ 2</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=zestech-box-dx265</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/zestech-box-dx265/anh-1.webp</image:loc>
+      <image:title>Zestech DX265 Thế Hệ 2</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=zestech-box-dx300</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/zestech-box-dx300/anh-1.webp</image:loc>
+      <image:title>Zestech DX300 Thế Hệ 2</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=zestech-box-dx350</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/zestech-box-dx350/anh-1.webp</image:loc>
+      <image:title>Zestech DX350</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=zestech-box-dx14-plus</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/zestech-box-dx14-plus/anh-1.webp</image:loc>
+      <image:title>Zestech DX14 Plus Thế Hệ 2</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=carlinkit-tbox-plus-8gb</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/carlinkit-tbox-plus-8gb/anh-1.webp</image:loc>
+      <image:title>Carlinkit TBox Plus QCM6125 8GB/128GB</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=carlinkit-tbox-plus-4gb</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/carlinkit-tbox-plus-4gb/anh-1.webp</image:loc>
+      <image:title>Carlinkit TBox Plus QCM6125 4GB</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=carlinkit-tbox-ambient-8gb</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/carlinkit-tbox-ambient-8gb/anh-1.webp</image:loc>
+      <image:title>Carlinkit TBox Ambient QCM6225 8GB/128GB</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=carlinkit-tbox-ambient-4gb</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/carlinkit-tbox-ambient-4gb/anh-1.webp</image:loc>
+      <image:title>Carlinkit TBox Ambient QCM6225 4GB/64GB</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=carlinkit-tbox-ambient-sdm660</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/carlinkit-tbox-ambient-sdm660/anh-1.webp</image:loc>
+      <image:title>Carlinkit TBox Ambient SDM660</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=carlinkit-tbox-s1</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/carlinkit-tbox-s1/anh-1.webp</image:loc>
+      <image:title>Carlinkit TBox S1 QCM6115</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=elliview-d5-premium-plus</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/elliview-d5-premium-plus/anh-1.webp</image:loc>
+      <image:title>ICAR Elliview D5 Premium+</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=elliview-d5-plus</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/elliview-d5-plus/anh-1.webp</image:loc>
+      <image:title>ICAR Elliview D5 Plus 2</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=elliview-d5-lite-plus</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/elliview-d5-lite-plus/anh-1.webp</image:loc>
+      <image:title>ICAR Elliview D5 Lite+</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=elliview-d5-neo-plus</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/elliview-d5-neo-plus/anh-1.webp</image:loc>
+      <image:title>ICAR Elliview D5 Neo+</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=elliview-d5-neo</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/elliview-d5-neo/anh-1.webp</image:loc>
+      <image:title>ICAR Elliview D5 Neo</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=elliview-d5pvf</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/elliview-d5pvf/anh-1.webp</image:loc>
+      <image:title>ICAR Elliview D5PVF (Dành riêng cho VinFast)</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=elliview-d5vf</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/elliview-d5vf/anh-1.webp</image:loc>
+      <image:title>ICAR Elliview D5VF (Dành riêng cho VinFast)</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=3m-film-4-cho</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/3m-film-4-cho/anh-1.webp</image:loc>
+      <image:title>Phim Cách Nhiệt 3M Xe 4 Chỗ</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=3m-film-5-cho</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/3m-film-5-cho/anh-1.webp</image:loc>
+      <image:title>Phim Cách Nhiệt 3M Xe 5 Chỗ</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=3m-film-7-cho</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/3m-film-7-cho/anh-1.webp</image:loc>
+      <image:title>Phim Cách Nhiệt 3M Xe 7 Chỗ</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=titan-black-sedan</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/titan-black-sedan/anh-1.webp</image:loc>
+      <image:title>Titan Black (Xe 4-5 Chỗ)</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=titan-titanium-sedan</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/titan-titanium-sedan/anh-1.webp</image:loc>
+      <image:title>Titan Titanium (Xe 4-5 Chỗ)</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=titan-titanium-plus-sedan</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/titan-titanium-plus-sedan/anh-1.webp</image:loc>
+      <image:title>Titan Titanium Plus (Xe 4-5 Chỗ)</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=titan-black-suv</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/titan-black-suv/anh-1.webp</image:loc>
+      <image:title>Titan Black (Xe 7 Chỗ)</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=titan-titanium-suv</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/titan-titanium-suv/anh-1.webp</image:loc>
+      <image:title>Titan Titanium (Xe 7 Chỗ)</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=titan-titanium-plus-suv</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/titan-titanium-plus-suv/anh-1.webp</image:loc>
+      <image:title>Titan Titanium Plus (Xe 7 Chỗ)</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=global-supreme-4-5-cho</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/global-supreme-4-5-cho/anh-1.webp</image:loc>
+      <image:title>Global Supreme Series (Xe 4-5 Chỗ)</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=global-qdp-ceramic-4-5-cho</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/global-qdp-ceramic-4-5-cho/anh-1.webp</image:loc>
+      <image:title>Global QDP Ceramic Series (Xe 4-5 Chỗ)</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=global-supreme-7-cho</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/global-supreme-7-cho/anh-1.webp</image:loc>
+      <image:title>Global Supreme Series (Xe 7 Chỗ)</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=global-qdp-ceramic-7-cho</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/global-qdp-ceramic-7-cho/anh-1.webp</image:loc>
+      <image:title>Global QDP Ceramic Series (Xe 7 Chỗ)</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=utour-c2l</loc>
-    <lastmod>2026-07-26</lastmod>
+    <lastmod>2026-08-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/utour-c2l/anh-1.webp</image:loc>
+      <image:title>UTOUR C2L</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=utour-c2-max</loc>
-    <lastmod>2026-07-26</lastmod>
+    <lastmod>2026-08-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/utour-c2-max/anh-1.webp</image:loc>
+      <image:title>UTOUR C2 Max</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=utour-c3l</loc>
-    <lastmod>2026-07-26</lastmod>
+    <lastmod>2026-08-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/utour-c3l/anh-1.webp</image:loc>
+      <image:title>UTOUR C3L (Combo Trước - Sau)</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=utour-c3</loc>
-    <lastmod>2026-07-26</lastmod>
+    <lastmod>2026-08-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/utour-c3/anh-1.webp</image:loc>
+      <image:title>UTOUR C3 (Gương Điện Tử AI ADAS)</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=utour-c3m</loc>
-    <lastmod>2026-07-26</lastmod>
+    <lastmod>2026-08-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/utour-c3m/anh-1.webp</image:loc>
+      <image:title>UTOUR C3M (Gương Điện Tử AI ADAS)</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=vietmap-sc620</loc>
-    <lastmod>2026-07-26</lastmod>
+    <lastmod>2026-08-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/vietmap-sc620/anh-1.webp</image:loc>
+      <image:title>VIETMAP SC620</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=vietmap-v740</loc>
-    <lastmod>2026-07-26</lastmod>
+    <lastmod>2026-08-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/vietmap-v740/anh-1.webp</image:loc>
+      <image:title>VIETMAP V740</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=vietmap-l110</loc>
-    <lastmod>2026-07-26</lastmod>
+    <lastmod>2026-08-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/vietmap-l110/anh-1.webp</image:loc>
+      <image:title>VIETMAP L110</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=vietmap-s720</loc>
-    <lastmod>2026-07-26</lastmod>
+    <lastmod>2026-08-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/vietmap-s720/anh-1.webp</image:loc>
+      <image:title>VIETMAP S720</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=vietmap-r440</loc>
-    <lastmod>2026-07-26</lastmod>
+    <lastmod>2026-08-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/zytf6rnh/image/upload/c_fill,g_auto,ar_4:3,w_800,q_auto,f_auto/v1787197636/duchieuauto/hd379bblrlcjtlamulhn.webp</image:loc>
+      <image:title>VIETMAP R440</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=vietmap-s860</loc>
-    <lastmod>2026-07-26</lastmod>
+    <lastmod>2026-08-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/vietmap-s860/anh-1.webp</image:loc>
+      <image:title>VIETMAP S860</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=vietmap-speedmap-m2</loc>
-    <lastmod>2026-07-26</lastmod>
+    <lastmod>2026-08-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/zytf6rnh/image/upload/c_fill,g_auto,ar_4:3,w_800,q_auto,f_auto/v1787197555/duchieuauto/tlnbwnpuxr5uesdyird9.webp</image:loc>
+      <image:title>VIETMAP SPEEDMAP M2</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=vietmap-ts-c1l</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/vietmap-ts-c1l/anh-1.webp</image:loc>
+      <image:title>VIETMAP TS-C1L</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=vietmap-ts-5k</loc>
-    <lastmod>2026-07-26</lastmod>
+    <lastmod>2026-08-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/vietmap-ts-5k/anh-1.webp</image:loc>
+      <image:title>VIETMAP TS-5K</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=vietmap-ts-3k</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/vietmap-ts-3k/anh-1.webp</image:loc>
+      <image:title>VIETMAP TS-3K</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=vietmap-ts-2k-lite</loc>
-    <lastmod>2026-07-26</lastmod>
+    <lastmod>2026-08-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/vietmap-ts-2k-lite/anh-1.webp</image:loc>
+      <image:title>VIETMAP TS-2K Lite</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=vietmap-ts-c1</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/vietmap-ts-c1/anh-1.webp</image:loc>
+      <image:title>VIETMAP TS-C1</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=70mai-t800</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/70mai-t800/anh-1.webp</image:loc>
+      <image:title>70mai 4K T800</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=70mai-omni-x800</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/70mai-omni-x800/anh-1.webp</image:loc>
+      <image:title>70mai Omni X800 4K (Camera 360 Độ)</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=70mai-a810</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/70mai-a810/anh-1.webp</image:loc>
+      <image:title>70mai A810</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=70mai-a800se</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/70mai-a800se/anh-1.webp</image:loc>
+      <image:title>70mai 4K A800SE</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=70mai-a510</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/70mai-a510/anh-1.webp</image:loc>
+      <image:title>70mai A510</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=70mai-a500s</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/70mai-a500s/anh-1.webp</image:loc>
+      <image:title>70mai A500S</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=70mai-m310</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/70mai-m310/anh-1.webp</image:loc>
+      <image:title>70mai M310 2K</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=70mai-t400</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/70mai-t400/anh-1.webp</image:loc>
+      <image:title>70mai T400</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=finevu-gx4</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/finevu-gx4/anh-1.webp</image:loc>
+      <image:title>FineVu GX4K</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=blackvue-elite10</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/blackvue-elite10/anh-1.webp</image:loc>
+      <image:title>BlackVue ELITE 10</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=blackvue-elite9</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/blackvue-elite9/anh-1.webp</image:loc>
+      <image:title>BlackVue ELITE 9</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=blackvue-elite8</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/blackvue-elite8/anh-1.webp</image:loc>
+      <image:title>BlackVue ELITE 8</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=blackvue-dr770x-2ch-ii</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/blackvue-dr770x-2ch-ii/anh-1.webp</image:loc>
+      <image:title>BlackVue DR770X-2CH II</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=xpel-ultimate-plus</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/xpel-ultimate-plus/anh-1.webp</image:loc>
+      <image:title>XPEL Ultimate Plus</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=xpel-stealth</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/xpel-stealth/anh-1.webp</image:loc>
+      <image:title>XPEL Stealth</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=xpel-tracwrap</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/xpel-tracwrap/anh-1.webp</image:loc>
+      <image:title>XPEL Tracwrap</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=xpel-armor</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/xpel-armor/anh-1.webp</image:loc>
+      <image:title>XPEL Armor</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=ax-ppf-g-series</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/ax-ppf-g-series/anh-1.webp</image:loc>
+      <image:title>AX PPF G Series</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=ax-ppf-k-series-v2</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/ax-ppf-k-series-v2/anh-1.webp</image:loc>
+      <image:title>AX PPF K Series Ver 2</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=ax-ppf-x-series-v2</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/ax-ppf-x-series-v2/anh-1.webp</image:loc>
+      <image:title>AX PPF X Series Ver 2</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=ax-ppf-m-series</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/ax-ppf-m-series/anh-1.webp</image:loc>
+      <image:title>AX PPF M Series</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=ax-ppf-s-series</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/ax-ppf-s-series/anh-1.webp</image:loc>
+      <image:title>AX PPF S Series</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=ax-tpu-super-black</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/ax-tpu-super-black/anh-1.webp</image:loc>
+      <image:title>AX Color PPF SP999 Super Black</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=3m-2080-s120</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/3m-2080-s120/anh-1.webp</image:loc>
+      <image:title>3M 2080-S120 Satin White Aluminum</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=oracal-970-123-lightning-strike</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/oracal-970-123-lightning-strike/anh-1.webp</image:loc>
+      <image:title>Oracal 970 - 123 Lightning Strike Gloss</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=oracal-970-070-black-matt</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/oracal-970-070-black-matt/anh-1.webp</image:loc>
+      <image:title>Oracal 970 - 070 Black Matt</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=oracal-970-090-silver-grey-matt</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/oracal-970-090-silver-grey-matt/anh-1.webp</image:loc>
+      <image:title>Oracal 970 - 090 Silver Grey Matt</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=oracal-970-704-metallic-black-gloss</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/oracal-970-704-metallic-black-gloss/anh-1.webp</image:loc>
+      <image:title>Oracal 970 - 704 Metallic Black Gloss</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=oracal-970-100-sunset-shift-gloss</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/oracal-970-100-sunset-shift-gloss/anh-1.webp</image:loc>
+      <image:title>Oracal 970 - 100 Sunset Shift Gloss</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=oracal-970-195-dove-blue-metallic-gloss</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/oracal-970-195-dove-blue-metallic-gloss/anh-1.webp</image:loc>
+      <image:title>Oracal 970 - 195 Dove Blue Metallic Gloss</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=avery-supreme-xtreme</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/avery-supreme-xtreme/anh-1.webp</image:loc>
+      <image:title>Avery Dennison Supreme Xtreme</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=avery-ultima-plus</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/avery-ultima-plus/anh-1.webp</image:loc>
+      <image:title>Avery Dennison Ultima Plus</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=avery-ultima</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/avery-ultima/anh-1.webp</image:loc>
+      <image:title>Avery Dennison Ultima</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=fogway-gen-3</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/fogway-gen-3/anh-1.webp</image:loc>
+      <image:title>Fogway Gen 3 (Bi LED)</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=fogway-gen-5</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/fogway-gen-5/anh-1.webp</image:loc>
+      <image:title>Fogway Gen 5 (Bi LED)</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=fogway-gen-9</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/fogway-gen-9/anh-1.webp</image:loc>
+      <image:title>Fogway Gen 9 (Bi Laser)</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=fogway-gen-1</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/fogway-gen-1/anh-1.webp</image:loc>
+      <image:title>Fogway Gen 1 (Bi Gầm)</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=gtr-limited-3-0</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/gtr-limited-3-0/anh-1.webp</image:loc>
+      <image:title>GTR Limited 3.0</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=gtr-limited-3-0-2024</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/gtr-limited-3-0-2024/anh-1.webp</image:loc>
+      <image:title>GTR Limited 3.0 (2024)</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=gtr-premium-2-0</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/gtr-premium-2-0/anh-1.webp</image:loc>
+      <image:title>GTR Premium 2.0</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=gtr-premium-ultra-2022</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/gtr-premium-ultra-2022/anh-1.webp</image:loc>
+      <image:title>GTR Premium Ultra 2022</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=gtr-g1-turbo</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/gtr-g1-turbo/anh-1.webp</image:loc>
+      <image:title>GTR Bi Gầm G1 Turbo</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=gtr-g1-turbo-v2</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/gtr-g1-turbo-v2/anh-1.webp</image:loc>
+      <image:title>GTR Bi Gầm G1 Turbo V2</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=gtr-g1-pro</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/gtr-g1-pro/anh-1.webp</image:loc>
+      <image:title>GTR Bi Gầm LED G1 Pro</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=gtr-g1-ultra</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/gtr-g1-ultra/anh-1.webp</image:loc>
+      <image:title>GTR Bi Gầm LED G1 Ultra</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=xlight-v20l-quantum</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/xlight-v20l-quantum/anh-1.webp</image:loc>
+      <image:title>X-Light V20L Quantum</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=xlight-quantum-x-v2</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/xlight-quantum-x-v2/anh-1.webp</image:loc>
+      <image:title>X-Light Quantum X V2</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=xlight-quantum-x</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/xlight-quantum-x/anh-1.webp</image:loc>
+      <image:title>X-Light Quantum X</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=xlight-v20-new-2025</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/xlight-v20-new-2025/anh-1.webp</image:loc>
+      <image:title>X-Light V20 New 2025</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=xlight-f-pro-v2</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/xlight-f-pro-v2/anh-1.webp</image:loc>
+      <image:title>X-Light F+ Pro V2</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=xlight-x5-ultra</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/xlight-x5-ultra/anh-1.webp</image:loc>
+      <image:title>X-Light X5 Ultra</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=xlight-f10-new-2025</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/xlight-f10-new-2025/anh-1.webp</image:loc>
+      <image:title>X-Light Bi Gầm F10 New 2025</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=xlight-x3-ultra</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/xlight-x3-ultra/anh-1.webp</image:loc>
+      <image:title>X-Light Bi Gầm X3 Ultra</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=aozoom-double-laser-phoenix</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/aozoom-double-laser-phoenix/anh-1.webp</image:loc>
+      <image:title>Aozoom Double Laser Phoenix Light</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=aozoom-laser-thor-18</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/aozoom-laser-thor-18/anh-1.webp</image:loc>
+      <image:title>Aozoom Laser Thor Light 1.8 inch</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=aozoom-jaguar-pro</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/aozoom-jaguar-pro/anh-1.webp</image:loc>
+      <image:title>Aozoom Bi Laser Jaguar Pro</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=aozoom-lion-king-pro</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/aozoom-lion-king-pro/anh-1.webp</image:loc>
+      <image:title>Aozoom Lion King Pro</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=aozoom-led-captain-18</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/aozoom-led-captain-18/anh-1.webp</image:loc>
+      <image:title>Aozoom LED Captain New Arrival 1.8 inch</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=aozoom-wasp-fog-30</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/aozoom-wasp-fog-30/anh-1.webp</image:loc>
+      <image:title>Aozoom LED Wasp Fog Light 3.0 inch</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=aozoom-g9-all-new</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/aozoom-g9-all-new/anh-1.webp</image:loc>
+      <image:title>Aozoom LED G9 All New</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=aozoom-ant-3in1-20</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/aozoom-ant-3in1-20/anh-1.webp</image:loc>
+      <image:title>Aozoom Ant 3in1 Fog Light 2.0 inch</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=aozoom-fog-ford-toyota</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/aozoom-fog-ford-toyota/anh-1.webp</image:loc>
+      <image:title>Aozoom Special Fog Light For Ford/Toyota</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=aozoom-stone-fog</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/aozoom-stone-fog/anh-1.webp</image:loc>
+      <image:title>Aozoom LED Stone Fog Light</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=aeroklas-e-roller-wildtrak</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/aeroklas-e-roller-wildtrak/anh-1.webp</image:loc>
+      <image:title>Aeroklas E Roller LID - Ford Ranger WildTrak 2023</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=aeroklas-e-roller-raptor</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/aeroklas-e-roller-raptor/anh-1.webp</image:loc>
+      <image:title>Aeroklas E Roller LID - Ford Ranger &amp; Raptor 2023</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=kingsprings-coils-raptor-2018</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/kingsprings-coils-raptor-2018/anh-1.webp</image:loc>
+      <image:title>King Springs Coils - Ford Ranger Raptor (07/2018+)</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=kingsprings-raptor-nextgen-2023</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/kingsprings-raptor-nextgen-2023/anh-1.webp</image:loc>
+      <image:title>King Springs Coils - Ranger Raptor NextGen 2023 ON</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=kingsprings-kfrr-121</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/kingsprings-kfrr-121/anh-1.webp</image:loc>
+      <image:title>King Springs KFRR-121 - Tăng chiều cao 2-3cm</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=kingsprings-kfrr-121hd</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/kingsprings-kfrr-121hd/anh-1.webp</image:loc>
+      <image:title>King Springs KFRR-121HD - Tăng chiều cao 5cm</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=kingsprings-kfrr-121ehd</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/kingsprings-kfrr-121ehd/anh-1.webp</image:loc>
+      <image:title>King Springs KFRR-121EHD - Tăng chiều cao 5cm (Tải nặng)</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=kingsprings-kfrr-124</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/kingsprings-kfrr-124/anh-1.webp</image:loc>
+      <image:title>King Springs KFRR-124 - Ranger Raptor NextGen 2023-ON</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=kingsprings-kfrs-121</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/kingsprings-kfrs-121/anh-1.webp</image:loc>
+      <image:title>King Springs KFRS-121 - Giữ nguyên chiều cao</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=tjm-giamxoc-colorado</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/tjm-giamxoc-colorado/anh-1.webp</image:loc>
+      <image:title>Full Set Giảm Xóc TJM4x4 - Chevrolet Colorado &amp; Isuzu D-Max</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=tjm-loxo-ranger-raptor</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/tjm-loxo-ranger-raptor/anh-1.webp</image:loc>
+      <image:title>Full Set 4 Lò Xo TJM Coil Springs - Ranger Raptor</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=tjm-nhip-hilux</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/tjm-nhip-hilux/anh-1.webp</image:loc>
+      <image:title>Bộ Nhíp TJM &amp; Phụ Kiện - Toyota Hilux (2015+)</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=tjm-nhip-navara</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/tjm-nhip-navara/anh-1.webp</image:loc>
+      <image:title>Bộ Nhíp TJM &amp; Phụ Kiện - Nissan Navara NP300 (2015+)</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=tjm-nhip-xgs-ranger</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/tjm-nhip-xgs-ranger/anh-1.webp</image:loc>
+      <image:title>Bộ Nhíp TJM XGS &amp; Phụ Kiện - Ford Ranger &amp; Mazda BT-50</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=tjm-toi-prime-12000</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/tjm-toi-prime-12000/anh-1.webp</image:loc>
+      <image:title>TJM Prime 12000lb (Cáp mềm)</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=tjm-toi-torq-12000</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/tjm-toi-torq-12000/anh-1.webp</image:loc>
+      <image:title>TJM Torq 12000lb (Cáp mềm)</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=tjm-toi-torq-9500</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/tjm-toi-torq-9500/anh-1.webp</image:loc>
+      <image:title>TJM Torq 9500lb (Cáp cứng)</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=warn-vr-evo-10s</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/warn-vr-evo-10s/anh-1.webp</image:loc>
+      <image:title>WARN VR EVO 10-S (Cáp mềm Synthetic)</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=warn-vr-evo-12s</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/warn-vr-evo-12s/anh-1.webp</image:loc>
+      <image:title>WARN VR EVO 12-S (Cáp mềm Synthetic)</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=warn-moc-toi-epic-sidewinder</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/warn-moc-toi-epic-sidewinder/anh-1.webp</image:loc>
+      <image:title>Móc Tời WARN Epic Sidewinder - Gunmetal</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=rua-xe</loc>
-    <lastmod>2026-07-28</lastmod>
+    <lastmod>2026-08-09</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/zytf6rnh/image/upload/c_fill,g_auto,ar_4:3,w_800,q_auto,f_auto/v1786204338/duchieuauto/pupvigs8lrhujc4uvwmj.webp</image:loc>
+      <image:title>Rửa Xe</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=ve-sinh-noi-that</loc>
-    <lastmod>2026-07-28</lastmod>
+    <lastmod>2026-08-09</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/zytf6rnh/image/upload/c_fill,g_auto,ar_4:3,w_800,q_auto,f_auto/v1786282739/duchieuauto/du4dffuf2vs4mqxct6g4.webp</image:loc>
+      <image:title>Vệ Sinh Nội Thất</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=ve-sinh-khoang-may</loc>
-    <lastmod>2026-07-28</lastmod>
+    <lastmod>2026-08-09</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/zytf6rnh/image/upload/c_fill,g_auto,ar_4:3,w_800,q_auto,f_auto/v1786252547/duchieuauto/wjsdaisjdg40jab0mze3.webp</image:loc>
+      <image:title>Vệ Sinh Khoang Máy</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=danh-bong-xe</loc>
-    <lastmod>2026-07-28</lastmod>
+    <lastmod>2026-08-09</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/danh-bong-xe/anh-1.webp</image:loc>
+      <image:title>Đánh Bóng Xe</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=phu-ceramic</loc>
-    <lastmod>2026-07-28</lastmod>
+    <lastmod>2026-08-09</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/phu-ceramic/anh-1.webp</image:loc>
+      <image:title>Phủ Ceramic</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=ve-sinh-dan-lanh</loc>
-    <lastmod>2026-07-28</lastmod>
+    <lastmod>2026-08-09</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/ve-sinh-dan-lanh/anh-1.webp</image:loc>
+      <image:title>Vệ Sinh Dàn Lạnh</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=boc-ghe-da</loc>
-    <lastmod>2026-07-28</lastmod>
+    <lastmod>2026-08-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/boc-ghe-da/anh-1.webp</image:loc>
+      <image:title>Bọc Ghế Da</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=boc-tran-da</loc>
-    <lastmod>2026-07-28</lastmod>
+    <lastmod>2026-08-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/boc-tran-da/anh-1.webp</image:loc>
+      <image:title>Bọc Trần Da</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=boc-da-tap-lo</loc>
-    <lastmod>2026-07-28</lastmod>
+    <lastmod>2026-08-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/boc-da-taplo/anh-1.webp</image:loc>
+      <image:title>Bọc Da Táp-Lô</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=nuoc-hoa-o-to-areon</loc>
     <lastmod>2026-07-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/nuoc-hoa-areon/anh-1.webp</image:loc>
+      <image:title>Nước Hoa Ô Tô Areon</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=gia-do-dien-thoai</loc>
-    <lastmod>2026-07-28</lastmod>
+    <lastmod>2026-08-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/gia-do-dien-thoai/anh-1.webp</image:loc>
+      <image:title>Giá Đỡ Điện Thoại</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=tau-sac-bo-chia-tau-sac</loc>
-    <lastmod>2026-07-28</lastmod>
+    <lastmod>2026-08-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/tau-sac/anh-1.webp</image:loc>
+      <image:title>Tẩu Sạc - Bộ Chia Tẩu Sạc</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=boc-vo-lang</loc>
-    <lastmod>2026-07-28</lastmod>
+    <lastmod>2026-08-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/boc-vo-lang/anh-1.webp</image:loc>
+      <image:title>Bọc Vô Lăng</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://duchieuauto.vn/san-pham-chi-tiet?id=camera-hanh-trinh-vietmap-speedmap-m1</loc>
+    <lastmod>2026-08-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/zytf6rnh/image/upload/c_fill,g_auto,ar_4:3,w_800,q_auto,f_auto/v1787196715/duchieuauto/kxixuwtjafhyuhuyriej.jpg</image:loc>
+      <image:title>VIETMAP SPEEDMAP M1</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/bai-viet-chi-tiet.html?slug=5-dau-hieu-nen-dan-phim-cach-nhiet-ngay</loc>
-    <lastmod>2026-07-26</lastmod>
+    <lastmod>2026-08-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/service/dan-phim-cach-nhiet/poster.webp</image:loc>
+      <image:title>5 Dấu Hiệu Cho Thấy Xe Bạn Cần Dán Phim Cách Nhiệt Ngay</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/bai-viet-chi-tiet.html?slug=kinh-nghiem-chon-loa-o-to-phu-hop</loc>
-    <lastmod>2026-07-26</lastmod>
+    <lastmod>2026-08-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/service/cach-am-oto/poster.webp</image:loc>
+      <image:title>Kinh Nghiệm Chọn Loa Ô Tô Phù Hợp Với Từng Dòng Xe</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/bai-viet-chi-tiet.html?slug=ppf-la-gi-co-nen-dan-cho-xe-moi</loc>
-    <lastmod>2026-07-27</lastmod>
+    <lastmod>2026-08-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/service/ppf-bao-ve-son-xe/poster.webp</image:loc>
+      <image:title>PPF Là Gì? Có Nên Dán PPF Cho Xe Mới Mua?</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/bai-viet-chi-tiet.html?slug=huong-dan-chon-den-bi-led-khong-choi-mat</loc>
-    <lastmod>2026-07-26</lastmod>
+    <lastmod>2026-08-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/service/do-den/poster.webp</image:loc>
+      <image:title>Hướng Dẫn Chọn Đèn Bi LED Đúng Chuẩn, Không Chói Mắt Xe Đối Diện</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/bai-viet-chi-tiet.html?slug=man-hinh-android-o-to-chon-cau-hinh-nao-de-khong-lag-sau-1-nam-su-dung</loc>
-    <lastmod>2026-07-28</lastmod>
+    <lastmod>2026-08-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/zestech-zx10-cao-cap/anh-1.webp</image:loc>
+      <image:title>Màn Hình Android Ô Tô: Chọn Cấu Hình Nào Để Không Lag Sau 1 Năm Sử Dụng?</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/bai-viet-chi-tiet.html?slug=android-box-o-to-la-gi-co-nen-lap-thay-vi-doi-man-hinh-moi</loc>
-    <lastmod>2026-07-28</lastmod>
+    <lastmod>2026-08-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/vietmap-box-bs10/anh-1.webp</image:loc>
+      <image:title>Android Box Ô Tô Là Gì? Có Nên Lắp Thay Vì Đổi Màn Hình Mới?</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/bai-viet-chi-tiet.html?slug=camera-hanh-trinh-va-camera-360-nen-lap-loai-nao-cho-xe-cua-ban</loc>
-    <lastmod>2026-07-28</lastmod>
+    <lastmod>2026-08-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/vietmap-sc620/anh-1.webp</image:loc>
+      <image:title>Camera Hành Trình Và Camera 360: Nên Lắp Loại Nào Cho Xe Của Bạn?</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://duchieuauto.vn/bai-viet-chi-tiet.html?slug=phu-kien-ban-tai-can-thiet-nhat-nap-thung-lo-xo-toi-dien-chon-sao-cho-dung</loc>
-    <lastmod>2026-07-28</lastmod>
+    <lastmod>2026-08-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <image:image>
+      <image:loc>https://duchieuauto.vn/assets/images/products/aeroklas-e-roller-wildtrak/anh-1.webp</image:loc>
+      <image:title>Phụ Kiện Bán Tải Cần Thiết Nhất: Nắp Thùng, Lò Xo, Tời Điện Chọn Sao Cho Đúng?</image:title>
+    </image:image>
   </url>
 </urlset>

@@ -212,6 +212,7 @@ export function renderBrandHtml({ cat, brand, type, types, products }) {
         (type ? `&loai=${encodeURIComponent(type.id)}` : "");
     const canonicalUrl = `${SITE_URL}${canonicalPath}`;
     const brandUrl = `${SITE_URL}/brand-san-pham?id=${cat.id}&brand=${brand.id}`;
+    const logoUrl = absoluteUrl((type && type.logo) || brand.logo);
 
     const breadcrumbItems = [
         { "@type": "ListItem", "position": 1, "name": "Trang chủ", "item": `${SITE_URL}/` },
@@ -231,12 +232,13 @@ export function renderBrandHtml({ cat, brand, type, types, products }) {
     const bodyHtml = `
 <nav><a href="/">Trang chủ</a> &raquo; <a href="/product">Sản Phẩm</a> &raquo; <a href="/category-chi-tiet?id=${cat.id}">${escapeHtml(cat.name)}</a> &raquo; ${escapeHtml(brandLabel)}</nav>
 <h1>${escapeHtml(brandLabel)}</h1>
+${logoUrl ? `<img src="${logoUrl}" alt="${escapeHtml(brandLabel)}">` : ""}
 ${listHtml}
 `;
 
     return htmlPage({
         title, description, canonicalPath,
-        ogType: "website",
+        ogImage: logoUrl, ogType: "website",
         jsonLdList: [breadcrumbSchema],
         bodyHtml
     });

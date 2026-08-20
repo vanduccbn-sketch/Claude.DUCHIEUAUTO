@@ -53,18 +53,16 @@ router.get("/brand", async (req, res) => {
     const typeId = req.query.loai;
     if (!catId || !brandId) return res.status(400).type("html").send(notFoundHtml("Thiếu id danh mục hoặc thương hiệu"));
 
-    const cat = await db.prepare("SELECT * FROM categories WHERE id = ?").get(catId);
-    const brand = await db.prepare("SELECT * FROM brands WHERE category_id = ? AND id = ? AND hidden = 0").get(catId, brandId);
+    const [cat, brand, type] = await Promise.all([
+        db.prepare("SELECT * FROM categories WHERE id = ?").get(catId),
+        db.prepare("SELECT * FROM brands WHERE category_id = ? AND id = ? AND hidden = 0").get(catId, brandId),
+        typeId ? db.prepare("SELECT * FROM brand_types WHERE category_id = ? AND brand_id = ? AND id = ?").get(catId, brandId, typeId) : Promise.resolve(null)
+    ]);
     if (!cat || !brand) return res.status(404).type("html").send(notFoundHtml("Không tìm thấy thương hiệu"));
-
-    let type = null;
-    if (typeId) {
-        type = await db.prepare("SELECT * FROM brand_types WHERE category_id = ? AND brand_id = ? AND id = ?").get(catId, brandId, typeId);
-        if (!type) return res.status(404).type("html").send(notFoundHtml("Không tìm thấy loại sản phẩm"));
-    }
+    if (typeId && !type) return res.status(404).type("html").send(notFoundHtml("Không tìm thấy loại sản phẩm"));
 
     const types = !typeId
-        ? await db.prepare("SELECT * FROM brand_types WHERE category_id = ? AND brand_id = ?").all(catId, brandId)
+        ? await db.prepare("SELECT * FROM brand_types WHERE category_id = ? AND brand_id = ? ORDER BY sort_order").all(catId, brandId)
         : [];
 
     const products = (typeId || !types.length)

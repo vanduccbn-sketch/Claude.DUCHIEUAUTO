@@ -44,6 +44,8 @@ const PATH_MAP = {
     "/san-pham-chi-tiet.html": { renderPath: "/render/product", requiredParam: "id" },
     "/category-chi-tiet": { renderPath: "/render/category", requiredParam: "id" },
     "/category-chi-tiet.html": { renderPath: "/render/category", requiredParam: "id" },
+    "/brand-san-pham": { renderPath: "/render/brand", requiredParam: "id" },
+    "/brand-san-pham.html": { renderPath: "/render/brand", requiredParam: "id" },
     "/bai-viet-chi-tiet": { renderPath: "/render/post", requiredParam: "slug" },
     "/bai-viet-chi-tiet.html": { renderPath: "/render/post", requiredParam: "slug" }
 };

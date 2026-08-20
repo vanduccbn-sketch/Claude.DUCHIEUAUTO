@@ -3,7 +3,7 @@
  * thay res.type("html").send(). Logic 100% giữ nguyên.
  */
 import { Hono } from "hono";
-import { renderProductHtml, renderCategoryHtml, renderPostHtml, notFoundHtml } from "../utils/ssr-render.js";
+import { renderProductHtml, renderCategoryHtml, renderBrandHtml, renderPostHtml, notFoundHtml } from "../utils/ssr-render.js";
 
 const CATEGORIES_WITH_PRODUCT_GROUPS = ["do-ban-tai"];
 async function resolveBrandName(db, categoryId, brandId, brandTypeId) {
@@ -41,6 +41,37 @@ app.get("/product", async (c) => {
         brand: brandName,
         specs: specs.map(s => [s.spec_key, s.spec_value])
     });
+    return c.html(html);
+});
+
+app.get("/brand", async (c) => {
+    const catId = c.req.query("id");
+    const brandId = c.req.query("brand");
+    const typeId = c.req.query("loai");
+    if (!catId || !brandId) return c.html(notFoundHtml("Thiếu id danh mục hoặc thương hiệu"), 400);
+
+    const db = c.get("db");
+    const cat = await db.prepare("SELECT * FROM categories WHERE id = ?").get(catId);
+    const brand = await db.prepare("SELECT * FROM brands WHERE category_id = ? AND id = ? AND hidden = 0").get(catId, brandId);
+    if (!cat || !brand) return c.html(notFoundHtml("Không tìm thấy thương hiệu"), 404);
+
+    let type = null;
+    if (typeId) {
+        type = await db.prepare("SELECT * FROM brand_types WHERE category_id = ? AND brand_id = ? AND id = ?").get(catId, brandId, typeId);
+        if (!type) return c.html(notFoundHtml("Không tìm thấy loại sản phẩm"), 404);
+    }
+
+    const types = !typeId
+        ? await db.prepare("SELECT * FROM brand_types WHERE category_id = ? AND brand_id = ?").all(catId, brandId)
+        : [];
+
+    const products = (typeId || !types.length)
+        ? (typeId
+            ? await db.prepare("SELECT id, name, price FROM products WHERE category_id = ? AND brand_id = ? AND brand_type_id = ? AND hidden = 0 ORDER BY sort_order").all(catId, brandId, typeId)
+            : await db.prepare("SELECT id, name, price FROM products WHERE category_id = ? AND brand_id = ? AND hidden = 0 ORDER BY sort_order").all(catId, brandId))
+        : [];
+
+    const html = renderBrandHtml({ cat, brand, type, types, products });
     return c.html(html);
 });
 

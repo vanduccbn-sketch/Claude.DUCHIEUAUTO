@@ -168,12 +168,14 @@ async function renderBlogDetail() {
         }
         const post = await res.json();
 
-        // Cập nhật SEO động (title/description/Open Graph) - lưu ý: vì trang render bằng JS,
-        // các trình thu thập dữ liệu KHÔNG chạy JS (đa số bot chia sẻ mạng xã hội) sẽ chỉ thấy
-        // được thẻ meta mặc định trong HTML gốc, không thấy bản cập nhật này. Google hiện tại có
-        // chạy JS khi index nên vẫn đọc được. Nếu cần preview đẹp khi share Zalo/Facebook, cần
-        // render phía server (ngoài phạm vi Phase 5 hiện tại).
+        // Cập nhật SEO động (title/description/Open Graph) - lưu ý: vì trang render bằng JS, các
+        // trình thu thập dữ liệu KHÔNG chạy JS (bot chia sẻ mạng xã hội, và theo dữ liệu GSC Coverage
+        // thật 2026-08-20 thì cả Googlebot ở bước quét đầu tiên) sẽ chỉ thấy thẻ meta mặc định trong
+        // HTML gốc. Bot dạng này nên đi qua cloudflare-worker-bot-ssr.js -> routes/render.js thay vì
+        // đọc bản cập nhật ở đây. setCanonicalUrl() (định nghĩa ở catalog-render.js, nạp trước file
+        // này) vẫn cần gọi để giúp Google ở bước render sau và các bot khác không gộp nhầm bài viết.
         document.title = (post.meta_title || post.title) + " | Đức Hiếu Auto";
+        setCanonicalUrl(`bai-viet-chi-tiet.html?slug=${post.slug}`);
         const metaDesc = document.querySelector('meta[name="description"]');
         if (metaDesc) metaDesc.setAttribute("content", post.meta_description || post.excerpt || "");
         setMetaTag("property", "og:title", post.meta_title || post.title);

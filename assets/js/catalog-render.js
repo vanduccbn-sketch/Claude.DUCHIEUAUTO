@@ -91,6 +91,21 @@ function getParam(name) {
     return new URLSearchParams(window.location.search).get(name);
 }
 
+// Trang danh mục/thương hiệu/sản phẩm là CSR (chỉ có nội dung sau khi hàm render tương ứng chạy
+// xong) nên HTML gốc không thể in sẵn <link rel="canonical"> đúng cho từng id - phải tự chèn ở
+// đây, cùng lúc với document.title, để Google Search Console không gộp nhầm các URL khác id lại
+// thành 1 nhóm "trang trùng lặp, chưa chọn trang chính tắc" (phát hiện thật qua GSC Coverage
+// 2026-08-20: 104 URL dính lỗi này, đều là category-chi-tiet/brand-san-pham/san-pham-chi-tiet).
+function setCanonicalUrl(pathWithQuery) {
+    let link = document.querySelector('link[rel="canonical"]');
+    if (!link) {
+        link = document.createElement("link");
+        link.setAttribute("rel", "canonical");
+        document.head.appendChild(link);
+    }
+    link.setAttribute("href", `https://duchieuauto.vn/${pathWithQuery}`);
+}
+
 function findCategoryIn(categories, id) {
     return categories.find(c => c.id === id);
 }
@@ -326,6 +341,7 @@ async function renderCategoryDetail() {
     }
 
     document.title = (cat.seo && cat.seo.title) ? cat.seo.title : cat.name + " | Đức Hiếu Auto";
+    setCanonicalUrl(`category-chi-tiet?id=${cat.id}`);
     if (cat.seo && cat.seo.metaDescription) {
         let metaDesc = document.querySelector('meta[name="description"]');
         if (!metaDesc) {
@@ -453,6 +469,7 @@ async function renderServiceGroupDetail(groupId) {
     }
 
     document.title = group.name + " | Đức Hiếu Auto";
+    setCanonicalUrl(`category-chi-tiet?group=${group.id}`);
     const posterImg = document.querySelector(".category-poster img");
     posterImg.src = group.poster;
     posterImg.alt = seoAlt(group.name);
@@ -604,6 +621,7 @@ async function renderBrandProducts() {
     // Hãng có phân loại (VD: Loa Ô Tô / Loa Sub / Âm Ly) và chưa chọn loại cụ thể -> hiển thị danh sách loại
     if (brand.types && !typeId) {
         document.title = brand.name + " | Đức Hiếu Auto";
+        setCanonicalUrl(`brand-san-pham?id=${cat.id}&brand=${brand.id}`);
         setBrandTitle(brand.name, brand.logo);
         breadcrumbBrandSep.hidden = true;
         breadcrumbBrand.hidden = true;
@@ -646,6 +664,7 @@ async function renderBrandProducts() {
         breadcrumbBrand.href = `brand-san-pham?id=${cat.id}&brand=${brand.id}`;
         document.querySelector(".breadcrumb-current").textContent = t.name;
         document.title = brand.name + " - " + t.name + " | Đức Hiếu Auto";
+        setCanonicalUrl(`brand-san-pham?id=${cat.id}&brand=${brand.id}&loai=${t.id}`);
         setBrandTitle(brand.name + " - " + t.name, t.logo || brand.logo);
     } else {
         productList = brand.products;
@@ -653,6 +672,7 @@ async function renderBrandProducts() {
         breadcrumbBrand.hidden = true;
         document.querySelector(".breadcrumb-current").textContent = brand.name;
         document.title = brand.name + " | Đức Hiếu Auto";
+        setCanonicalUrl(`brand-san-pham?id=${cat.id}&brand=${brand.id}`);
         setBrandTitle(brand.name, brand.logo);
     }
 
@@ -1218,6 +1238,7 @@ async function renderProductDetail() {
 
         const pageDesc = (p.description || "").slice(0, 155);
         document.title = `${p.name} - ${p.brand} | Đức Hiếu Auto`;
+        setCanonicalUrl(`san-pham-chi-tiet?id=${id}`);
         const metaDesc = document.querySelector('meta[name="description"]');
         if (metaDesc && pageDesc) metaDesc.setAttribute("content", pageDesc);
         const ogTitle = document.querySelector('meta[property="og:title"]');

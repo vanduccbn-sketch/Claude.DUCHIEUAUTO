@@ -210,6 +210,50 @@ ${faqHtml}
     });
 }
 
+/* ---------- Thương hiệu ----------
+   PHÁT HIỆN 2026-08-20 qua GSC Coverage thật: route SSR-cho-bot ban đầu (Phase 12) chỉ có
+   product/category/post, THIẾU hẳn loại trang này dù cũng là URL động (?id=&brand=[&loai=]) và
+   cũng bị Google gắn cờ "chưa lập chỉ mục"/"trang trùng lặp" y hệt 2 loại kia. "types" có phần tử
+   nghĩa là thương hiệu này còn phân loại con chưa chọn (hiển thị danh sách loại), ngược lại hiển
+   thị thẳng danh sách sản phẩm - đúng logic renderBrandProducts() trong catalog-render.js. */
+function renderBrandHtml({ cat, brand, type, types, products }) {
+    const brandLabel = type ? `${brand.name} - ${type.name}` : brand.name;
+    const title = `${brandLabel} | ${SITE_NAME}`;
+    const description = `Danh sách sản phẩm ${brandLabel} chính hãng tại ${SITE_NAME}, Buôn Ma Thuột, Đắk Lắk.`;
+    const canonicalPath = `/brand-san-pham?id=${encodeURIComponent(cat.id)}&brand=${encodeURIComponent(brand.id)}` +
+        (type ? `&loai=${encodeURIComponent(type.id)}` : "");
+    const canonicalUrl = `${SITE_URL}${canonicalPath}`;
+    const brandUrl = `${SITE_URL}/brand-san-pham?id=${cat.id}&brand=${brand.id}`;
+
+    const breadcrumbItems = [
+        { "@type": "ListItem", "position": 1, "name": "Trang chủ", "item": `${SITE_URL}/` },
+        { "@type": "ListItem", "position": 2, "name": "Sản Phẩm", "item": `${SITE_URL}/product` },
+        { "@type": "ListItem", "position": 3, "name": cat.name, "item": `${SITE_URL}/category-chi-tiet?id=${cat.id}` },
+        { "@type": "ListItem", "position": 4, "name": brand.name, "item": brandUrl }
+    ];
+    if (type) {
+        breadcrumbItems.push({ "@type": "ListItem", "position": 5, "name": type.name, "item": canonicalUrl });
+    }
+    const breadcrumbSchema = { "@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": breadcrumbItems };
+
+    const listHtml = (types && types.length)
+        ? `<ul>${types.map(t => `<li><a href="/brand-san-pham?id=${cat.id}&brand=${brand.id}&loai=${t.id}">${escapeHtml(t.name)}</a></li>`).join("")}</ul>`
+        : `<ul>${(products || []).map(p => `<li><a href="/san-pham-chi-tiet?id=${p.id}">${escapeHtml(p.name)}</a>${p.price ? ` - ${escapeHtml(p.price)}` : ""}</li>`).join("")}</ul>`;
+
+    const bodyHtml = `
+<nav><a href="/">Trang chủ</a> &raquo; <a href="/product">Sản Phẩm</a> &raquo; <a href="/category-chi-tiet?id=${cat.id}">${escapeHtml(cat.name)}</a> &raquo; ${escapeHtml(brandLabel)}</nav>
+<h1>${escapeHtml(brandLabel)}</h1>
+${listHtml}
+`;
+
+    return htmlPage({
+        title, description, canonicalPath,
+        ogType: "website",
+        jsonLdList: [breadcrumbSchema],
+        bodyHtml
+    });
+}
+
 /* ---------- Bài viết ---------- */
 function renderPostHtml(post) {
     const title = `${post.meta_title || post.title} | ${SITE_NAME}`;
@@ -253,4 +297,4 @@ ${post.content || ""}
     });
 }
 
-module.exports = { renderProductHtml, renderCategoryHtml, renderPostHtml, notFoundHtml, escapeHtml };
+module.exports = { renderProductHtml, renderCategoryHtml, renderBrandHtml, renderPostHtml, notFoundHtml, escapeHtml };

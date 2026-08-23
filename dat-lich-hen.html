@@ -147,6 +147,9 @@
                         <div class="form-group">
                             <label for="bkDate">Ngày hẹn mong muốn *</label>
                             <input type="date" id="bkDate" name="date" required>
+                            <select id="bkDateSelect" name="date_select" hidden>
+                                <option value="" disabled selected>-- Chọn ngày --</option>
+                            </select>
                         </div>
 
                         <div class="form-group">
@@ -158,10 +161,12 @@
 
                         <div class="form-row">
                             <div class="form-group">
-                                <label for="bkCarBrand">Hãng xe (nếu có)</label>
-                                <select id="bkCarBrand" name="car_brand">
-                                    <option value="">-- Chọn hãng xe --</option>
-                                </select>
+                                <label for="bkCarBrandSearch">Hãng xe (nếu có)</label>
+                                <div class="searchable-select" id="bkCarBrandWrap">
+                                    <input type="text" id="bkCarBrandSearch" placeholder="-- Tìm/chọn hãng xe --" autocomplete="off">
+                                    <input type="hidden" id="bkCarBrand" name="car_brand">
+                                    <ul class="searchable-select-list" id="bkCarBrandList" hidden></ul>
+                                </div>
                                 <input type="text" id="bkCarBrandOther" placeholder="Nhập tên hãng xe" hidden>
                             </div>
                             <div class="form-group">
@@ -175,7 +180,7 @@
 
                         <div class="form-group">
                             <label for="bkNote">Ghi chú thêm</label>
-                            <textarea id="bkNote" name="message" rows="3" placeholder="Mô tả thêm nhu cầu của bạn (nếu có)"></textarea>
+                            <textarea id="bkNote" name="message" rows="3" placeholder="Cho chúng tôi biết thêm những điều bạn cần"></textarea>
                         </div>
 
                         <div class="form-group">
@@ -317,60 +322,106 @@
         const WASH_PROMO_START_DATE = '2026-09-15';
         const WASH_PROMO_END_DATE = '2026-09-19';
 
+        // .toISOString() quy đổi sang UTC - sai lệch 1 ngày với "hôm nay"/các ngày khuyến mãi theo
+        // giờ Việt Nam (UTC+7) vào khoảng nửa đêm đến 7h sáng giờ VN (lúc đó UTC vẫn còn là ngày hôm
+        // trước). Phải tự ghép chuỗi YYYY-MM-DD từ getFullYear/getMonth/getDate (giờ LOCAL) thay vì
+        // toISOString() cho mọi so sánh/hiển thị ngày ở trang này.
+        function toLocalIsoDate(d) {
+            return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        }
+
         const bkService = document.getElementById('bkService');
         const bkDateInput = document.getElementById('bkDate');
-        const todayStr = new Date().toISOString().split('T')[0];
+        const bkDateSelect = document.getElementById('bkDateSelect');
+        const todayStr = toLocalIsoDate(new Date());
 
         function isWashPromoSelected() {
             return bkService.value === WASH_PROMO_SERVICE_VALUE;
         }
 
-        // Chọn khuyến mãi rửa xe -> chỉ cho chọn đúng 5 ngày khai trương. Chọn dịch vụ khác -> quay
-        // lại hành vi bình thường (không cho chọn ngày quá khứ, không giới hạn ngày tối đa).
+        // Ngày hẹn của khuyến mãi rửa xe CHỈ có đúng 5 giá trị hợp lệ (15-19/09/2026) - thay vì để
+        // khách tự bấm lịch rồi mới biết ngày nào hợp lệ (input[type=date] với min/max vẫn cho mở
+        // lịch đầy đủ, không rõ ràng), đổi hẳn sang 1 select liệt kê sẵn đúng 5 ngày đó.
+        function buildWashPromoDateOptions() {
+            const dayNames = ['Chủ Nhật', 'Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy'];
+            bkDateSelect.innerHTML = '<option value="" disabled selected>-- Chọn ngày --</option>';
+            let d = new Date(WASH_PROMO_START_DATE + 'T00:00:00');
+            const end = new Date(WASH_PROMO_END_DATE + 'T00:00:00');
+            while (d <= end) {
+                const iso = toLocalIsoDate(d);
+                const label = `${dayNames[d.getDay()]}, ${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
+                bkDateSelect.insertAdjacentHTML('beforeend', `<option value="${iso}">${label}</option>`);
+                d.setDate(d.getDate() + 1);
+            }
+        }
+        buildWashPromoDateOptions();
+
+        function getSelectedDate() {
+            return isWashPromoSelected() ? bkDateSelect.value : bkDateInput.value;
+        }
+
+        // Chọn khuyến mãi rửa xe -> ẩn lịch tự do, hiện select đúng 5 ngày khai trương. Chọn dịch
+        // vụ khác -> quay lại ô lịch bình thường (không cho chọn ngày quá khứ).
         function applyDateConstraints() {
             if (isWashPromoSelected()) {
-                bkDateInput.min = WASH_PROMO_START_DATE;
-                bkDateInput.max = WASH_PROMO_END_DATE;
-                if (bkDateInput.value && (bkDateInput.value < WASH_PROMO_START_DATE || bkDateInput.value > WASH_PROMO_END_DATE)) {
-                    bkDateInput.value = '';
-                }
+                bkDateInput.hidden = true;
+                bkDateInput.required = false;
+                bkDateSelect.hidden = false;
+                bkDateSelect.required = true;
             } else {
+                bkDateInput.hidden = false;
+                bkDateInput.required = true;
                 bkDateInput.min = todayStr;
-                bkDateInput.removeAttribute('max');
-                if (bkDateInput.value && bkDateInput.value < todayStr) {
-                    bkDateInput.value = '';
-                }
+                if (bkDateInput.value && bkDateInput.value < todayStr) bkDateInput.value = '';
+                bkDateSelect.hidden = true;
+                bkDateSelect.required = false;
+                bkDateSelect.value = '';
             }
         }
         applyDateConstraints();
 
-        bkService.addEventListener('change', () => {
-            applyDateConstraints();
-            if (bkDateInput.value) {
-                loadSlots(bkDateInput.value);
+        function reloadSlotsOrReset() {
+            const date = getSelectedDate();
+            if (date) {
+                loadSlots(date);
             } else {
                 selectedSlot = null;
                 slotPicker.innerHTML = `<p class="slot-picker-hint">Chọn ngày hẹn ở trên để xem khung giờ còn trống.</p>`;
             }
-        });
+        }
 
-        // ---------- Hãng xe / Dòng xe (2 mục chọn theo tầng, có "Khác" cho khách tự gõ) ----------
-        const bkCarBrand = document.getElementById('bkCarBrand');
+        bkService.addEventListener('change', () => {
+            applyDateConstraints();
+            reloadSlotsOrReset();
+        });
+        bkDateSelect.addEventListener('change', reloadSlotsOrReset);
+
+        // ---------- Hãng xe (ô tìm/chọn) / Dòng xe (select theo tầng), có "Khác" cho khách tự gõ ----------
+        const bkCarBrandWrap = document.getElementById('bkCarBrandWrap');
+        const bkCarBrandSearch = document.getElementById('bkCarBrandSearch');
+        const bkCarBrand = document.getElementById('bkCarBrand'); // input hidden - lưu giá trị thật đã chọn
+        const bkCarBrandList = document.getElementById('bkCarBrandList');
         const bkCarBrandOther = document.getElementById('bkCarBrandOther');
         const bkCarModel = document.getElementById('bkCarModel');
         const bkCarModelOther = document.getElementById('bkCarModelOther');
 
-        Object.keys(CAR_DATA).sort((a, b) => a.localeCompare(b, 'vi')).forEach(brand => {
-            bkCarBrand.insertAdjacentHTML('beforeend', `<option value="${brand}">${brand}</option>`);
-        });
-        bkCarBrand.insertAdjacentHTML('beforeend', `<option value="Khác">Khác</option>`);
+        // Thứ tự lấy thẳng từ CAR_DATA (đã xếp theo độ phổ biến tại VN, xem car-data.js) - KHÔNG
+        // sort lại theo ABC như bản trước, để hãng bán chạy nhất hiện lên đầu danh sách/kết quả tìm.
+        const BRAND_OPTIONS = Object.keys(CAR_DATA).concat(['Khác']);
 
         function resetCarModelSelect(placeholder) {
             bkCarModel.innerHTML = `<option value="">${placeholder}</option>`;
         }
 
-        bkCarBrand.addEventListener('change', () => {
-            const brand = bkCarBrand.value;
+        function renderBrandList(filterText) {
+            const q = (filterText || '').trim().toLowerCase();
+            const items = q ? BRAND_OPTIONS.filter(b => b.toLowerCase().includes(q)) : BRAND_OPTIONS;
+            bkCarBrandList.innerHTML = items.length
+                ? items.map(b => `<li data-value="${b}">${b}</li>`).join('')
+                : '<li class="no-result">Không tìm thấy hãng xe phù hợp</li>';
+        }
+
+        function handleBrandChange(brand) {
             bkCarBrandOther.hidden = brand !== 'Khác';
             if (brand !== 'Khác') bkCarBrandOther.value = '';
 
@@ -402,6 +453,41 @@
                 bkCarModel.insertAdjacentHTML('beforeend', `<option value="${model}">${model}</option>`);
             });
             bkCarModel.insertAdjacentHTML('beforeend', `<option value="Khác">Khác</option>`);
+        }
+
+        function selectCarBrand(brand) {
+            bkCarBrand.value = brand;
+            bkCarBrandSearch.value = brand;
+            bkCarBrandList.hidden = true;
+            handleBrandChange(brand);
+        }
+
+        bkCarBrandSearch.addEventListener('focus', () => {
+            renderBrandList(bkCarBrandSearch.value === bkCarBrand.value ? '' : bkCarBrandSearch.value);
+            bkCarBrandList.hidden = false;
+        });
+        bkCarBrandSearch.addEventListener('input', () => {
+            renderBrandList(bkCarBrandSearch.value);
+            bkCarBrandList.hidden = false;
+        });
+        // mousedown (không phải click) + preventDefault để chọn được TRƯỚC KHI ô tìm bị blur ẩn
+        // danh sách - dùng click thường sẽ bị blur chạy trước, danh sách ẩn mất trước khi kịp click.
+        bkCarBrandList.addEventListener('mousedown', (e) => {
+            const li = e.target.closest('li[data-value]');
+            if (!li) return;
+            e.preventDefault();
+            selectCarBrand(li.dataset.value);
+        });
+        bkCarBrandSearch.addEventListener('blur', () => {
+            setTimeout(() => {
+                bkCarBrandList.hidden = true;
+                // Gõ dở không bấm chọn -> quay lại đúng giá trị đã chọn trước đó (hoặc rỗng), tránh
+                // để lại chữ gõ tay không khớp giá trị thật sẽ gửi lên.
+                bkCarBrandSearch.value = bkCarBrand.value || '';
+            }, 150);
+        });
+        document.addEventListener('click', (e) => {
+            if (!bkCarBrandWrap.contains(e.target)) bkCarBrandList.hidden = true;
         });
 
         bkCarModel.addEventListener('change', () => {
@@ -502,7 +588,7 @@
                 name: document.getElementById('bkName').value.trim(),
                 phone: document.getElementById('bkPhone').value.trim(),
                 service: bkService.value,
-                preferred_date: bkDateInput.value,
+                preferred_date: getSelectedDate(),
                 preferred_time: selectedSlot,
                 car_brand: resolvedCarBrand(),
                 car_model: resolvedCarModel(),
@@ -524,7 +610,7 @@
                 if (!res.ok) {
                     // 409 = khung giờ vừa đầy chỗ (người khác vừa đặt trước) - tải lại danh sách
                     // khung giờ để khách chọn khung giờ khác thay vì chỉ báo lỗi chung chung.
-                    if (res.status === 409) loadSlots(bkDateInput.value);
+                    if (res.status === 409) loadSlots(getSelectedDate());
                     throw new Error(data.error || 'Gửi thất bại');
                 }
 

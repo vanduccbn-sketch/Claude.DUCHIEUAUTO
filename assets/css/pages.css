@@ -217,24 +217,70 @@
     box-shadow: var(--shadow-lg);
 }
 
-.slot-picker { display: flex; flex-wrap: wrap; gap: 10px; }
-.slot-picker-hint { font-size: 13px; color: var(--gray); font-style: italic; margin: 4px 0; }
-.slot-btn {
-    padding: 10px 14px;
+.slot-picker {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 8px;
+}
+.slot-picker-hint { font-size: 13px; color: var(--gray); font-style: italic; margin: 4px 0; grid-column: 1 / -1; }
+/* Scope bằng .booking-form .slot-btn (2 class) thay vì chỉ .slot-btn (1 class) - ".booking-form
+   button" (1 class + 1 thẻ = độ ưu tiên cao hơn ".slot-btn" đứng 1 mình) từng đè mất kiểu ô nhỏ
+   gọn ở đây, khiến khung giờ hiện thành nút đỏ to full-width giống nút "Xác Nhận Đặt Lịch". */
+.booking-form .slot-btn {
+    width: auto;
+    padding: 10px 6px;
     background-color: var(--bg-color);
     border: 1px solid var(--border-color-light);
     color: var(--text-color);
     border-radius: 8px;
     font-family: inherit;
-    font-size: 13px;
+    font-size: 12.5px;
     font-weight: 600;
+    text-transform: none;
+    letter-spacing: normal;
     cursor: pointer;
     transition: var(--transition);
+    margin-top: 0;
 }
-.slot-btn:hover:not(:disabled) { border-color: var(--primary); color: var(--primary); }
-.slot-btn.selected { background-color: var(--primary); border-color: var(--primary); color: var(--white); }
-.slot-btn.full { opacity: 0.5; cursor: not-allowed; text-decoration: line-through; }
-.slot-btn.full span { display: block; font-size: 10px; text-decoration: none; font-weight: 400; }
+.booking-form .slot-btn:hover:not(:disabled) {
+    border-color: var(--primary);
+    color: var(--primary);
+    background-color: var(--bg-color);
+    transform: none;
+    box-shadow: none;
+}
+.booking-form .slot-btn.selected { background-color: var(--primary); border-color: var(--primary); color: var(--white); }
+.booking-form .slot-btn.full { opacity: 0.5; cursor: not-allowed; text-decoration: line-through; }
+.booking-form .slot-btn.full span { display: block; font-size: 10px; text-decoration: none; font-weight: 400; }
+
+/* ---------- Hãng xe: ô tìm/chọn (combobox) thay cho <select> gốc để có thanh tìm ---------- */
+.searchable-select { position: relative; }
+.searchable-select-list {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    z-index: 20;
+    max-height: 260px;
+    overflow-y: auto;
+    background-color: var(--white);
+    border: 1px solid var(--border-color-light);
+    border-radius: 8px;
+    box-shadow: var(--shadow-sm);
+    list-style: none;
+    margin: 0;
+    padding: 6px;
+}
+.searchable-select-list li {
+    padding: 9px 10px;
+    border-radius: 6px;
+    font-size: 13.5px;
+    cursor: pointer;
+}
+.searchable-select-list li:hover,
+.searchable-select-list li.active { background-color: var(--bg-color); color: var(--primary); }
+.searchable-select-list li.no-result { color: var(--gray); font-style: italic; cursor: default; }
+.searchable-select-list li.no-result:hover { background-color: transparent; color: var(--gray); }
 
 .form-error {
     background-color: rgba(220, 53, 69, 0.08);

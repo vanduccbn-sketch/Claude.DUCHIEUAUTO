@@ -78,6 +78,11 @@
                         <input type="number" id="booking_slot_capacity" name="booking_slot_capacity" min="1" placeholder="Mặc định: 2">
                         <p class="form-hint">Khi 1 khung giờ đã đủ số lượng này, khách sẽ không chọn được khung giờ đó nữa trên trang Đặt Lịch Hẹn.</p>
                     </div>
+                    <div class="form-group">
+                        <label for="wash_promo_slot_capacity">Số xe tối đa / khung giờ - Rửa xe miễn phí (15-19/09)</label>
+                        <input type="number" id="wash_promo_slot_capacity" name="wash_promo_slot_capacity" min="1" placeholder="Mặc định: 1">
+                        <p class="form-hint">Sức chứa riêng cho khung giờ 45 phút của chương trình "Trải nghiệm dịch vụ rửa xe miễn phí" (khác số lịch hẹn thi công ở trên).</p>
+                    </div>
                 </div>
             </div>
 
@@ -100,7 +105,7 @@
             "google_analytics_id", "facebook_pixel_id", "google_search_console_verification",
             "social_facebook", "social_zalo", "social_youtube",
             "seo_default_title", "seo_default_description",
-            "booking_slot_capacity"
+            "booking_slot_capacity", "wash_promo_slot_capacity"
         ];
 
         async function loadSettings() {

@@ -131,6 +131,7 @@
                             <label for="bkService">Dịch vụ quan tâm *</label>
                             <select id="bkService" name="service" required>
                                 <option value="" disabled selected>-- Chọn dịch vụ --</option>
+                                <option value="Trải nghiệm dịch vụ rửa xe (Miễn Phí)">🎁 Trải nghiệm dịch vụ rửa xe (Miễn Phí) - 15-19/09</option>
                                 <option value="Màn Hình Ô Tô">Màn Hình Ô Tô</option>
                                 <option value="Âm Thanh - Cách Âm Ô Tô">Âm Thanh - Cách Âm Ô Tô</option>
                                 <option value="Android Box Ô Tô">Android Box Ô Tô</option>
@@ -155,9 +156,21 @@
                             </div>
                         </div>
 
-                        <div class="form-group">
-                            <label for="bkCar">Dòng xe (nếu có)</label>
-                            <input type="text" id="bkCar" name="car" placeholder="VD: Ford Ranger Wildtrak 2023">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="bkCarBrand">Hãng xe (nếu có)</label>
+                                <select id="bkCarBrand" name="car_brand">
+                                    <option value="">-- Chọn hãng xe --</option>
+                                </select>
+                                <input type="text" id="bkCarBrandOther" placeholder="Nhập tên hãng xe" hidden>
+                            </div>
+                            <div class="form-group">
+                                <label for="bkCarModel">Dòng xe (nếu có)</label>
+                                <select id="bkCarModel" name="car_model" disabled>
+                                    <option value="">-- Chọn hãng xe trước --</option>
+                                </select>
+                                <input type="text" id="bkCarModelOther" placeholder="Nhập tên dòng xe" hidden>
+                            </div>
                         </div>
 
                         <div class="form-group">
@@ -275,6 +288,7 @@
     <script src="assets/js/catalog-data.js"></script>
     <script src="assets/js/catalog-render.js"></script>
     <script src="assets/js/site-search.js"></script>
+    <script src="assets/js/car-data.js"></script>
     <script>
         renderNavProductsDropdown("#navProductsDropdown");
 
@@ -295,9 +309,113 @@
         if (window.matchMedia('(max-width: 768px)').matches) quickContact.classList.add('collapsed');
         quickContactToggle.addEventListener('click', () => quickContact.classList.toggle('collapsed'));
 
-        // Không cho chọn ngày trong quá khứ
+        // Khuyến mãi "Trải nghiệm dịch vụ rửa xe miễn phí" (5 ngày đầu khai trương) - giá trị/khoảng
+        // ngày phải khớp CHÍNH XÁC với WASH_PROMO_SERVICE_VALUE/WASH_PROMO_START_DATE/END_DATE trong
+        // duchieuauto-backend/routes/contacts.js (và bản Hono ở duchieuauto-worker) - đổi 1 bên mà
+        // quên bên kia sẽ khiến khách chọn được ngày/khung giờ mà server vẫn từ chối.
+        const WASH_PROMO_SERVICE_VALUE = 'Trải nghiệm dịch vụ rửa xe (Miễn Phí)';
+        const WASH_PROMO_START_DATE = '2026-09-15';
+        const WASH_PROMO_END_DATE = '2026-09-19';
+
+        const bkService = document.getElementById('bkService');
         const bkDateInput = document.getElementById('bkDate');
-        bkDateInput.min = new Date().toISOString().split('T')[0];
+        const todayStr = new Date().toISOString().split('T')[0];
+
+        function isWashPromoSelected() {
+            return bkService.value === WASH_PROMO_SERVICE_VALUE;
+        }
+
+        // Chọn khuyến mãi rửa xe -> chỉ cho chọn đúng 5 ngày khai trương. Chọn dịch vụ khác -> quay
+        // lại hành vi bình thường (không cho chọn ngày quá khứ, không giới hạn ngày tối đa).
+        function applyDateConstraints() {
+            if (isWashPromoSelected()) {
+                bkDateInput.min = WASH_PROMO_START_DATE;
+                bkDateInput.max = WASH_PROMO_END_DATE;
+                if (bkDateInput.value && (bkDateInput.value < WASH_PROMO_START_DATE || bkDateInput.value > WASH_PROMO_END_DATE)) {
+                    bkDateInput.value = '';
+                }
+            } else {
+                bkDateInput.min = todayStr;
+                bkDateInput.removeAttribute('max');
+                if (bkDateInput.value && bkDateInput.value < todayStr) {
+                    bkDateInput.value = '';
+                }
+            }
+        }
+        applyDateConstraints();
+
+        bkService.addEventListener('change', () => {
+            applyDateConstraints();
+            if (bkDateInput.value) {
+                loadSlots(bkDateInput.value);
+            } else {
+                selectedSlot = null;
+                slotPicker.innerHTML = `<p class="slot-picker-hint">Chọn ngày hẹn ở trên để xem khung giờ còn trống.</p>`;
+            }
+        });
+
+        // ---------- Hãng xe / Dòng xe (2 mục chọn theo tầng, có "Khác" cho khách tự gõ) ----------
+        const bkCarBrand = document.getElementById('bkCarBrand');
+        const bkCarBrandOther = document.getElementById('bkCarBrandOther');
+        const bkCarModel = document.getElementById('bkCarModel');
+        const bkCarModelOther = document.getElementById('bkCarModelOther');
+
+        Object.keys(CAR_DATA).sort((a, b) => a.localeCompare(b, 'vi')).forEach(brand => {
+            bkCarBrand.insertAdjacentHTML('beforeend', `<option value="${brand}">${brand}</option>`);
+        });
+        bkCarBrand.insertAdjacentHTML('beforeend', `<option value="Khác">Khác</option>`);
+
+        function resetCarModelSelect(placeholder) {
+            bkCarModel.innerHTML = `<option value="">${placeholder}</option>`;
+        }
+
+        bkCarBrand.addEventListener('change', () => {
+            const brand = bkCarBrand.value;
+            bkCarBrandOther.hidden = brand !== 'Khác';
+            if (brand !== 'Khác') bkCarBrandOther.value = '';
+
+            if (!brand) {
+                bkCarModel.hidden = false;
+                bkCarModel.disabled = true;
+                bkCarModelOther.hidden = true;
+                bkCarModelOther.value = '';
+                resetCarModelSelect('-- Chọn hãng xe trước --');
+                return;
+            }
+
+            if (brand === 'Khác') {
+                // Hãng không có trong danh sách gợi ý -> không có dữ liệu dòng xe để gợi ý theo,
+                // cho khách gõ tay thẳng thay vì bắt chọn "Khác" thêm 1 lần nữa trong select rỗng.
+                bkCarModel.hidden = true;
+                bkCarModel.disabled = true;
+                resetCarModelSelect('-- Chọn hãng xe trước --');
+                bkCarModelOther.hidden = false;
+                return;
+            }
+
+            bkCarModel.hidden = false;
+            bkCarModel.disabled = false;
+            bkCarModelOther.hidden = true;
+            bkCarModelOther.value = '';
+            resetCarModelSelect('-- Chọn dòng xe --');
+            (CAR_DATA[brand] || []).forEach(model => {
+                bkCarModel.insertAdjacentHTML('beforeend', `<option value="${model}">${model}</option>`);
+            });
+            bkCarModel.insertAdjacentHTML('beforeend', `<option value="Khác">Khác</option>`);
+        });
+
+        bkCarModel.addEventListener('change', () => {
+            bkCarModelOther.hidden = bkCarModel.value !== 'Khác';
+            if (bkCarModel.value !== 'Khác') bkCarModelOther.value = '';
+        });
+
+        function resolvedCarBrand() {
+            return (bkCarBrand.value === 'Khác' ? bkCarBrandOther.value : bkCarBrand.value).trim();
+        }
+        function resolvedCarModel() {
+            if (bkCarModel.hidden) return bkCarModelOther.value.trim();
+            return (bkCarModel.value === 'Khác' ? bkCarModelOther.value : bkCarModel.value).trim();
+        }
 
         // Zalo cá nhân (không phải Official Account) không cho gửi tin nhắn tự động qua API,
         // nên giải pháp khả thi là: soạn sẵn nội dung đặt lịch, copy vào clipboard, rồi mở khung
@@ -311,7 +429,8 @@
                 `Ngày hẹn: ${data.preferred_date}`,
                 `Khung giờ: ${data.preferred_time}`
             ];
-            if (data.car) lines.push(`Dòng xe: ${data.car}`);
+            const carText = [data.car_brand, data.car_model].filter(Boolean).join(' ');
+            if (carText) lines.push(`Dòng xe: ${carText}`);
             if (data.message) lines.push(`Ghi chú: ${data.message}`);
             return lines.join('\n');
         }
@@ -336,7 +455,8 @@
             selectedSlot = null;
             slotPicker.innerHTML = `<p class="slot-picker-hint">Đang tải khung giờ...</p>`;
             try {
-                const res = await fetch(`${API_BASE_URL}/api/contacts/availability?date=${encodeURIComponent(date)}`);
+                const typeParam = isWashPromoSelected() ? '&type=wash_promo' : '';
+                const res = await fetch(`${API_BASE_URL}/api/contacts/availability?date=${encodeURIComponent(date)}${typeParam}`);
                 if (!res.ok) throw new Error();
                 const data = await res.json();
                 slotPicker.innerHTML = data.slots.map(slotButtonHtml).join('');
@@ -381,12 +501,14 @@
                 type: 'booking',
                 name: document.getElementById('bkName').value.trim(),
                 phone: document.getElementById('bkPhone').value.trim(),
-                service: document.getElementById('bkService').value,
+                service: bkService.value,
                 preferred_date: bkDateInput.value,
                 preferred_time: selectedSlot,
-                car: document.getElementById('bkCar').value.trim(),
+                car_brand: resolvedCarBrand(),
+                car_model: resolvedCarModel(),
                 message: document.getElementById('bkNote').value.trim(),
-                recaptcha_token: recaptchaToken
+                recaptcha_token: recaptchaToken,
+                slot_type: isWashPromoSelected() ? 'wash_promo' : undefined
             };
 
             const submitBtn = bookingForm.querySelector('button[type="submit"]');

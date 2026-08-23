@@ -16,6 +16,7 @@
         .slot-card .slot-customer { font-size: 12.5px; padding: 4px 0; border-top: 1px solid var(--border); }
         .slot-card .slot-customer:first-of-type { border-top: none; }
         .slot-card .slot-empty { font-size: 12.5px; color: var(--text-muted); font-style: italic; }
+        .slot-grid-heading { font-size: 15px; margin: 0 0 12px; }
     </style>
 </head>
 <body>
@@ -103,7 +104,7 @@
                     <td>${TYPE_LABEL[c.type] || "Liên hệ"}</td>
                     <td>${escapeHtml(c.name)}${c.message ? `<div class="form-hint">${escapeHtml(c.message)}</div>` : ""}</td>
                     <td><a href="tel:${encodeURIComponent(c.phone)}">${escapeHtml(c.phone)}</a></td>
-                    <td>${escapeHtml(c.service) || "-"}${c.preferred_date ? `<div class="form-hint">${escapeHtml(c.preferred_date)} ${escapeHtml(c.preferred_time || "")}</div>` : ""}</td>
+                    <td>${escapeHtml(c.service) || "-"}${c.preferred_date ? `<div class="form-hint">${escapeHtml(c.preferred_date)} ${escapeHtml(c.preferred_time || "")}</div>` : ""}${(c.car_brand || c.car_model) ? `<div class="form-hint">${escapeHtml([c.car_brand, c.car_model].filter(Boolean).join(" "))}</div>` : ""}</td>
                     <td>${formatDateTime(c.created_at)}</td>
                     <td>
                         <select class="status-select" data-id="${c.id}">
@@ -126,6 +127,28 @@
             });
         }
 
+        // Khuyến mãi "Trải nghiệm dịch vụ rửa xe miễn phí" (5 ngày đầu khai trương) dùng bộ khung
+        // giờ RIÊNG (?type=wash_promo) - khớp WASH_PROMO_START_DATE/END_DATE trong
+        // duchieuauto-backend/routes/contacts.js. Ngoài đúng 5 ngày này thì không cần hiện khung
+        // giờ rửa xe (không có gì để đặt).
+        const WASH_PROMO_START_DATE = "2026-09-15";
+        const WASH_PROMO_END_DATE = "2026-09-19";
+
+        function slotGridSectionHtml(title, data, bookingsForDate) {
+            const cards = data.slots.map(s => {
+                const customers = bookingsForDate.filter(c => c.preferred_time === s.slot);
+                return `
+                    <div class="slot-card ${s.full ? "full" : ""}">
+                        <div class="slot-time">${s.slot}</div>
+                        <div class="slot-count">${s.booked}/${data.capacity} chỗ đã đặt${s.full ? " - Đầy" : ""}</div>
+                        ${customers.length
+                            ? customers.map(c => `<div class="slot-customer"><strong>${escapeHtml(c.name)}</strong> - <a href="tel:${encodeURIComponent(c.phone)}">${escapeHtml(c.phone)}</a></div>`).join("")
+                            : `<div class="slot-empty">Còn trống</div>`}
+                    </div>`;
+            }).join("");
+            return `<h3 class="slot-grid-heading">${title}</h3><div class="slot-grid">${cards}</div>`;
+        }
+
         // Xem lịch đặt hẹn trực quan theo 1 ngày cụ thể thay vì phải dò trong danh sách phẳng sắp
         // theo thời gian GỬI form (không phải thời gian HẸN) - dùng lại đúng endpoint /availability
         // đã có sẵn cho trang đặt lịch công khai để lấy sức chứa/số đã đặt mỗi khung giờ, ghép thêm
@@ -137,21 +160,16 @@
 
             grid.innerHTML = loadingHintHtml();
             try {
-                const res = await apiFetch(`/api/contacts/availability?date=${encodeURIComponent(date)}`);
-                const data = await res.json();
                 const bookingsForDate = lastContacts.filter(c => c.type === "booking" && c.preferred_date === date);
+                const normalRes = await apiFetch(`/api/contacts/availability?date=${encodeURIComponent(date)}`);
+                let html = slotGridSectionHtml("Khung giờ thi công", await normalRes.json(), bookingsForDate);
 
-                grid.innerHTML = data.slots.map(s => {
-                    const customers = bookingsForDate.filter(c => c.preferred_time === s.slot);
-                    return `
-                        <div class="slot-card ${s.full ? "full" : ""}">
-                            <div class="slot-time">${s.slot}</div>
-                            <div class="slot-count">${s.booked}/${data.capacity} chỗ đã đặt${s.full ? " - Đầy" : ""}</div>
-                            ${customers.length
-                                ? customers.map(c => `<div class="slot-customer"><strong>${escapeHtml(c.name)}</strong> - <a href="tel:${encodeURIComponent(c.phone)}">${escapeHtml(c.phone)}</a></div>`).join("")
-                                : `<div class="slot-empty">Còn trống</div>`}
-                        </div>`;
-                }).join("");
+                if (date >= WASH_PROMO_START_DATE && date <= WASH_PROMO_END_DATE) {
+                    const washRes = await apiFetch(`/api/contacts/availability?date=${encodeURIComponent(date)}&type=wash_promo`);
+                    html += slotGridSectionHtml("Khung giờ - Trải nghiệm rửa xe miễn phí", await washRes.json(), bookingsForDate);
+                }
+
+                grid.innerHTML = html;
             } catch (err) {
                 grid.innerHTML = `<p class="form-hint">Không tải được lịch ngày này.</p>`;
             }
@@ -183,11 +201,11 @@
         // UTF-8 đầu file để không lỗi font tiếng Việt khi mở bằng Excel - giống cách làm ở san-pham.html.
         function exportCsv() {
             if (lastContacts.length === 0) return showToast("Không có dữ liệu để xuất", true);
-            const rows = [["Loại", "Khách hàng", "SĐT", "Dịch vụ", "Ngày hẹn", "Giờ hẹn", "Ghi chú", "Thời gian gửi", "Trạng thái"]];
+            const rows = [["Loại", "Khách hàng", "SĐT", "Dịch vụ", "Ngày hẹn", "Giờ hẹn", "Hãng xe", "Dòng xe", "Ghi chú", "Thời gian gửi", "Trạng thái"]];
             lastContacts.forEach(c => {
                 rows.push([
                     TYPE_LABEL[c.type] || "Liên hệ", c.name, c.phone, c.service || "",
-                    c.preferred_date || "", c.preferred_time || "", c.message || "",
+                    c.preferred_date || "", c.preferred_time || "", c.car_brand || "", c.car_model || "", c.message || "",
                     formatDateTime(c.created_at), STATUS_LABEL[c.status] || c.status
                 ]);
             });

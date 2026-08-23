@@ -332,6 +332,17 @@ const ready = (async () => {
     if (!categoryColumnsCheck.includes("seo_h1")) {
         await exec("ALTER TABLE categories ADD COLUMN seo_h1 TEXT");
     }
+
+    // Migration tương tự cho "contacts" - thêm "car_brand"/"car_model" (tách riêng hãng/dòng xe thay
+    // vì trước đây form đặt lịch có gửi lên 1 trường "car" tự do nhưng route POST /api/contacts chưa
+    // từng đọc/lưu field này - phát hiện lúc làm tính năng chọn hãng/dòng xe 2026-08-21.
+    const contactColumnsCheck = (await prepare("PRAGMA table_info(contacts)").all()).map(c => c.name);
+    if (!contactColumnsCheck.includes("car_brand")) {
+        await exec("ALTER TABLE contacts ADD COLUMN car_brand TEXT");
+    }
+    if (!contactColumnsCheck.includes("car_model")) {
+        await exec("ALTER TABLE contacts ADD COLUMN car_model TEXT");
+    }
 })();
 
 module.exports = { prepare, exec, logActivity, ready };

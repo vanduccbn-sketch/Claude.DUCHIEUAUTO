@@ -22,19 +22,50 @@ const BOOKING_SLOTS = [
 ];
 const DEFAULT_SLOT_CAPACITY = 2; // Số lịch hẹn tối đa/khung giờ nếu chưa cấu hình riêng trong Cấu Hình
 
-async function getSlotCapacity() {
-    const row = await db.prepare("SELECT value FROM settings WHERE key = 'booking_slot_capacity'").get();
-    const n = parseInt(row && row.value, 10);
-    return Number.isFinite(n) && n > 0 ? n : DEFAULT_SLOT_CAPACITY;
+// Khuyến mãi "Trải nghiệm dịch vụ rửa xe miễn phí" (5 ngày đầu khai trương) - khung giờ RIÊNG,
+// ngắn hơn (45 phút, khớp thời gian rửa 1 xe) và chạy liên tục 8:00-18:00 KHÔNG nghỉ trưa (khác
+// khung giờ thi công thường ở trên), vì đây là dịch vụ riêng biệt có thể bố trí nhân sự khác.
+// 600 phút (8:00-18:00) / 45 phút = 13 khung tối đa, khung cuối kết thúc 17:45 (còn dư 15 phút
+// trước giờ đóng cửa, không đủ chỗ cho khung thứ 14).
+const WASH_PROMO_SLOTS = [
+    "8:00 - 8:45", "8:45 - 9:30", "9:30 - 10:15", "10:15 - 11:00",
+    "11:00 - 11:45", "11:45 - 12:30", "12:30 - 13:15", "13:15 - 14:00",
+    "14:00 - 14:45", "14:45 - 15:30", "15:30 - 16:15", "16:15 - 17:00", "17:00 - 17:45"
+];
+// Chuỗi ISO YYYY-MM-DD so sánh trực tiếp bằng toán tử chuỗi vẫn đúng thứ tự thời gian - không cần
+// parse Date. Chặn CẢ backend (không chỉ ẩn/giới hạn trên giao diện) - khách gọi thẳng API vẫn
+// không đặt được lịch ngoài đúng 5 ngày khuyến mãi.
+const WASH_PROMO_START_DATE = "2026-09-15";
+const WASH_PROMO_END_DATE = "2026-09-19";
+const DEFAULT_WASH_PROMO_CAPACITY = 1; // Quà tặng khai trương số lượng có hạn - mặc định 1 xe/khung giờ
+
+function isWithinWashPromoWindow(date) {
+    return date >= WASH_PROMO_START_DATE && date <= WASH_PROMO_END_DATE;
 }
 
-// GET /api/contacts/availability?date=YYYY-MM-DD - public, cho trang đặt lịch biết khung giờ nào
-// còn chỗ trước khi khách chọn, tránh nhiều khách chọn trùng 1 khung giờ đã đầy.
+async function getCapacityFromSettings(key, defaultVal) {
+    const row = await db.prepare("SELECT value FROM settings WHERE key = ?").get(key);
+    const n = parseInt(row && row.value, 10);
+    return Number.isFinite(n) && n > 0 ? n : defaultVal;
+}
+async function getSlotCapacity() { return getCapacityFromSettings("booking_slot_capacity", DEFAULT_SLOT_CAPACITY); }
+async function getWashPromoCapacity() { return getCapacityFromSettings("wash_promo_slot_capacity", DEFAULT_WASH_PROMO_CAPACITY); }
+
+// GET /api/contacts/availability?date=YYYY-MM-DD[&type=wash_promo] - public, cho trang đặt lịch
+// biết khung giờ nào còn chỗ trước khi khách chọn, tránh nhiều khách chọn trùng 1 khung giờ đã đầy.
+// "type=wash_promo" chuyển sang đúng bộ khung giờ/sức chứa riêng của khuyến mãi rửa xe miễn phí -
+// cờ RIÊNG (không dò theo chữ "service") để đổi câu chữ hiển thị sau này không làm gãy logic.
 router.get("/availability", async (req, res) => {
-    const { date } = req.query;
+    const { date, type } = req.query;
     if (!date) return res.status(400).json({ error: "Thiếu ngày cần kiểm tra" });
 
-    const capacity = await getSlotCapacity();
+    const isWashPromo = type === "wash_promo";
+    if (isWashPromo && !isWithinWashPromoWindow(date)) {
+        return res.status(400).json({ error: "Ngày ngoài khoảng thời gian khuyến mãi rửa xe miễn phí (15/09 - 19/09/2026)" });
+    }
+
+    const slots = isWashPromo ? WASH_PROMO_SLOTS : BOOKING_SLOTS;
+    const capacity = isWashPromo ? await getWashPromoCapacity() : await getSlotCapacity();
     const rows = await db.prepare(
         "SELECT preferred_time, COUNT(*) as booked FROM contacts WHERE type = 'booking' AND preferred_date = ? GROUP BY preferred_time"
     ).all(date);
@@ -43,7 +74,7 @@ router.get("/availability", async (req, res) => {
 
     res.json({
         capacity,
-        slots: BOOKING_SLOTS.map(slot => ({
+        slots: slots.map(slot => ({
             slot,
             booked: bookedMap[slot] || 0,
             full: (bookedMap[slot] || 0) >= capacity
@@ -53,7 +84,7 @@ router.get("/availability", async (req, res) => {
 
 // POST /api/contacts - nhận form liên hệ / đặt lịch hẹn từ frontend (public)
 router.post("/", async (req, res) => {
-    const { type, name, phone, email, service, preferred_date, preferred_time, message, recaptcha_token } = req.body;
+    const { type, name, phone, email, service, preferred_date, preferred_time, car_brand, car_model, message, recaptcha_token, slot_type } = req.body;
 
     if (!name || !phone) {
         return res.status(400).json({ error: "Thiếu họ tên hoặc số điện thoại" });
@@ -64,6 +95,7 @@ router.post("/", async (req, res) => {
     }
 
     const isBooking = type === "booking";
+    const isWashPromo = slot_type === "wash_promo";
     // "maintenance" = đăng ký nhắc bảo dưỡng định kỳ - tái dùng nguyên bảng/API contacts (cùng bản
     // chất "khách để lại thông tin, admin theo dõi/liên hệ lại") thay vì tạo bảng riêng gần như
     // giống hệt. Hiện chưa có cơ chế TỰ ĐỘNG gửi nhắc (email/SMS) - admin xem danh sách và chủ động
@@ -72,12 +104,17 @@ router.post("/", async (req, res) => {
     const resolvedType = VALID_TYPES.includes(type) ? type : "contact";
 
     // Chặn trùng lịch ngay ở server (không chỉ dựa vào UI đã disable) - phòng trường hợp 2 khách
-    // cùng gửi gần như đồng thời trước khi UI kịp cập nhật lại trạng thái đầy chỗ.
+    // cùng gửi gần như đồng thời trước khi UI kịp cập nhật lại trạng thái đầy chỗ. Khuyến mãi rửa
+    // xe miễn phí dùng bộ khung giờ/sức chứa/khoảng ngày RIÊNG (xem WASH_PROMO_* ở trên).
     if (isBooking && preferred_date && preferred_time) {
-        if (!BOOKING_SLOTS.includes(preferred_time)) {
+        const validSlots = isWashPromo ? WASH_PROMO_SLOTS : BOOKING_SLOTS;
+        if (!validSlots.includes(preferred_time)) {
             return res.status(400).json({ error: "Khung giờ không hợp lệ" });
         }
-        const capacity = await getSlotCapacity();
+        if (isWashPromo && !isWithinWashPromoWindow(preferred_date)) {
+            return res.status(400).json({ error: "Ngày ngoài khoảng thời gian khuyến mãi rửa xe miễn phí (15/09 - 19/09/2026)" });
+        }
+        const capacity = isWashPromo ? await getWashPromoCapacity() : await getSlotCapacity();
         const current = await db.prepare(
             "SELECT COUNT(*) as c FROM contacts WHERE type = 'booking' AND preferred_date = ? AND preferred_time = ?"
         ).get(preferred_date, preferred_time);
@@ -87,8 +124,8 @@ router.post("/", async (req, res) => {
     }
 
     const info = await db.prepare(`
-        INSERT INTO contacts (type, name, phone, email, service, preferred_date, preferred_time, message)
-        VALUES (@type, @name, @phone, @email, @service, @preferred_date, @preferred_time, @message)
+        INSERT INTO contacts (type, name, phone, email, service, preferred_date, preferred_time, car_brand, car_model, message)
+        VALUES (@type, @name, @phone, @email, @service, @preferred_date, @preferred_time, @car_brand, @car_model, @message)
     `).run({
         type: resolvedType,
         name, phone,
@@ -96,6 +133,8 @@ router.post("/", async (req, res) => {
         service: service || null,
         preferred_date: preferred_date || null,
         preferred_time: preferred_time || null,
+        car_brand: car_brand || null,
+        car_model: car_model || null,
         message: message || null
     });
 

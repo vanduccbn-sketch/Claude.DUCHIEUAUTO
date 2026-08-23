@@ -186,6 +186,12 @@
     background-color: var(--white);
 }
 
+/* Ô "Khác" (Hãng xe/Dòng xe) nằm ngay dưới select trong cùng .form-group - .form-group không có
+   gap giữa các con, cần margin-top riêng khi ô này hiện ra (bỏ [hidden] để tránh chọn cả lúc ẩn). */
+.booking-form .form-group select + input:not([hidden]) {
+    margin-top: 8px;
+}
+
 .booking-form button {
     display: inline-flex;
     align-items: center;

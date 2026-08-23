@@ -20,7 +20,8 @@ const ALLOWED_KEYS = [
     "social_youtube",
     "seo_default_title",
     "seo_default_description",
-    "booking_slot_capacity"
+    "booking_slot_capacity",
+    "wash_promo_slot_capacity"
 ];
 
 // GET /api/settings - public (trang công khai cần đọc mã GA/Pixel/social links để hiển thị,

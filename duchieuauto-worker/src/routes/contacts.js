@@ -3,7 +3,7 @@
  */
 import { Hono } from "hono";
 import { requireRole } from "../middleware/auth.js";
-import { verifyRecaptcha } from "../utils/verify-recaptcha.js";
+import { verifyTurnstile } from "../utils/verify-turnstile.js";
 
 const canViewContacts = requireRole();
 
@@ -79,8 +79,8 @@ app.post("/", async (c) => {
         return c.json({ error: "Thiếu họ tên hoặc số điện thoại" }, 400);
     }
 
-    if (!(await verifyRecaptcha(recaptcha_token, c.env))) {
-        return c.json({ error: "Xác thực reCAPTCHA thất bại, vui lòng thử lại" }, 400);
+    if (!(await verifyTurnstile(recaptcha_token, c.env))) {
+        return c.json({ error: "Xác thực bảo mật thất bại, vui lòng thử lại" }, 400);
     }
 
     const db = c.get("db");

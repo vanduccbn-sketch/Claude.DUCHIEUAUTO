@@ -3,7 +3,7 @@
  */
 import { Hono } from "hono";
 import { requireRole } from "../middleware/auth.js";
-import { verifyRecaptcha } from "../utils/verify-recaptcha.js";
+import { verifyTurnstile } from "../utils/verify-turnstile.js";
 
 const canModerateReviews = requireRole("content", "super_admin");
 
@@ -34,8 +34,8 @@ app.post("/", async (c) => {
     if (!Number.isInteger(ratingNum) || ratingNum < 1 || ratingNum > 5) {
         return c.json({ error: "Số sao phải từ 1 đến 5" }, 400);
     }
-    if (!(await verifyRecaptcha(recaptcha_token, c.env))) {
-        return c.json({ error: "Xác thực reCAPTCHA thất bại, vui lòng thử lại" }, 400);
+    if (!(await verifyTurnstile(recaptcha_token, c.env))) {
+        return c.json({ error: "Xác thực bảo mật thất bại, vui lòng thử lại" }, 400);
     }
 
     const db = c.get("db");

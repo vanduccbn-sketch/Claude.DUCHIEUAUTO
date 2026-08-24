@@ -1008,9 +1008,9 @@ async function initProductReviews(productId) {
             return;
         }
 
-        const recaptchaToken = typeof grecaptcha !== "undefined" ? grecaptcha.getResponse() : "";
+        const recaptchaToken = typeof turnstile !== "undefined" ? turnstile.getResponse() : "";
         if (!recaptchaToken) {
-            errorEl.textContent = 'Vui lòng xác nhận reCAPTCHA "Tôi không phải người máy".';
+            errorEl.textContent = 'Vui lòng xác nhận bạn không phải người máy.';
             errorEl.hidden = false;
             return;
         }
@@ -1039,7 +1039,7 @@ async function initProductReviews(productId) {
         } catch (err) {
             errorEl.textContent = err.message;
             errorEl.hidden = false;
-            if (typeof grecaptcha !== "undefined") grecaptcha.reset();
+            if (typeof turnstile !== "undefined") turnstile.reset();
         } finally {
             submitBtn.disabled = false;
         }

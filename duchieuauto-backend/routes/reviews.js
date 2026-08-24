@@ -1,7 +1,7 @@
 const express = require("express");
 const db = require("../models/db");
 const { requireRole } = require("../middleware/auth");
-const { verifyRecaptcha } = require("../utils/verify-recaptcha");
+const { verifyTurnstile } = require("../utils/verify-turnstile");
 
 const router = express.Router();
 
@@ -37,8 +37,8 @@ router.post("/", async (req, res) => {
     if (!Number.isInteger(ratingNum) || ratingNum < 1 || ratingNum > 5) {
         return res.status(400).json({ error: "Số sao phải từ 1 đến 5" });
     }
-    if (!(await verifyRecaptcha(recaptcha_token))) {
-        return res.status(400).json({ error: "Xác thực reCAPTCHA thất bại, vui lòng thử lại" });
+    if (!(await verifyTurnstile(recaptcha_token))) {
+        return res.status(400).json({ error: "Xác thực bảo mật thất bại, vui lòng thử lại" });
     }
 
     const product = await db.prepare("SELECT id FROM products WHERE id = ?").get(product_id);

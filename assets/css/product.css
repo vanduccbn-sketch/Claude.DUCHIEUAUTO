@@ -108,3 +108,39 @@
     .swiper-button-next, .swiper-button-prev { top: 95px; width: 32px; height: 32px; background-color: rgba(21, 23, 28, 0.4); }
     .swiper-button-next:after, .swiper-button-prev:after { font-size: 12px; }
 }
+
+/* ================================================================
+   DI ĐỘNG (≤767px): 3 khối thẻ trang chủ (Dịch Vụ Chuyên Nghiệp / Sản Phẩm Chiến Lược /
+   Giải Mã Công Nghệ) KHÔNG dùng slider nữa - hiển thị hết thẻ dạng xếp dọc, không phải vuốt.
+   JS (index.html) không khởi tạo Swiper ở kích thước này; CSS dưới đây dựng lại layout lưới.
+   ================================================================ */
+@media (max-width: 767px) {
+    .service-slider, .product-slider, .tech-slider { overflow: visible !important; padding-bottom: 0; }
+    .service-slider .swiper-wrapper,
+    .product-slider .swiper-wrapper,
+    .tech-slider .swiper-wrapper {
+        display: grid !important;
+        grid-template-columns: 1fr;
+        gap: 16px;
+        transform: none !important;
+        width: auto !important;
+        height: auto !important;
+        transition: none !important;
+    }
+    .service-slider .swiper-slide,
+    .product-slider .swiper-slide,
+    .tech-slider .swiper-slide {
+        width: auto !important;
+        margin: 0 !important;
+        height: auto;
+    }
+    .service-slider .swiper-pagination,
+    .product-slider .swiper-pagination,
+    .tech-slider .swiper-pagination,
+    .service-slider .swiper-button-next, .service-slider .swiper-button-prev,
+    .product-slider .swiper-button-next, .product-slider .swiper-button-prev,
+    .tech-slider .swiper-button-next, .tech-slider .swiper-button-prev,
+    .service-slider .swipe-hint,
+    .product-slider .swipe-hint,
+    .tech-slider .swipe-hint { display: none !important; }
+}

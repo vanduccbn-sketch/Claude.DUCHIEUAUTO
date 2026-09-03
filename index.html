@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Đức Hiếu Auto | Nâng Cấp & Chăm Sóc Xe Chuyên Nghiệp</title>
     <meta name="description" content="Đức Hiếu Auto - Trung tâm nâng cấp và chăm sóc ô tô chuyên nghiệp tại Buôn Ma Thuột, Đắk Lắk. Màn hình, âm thanh, phim cách nhiệt, PPF, đèn LED - dịch vụ uy tín, chất lượng hàng đầu.">
     <meta property="og:title" content="Đức Hiếu Auto | Nâng Cấp & Chăm Sóc Xe Chuyên Nghiệp">
@@ -147,8 +147,8 @@
                 <div class="overlay"></div>
             </div>
             <div class="container hero-content">
-                <span class="subtitle" id="heroSubtitle" data-content-key="hero_subtitle" data-aos="fade-up">Premium Automotive Upgrade</span>
-                <h1 class="title" data-aos="fade-up" data-aos-delay="100"><span id="heroTitleLine1" data-content-key="hero_title_line1">ĐỊNH HÌNH PHONG CÁCH</span> <br><span class="text-primary" id="heroTitleLine2" data-content-key="hero_title_line2">ĐẲNG CẤP XẾ YÊU</span></h1>
+                <span class="subtitle" id="heroSubtitle" data-content-key="hero_subtitle" data-aos="fade-up">Nâng Cấp & Chăm Sóc Ô Tô</span>
+                <h1 class="title" data-aos="fade-up" data-aos-delay="100"><span id="heroTitleLine1" data-content-key="hero_title_line1">ĐỊNH HÌNH PHONG CÁCH</span> <br><span class="text-primary" id="heroTitleLine2" data-content-key="hero_title_line2">GHI DẤU CHẤT RIÊNG</span></h1>
                 <p class="desc" id="heroDescription" data-content-key="hero_description" data-aos="fade-up" data-aos-delay="200">Trung tâm chăm sóc và nâng cấp ô tô chuyên nghiệp hàng đầu.</p>
                 <div class="hero-buttons" data-aos="fade-up" data-aos-delay="300">
                     <a href="#service" class="btn btn-primary">Khám Phá Dịch Vụ</a>
@@ -425,7 +425,6 @@
         </button>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script src="assets/js/api-config.js"></script>
@@ -436,6 +435,7 @@
     <script src="assets/js/catalog-data.js"></script>
     <script src="assets/js/catalog-render.js"></script>
     <script src="assets/js/site-search.js"></script>
+    <script src="assets/js/site-ui.js"></script>
     <script>
         // Render danh sách dịch vụ theo nhóm: Nội Thất / Ngoại Thất / Đồ Bán Tải (link ra trang riêng, không còn popup)
         // [Phase 7] renderServiceGrid gọi API bất đồng bộ - giữ lại promise để gọi Swiper.update()
@@ -547,6 +547,7 @@
         renderServiceGridPromise.then(() => {
             serviceSwiper.update();
             updateSwipeHint(serviceSwiper);
+            syncHomeSliderMode();
         });
 
         const techSwiper = new Swiper('.tech-slider', {
@@ -566,7 +567,23 @@
             updateSwipeHint(productSwiper);
             techSwiper.update();
             updateSwipeHint(techSwiper);
+            syncHomeSliderMode();
         });
+
+        // Di động (≤767px): 3 slider trang chủ hiển thị HẾT thẻ dạng xếp dọc (CSS lo phần layout),
+        // ở đây chỉ tắt vuốt-ngang của Swiper để nó không "bắt" thao tác cuộn dọc của người dùng.
+        // Xoay ngang máy / phóng to lại >767px thì bật vuốt trở lại và cho Swiper tính lại kích thước.
+        const homePhoneMQ = window.matchMedia('(max-width: 767px)');
+        function syncHomeSliderMode() {
+            const stacked = homePhoneMQ.matches;
+            [productSwiper, serviceSwiper, techSwiper].forEach((s) => {
+                if (!s || s.destroyed) return;
+                s.allowTouchMove = !stacked;
+                s.update();
+            });
+        }
+        homePhoneMQ.addEventListener('change', syncHomeSliderMode);
+        syncHomeSliderMode();
 
         // Toggle menu mobile
         const menuToggle = document.querySelector('.menu-toggle');

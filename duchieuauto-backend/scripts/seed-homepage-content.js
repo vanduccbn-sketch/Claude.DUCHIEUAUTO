@@ -8,9 +8,9 @@ require("dotenv").config();
 const db = require("../models/db");
 
 const SEED_VALUES = {
-    hero_subtitle: "Premium Automotive Upgrade",
+    hero_subtitle: "Nâng Cấp & Chăm Sóc Ô Tô",
     hero_title_line1: "ĐỊNH HÌNH PHONG CÁCH",
-    hero_title_line2: "ĐẲNG CẤP XẾ YÊU",
+    hero_title_line2: "GHI DẤU CHẤT RIÊNG",
     hero_description: "Trung tâm chăm sóc và nâng cấp ô tô chuyên nghiệp hàng đầu.",
     hero_poster_image: "assets/images/nen1.webp",
 

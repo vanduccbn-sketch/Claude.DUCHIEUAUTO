@@ -739,6 +739,57 @@ Chromium riêng) để xác nhận từng bug trước khi deploy/push.
   lưu -> xác nhận trang công khai hiển thị đúng cả H1 tuỳ chỉnh lẫn nội dung định dạng, sau đó khôi
   phục lại đúng dữ liệu gốc của danh mục thật đã dùng để test.
 
+## Việc đã làm (2026-09-02) — Audit giao diện mobile trang chủ + sửa theo chuẩn UX
+
+User gửi 8 ảnh chụp `duchieuauto.vn` trên iPhone (Safari) và yêu cầu rà theo chuẩn thiết kế web,
+sửa trong repo. Đã đọc lại `Thông tin/*.md` trước khi làm, ghi chú vào `Thông tin/viec-can-luu-y.md`.
+
+- [x] **Menu mobile bung ra chỉ cao bằng nội dung → hero lòi ra phía dưới, nền không mờ, trông rối.**
+  `assets/css/header.css`: đổi `.main-nav` (≤991px) từ `max-height: calc(100vh - 100%)` (chỉ giới
+  hạn trên, để menu co theo nội dung) sang `height: calc(100dvh - 100%)` — phủ kín toàn bộ vùng dưới
+  header, nền `var(--dark)` đặc. Dùng `dvh` (fallback `vh`) để không nhảy layout khi thanh địa chỉ
+  Safari ẩn/hiện. Thêm `overscroll-behavior: contain`.
+- [x] **Menu mobile không khoá cuộn nền, không tự đóng khi bấm link, hamburger không đổi thành X,
+  thiếu `aria-expanded`.** Thêm file dùng chung mới `assets/js/site-ui.js` (nạp trên MỌI trang, ngay
+  sau `site-search.js`). Nó KHÔNG tự gắn sự kiện mở/đóng menu (việc đó do `<script>` inline sẵn của
+  từng trang lo — gắn 2 lần sẽ triệt tiêu nhau) mà chỉ dùng `MutationObserver` theo dõi class
+  `.main-nav.active` rồi bổ sung: gắn `.nav-open` lên `<html>` (CSS `html.nav-open { overflow: hidden }`
+  khoá cuộn nền), đổi icon `fa-bars` ↔ `fa-xmark`, cập nhật `aria-expanded`/`aria-label`, đóng menu
+  khi bấm vào `<a href>` bên trong hoặc nhấn Esc, tự bỏ trạng thái khi resize lên ≥992px.
+- [x] **Header dính khi cuộn để nền quá trong (`rgba(21,23,28,0.32)` + blur 3px) → chữ/section phía
+  sau lộ mờ xuyên qua, trông như lỗi hiển thị** (thấy rõ ở ảnh khối "Công Nghệ" và "Liên Hệ").
+  `header.css`: `#header.scrolled` tăng lên `rgba(21,23,28,0.72)` + blur 8px — vẫn nhẹ hơn lúc chưa
+  cuộn nhưng luôn đọc rõ.
+- [x] **Quá nhiều nút nổi chồng nhau ở góc phải-dưới; dính sát thanh Safari; đè chữ dòng bản quyền ở
+  footer.** `assets/css/main.css`: thêm `env(safe-area-inset-bottom)` vào `bottom` của `.back-to-top`
+  và `.quick-contact` (cả bản desktop lẫn ≤768px). `assets/css/footer.css`: thêm `padding-bottom`
+  cho `.footer-bottom` trên ≤768px để nút không che dòng "© 2026...". Thêm `viewport-fit=cover` vào
+  thẻ `<meta name="viewport">` của **tất cả 13 trang** để `env(safe-area-*)` có tác dụng trên iPhone
+  có notch. (Widget liên hệ nhanh vẫn thu gọn sẵn trên mobile như trước.)
+- [x] **Vi phạm brand-style (từ cấm "đẳng cấp", chữ tiếng Anh "Premium Automotive Upgrade").**
+  `index.html`: hero `hero_subtitle` "Premium Automotive Upgrade" → "Nâng Cấp & Chăm Sóc Ô Tô";
+  `hero_title_line2` "ĐẲNG CẤP XẾ YÊU" → "GHI DẤU CHẤT RIÊNG". Đồng bộ giá trị mặc định ở
+  `duchieuauto-backend/scripts/seed-homepage-content.js` và placeholder ở cả 2 bản
+  `admin/trang-chu.html` (backend + worker). `assets/js/catalog-data.js`: mô tả Oracal 970-704
+  "vẻ ngoài đẳng cấp" → "vẻ ngoài sang trọng".
+  **Các key này do CMS quản (`data-content-key`) — sửa code chỉ đổi mặc định/fallback.**
+- [x] **Phụ:** bỏ thư viện `gsap` load ở `index.html` nhưng không nơi nào dùng (grep toàn repo chỉ
+  thấy đúng dòng `<script>`). Thêm `@media (prefers-reduced-motion: reduce)` vào `main.css` (tắt
+  scroll mượt / animation dài / marquee logo). Tăng contrast `.stat-label` (0.72rem/opacity .65 →
+  0.8rem/opacity .82) và hero `.desc` (thêm màu sáng hơn + `text-shadow`).
+- [x] Tăng `sw.js` `CACHE_NAME` `dha-static-v19` → `v20` (bắt buộc khi đổi CSS/JS/HTML).
+- [x] Kiểm thử: Chrome headless (390×844) chụp trang chủ + 1 bản test ép `.main-nav.active` —
+  xác nhận menu mobile phủ kín màn hình, nền đặc, không còn hero lộ phía sau. (Nội dung động
+  services/products không render offline do backend không chạy — chỉ kiểm phần bố cục/CSS.)
+
+- [ ] **User tự sửa nội dung hero THẬT trong admin** (`admin.duchieuauto.vn` → Trang Chủ): dòng nhỏ,
+  dòng tiêu đề 2, và đoạn mô tả About nếu bản đang chạy còn chữ "tuyệt vời" (ảnh chụp cho thấy có).
+  Code chỉ đổi được giá trị mặc định, không đổi được dữ liệu đã lưu trong Turso.
+- [ ] **Nên tải ảnh khối About về `assets/images/about/`** thay cho link ngoài
+  `images.unsplash.com/photo-1603584173870...` (`index.html` + seed) — link ngoài chậm, rủi ro mất
+  ảnh, không kiểm soát bản quyền.
+- [ ] Các sửa đổi trên đang ở local, **CHƯA commit / CHƯA push** — chờ user review.
+
 - [ ] **User cần xác nhận lỗi nhảy trang khi gõ tiếng Việt có dấu đã hết hẳn chưa** (2 fix đã lên
   live: `html { overflow-anchor: none }` + `spellcheck="false"` trên khung Quill) - không tái hiện
   được qua Puppeteer dù thử 8 cách, cần người dùng Unikey thật xác nhận trực tiếp.

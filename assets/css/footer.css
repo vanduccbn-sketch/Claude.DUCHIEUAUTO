@@ -17,6 +17,11 @@
 .contact-info li a, .contact-info li span, .contact-info li { overflow-wrap: break-word; word-break: break-word; }
 .contact-info li i { color: var(--primary); margin-top: 3px; width: 14px; flex-shrink: 0; }
 .footer-bottom { background-color: #0d0e12; padding: 20px 0; border-top: 1px solid rgba(255, 255, 255, 0.05); }
+/* Trên di động các nút nổi (liên hệ nhanh + lên đầu trang) nằm đè lên dòng bản quyền ở đáy -
+   chừa thêm khoảng trống để chữ không bị che (audit mobile 2026-09). */
+@media (max-width: 768px) {
+    .footer-bottom { padding-bottom: calc(84px + env(safe-area-inset-bottom, 0px)); }
+}
 .footer-bottom-inner { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
 .footer-bottom p { color: var(--gray); font-size: 13px; }
 .footer-credit { color: var(--gray); opacity: 0.7; }

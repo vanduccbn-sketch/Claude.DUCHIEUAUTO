@@ -190,16 +190,12 @@
         border-radius: 8px;
         transition: max-height 0.3s ease, margin-top 0.3s ease;
     }
-    /* Accordion "SẢN PHẨM": mặc định đóng, chỉ mở khi bấm (class .dropdown-open) */
-    .nav-dropdown:not(.nav-dropdown-mega) { max-height: 0; overflow: hidden; }
-    .has-dropdown.dropdown-open .nav-dropdown:not(.nav-dropdown-mega) { max-height: 1400px; margin-top: 10px; padding: 8px; }
+    /* Accordion: "Dịch Vụ" (mega) và "Sản Phẩm" đều mặc định đóng, bấm nút mũi tên mới xổ ra -
+       đồng bộ 2 mục, tránh menu quá dài khi "Dịch Vụ" luôn mở sẵn như trước. */
+    .nav-dropdown, .nav-dropdown-mega { max-height: 0; overflow: hidden; }
+    .has-dropdown.dropdown-open .nav-dropdown { max-height: 1400px; margin-top: 10px; padding: 8px 10px 4px; }
     .nav-dropdown-col { min-width: 0 !important; width: 100% !important; }
     .nav-dropdown-col + .nav-dropdown-col { border-left: none; padding-left: 0; border-top: 1px solid rgba(255, 255, 255, 0.08); margin-top: 6px; padding-top: 8px; }
-
-    /* "DỊCH VỤ" (mega menu): hiện sẵn TOÀN BỘ danh mục dịch vụ trên mobile, không cần bấm xổ.
-       "SẢN PHẨM" vẫn là accordion bấm-mới-mở. Desktop giữ nguyên mega menu hover như cũ. */
-    .has-mega-dropdown > .nav-item-row .nav-dropdown-toggle { display: none; }
-    .nav-dropdown-mega { max-height: none !important; overflow: visible !important; margin-top: 6px; padding: 8px 10px 4px; }
     .nav-dropdown-heading { padding: 4px 12px 10px; }
 
     /* Flyout thương hiệu chỉ hoạt động bằng hover (desktop) - trên mobile ẩn đi, chạm vào danh mục sẽ điều hướng thẳng */

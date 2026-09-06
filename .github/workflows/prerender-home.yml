@@ -1,0 +1,54 @@
+# Pre-render trang chủ (Phase 3B - kế hoạch tháng 9/2026)
+# Nạp index.html bằng Chrome thật, đợi JS render 4 khối động, ghi HTML đã render vào index.html
+# giữa các marker <!--PR:xxx-->, rồi commit lại nếu có thay đổi.
+#
+# KHI NÀO CHẠY:
+#   - Bấm tay ở tab Actions (workflow_dispatch) - dùng sau khi đổi "Sản Phẩm Chiến Lược" /
+#     "Giải Mã Công Nghệ" / dịch vụ trong CMS.
+#   - Tự chạy mỗi ngày 20:00 UTC (03:00 giờ VN) để nội dung prerender không bị cũ quá.
+# KHÔNG chạy theo mỗi lần push để tránh vòng lặp commit.
+
+name: Pre-render trang chủ
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 20 * * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: prerender-home
+  cancel-in-progress: false
+
+jobs:
+  prerender:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Cài puppeteer
+        working-directory: scripts
+        run: npm install --no-audit --no-fund
+
+      - name: Chạy pre-render
+        run: node scripts/prerender-home.mjs
+
+      - name: Commit nếu index.html đổi
+        run: |
+          if git diff --quiet -- index.html; then
+            echo "index.html không đổi - bỏ qua commit."
+            exit 0
+          fi
+          git config user.name  "vanduccbn-sketch"
+          git config user.email "vanduc.cbn@gmail.com"
+          git add index.html
+          git commit -m "Pre-render trang chủ (tự động)
+
+          Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>"
+          git push

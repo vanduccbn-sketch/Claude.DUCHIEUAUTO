@@ -1,0 +1,12 @@
+{
+  "name": "duchieuauto-scripts",
+  "private": true,
+  "type": "module",
+  "description": "Script build phụ trợ cho frontend tĩnh (pre-render trang chủ). Chỉ dùng khi chạy prerender - KHÔNG ảnh hưởng cách deploy GitHub Pages bình thường.",
+  "scripts": {
+    "prerender": "node prerender-home.mjs"
+  },
+  "dependencies": {
+    "puppeteer": "^23.0.0"
+  }
+}

@@ -2,3 +2,5 @@
 docs/tai-khoan-va-lien-ket-du-an.md
 preview-mobile.ps1
 preview-mobile.cmd
+scripts/node_modules/
+scripts/package-lock.json

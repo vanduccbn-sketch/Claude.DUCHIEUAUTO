@@ -5,32 +5,76 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Đức Hiếu Auto | Nâng Cấp & Chăm Sóc Xe Chuyên Nghiệp</title>
     <meta name="description" content="Đức Hiếu Auto - Trung tâm nâng cấp và chăm sóc ô tô chuyên nghiệp tại Buôn Ma Thuột, Đắk Lắk. Màn hình, âm thanh, phim cách nhiệt, PPF, đèn LED - dịch vụ uy tín, chất lượng hàng đầu.">
+    <link rel="canonical" href="https://duchieuauto.vn/">
     <meta property="og:title" content="Đức Hiếu Auto | Nâng Cấp & Chăm Sóc Xe Chuyên Nghiệp">
     <meta property="og:description" content="Trung tâm nâng cấp và chăm sóc ô tô chuyên nghiệp tại Buôn Ma Thuột - màn hình, âm thanh, phim cách nhiệt, PPF, đèn LED.">
     <meta property="og:image" content="https://duchieuauto.vn/assets/images/logo-duchieu.webp">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://duchieuauto.vn/">
+    <!-- Toạ độ + hasMap lấy từ link Google Maps của anh Đức (2026-09-06). Giờ mở cửa: anh Đức
+         xác nhận "mở xuyên suốt, không nghỉ trưa" - tạm để 07:30-18:30 cả tuần, sửa lại nếu sai giờ. -->
     <script type="application/ld+json">
     {
         "@context": "https://schema.org",
-        "@type": "AutoRepair",
-        "name": "Đức Hiếu Auto",
-        "image": "https://duchieuauto.vn/assets/images/logo-duchieu.webp",
-        "url": "https://duchieuauto.vn/",
-        "telephone": "+84916955957",
-        "email": "info@duchieuauto.vn",
-        "priceRange": "$$",
-        "address": {
-            "@type": "PostalAddress",
-            "streetAddress": "251 Lý Thái Tổ",
-            "addressLocality": "Buôn Ma Thuột",
-            "addressRegion": "Đắk Lắk",
-            "addressCountry": "VN"
-        },
-        "areaServed": ["Buôn Ma Thuột", "Đắk Lắk"],
-        "sameAs": [
-            "https://www.facebook.com/duchieuautobmt/",
-            "https://zalo.me/0916955957"
+        "@graph": [
+            {
+                "@type": ["AutoRepair", "LocalBusiness"],
+                "@id": "https://duchieuauto.vn/#business",
+                "name": "Đức Hiếu Auto",
+                "alternateName": ["Đức Hiếu Auto - Trung tâm chăm sóc và phụ kiện ô tô", "Đức Hiếu Auto Buôn Ma Thuột", "Độ Xe Đức Hiếu Auto"],
+                "url": "https://duchieuauto.vn/",
+                "logo": "https://duchieuauto.vn/assets/images/logo-duchieu.webp",
+                "image": "https://duchieuauto.vn/assets/images/logo-duchieu.webp",
+                "telephone": "+84916955957",
+                "email": "info@duchieuauto.vn",
+                "priceRange": "$$",
+                "currenciesAccepted": "VND",
+                "paymentAccepted": "Tiền mặt, Chuyển khoản ngân hàng",
+                "address": {
+                    "@type": "PostalAddress",
+                    "streetAddress": "251 Lý Thái Tổ",
+                    "addressLocality": "Buôn Ma Thuột",
+                    "addressRegion": "Đắk Lắk",
+                    "postalCode": "630000",
+                    "addressCountry": "VN"
+                },
+                "geo": { "@type": "GeoCoordinates", "latitude": 12.7037263, "longitude": 108.063114 },
+                "hasMap": "https://www.google.com/maps?cid=3062975238867378675",
+                "openingHoursSpecification": [
+                    {
+                        "@type": "OpeningHoursSpecification",
+                        "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+                        "opens": "07:30",
+                        "closes": "18:30"
+                    }
+                ],
+                "areaServed": [
+                    { "@type": "City", "name": "Buôn Ma Thuột" },
+                    { "@type": "AdministrativeArea", "name": "Đắk Lắk" },
+                    { "@type": "AdministrativeArea", "name": "Đắk Nông" }
+                ],
+                "sameAs": [
+                    "https://www.facebook.com/duchieuautobmt/",
+                    "https://zalo.me/0916955957"
+                ],
+                "hasOfferCatalog": { "@id": "https://duchieuauto.vn/#services" }
+            },
+            {
+                "@type": "OfferCatalog",
+                "@id": "https://duchieuauto.vn/#services",
+                "name": "Dịch vụ nâng cấp & chăm sóc ô tô - Đức Hiếu Auto",
+                "itemListElement": [
+                    { "@type": "OfferCatalog", "name": "Chăm Sóc Xe - Detailing", "url": "https://duchieuauto.vn/san-pham-chi-tiet?id=rua-xe" },
+                    { "@type": "OfferCatalog", "name": "Màn Hình Ô Tô", "url": "https://duchieuauto.vn/category-chi-tiet?id=man-hinh-o-to" },
+                    { "@type": "OfferCatalog", "name": "Âm Thanh - Cách Âm Ô Tô", "url": "https://duchieuauto.vn/category-chi-tiet?id=am-thanh-cach-am-oto" },
+                    { "@type": "OfferCatalog", "name": "Android Box Ô Tô", "url": "https://duchieuauto.vn/category-chi-tiet?id=android-box-o-to" },
+                    { "@type": "OfferCatalog", "name": "Camera Hành Trình - Camera 360", "url": "https://duchieuauto.vn/category-chi-tiet?id=camera-hanh-trinh" },
+                    { "@type": "OfferCatalog", "name": "Film Cách Nhiệt", "url": "https://duchieuauto.vn/category-chi-tiet?id=dan-phim-cach-nhiet" },
+                    { "@type": "OfferCatalog", "name": "PPF - Wrap Đổi Màu", "url": "https://duchieuauto.vn/category-chi-tiet?id=ppf-wrap-doi-mau" },
+                    { "@type": "OfferCatalog", "name": "Nâng Cấp Ánh Sáng", "url": "https://duchieuauto.vn/category-chi-tiet?id=do-den" },
+                    { "@type": "OfferCatalog", "name": "Đồ Bán Tải", "url": "https://duchieuauto.vn/category-chi-tiet?id=do-ban-tai" }
+                ]
+            }
         ]
     }
     </script>
@@ -201,7 +245,150 @@
                 <div class="brand-marquee" data-aos="fade-up">
                     <span class="brand-marquee-label">Thương Hiệu Chính Hãng Chúng Tôi Phân Phối</span>
                     <div class="brand-marquee-viewport">
-                        <div class="brand-marquee-track"></div>
+                        <!--PR:brands:START--><div class="brand-marquee-track"><a class="brand-marquee-item" href="brand-san-pham?id=ppf-wrap-doi-mau&amp;brand=xpel" title="XPEL">
+            <img src="assets/images/brands/xpel/logo.png" alt="XPEL" loading="lazy">
+        </a>
+        <a class="brand-marquee-item" href="brand-san-pham?id=dan-phim-cach-nhiet&amp;brand=3m-film" title="3M">
+            <img src="assets/images/brands/3m-film/logo.png" alt="3M" loading="lazy">
+        </a>
+        <a class="brand-marquee-item" href="brand-san-pham?id=am-thanh-cach-am-oto&amp;brand=jbl" title="JBL">
+            <img src="assets/images/brands/jbl/logo.svg" alt="JBL" loading="lazy">
+        </a>
+        <a class="brand-marquee-item" href="brand-san-pham?id=am-thanh-cach-am-oto&amp;brand=infinity" title="Infinity">
+            <img src="assets/images/brands/infinity/logo.png" alt="Infinity" loading="lazy">
+        </a>
+        <a class="brand-marquee-item" href="brand-san-pham?id=am-thanh-cach-am-oto&amp;brand=harman-kardon" title="Harman/Kardon">
+            <img src="assets/images/brands/harman-kardon/logo.png" alt="Harman/Kardon" loading="lazy">
+        </a>
+        <a class="brand-marquee-item" href="brand-san-pham?id=am-thanh-cach-am-oto&amp;brand=pioneer" title="Pioneer">
+            <img src="assets/images/brands/pioneer/logo.png" alt="Pioneer" loading="lazy">
+        </a>
+        <a class="brand-marquee-item" href="brand-san-pham?id=do-ban-tai&amp;brand=toi-dien&amp;loai=warn" title="WARN">
+            <img src="assets/images/brands/warn/logo.svg" alt="WARN" loading="lazy">
+        </a>
+        <a class="brand-marquee-item" href="brand-san-pham?id=do-ban-tai&amp;brand=toi-dien&amp;loai=tjm" title="TJM">
+            <img src="assets/images/brands/tjm/logo.svg" alt="TJM" loading="lazy">
+        </a>
+        <a class="brand-marquee-item" href="brand-san-pham?id=do-ban-tai&amp;brand=lo-xo-giam-xoc&amp;loai=king-springs" title="King Springs">
+            <img src="assets/images/brands/king-springs/logo.svg" alt="King Springs" loading="lazy">
+        </a>
+        <a class="brand-marquee-item" href="brand-san-pham?id=do-ban-tai&amp;brand=nap-thung&amp;loai=aeroklas" title="Aeroklas">
+            <img src="assets/images/brands/aeroklas/logo.png" alt="Aeroklas" loading="lazy">
+        </a>
+        <a class="brand-marquee-item" href="brand-san-pham?id=do-den&amp;brand=fogway" title="Fogway">
+            <img src="assets/images/brands/fogway/logo.png" alt="Fogway" loading="lazy">
+        </a>
+        <a class="brand-marquee-item" href="brand-san-pham?id=do-den&amp;brand=aozoom" title="Aozoom">
+            <img src="assets/images/brands/aozoom/logo.svg" alt="Aozoom" loading="lazy">
+        </a>
+        <a class="brand-marquee-item" href="brand-san-pham?id=man-hinh-o-to&amp;brand=zestech" title="Zestech">
+            <img src="assets/images/brands/zestech/logo.svg" alt="Zestech" loading="lazy">
+        </a>
+        <a class="brand-marquee-item" href="brand-san-pham?id=man-hinh-o-to&amp;brand=teyes" title="Teyes">
+            <img src="assets/images/brands/teyes/logo.png" alt="Teyes" loading="lazy">
+        </a>
+        <a class="brand-marquee-item" href="brand-san-pham?id=man-hinh-o-to&amp;brand=gotech" title="Gotech">
+            <img src="assets/images/brands/gotech/logo.png" alt="Gotech" loading="lazy">
+        </a>
+        <a class="brand-marquee-item" href="brand-san-pham?id=camera-hanh-trinh&amp;brand=vietmap-cam" title="VIETMAP">
+            <img src="assets/images/brands/vietmap-cam/logo.png" alt="VIETMAP" loading="lazy">
+        </a>
+        <a class="brand-marquee-item" href="brand-san-pham?id=camera-hanh-trinh&amp;brand=utour" title="UTOUR">
+            <img src="assets/images/brands/utour/logo.png" alt="UTOUR" loading="lazy">
+        </a>
+        <a class="brand-marquee-item" href="brand-san-pham?id=camera-hanh-trinh&amp;brand=blackvue" title="BlackVue">
+            <img src="assets/images/brands/blackvue/logo-wordmark.png" alt="BlackVue" loading="lazy">
+        </a>
+        <a class="brand-marquee-item" href="brand-san-pham?id=android-box-o-to&amp;brand=carlinkit" title="Carlinkit">
+            <img src="assets/images/brands/carlinkit/logo.png" alt="Carlinkit" loading="lazy">
+        </a>
+        <a class="brand-marquee-item" href="brand-san-pham?id=android-box-o-to&amp;brand=elliview" title="Elliview">
+            <img src="assets/images/brands/elliview/logo.png" alt="Elliview" loading="lazy">
+        </a>
+        <a class="brand-marquee-item" href="brand-san-pham?id=ppf-wrap-doi-mau&amp;brand=ax-film" title="AX Film">
+            <img src="assets/images/brands/ax-film/logo.png" alt="AX Film" loading="lazy">
+        </a>
+        <a class="brand-marquee-item" href="brand-san-pham?id=ppf-wrap-doi-mau&amp;brand=avery" title="Avery Dennison">
+            <img src="assets/images/brands/avery-dennison/logo.png" alt="Avery Dennison" loading="lazy">
+        </a>
+        <a class="brand-marquee-item" href="brand-san-pham?id=dan-phim-cach-nhiet&amp;brand=global-film" title="Global">
+            <img src="assets/images/brands/global-film/logo.png" alt="Global" loading="lazy">
+        </a>
+        <a class="brand-marquee-item" href="brand-san-pham?id=camera-hanh-trinh&amp;brand=70mai" title="70mai">
+            <img src="assets/images/brands/70mai/logo.svg" alt="70mai" loading="lazy">
+        </a>
+        <a class="brand-marquee-item" href="brand-san-pham?id=ppf-wrap-doi-mau&amp;brand=xpel" title="XPEL">
+            <img src="assets/images/brands/xpel/logo.png" alt="XPEL" loading="lazy">
+        </a>
+        <a class="brand-marquee-item" href="brand-san-pham?id=dan-phim-cach-nhiet&amp;brand=3m-film" title="3M">
+            <img src="assets/images/brands/3m-film/logo.png" alt="3M" loading="lazy">
+        </a>
+        <a class="brand-marquee-item" href="brand-san-pham?id=am-thanh-cach-am-oto&amp;brand=jbl" title="JBL">
+            <img src="assets/images/brands/jbl/logo.svg" alt="JBL" loading="lazy">
+        </a>
+        <a class="brand-marquee-item" href="brand-san-pham?id=am-thanh-cach-am-oto&amp;brand=infinity" title="Infinity">
+            <img src="assets/images/brands/infinity/logo.png" alt="Infinity" loading="lazy">
+        </a>
+        <a class="brand-marquee-item" href="brand-san-pham?id=am-thanh-cach-am-oto&amp;brand=harman-kardon" title="Harman/Kardon">
+            <img src="assets/images/brands/harman-kardon/logo.png" alt="Harman/Kardon" loading="lazy">
+        </a>
+        <a class="brand-marquee-item" href="brand-san-pham?id=am-thanh-cach-am-oto&amp;brand=pioneer" title="Pioneer">
+            <img src="assets/images/brands/pioneer/logo.png" alt="Pioneer" loading="lazy">
+        </a>
+        <a class="brand-marquee-item" href="brand-san-pham?id=do-ban-tai&amp;brand=toi-dien&amp;loai=warn" title="WARN">
+            <img src="assets/images/brands/warn/logo.svg" alt="WARN" loading="lazy">
+        </a>
+        <a class="brand-marquee-item" href="brand-san-pham?id=do-ban-tai&amp;brand=toi-dien&amp;loai=tjm" title="TJM">
+            <img src="assets/images/brands/tjm/logo.svg" alt="TJM" loading="lazy">
+        </a>
+        <a class="brand-marquee-item" href="brand-san-pham?id=do-ban-tai&amp;brand=lo-xo-giam-xoc&amp;loai=king-springs" title="King Springs">
+            <img src="assets/images/brands/king-springs/logo.svg" alt="King Springs" loading="lazy">
+        </a>
+        <a class="brand-marquee-item" href="brand-san-pham?id=do-ban-tai&amp;brand=nap-thung&amp;loai=aeroklas" title="Aeroklas">
+            <img src="assets/images/brands/aeroklas/logo.png" alt="Aeroklas" loading="lazy">
+        </a>
+        <a class="brand-marquee-item" href="brand-san-pham?id=do-den&amp;brand=fogway" title="Fogway">
+            <img src="assets/images/brands/fogway/logo.png" alt="Fogway" loading="lazy">
+        </a>
+        <a class="brand-marquee-item" href="brand-san-pham?id=do-den&amp;brand=aozoom" title="Aozoom">
+            <img src="assets/images/brands/aozoom/logo.svg" alt="Aozoom" loading="lazy">
+        </a>
+        <a class="brand-marquee-item" href="brand-san-pham?id=man-hinh-o-to&amp;brand=zestech" title="Zestech">
+            <img src="assets/images/brands/zestech/logo.svg" alt="Zestech" loading="lazy">
+        </a>
+        <a class="brand-marquee-item" href="brand-san-pham?id=man-hinh-o-to&amp;brand=teyes" title="Teyes">
+            <img src="assets/images/brands/teyes/logo.png" alt="Teyes" loading="lazy">
+        </a>
+        <a class="brand-marquee-item" href="brand-san-pham?id=man-hinh-o-to&amp;brand=gotech" title="Gotech">
+            <img src="assets/images/brands/gotech/logo.png" alt="Gotech" loading="lazy">
+        </a>
+        <a class="brand-marquee-item" href="brand-san-pham?id=camera-hanh-trinh&amp;brand=vietmap-cam" title="VIETMAP">
+            <img src="assets/images/brands/vietmap-cam/logo.png" alt="VIETMAP" loading="lazy">
+        </a>
+        <a class="brand-marquee-item" href="brand-san-pham?id=camera-hanh-trinh&amp;brand=utour" title="UTOUR">
+            <img src="assets/images/brands/utour/logo.png" alt="UTOUR" loading="lazy">
+        </a>
+        <a class="brand-marquee-item" href="brand-san-pham?id=camera-hanh-trinh&amp;brand=blackvue" title="BlackVue">
+            <img src="assets/images/brands/blackvue/logo-wordmark.png" alt="BlackVue" loading="lazy">
+        </a>
+        <a class="brand-marquee-item" href="brand-san-pham?id=android-box-o-to&amp;brand=carlinkit" title="Carlinkit">
+            <img src="assets/images/brands/carlinkit/logo.png" alt="Carlinkit" loading="lazy">
+        </a>
+        <a class="brand-marquee-item" href="brand-san-pham?id=android-box-o-to&amp;brand=elliview" title="Elliview">
+            <img src="assets/images/brands/elliview/logo.png" alt="Elliview" loading="lazy">
+        </a>
+        <a class="brand-marquee-item" href="brand-san-pham?id=ppf-wrap-doi-mau&amp;brand=ax-film" title="AX Film">
+            <img src="assets/images/brands/ax-film/logo.png" alt="AX Film" loading="lazy">
+        </a>
+        <a class="brand-marquee-item" href="brand-san-pham?id=ppf-wrap-doi-mau&amp;brand=avery" title="Avery Dennison">
+            <img src="assets/images/brands/avery-dennison/logo.png" alt="Avery Dennison" loading="lazy">
+        </a>
+        <a class="brand-marquee-item" href="brand-san-pham?id=dan-phim-cach-nhiet&amp;brand=global-film" title="Global">
+            <img src="assets/images/brands/global-film/logo.png" alt="Global" loading="lazy">
+        </a>
+        <a class="brand-marquee-item" href="brand-san-pham?id=camera-hanh-trinh&amp;brand=70mai" title="70mai">
+            <img src="assets/images/brands/70mai/logo.svg" alt="70mai" loading="lazy">
+        </a></div><!--PR:brands:END-->
                     </div>
                 </div>
 
@@ -216,7 +403,47 @@
             <div class="container">
                 <h2 class="section-title" data-content-key="service_section_title">DỊCH VỤ CHUYÊN NGHIỆP</h2>
                 <div class="swiper service-slider">
-                    <div class="swiper-wrapper service-catalog-grid"></div>
+                    <!--PR:services:START--><div class="swiper-wrapper service-catalog-grid"><div class="swiper-slide">
+        <a class="service-card" href="category-chi-tiet?id=cham-soc-xe">
+            <div class="service-img">
+                <img src="https://res.cloudinary.com/zytf6rnh/image/upload/c_limit,w_1600,q_auto,f_auto/v1786204142/duchieuauto/ily3egtqvuvs6ia4zpyt.jpg" alt="Chăm Sóc Xe - Detailing - Đức Hiếu Auto Buôn Ma Thuột" loading="lazy" onerror="this.src='assets/images/placeholder.svg'">
+                <div class="service-overlay"><i class="fa-solid fa-magnifying-glass-plus"></i></div>
+            </div>
+            <div class="service-content">
+                <h3>Chăm Sóc Xe - Detailing</h3>
+                <span class="service-more">Xem chi tiết <i class="fa-solid fa-arrow-right"></i></span>
+            </div>
+        </a></div><div class="swiper-slide">
+        <a class="service-card" href="category-chi-tiet?group=noi-that-o-to">
+            <div class="service-img">
+                <img src="assets/images/products-category/man-hinh-o-to/poster.webp" alt="Nội Thất Ô Tô - Đức Hiếu Auto Buôn Ma Thuột" loading="lazy" onerror="this.src='assets/images/placeholder.svg'">
+                <div class="service-overlay"><i class="fa-solid fa-magnifying-glass-plus"></i></div>
+            </div>
+            <div class="service-content">
+                <h3>Nội Thất Ô Tô</h3>
+                <span class="service-more">Xem chi tiết <i class="fa-solid fa-arrow-right"></i></span>
+            </div>
+        </a></div><div class="swiper-slide">
+        <a class="service-card" href="category-chi-tiet?group=ngoai-that-o-to">
+            <div class="service-img">
+                <img src="assets/images/service/ppf-bao-ve-son-xe/poster.webp" alt="Ngoại Thất Ô Tô - Đức Hiếu Auto Buôn Ma Thuột" loading="lazy" onerror="this.src='assets/images/placeholder.svg'">
+                <div class="service-overlay"><i class="fa-solid fa-magnifying-glass-plus"></i></div>
+            </div>
+            <div class="service-content">
+                <h3>Ngoại Thất Ô Tô</h3>
+                <span class="service-more">Xem chi tiết <i class="fa-solid fa-arrow-right"></i></span>
+            </div>
+        </a></div><div class="swiper-slide">
+        <a class="service-card" href="category-chi-tiet?id=do-ban-tai">
+            <div class="service-img">
+                <img src="assets/images/products-category/do-ban-tai/poster.webp" alt="Đồ Bán Tải - Đức Hiếu Auto Buôn Ma Thuột" loading="lazy" onerror="this.src='assets/images/placeholder.svg'">
+                <div class="service-overlay"><i class="fa-solid fa-magnifying-glass-plus"></i></div>
+            </div>
+            <div class="service-content">
+                <h3>Đồ Bán Tải</h3>
+                <span class="service-more">Xem chi tiết <i class="fa-solid fa-arrow-right"></i></span>
+            </div>
+        </a></div></div><!--PR:services:END-->
                     <div class="swiper-pagination"></div>
                     <div class="swiper-button-next"></div>
                     <div class="swiper-button-prev"></div>
@@ -256,7 +483,66 @@
                 <div class="section-header"><h2 class="section-title" data-content-key="product_section_title">SẢN PHẨM CHIẾN LƯỢC</h2></div>
 
                 <div class="swiper product-slider">
-                    <div class="swiper-wrapper strategic-products-grid"></div>
+                    <!--PR:strategic:START--><div class="swiper-wrapper strategic-products-grid"><div class="swiper-slide">
+            <div class="product-card">
+                <div class="product-img">
+                    <span class="product-badge product-badge-hot"><i class="fa-solid fa-bolt"></i> Giá Sốc</span>
+                    <img src="assets/images/products/jbl-basspro-lite/anh-1.webp" srcset="assets/images/products/jbl-basspro-lite/anh-1-400w.webp 400w, assets/images/products/jbl-basspro-lite/anh-1.webp 800w" sizes="(max-width: 640px) 45vw, (max-width: 1024px) 28vw, 260px" alt="JBL Bass pro LITE - Đức Hiếu Auto Buôn Ma Thuột" loading="lazy" onerror="this.src='assets/images/placeholder.svg'">
+                </div>
+                <div class="product-info">
+                    <span class="product-brand">JBL</span>
+                    <h3 class="product-name">JBL Bass pro LITE</h3>
+                    <p class="product-desc">Loa siêu trầm gầm ghế tích hợp sẵn amply Class D 100W RMS, âm bass chặt chẽ trong thiết kế nhỏ gọn nhất phân khúc.</p>
+                    <div class="product-price-row">
+                        <span class="product-price">7.890.000₫</span>
+                        <span class="product-price-tag">Ưu đãi hôm nay</span>
+                    </div>
+                    <div class="product-action">
+                        <a href="san-pham-chi-tiet?id=jbl-basspro-lite" class="btn btn-primary btn-sm">Xem Chi Tiết</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="swiper-slide">
+            <div class="product-card">
+                <div class="product-img">
+                    <span class="product-badge product-badge-hot"><i class="fa-solid fa-bolt"></i> Giá Sốc</span>
+                    <img src="assets/images/products/3m-film-4-cho/anh-1.webp" srcset="assets/images/products/3m-film-4-cho/anh-1-400w.webp 400w, assets/images/products/3m-film-4-cho/anh-1.webp 800w" sizes="(max-width: 640px) 45vw, (max-width: 1024px) 28vw, 260px" alt="Phim Cách Nhiệt 3M Xe 4 Chỗ - Đức Hiếu Auto Buôn Ma Thuột" loading="lazy" onerror="this.src='assets/images/placeholder.svg'">
+                </div>
+                <div class="product-info">
+                    <span class="product-brand">3M</span>
+                    <h3 class="product-name">Phim Cách Nhiệt 3M Xe 4 Chỗ</h3>
+                    <p class="product-desc">Trọn gói dán phim cách nhiệt 3M chính hãng, cản tia UV đến 99.9%, cản hồng ngoại đến 97%, giảm chói cả ngày lẫn đêm.</p>
+                    <div class="product-price-row">
+                        <span class="product-price">14.800.000₫</span>
+                        <span class="product-price-tag">Số lượng có hạn</span>
+                    </div>
+                    <div class="product-action">
+                        <a href="san-pham-chi-tiet?id=3m-film-4-cho" class="btn btn-primary btn-sm">Xem Chi Tiết</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="swiper-slide">
+            <div class="product-card">
+                <div class="product-img">
+                    <span class="product-badge product-badge-hot"><i class="fa-solid fa-bolt"></i> Giá Sốc</span>
+                    <img src="assets/images/products/zestech-zx10-cao-cap/anh-1.webp" srcset="assets/images/products/zestech-zx10-cao-cap/anh-1-400w.webp 400w, assets/images/products/zestech-zx10-cao-cap/anh-1.webp 800w" sizes="(max-width: 640px) 45vw, (max-width: 1024px) 28vw, 260px" alt="Zestech ZX10 Bản Cao Cấp - Đức Hiếu Auto Buôn Ma Thuột" loading="lazy" onerror="this.src='assets/images/placeholder.svg'">
+                </div>
+                <div class="product-info">
+                    <span class="product-brand">Zestech</span>
+                    <h3 class="product-name">Zestech ZX10 Bản Cao Cấp</h3>
+                    <p class="product-desc">Màn hình Android cao cấp chip UIS7862S, khung hợp kim titan tản nhiệt, điều khiển giọng nói AI Kiki, cảnh báo tốc độ/bắn tốc độ.</p>
+                    <div class="product-price-row">
+                        <span class="product-price">11.900.000₫</span>
+                        <span class="product-price-tag">Giá tốt nhất tháng</span>
+                    </div>
+                    <div class="product-action">
+                        <a href="san-pham-chi-tiet?id=zestech-zx10-cao-cap" class="btn btn-primary btn-sm">Xem Chi Tiết</a>
+                    </div>
+                </div>
+            </div>
+        </div></div><!--PR:strategic:END-->
                     <div class="swiper-pagination"></div>
                     <div class="swiper-button-next"></div>
                     <div class="swiper-button-prev"></div>
@@ -283,7 +569,58 @@
                 </div>
 
                 <div class="swiper tech-slider">
-                    <div class="swiper-wrapper tech-stories-grid"></div>
+                    <!--PR:tech:START--><div class="swiper-wrapper tech-stories-grid"><div class="swiper-slide">
+        <a class="tech-story-card" href="san-pham-chi-tiet?id=xpel-ultimate-plus">
+            <div class="tech-story-img">
+                <img src="assets/images/products/xpel-ultimate-plus/anh-1.webp" srcset="assets/images/products/xpel-ultimate-plus/anh-1-400w.webp 400w, assets/images/products/xpel-ultimate-plus/anh-1.webp 800w" sizes="(max-width: 640px) 45vw, (max-width: 1024px) 28vw, 260px" alt="XPEL Ultimate Plus - Đức Hiếu Auto Buôn Ma Thuột" loading="lazy" onerror="this.src='assets/images/placeholder.svg'">
+                <span class="tech-story-tag">PPF - Bảo Vệ Sơn Xe</span>
+            </div>
+            <div class="tech-story-body">
+                <h3>Vết Xước Tự Biến Mất</h3>
+                <p>Một lớp phim trong suốt có thể tự "chữa lành" vết xước chỉ sau vài phút dưới nắng — đó là điều <strong>XPEL Ultimate Plus</strong> làm được nhờ công nghệ Clear Coat tự phục hồi 4 lớp, gần như vô hình trên thân xe, chặn đứng tia UV và đá văng trên mọi hành trình.</p>
+                <span class="tech-story-link">Tìm hiểu thêm <i class="fa-solid fa-arrow-right"></i></span>
+            </div>
+        </a>
+        </div>
+        <div class="swiper-slide">
+        <a class="tech-story-card" href="san-pham-chi-tiet?id=gtr-premium-2-0">
+            <div class="tech-story-img">
+                <img src="assets/images/products/gtr-premium-2-0/anh-1.webp" srcset="assets/images/products/gtr-premium-2-0/anh-1-400w.webp 400w, assets/images/products/gtr-premium-2-0/anh-1.webp 800w" sizes="(max-width: 640px) 45vw, (max-width: 1024px) 28vw, 260px" alt="GTR Premium 2.0 - Đức Hiếu Auto Buôn Ma Thuột" loading="lazy" onerror="this.src='assets/images/placeholder.svg'">
+                <span class="tech-story-tag">Bi LED - Nâng Cấp Ánh Sáng</span>
+            </div>
+            <div class="tech-story-body">
+                <h3>Ánh Sáng Đầu Tiên Trên Thế Giới</h3>
+                <p><strong>GTR Premium 2.0</strong> là mẫu đèn bi LED đầu tiên trên thế giới dùng 14 nhân LED Osram, đạt chuẩn sản xuất Nhật Bản. Tản nhiệt độc quyền GTR Cooling Ai giữ ánh sáng ổn định suốt hành trình, lớp phủ AR Pro loại bỏ chói mắt xe đối diện — lái đêm an toàn và tự tin hơn.</p>
+                <span class="tech-story-link">Tìm hiểu thêm <i class="fa-solid fa-arrow-right"></i></span>
+            </div>
+        </a>
+        </div>
+        <div class="swiper-slide">
+        <a class="tech-story-card" href="san-pham-chi-tiet?id=jbl-club-605csq">
+            <div class="tech-story-img">
+                <img src="assets/images/products/jbl-club-605csq/anh-1.webp" srcset="assets/images/products/jbl-club-605csq/anh-1-400w.webp 400w, assets/images/products/jbl-club-605csq/anh-1.webp 800w" sizes="(max-width: 640px) 45vw, (max-width: 1024px) 28vw, 260px" alt="JBL Club 605CSQ - Đức Hiếu Auto Buôn Ma Thuột" loading="lazy" onerror="this.src='assets/images/placeholder.svg'">
+                <span class="tech-story-tag">Loa Phân Tần - Âm Thanh</span>
+            </div>
+            <div class="tech-story-body">
+                <h3>Sân Khấu Âm Nhạc Trong Cabin</h3>
+                <p>Với bộ loa mid-bass, tweeter và phân tần tách rời, <strong>JBL Club 605CSQ</strong> cho phép bố trí "sân khấu âm thanh" theo đúng ý bạn — âm thanh tách bạch, chi tiết đến từng nốt nhạc. Lựa chọn của những ai không chấp nhận dàn âm thanh nguyên bản tầm thường.</p>
+                <span class="tech-story-link">Tìm hiểu thêm <i class="fa-solid fa-arrow-right"></i></span>
+            </div>
+        </a>
+        </div>
+        <div class="swiper-slide">
+        <a class="tech-story-card" href="san-pham-chi-tiet?id=warn-vr-evo-12s">
+            <div class="tech-story-img">
+                <img src="assets/images/products/warn-vr-evo-12s/anh-1.webp" srcset="assets/images/products/warn-vr-evo-12s/anh-1-400w.webp 400w, assets/images/products/warn-vr-evo-12s/anh-1.webp 800w" sizes="(max-width: 640px) 45vw, (max-width: 1024px) 28vw, 260px" alt="WARN VR EVO 12-S (Cáp mềm Synthetic) - Đức Hiếu Auto Buôn Ma Thuột" loading="lazy" onerror="this.src='assets/images/placeholder.svg'">
+                <span class="tech-story-tag">Tời Điện - Cứu Hộ Địa Hình</span>
+            </div>
+            <div class="tech-story-body">
+                <h3>Sẵn Sàng Cho Mọi Địa Hình</h3>
+                <p>Khi bánh xe lún sâu trong bùn hay cần vượt chướng ngại, <strong>WARN VR EVO 12-S</strong> là người bạn đồng hành đáng tin cậy — chuẩn chống nước IP68, thân nhôm nguyên khối, sản xuất tại Hoa Kỳ, điều khiển 2 trong 1 có dây và không dây.</p>
+                <span class="tech-story-link">Tìm hiểu thêm <i class="fa-solid fa-arrow-right"></i></span>
+            </div>
+        </a>
+        </div></div><!--PR:tech:END-->
                     <div class="swiper-pagination"></div>
                     <div class="swiper-button-next"></div>
                     <div class="swiper-button-prev"></div>

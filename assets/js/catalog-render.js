@@ -267,9 +267,13 @@ async function renderServiceGrid(containerSelector) {
         // cần bọc trong .swiper-slide.
         container.innerHTML = items.map(item => `<div class="swiper-slide">${serviceCardHtml(item)}</div>`).join("");
     } catch (err) {
-        container.innerHTML = CATALOG.serviceGroups
-            .map(g => `<div class="swiper-slide">${serviceCardHtml({ ...g, href: `category-chi-tiet?group=${g.id}` })}</div>`)
-            .join("");
+        // Giữ nội dung prerender build sẵn (marker <!--PR:services-->) nếu có; chỉ dựng bản rút gọn
+        // từ dữ liệu tĩnh khi container đang trống.
+        if (!container.children.length) {
+            container.innerHTML = CATALOG.serviceGroups
+                .map(g => `<div class="swiper-slide">${serviceCardHtml({ ...g, href: `category-chi-tiet?group=${g.id}` })}</div>`)
+                .join("");
+        }
     }
 }
 
@@ -1110,7 +1114,7 @@ async function renderHomepageHighlights() {
             if (data.strategic.length) {
                 strategicGrid.innerHTML = data.strategic.map(strategicProductCardHtml).join("");
                 if (section) section.hidden = false;
-            } else if (section) {
+            } else if (section && !strategicGrid.children.length) {
                 section.hidden = true;
             }
         }
@@ -1119,14 +1123,16 @@ async function renderHomepageHighlights() {
             if (data.tech.length) {
                 techGrid.innerHTML = data.tech.map(techStoryCardHtml).join("");
                 if (section) section.hidden = false;
-            } else if (section) {
+            } else if (section && !techGrid.children.length) {
                 section.hidden = true;
             }
         }
     } catch (err) {
-        // Lỗi tải không nên chặn cả trang chủ - ẩn 2 khu vực này đi, phần còn lại vẫn hoạt động.
-        if (strategicGrid) { const s = strategicGrid.closest("section"); if (s) s.hidden = true; }
-        if (techGrid) { const s = techGrid.closest("section"); if (s) s.hidden = true; }
+        // Lỗi tải không nên chặn cả trang chủ. Nếu 2 khu vực này đã có sẵn nội dung (bản prerender
+        // build sẵn vào index.html - xem markers <!--PR:strategic/tech-->) thì GIỮ NGUYÊN nội dung đó;
+        // chỉ ẩn khi thật sự trống.
+        if (strategicGrid && !strategicGrid.children.length) { const s = strategicGrid.closest("section"); if (s) s.hidden = true; }
+        if (techGrid && !techGrid.children.length) { const s = techGrid.closest("section"); if (s) s.hidden = true; }
     }
 }
 

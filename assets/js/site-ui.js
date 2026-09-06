@@ -9,6 +9,21 @@
 (function () {
     "use strict";
 
+    // Trang động (category/san-pham/brand/bai-viet chi tiet) là khung CSR: bot nhận bản SSR có
+    // <link rel="canonical"> riêng, còn người dùng thật nhận khung này chưa có canonical. Nếu
+    // trang CHƯA có thẻ canonical thì tự thêm canonical tự-trỏ, bỏ đuôi ".html" cho khớp đúng
+    // URL chuẩn mà bản SSR khai (vd .../san-pham-chi-tiet?id=x). Trang tĩnh đã có canonical cứng
+    // trong <head> nên nhánh này tự bỏ qua.
+    function canonicalFallback() {
+        if (document.querySelector('link[rel="canonical"]')) return;
+        var href = location.origin + location.pathname.replace(/\.html$/, "") + location.search;
+        var link = document.createElement("link");
+        link.rel = "canonical";
+        link.href = href;
+        document.head.appendChild(link);
+    }
+    canonicalFallback();
+
     function init() {
         var nav = document.querySelector(".main-nav");
         var toggle = document.querySelector(".menu-toggle");

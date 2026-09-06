@@ -32,6 +32,18 @@ function absoluteUrl(pathOrUrl) {
     return `${SITE_URL}/${pathOrUrl}`;
 }
 
+// DB (SQLite/libSQL) trả datetime kiểu "2026-07-26 02:40:50" - schema.org yêu cầu ISO 8601 có
+// múi giờ, nếu không Google báo lỗi khi kiểm. VN là UTC+7 cố định (không có giờ mùa hè). Chuỗi
+// đã đúng chuẩn (có "T" + phần thập phân/"Z") thì giữ nguyên.
+function toIsoDate(dt) {
+    if (!dt) return undefined;
+    const s = String(dt).trim();
+    if (/^\d{4}-\d{2}-\d{2}[ T]\d{2}:\d{2}:\d{2}$/.test(s)) {
+        return s.replace(" ", "T") + "+07:00";
+    }
+    return s;
+}
+
 const BASE_STYLE = `
 body{font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif;max-width:860px;margin:0 auto;padding:24px;line-height:1.6;color:#222}
 h1{font-size:1.6rem;margin-bottom:.3em}
@@ -270,8 +282,8 @@ function renderPostHtml(post) {
         "headline": post.title,
         "description": description,
         "image": coverUrl ? [coverUrl] : undefined,
-        "datePublished": post.created_at,
-        "dateModified": post.updated_at || post.created_at,
+        "datePublished": toIsoDate(post.created_at),
+        "dateModified": toIsoDate(post.updated_at || post.created_at),
         "author": { "@type": "Organization", "name": SITE_NAME },
         "publisher": { "@type": "Organization", "name": SITE_NAME }
     };

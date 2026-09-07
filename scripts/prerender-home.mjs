@@ -118,8 +118,9 @@ async function main() {
             if (next !== html) { html = next; changed++; }
             console.log(`  ${key}: ${inner.length} ky tu`);
         }
-        // giữ CRLF cho khớp phần còn lại của repo
-        html = html.replace(/\r\n|\n/g, "\r\n");
+        // Ghi LF (repo chuẩn hoá LF qua .gitattributes) - KHÔNG ép CRLF nữa, tránh commit
+        // "đổi toàn bộ xuống dòng" vô nghĩa từ Action khi chạy trên Linux.
+        html = html.replace(/\r\n/g, "\n");
         await writeFile(INDEX, html, "utf-8");
         console.log(`\nDONE - da cap nhat ${changed}/4 khoi trong index.html`);
     } finally {

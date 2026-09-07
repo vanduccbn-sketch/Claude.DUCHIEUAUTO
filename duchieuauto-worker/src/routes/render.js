@@ -33,13 +33,15 @@ app.get("/product", async (c) => {
     if (!p) return c.html(notFoundHtml("Không tìm thấy sản phẩm"), 404);
 
     const specs = await db.prepare("SELECT spec_key, spec_value FROM product_specs WHERE product_id = ? ORDER BY sort_order").all(id);
+    const priceTiers = await db.prepare("SELECT label, price FROM product_price_tiers WHERE product_id = ? ORDER BY sort_order").all(id);
     const brandName = await resolveBrandName(db, p.category_id, p.brand_id, p.brand_type_id);
 
     const html = renderProductHtml({
         ...p,
         image: productImagePath(p.id, p.image),
         brand: brandName,
-        specs: specs.map(s => [s.spec_key, s.spec_value])
+        specs: specs.map(s => [s.spec_key, s.spec_value]),
+        priceTiers: priceTiers.map(t => [t.label, t.price])
     });
     return c.html(html);
 });

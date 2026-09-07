@@ -46,19 +46,32 @@ function absoluteImageUrl(image) {
     return `${SITE_URL}/${image}`;
 }
 
-// Trang tĩnh cố định - không đổi thường xuyên, không lấy được từ database.
+// Trang tĩnh cố định - lastmod lấy theo ngày commit git cuối cùng chạm vào file HTML tương ứng
+// (đúng "lần sửa nội dung gần nhất" thật, không phải ngày build). "" -> index.html, "product" ->
+// product.html. Bỏ <priority>/<changefreq> ở TẤT CẢ url: Google đã tuyên bố không dùng 2 thẻ này.
 const STATIC_PAGES = [
-    { loc: "", priority: "1.0", changefreq: "weekly" },
-    { loc: "product", priority: "0.9", changefreq: "weekly" },
-    { loc: "tin-tuc.html", priority: "0.8", changefreq: "weekly" },
-    { loc: "dat-lich-hen.html", priority: "0.8", changefreq: "monthly" },
-    { loc: "nhac-bao-duong.html", priority: "0.6", changefreq: "monthly" },
-    { loc: "faq.html", priority: "0.6", changefreq: "monthly" },
-    { loc: "chinh-sach.html", priority: "0.4", changefreq: "yearly" }
+    { loc: "", file: "index.html" },
+    { loc: "product", file: "product.html" },
+    { loc: "tin-tuc.html", file: "tin-tuc.html" },
+    { loc: "dat-lich-hen.html", file: "dat-lich-hen.html" },
+    { loc: "nhac-bao-duong.html", file: "nhac-bao-duong.html" },
+    { loc: "faq.html", file: "faq.html" },
+    { loc: "chinh-sach.html", file: "chinh-sach.html" }
 ];
 
-function urlTag({ loc, priority, changefreq, lastmod, images }) {
-    const lastmodTag = lastmod ? `\n    <lastmod>${lastmod.slice(0, 10)}</lastmod>` : "";
+const { execSync } = require("child_process");
+const REPO_ROOT = path.join(__dirname, "..", "..");
+function gitLastmod(file) {
+    try {
+        const d = execSync(`git log -1 --format=%cs -- "${file}"`, { cwd: REPO_ROOT }).toString().trim();
+        return /^\d{4}-\d{2}-\d{2}$/.test(d) ? d : null;
+    } catch (err) {
+        return null;
+    }
+}
+
+function urlTag({ loc, lastmod, images }) {
+    const lastmodTag = lastmod ? `\n    <lastmod>${String(lastmod).slice(0, 10)}</lastmod>` : "";
     // XML yêu cầu escape "&" thành "&amp;" trong <loc> - URL nhiều tham số (brand-san-pham?id=..&brand=..&loai=..) có ký tự này.
     const escapedLoc = `${SITE_URL}/${loc}`.replace(/&/g, "&amp;");
     // Image sitemap extension (xem xmlns:image ở urlset) - giúp Googlebot-Image khám phá ảnh nhanh
@@ -68,18 +81,18 @@ function urlTag({ loc, priority, changefreq, lastmod, images }) {
         .filter(Boolean)
         .map(img => `\n    <image:image>\n      <image:loc>${escapeXml(img.url)}</image:loc>${img.title ? `\n      <image:title>${escapeXml(img.title)}</image:title>` : ""}\n    </image:image>`)
         .join("");
-    return `  <url>\n    <loc>${escapedLoc}</loc>${lastmodTag}\n    <changefreq>${changefreq}</changefreq>\n    <priority>${priority}</priority>${imageTags}\n  </url>`;
+    return `  <url>\n    <loc>${escapedLoc}</loc>${lastmodTag}${imageTags}\n  </url>`;
 }
 
 async function run() {
-    const urls = STATIC_PAGES.map(urlTag);
+    const urls = STATIC_PAGES.map(p => urlTag({ loc: p.loc, lastmod: gitLastmod(p.file) }));
 
     const categories = await db.prepare("SELECT id, name, poster, seo_image, seo_image_caption, updated_at FROM categories ORDER BY sort_order").all();
     for (const cat of categories) {
         const posterUrl = absoluteImageUrl(cat.poster);
         const seoImgUrl = absoluteImageUrl(cat.seo_image);
         urls.push(urlTag({
-            loc: `category-chi-tiet?id=${cat.id}`, priority: "0.7", changefreq: "monthly", lastmod: cat.updated_at,
+            loc: `category-chi-tiet?id=${cat.id}`, lastmod: cat.updated_at,
             images: [
                 posterUrl && { url: posterUrl, title: cat.name },
                 // Không lặp lại nếu ảnh SEO minh hoạ trùng đúng ảnh đại diện (admin thường chỉ chọn 1 trong 2).
@@ -100,14 +113,12 @@ async function run() {
         if (types.length) {
             for (const t of types) {
                 urls.push(urlTag({
-                    loc: `brand-san-pham?id=${brand.category_id}&brand=${brand.id}&loai=${t.id}`,
-                    priority: "0.6", changefreq: "monthly"
+                    loc: `brand-san-pham?id=${brand.category_id}&brand=${brand.id}&loai=${t.id}`
                 }));
             }
         } else {
             urls.push(urlTag({
-                loc: `brand-san-pham?id=${brand.category_id}&brand=${brand.id}`,
-                priority: "0.6", changefreq: "monthly"
+                loc: `brand-san-pham?id=${brand.category_id}&brand=${brand.id}`
             }));
         }
     }
@@ -116,7 +127,7 @@ async function run() {
     for (const p of products) {
         const imgUrl = absoluteImageUrl(productImagePath(p.id, p.image));
         urls.push(urlTag({
-            loc: `san-pham-chi-tiet?id=${p.id}`, priority: "0.5", changefreq: "monthly", lastmod: p.updated_at,
+            loc: `san-pham-chi-tiet?id=${p.id}`, lastmod: p.updated_at,
             images: [imgUrl && { url: imgUrl, title: p.name }]
         }));
     }
@@ -125,7 +136,7 @@ async function run() {
     for (const post of posts) {
         const imgUrl = absoluteImageUrl(post.cover_image);
         urls.push(urlTag({
-            loc: `bai-viet-chi-tiet.html?slug=${post.slug}`, priority: "0.6", changefreq: "monthly", lastmod: post.updated_at,
+            loc: `bai-viet-chi-tiet.html?slug=${post.slug}`, lastmod: post.updated_at,
             images: [imgUrl && { url: imgUrl, title: post.title }]
         }));
     }

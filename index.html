@@ -9,8 +9,15 @@
     <meta property="og:title" content="Đức Hiếu Auto | Nâng Cấp & Chăm Sóc Xe Chuyên Nghiệp">
     <meta property="og:description" content="Trung tâm nâng cấp và chăm sóc ô tô chuyên nghiệp tại Buôn Ma Thuột - màn hình, âm thanh, phim cách nhiệt, PPF, đèn LED.">
     <meta property="og:image" content="https://duchieuauto.vn/assets/images/logo-duchieu.webp">
+    <meta property="og:image:alt" content="Đức Hiếu Auto - Nâng cấp & chăm sóc ô tô Buôn Ma Thuột">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://duchieuauto.vn/">
+    <meta property="og:site_name" content="Đức Hiếu Auto">
+    <meta property="og:locale" content="vi_VN">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Đức Hiếu Auto | Nâng Cấp & Chăm Sóc Xe Chuyên Nghiệp">
+    <meta name="twitter:description" content="Trung tâm nâng cấp và chăm sóc ô tô chuyên nghiệp tại Buôn Ma Thuột - màn hình, âm thanh, phim cách nhiệt, PPF, đèn LED.">
+    <meta name="twitter:image" content="https://duchieuauto.vn/assets/images/logo-duchieu.webp">
     <!-- Toạ độ + hasMap lấy từ link Google Maps của anh Đức (2026-09-06). Giờ mở cửa: anh Đức
          xác nhận "mở xuyên suốt, không nghỉ trưa" - tạm để 07:30-18:30 cả tuần, sửa lại nếu sai giờ. -->
     <script type="application/ld+json">
@@ -50,6 +57,10 @@
                 ],
                 "areaServed": [
                     { "@type": "City", "name": "Buôn Ma Thuột" },
+                    { "@type": "AdministrativeArea", "name": "Cư M'gar" },
+                    { "@type": "AdministrativeArea", "name": "Buôn Đôn" },
+                    { "@type": "AdministrativeArea", "name": "Krông Pắc" },
+                    { "@type": "AdministrativeArea", "name": "Ea Kar" },
                     { "@type": "AdministrativeArea", "name": "Đắk Lắk" },
                     { "@type": "AdministrativeArea", "name": "Đắk Nông" }
                 ],
@@ -58,6 +69,14 @@
                     "https://zalo.me/0916955957"
                 ],
                 "hasOfferCatalog": { "@id": "https://duchieuauto.vn/#services" }
+            },
+            {
+                "@type": "WebSite",
+                "@id": "https://duchieuauto.vn/#website",
+                "url": "https://duchieuauto.vn/",
+                "name": "Đức Hiếu Auto",
+                "inLanguage": "vi-VN",
+                "publisher": { "@id": "https://duchieuauto.vn/#business" }
             },
             {
                 "@type": "OfferCatalog",
@@ -84,11 +103,17 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Ảnh nền hero là ảnh LCP - preload để hiện sớm (Phase 4 tối ưu tốc độ) -->
+    <link rel="preload" as="image" href="assets/images/nen1.webp" fetchpriority="high">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css"/>
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <!-- AOS: chuyển từ unpkg (hay chậm) sang jsdelivr - cùng CDN với Swiper, đỡ 1 lượt phân giải DNS -->
+    <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
 
     <!-- Font UTM (đặt file font vào assets/fonts/) -->
     <link rel="stylesheet" href="assets/css/fonts.css">
@@ -395,7 +420,8 @@
             </div>
         </section>
 
-        <!-- Danh sách dịch vụ được render tự động từ assets/js/catalog-data.js
+        <!-- Danh sách dịch vụ: pre-render sẵn vào HTML (marker PR:services), JS trong catalog-render.js
+             render lại từ API khi tải xong.
              Bấm vào 1 dịch vụ -> mở category-chi-tiet (poster + thương hiệu)
              -> bấm thương hiệu -> brand-san-pham (danh sách sản phẩm)
              -> bấm sản phẩm -> san-pham-chi-tiet (chi tiết) -->
@@ -763,13 +789,12 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
     <script src="assets/js/api-config.js"></script>
     <script src="assets/js/pwa-init.js"></script>
     <script src="assets/js/site-settings.js"></script>
     <script src="assets/js/homepage-content.js"></script>
     <script src="assets/js/header-scroll.js"></script>
-    <script src="assets/js/catalog-data.js"></script>
     <script src="assets/js/catalog-render.js"></script>
     <script src="assets/js/site-search.js"></script>
     <script src="assets/js/site-ui.js"></script>

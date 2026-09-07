@@ -1,6 +1,12 @@
 /* =========================================================
-   CATALOG DATA - NGUỒN DỮ LIỆU DUY NHẤT
+   CATALOG DATA - DỮ LIỆU SẢN PHẨM TĨNH (LỊCH SỬ - KHÔNG CÒN NẠP TRÊN SITE)
    =========================================================
+   [2026-09] File này (227 KB) KHÔNG còn được <script src> ở bất kỳ trang HTML nào nữa.
+   Dữ liệu sản phẩm thật đã ở Turso từ Phase 7 (API /api/products/catalog); serviceGroups
+   (2 nhóm hiển thị trang chủ) đã dời vào assets/js/catalog-render.js.
+   Giữ lại chỉ để duchieuauto-backend/scripts/migrate-catalog-data.js (chạy 1 lần) còn tham chiếu
+   được. Có thể xoá hẳn sau khi chắc chắn không cần đối chiếu dữ liệu gốc.
+   ---------------------------------------------------------
    Cấu trúc:
    - categories: danh sách DUY NHẤT gồm 8 nhóm dịch vụ/danh mục sản phẩm
      (poster + danh sách thương hiệu, thương hiệu có thể chia thêm "types").

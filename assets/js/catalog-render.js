@@ -6,7 +6,32 @@
    admin sửa được qua trang quản trị) thay vì đọc CATALOG tĩnh trong catalog-data.js.
    CATALOG.serviceGroups vẫn giữ tĩnh - đó chỉ là cách NHÓM HIỂN THỊ ở trang chủ (Nội Thất/Ngoại
    Thất Ô Tô), không phải dữ liệu sản phẩm nên không thuộc phạm vi CMS sản phẩm.
+
+   [Phase 4 tối ưu tốc độ, 2026-09] serviceGroups (508 byte) dời hẳn vào đây và BỎ nạp
+   catalog-data.js (227 KB dữ liệu sản phẩm cũ - đã migrate sang Turso từ Phase 7, không còn
+   trang nào dùng tới) khỏi toàn bộ HTML. File catalog-data.js vẫn giữ trong repo cho
+   scripts/migrate-catalog-data.js (chạy 1 lần trong quá khứ), chỉ là site không tải nữa.
    ========================================================= */
+
+// serviceGroups: 2 nhóm gộp TĨNH chỉ để hiển thị lưới "Dịch Vụ" ở trang chủ (không phải danh mục
+// thật trong Turso). Admin đổi ảnh 2 nhóm này qua trang "Trang Chủ" (service_poster_*).
+const CATALOG = {
+    serviceGroups: [
+        {
+            id: "noi-that-o-to",
+            name: "Nội Thất Ô Tô",
+            poster: "assets/images/products-category/man-hinh-o-to/poster.webp",
+            categories: ["man-hinh-o-to", "am-thanh-cach-am-oto", "android-box-o-to", "camera-hanh-trinh", "doi-mau-noi-that"]
+        },
+        {
+            id: "ngoai-that-o-to",
+            name: "Ngoại Thất Ô Tô",
+            poster: "assets/images/service/ppf-bao-ve-son-xe/poster.webp",
+            categories: ["dan-phim-cach-nhiet", "ppf-wrap-doi-mau", "do-den"]
+        }
+    ]
+};
+
 
 // Phase 9.4 - tự thêm hậu tố tên thương hiệu + khu vực vào alt text ảnh sản phẩm/danh mục, không
 // bắt admin gõ tay - vừa chuẩn SEO ảnh (Google Images) vừa cho GEO/AI hiểu rõ ngữ cảnh địa lý khi
@@ -786,6 +811,7 @@ function injectServiceSchema(serviceName, description) {
 /* ---------- Trang chi tiết sản phẩm ---------- */
 function injectProductSchema(p, img, absoluteImgUrl, reviewStats) {
     const priceDigits = (p.price || "").replace(/[^\d]/g, "");
+    const priceValidUntil = new Date(Date.now() + 365 * 24 * 3600 * 1000).toISOString().slice(0, 10);
     const schema = {
         "@context": "https://schema.org",
         "@type": "Product",
@@ -799,9 +825,27 @@ function injectProductSchema(p, img, absoluteImgUrl, reviewStats) {
             "@type": "Offer",
             "priceCurrency": "VND",
             "price": priceDigits,
+            "priceValidUntil": priceValidUntil,
             "availability": "https://schema.org/InStock",
             "url": window.location.href
         };
+    } else if (Array.isArray(p.priceTiers) && p.priceTiers.length) {
+        // Không có giá gốc nhưng có "giá theo dòng xe" -> AggregateOffer (khoảng giá). Đồng bộ với SSR.
+        const tierPrices = p.priceTiers
+            .map(t => Number(String(Array.isArray(t) ? t[1] : t).replace(/[^\d]/g, "")))
+            .filter(n => n > 0);
+        if (tierPrices.length) {
+            schema.offers = {
+                "@type": "AggregateOffer",
+                "priceCurrency": "VND",
+                "lowPrice": Math.min(...tierPrices),
+                "highPrice": Math.max(...tierPrices),
+                "offerCount": tierPrices.length,
+                "priceValidUntil": priceValidUntil,
+                "availability": "https://schema.org/InStock",
+                "url": window.location.href
+            };
+        }
     }
     // Chỉ chèn AggregateRating khi có ít nhất 1 đánh giá THẬT đã được duyệt - không tự bịa số
     // liệu (đúng nguyên tắc nội dung của dự án), rating giả sẽ vi phạm chính sách schema của Google.

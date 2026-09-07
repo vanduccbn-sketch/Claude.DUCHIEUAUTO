@@ -90,6 +90,8 @@ export function renderProductHtml(p) {
     const canonicalUrl = `${SITE_URL}${canonicalPath}`;
     const absImg = absoluteUrl(p.image);
     const priceDigits = (p.price || "").replace(/[^\d]/g, "");
+    // Google khuyến nghị Offer có priceValidUntil; để giá trị cố định sẽ mau cũ -> tính ~1 năm động.
+    const priceValidUntil = new Date(Date.now() + 365 * 24 * 3600 * 1000).toISOString().slice(0, 10);
 
     const productSchema = {
         "@context": "https://schema.org",
@@ -104,9 +106,27 @@ export function renderProductHtml(p) {
             "@type": "Offer",
             "priceCurrency": "VND",
             "price": priceDigits,
+            "priceValidUntil": priceValidUntil,
             "availability": "https://schema.org/InStock",
             "url": canonicalUrl
         };
+    } else if (Array.isArray(p.priceTiers) && p.priceTiers.length) {
+        // Không có giá gốc nhưng có "giá theo dòng xe" -> AggregateOffer (khoảng giá) để bot vẫn đọc được giá.
+        const tierPrices = p.priceTiers
+            .map((t) => Number(String(Array.isArray(t) ? t[1] : t).replace(/[^\d]/g, "")))
+            .filter((n) => n > 0);
+        if (tierPrices.length) {
+            productSchema.offers = {
+                "@type": "AggregateOffer",
+                "priceCurrency": "VND",
+                "lowPrice": Math.min(...tierPrices),
+                "highPrice": Math.max(...tierPrices),
+                "offerCount": tierPrices.length,
+                "priceValidUntil": priceValidUntil,
+                "availability": "https://schema.org/InStock",
+                "url": canonicalUrl
+            };
+        }
     }
 
     const breadcrumbItems = [
